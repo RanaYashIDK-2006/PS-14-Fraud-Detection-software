@@ -1,0 +1,86 @@
+{
+  "dataset": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\data\\transactions_causal.csv",
+  "n_rows": 197645,
+  "fraud_rate": 0.01191024311265147,
+  "features": [
+    "amount_ratio",
+    "txn_freq_last_24h",
+    "txn_time_unusual",
+    "new_device_flag",
+    "unusual_location_flag",
+    "unusual_recipient_flag",
+    "failed_auth_count_24h",
+    "days_since_last_similar_txn",
+    "gradual_escalation_score",
+    "known_device_count",
+    "account_tenure_days",
+    "hour_of_day",
+    "is_weekend",
+    "shared_device_accounts",
+    "shared_recipient_accounts",
+    "mule_ring_score",
+    "hour_deviation",
+    "amount_zscore",
+    "velocity_deviation",
+    "recipient_novelty",
+    "txn_regularity"
+  ],
+  "feature_source": "runtime mapper (map_causal_features - 21 causal section-16, schema v3 - identical to inference)",
+  "ensemble_weights": {
+    "xgb": 0.34,
+    "lgb": 0.33,
+    "cb": 0.33
+  },
+  "val": {
+    "auc": 0.9998868843576428,
+    "pr_auc": 0.9931537131068103,
+    "locked_threshold_fpr_1pct": 0.04978322075409713,
+    "recall_at_threshold": 0.9954337899543378,
+    "fpr_at_threshold": 0.009990485252140819,
+    "precision_at_threshold": 0.42578125,
+    "threshold_policy": "FPR <= 1% (validation-only)",
+    "band85": {
+      "score_band": 85,
+      "recall": 0.9497716894977168,
+      "precision": 0.9904761904761905,
+      "fpr": 6.796248470844094e-05,
+      "tp": 208,
+      "fp": 2,
+      "fn": 11,
+      "alerts_per_1000": 7.08
+    }
+  },
+  "test": {
+    "auc": 0.9993636692408122,
+    "pr_auc": 0.9889388535193709,
+    "recall_at_1pct_fpr_reference": 0.9907881269191402,
+    "at_locked_threshold": {
+      "threshold": 0.04978322075409713,
+      "recall": 0.9948822927328557,
+      "fpr": 0.011824206487617719,
+      "tp": 972,
+      "fp": 339
+    },
+    "band85": {
+      "score_band": 85,
+      "recall": 0.7553735926305015,
+      "precision": 1.0,
+      "fpr": 0.0,
+      "tp": 738,
+      "fp": 0,
+      "fn": 239,
+      "alerts_per_1000": 24.89
+    },
+    "brier_calibrated": 0.005462781691891033,
+    "ece_calibrated": 0.314413154315785
+  },
+  "seed": 42,
+  "periods": {
+    "train": "2025-06-01 02:01:29.297060081-2025-08-24 02:04:32.791405112",
+    "val": "2025-08-24 02:05:52.123246703-2025-09-11 08:17:07.315063609",
+    "test": "2025-09-11 08:17:30.248820726-2025-12-20 07:05:35.691618308"
+  },
+  "model_id": "altman_runtime17c_20260904_003850",
+  "stage_dir": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\models\\staging_runtime15",
+  "dataset_sha256": "c81c26cff1b3f39d31b1ca08dd1047ee97b4621b210e8381f2737134e88e4616"
+}

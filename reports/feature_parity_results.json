@@ -1,0 +1,12 @@
+{
+  "built_at": "2026-09-03T18:09:53.516315+00:00",
+  "suite": "scripts/feature_parity_test.py",
+  "passed": 56,
+  "failed": 0,
+  "verdict": "PASS",
+  "deployed_model": "altman_runtime16_20260903_233407",
+  "schema_version": "altman_runtime_v2",
+  "vector_tolerance": 1e-09,
+  "score_tolerance": 1e-06,
+  "note": "see reports/PS14_FEATURE_PARITY_REPORT.md for the mismatch register and contract"
+}

@@ -1,0 +1,163 @@
+{
+  "model": {
+    "model_id": "altman_lean_15feat_20260830_200346",
+    "feature_schema_version": "lean_15feat_v1",
+    "n_features": 15,
+    "algorithm": "xgb+lgb+cb ensemble (weighted mean of probs) + RobustScaler + PlattCalibration",
+    "explanation_method": "native TreeSHAP (XGBoost pred_contribs / LightGBM pred_contrib / CatBoost ShapValues)"
+  },
+  "explanation_validation": {
+    "method": "native TreeSHAP (XGBoost pred_contribs / LightGBM pred_contrib / CatBoost ShapValues) \u2014 same algorithm as shap.TreeExplainer, run inside each booster; ensemble attribution = weighted average of per-model SHAP vectors (documented approximation: contributions are in logit space, ensemble raw = weighted mean of probabilities)",
+    "pipeline_replication": {
+      "pass": true,
+      "max_abs_diff_manual_vs_engine_score": 2.220446049250313e-16,
+      "detail": "hand-replicated map+scale+predict+calibrate pipeline reproduces the engine's final score to <1e-6 on every transaction; the explanation SHAP vectors are computed from the identical scaled matrix X that produces those scores, so explanations use the exact feature values supplied to the model"
+    },
+    "per_model_additivity": {
+      "xgboost": {
+        "pass": true,
+        "max_abs_err": 4.944370192161429e-07,
+        "detail": "sum(contributions)+base -> sigmoid == predict_proba"
+      },
+      "lightgbm": {
+        "pass": true,
+        "max_abs_err": 0.0,
+        "detail": "sum(contributions)+base -> sigmoid == predict_proba"
+      },
+      "catboost": {
+        "pass": true,
+        "max_abs_err": 1.6653345369377348e-15,
+        "detail": "sum(contributions)+base -> sigmoid == predict_proba"
+      }
+    },
+    "no_future_information": {
+      "pass": true,
+      "detail": "all 15 features derive from the incoming pre-transaction ML_FEATURES dict + historical entity fraud rates (tracker lookups); the mapper is stateless, uses only the current event's inputs; provenance table below"
+    }
+  },
+  "known_examples": {
+    "known_fraud_txn": {
+      "score": 0.253978,
+      "decision": "allow",
+      "top": [
+        [
+          "mcc_n",
+          42.77584
+        ],
+        [
+          "has_zip",
+          16.74991
+        ],
+        [
+          "merch_tx_count",
+          6.32412
+        ],
+        [
+          "amt_sq",
+          5.80807
+        ],
+        [
+          "is_online",
+          4.69384
+        ]
+      ]
+    },
+    "known_legit_txn": {
+      "score": 0.027361,
+      "decision": "allow",
+      "top": [
+        [
+          "mcc_n",
+          6.8263
+        ],
+        [
+          "has_zip",
+          3.5511
+        ],
+        [
+          "merch_tx_count",
+          1.24596
+        ],
+        [
+          "merch_fraud_rate",
+          1.21686
+        ],
+        [
+          "city_fraud_rate",
+          0.98235
+        ]
+      ]
+    }
+  },
+  "feature_provenance": {
+    "log_amt": "log1p(amount) \u2014 current transaction amount only",
+    "amt_sq": "amount^2 \u2014 current transaction only",
+    "hour_cos": "cos(2pi*hour/24) \u2014 event timestamp only",
+    "is_business_hours": "9<=hour<=17 \u2014 event timestamp only",
+    "chip": "new_device_flag proxy for online/chip \u2014 event only",
+    "is_online": "same proxy \u2014 event only",
+    "mcc_n": "HARDCODED 0 in runtime mapper (parity PARTIAL, check #16)",
+    "has_zip": "HARDCODED 0 in runtime mapper (parity PARTIAL, check #16)",
+    "has_state": "HARDCODED 0 in runtime mapper (parity PARTIAL, check #16)",
+    "merch_tx_count": "historical merchant tx count (tracker/input) \u2014 before event",
+    "merch_fraud_rate": "historical merchant fraud rate \u2014 before event (tracker or input)",
+    "city_fraud_rate": "historical city fraud rate \u2014 before event (tracker or input)",
+    "very_high_amt": "amount_ratio>5 \u2014 current event only",
+    "amt_x_mcc": "amount*mcc_n \u2014 current event only (mcc hardcoded)",
+    "amt_x_online": "amount*online \u2014 current event only"
+  },
+  "audit_trail": {
+    "events_written": 122,
+    "events_flushed": 0,
+    "total_events_in_chain": 1344,
+    "chain_verify": {
+      "ok": true,
+      "entries": 1344
+    },
+    "immutable_append_only": "SQLite RAISE(ABORT) trigger blocks UPDATE/DELETE on audit_events",
+    "pseudonymous": "payloads store only hashed txn ids, model/feature versions, score, threshold, decision and top features \u2014 no raw transaction data",
+    "immutability_proof": {
+      "pass": true,
+      "detail": "UPDATE blocked: IntegrityError: (sqlite3.IntegrityError) audit_events is append-only: update blocked\n[SQL: UPDAT"
+    }
+  },
+  "reproducibility": {
+    "same_txn_same_model_same_config_same_decision": true,
+    "max_score_diff_across_instances": 0.0,
+    "shap_reproducible_max_abs_diff": 0.0,
+    "determinism_note": "XGB/LGB/CB tree models are deterministic for fixed inputs; no nondeterminism documented in the deployed path (no GPU, no sampling at predict time).",
+    "verified_on_n_transactions": 120
+  },
+  "deployed_decision_path_finding": {
+    "severity": "HIGH",
+    "finding": "The loaded calibrator (models/artifacts/calibrator.joblib, PlattCalibration) was fit by src/train_compare.py on the PS-14 SYNTHETIC model family's out-of-archetype scores, not on the deployed lean Altman model. The lean model's raw ensemble scores saturate (p50=0.9619 on this batch), and the Platt sigmoid compresses the entire output range into [0.0274, 0.2540].",
+    "production_band_threshold": 0.85,
+    "max_calibrated_score_on_batch": 0.253978,
+    "impact": "production band_of() flags ml_score*100 >= 85 as verify; the deployed calibrated score never reaches 0.85 on this batch, so the ML path is inert in the decision layer regardless of the raw model's signal",
+    "cross_reference": "consistent with check #16 PRODUCTION PARITY = FAIL (artifact set never validated end-to-end)",
+    "recommendation": "fit a calibrator on the deployed model's own OOF scores, or remove calibration and lock a threshold on raw scores"
+  },
+  "summary": {
+    "transactions_scored": 122,
+    "explanation_validated": {
+      "xgboost": {
+        "pass": true,
+        "max_abs_err": 4.944370192161429e-07,
+        "detail": "sum(contributions)+base -> sigmoid == predict_proba"
+      },
+      "lightgbm": {
+        "pass": true,
+        "max_abs_err": 0.0,
+        "detail": "sum(contributions)+base -> sigmoid == predict_proba"
+      },
+      "catboost": {
+        "pass": true,
+        "max_abs_err": 1.6653345369377348e-15,
+        "detail": "sum(contributions)+base -> sigmoid == predict_proba"
+      }
+    },
+    "audit_trail_written": 122,
+    "reproducibility_pass": true,
+    "deployed_decision_path": "FINDING (calibrator mismatch) - see above"
+  }
+}

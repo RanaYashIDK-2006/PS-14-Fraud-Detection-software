@@ -1,0 +1,85 @@
+{
+  "backup": {
+    "backup_dir": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\BACKUPS\\E_hardneg_cert_20260904",
+    "backup_hashes": {
+      "cb_native.joblib": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+      "feature_list.json": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+      "lgb_native.joblib": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+      "manifest.json": "9882ff1dd058d5e29b469272d1386455ad63242874c549302c71db55d138a98f",
+      "manifest_v2.json.bak": "34b92abe67d1eebf2a2b2e1c67980c3a0d1be457f39c3d595f6da60c647c24ce",
+      "manifest_v3.json.bak": "9882ff1dd058d5e29b469272d1386455ad63242874c549302c71db55d138a98f",
+      "scaler_native.joblib": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+      "xgb_native.joblib": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc"
+    },
+    "files_verified": [
+      "cb_native.joblib",
+      "feature_list.json",
+      "lgb_native.joblib",
+      "manifest.json",
+      "manifest_v2.json.bak",
+      "manifest_v3.json.bak",
+      "scaler_native.joblib",
+      "xgb_native.joblib"
+    ],
+    "note": "plain copy; immutability by convention (no code commits in this project)",
+    "source_dir": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\models\\production\\altman_native",
+    "verified_sha256_equal": true
+  },
+  "code_version_hashes": {
+    ".freebuff/mission_train.py": "9957320de592e5bf08f7a70b9b2a2fc1a8d1cc70bb1e550427330d164c3d6b53",
+    "scripts/retrain_native_consistent.py": "bc4d5af174790b15faf61257b9ac88b1f61e8dd2040af9fd66798c16aae70b25",
+    "src/privacy_layer/native_features.py": "5760a20376306598312cfaf32d8d12b5e5f3ff268fcc0b4de4baff64e90f57d1",
+    "src/risk_engine/altman_native_ensemble.py": "d9fa2863e16be18dfca1a227f1487eea7f31226037f24a4042933f0dfd15fbfa",
+    "src/risk_engine/main.py": "178b0128c544bc49138d64cba590043200865aa2fe5bd503fd95c8454219800e",
+    "src/settings.py": "c9d35951eb476ecd32333269aad49fb76f0dce10d22cc4b738c956b19aa62323"
+  },
+  "final_test_dataset_sha256": "b2eba29a5c774defeb0e0683796b0d48a9513e7a1f44c1cd33845c651e5ced6b",
+  "hashes": {
+    "artifacts": {
+      "cb_native.joblib": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+      "feature_list.json": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+      "lgb_native.joblib": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+      "manifest.json": "9882ff1dd058d5e29b469272d1386455ad63242874c549302c71db55d138a98f",
+      "manifest_v2.json.bak": "34b92abe67d1eebf2a2b2e1c67980c3a0d1be457f39c3d595f6da60c647c24ce",
+      "manifest_v3.json.bak": "9882ff1dd058d5e29b469272d1386455ad63242874c549302c71db55d138a98f",
+      "scaler_native.joblib": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+      "xgb_native.joblib": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc"
+    },
+    "feature_list_sha256": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+    "manifest_sha256": "9882ff1dd058d5e29b469272d1386455ad63242874c549302c71db55d138a98f"
+  },
+  "known_validation_behavior": {
+    "P1": {
+      "fpr": 0.07082767,
+      "recall": 0.990089,
+      "threshold": 0.053558
+    },
+    "P2": {
+      "fpr": 0.115304401,
+      "recall": 0.995044,
+      "threshold": 0.018758
+    },
+    "auc": 0.995594,
+    "fraud": 3834,
+    "pr_auc": 0.914337,
+    "recall_at_fpr5": 0.982264,
+    "rows": 174530
+  },
+  "phase": 6,
+  "production": {
+    "dir": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\models\\production\\altman_native",
+    "locked_threshold": 0.018758,
+    "model_type": "xgb_lgb_cb_native",
+    "model_version": "altman_native_E_hardneg_cert_20260904",
+    "n_features": 48
+  },
+  "purpose": "exposure-normalization feature campaign (no deploy)",
+  "raw_corpus_sha256": null,
+  "snapshot_time_utc": "2026-09-05T07:24:31.704321Z",
+  "verification": {
+    "artifact_hashes_match_manifest": true,
+    "backup_equals_original": true,
+    "deployed_version_matches_certified": true,
+    "locked_threshold_matches": true
+  }
+}

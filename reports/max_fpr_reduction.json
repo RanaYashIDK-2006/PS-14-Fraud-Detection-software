@@ -1,0 +1,15 @@
+{
+  "ulb": {
+    "best_model": "Stack",
+    "auc": 0.9723,
+    "fpr_3pct": 0.029479,
+    "recall_at_3pct": 0.8667
+  },
+  "altman": {
+    "best_model": "Global",
+    "auc": 0.9796,
+    "fpr_3pct": 0.029688,
+    "recall_at_3pct": 0.891
+  },
+  "elapsed": 652.4
+}

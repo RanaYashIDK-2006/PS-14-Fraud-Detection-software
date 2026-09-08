@@ -1,0 +1,17 @@
+{
+  "dataset": "PAYSIM_ENHANCED",
+  "n_rows": 1200000,
+  "n_features": 38,
+  "cv_auc": 0.930525,
+  "cv_r1": 0.477551,
+  "cv_r1_std": 0.009312,
+  "target_55": false,
+  "suspicious_type_stats": {
+    "n": 1073920,
+    "fraud": 58184,
+    "fraud_rate": 0.0542,
+    "legit_in_suspicious": 1015736
+  },
+  "elapsed": 215,
+  "ts": "2026-08-29T08:49:09Z"
+}

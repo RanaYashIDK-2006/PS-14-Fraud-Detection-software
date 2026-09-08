@@ -1,0 +1,408 @@
+{
+  "built_at": "2026-09-03T17:54:01.982447+00:00",
+  "A_dataset_integrity": {
+    "file": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\data\\transactions_causal.csv",
+    "sha256": "c81c26cff1b3f39d31b1ca08dd1047ee97b4621b210e8381f2737134e88e4616",
+    "rows": 197645,
+    "fraud": 2354,
+    "legit": 195291,
+    "fraud_rate": 0.01191,
+    "ts_min_epoch": 1748743289.29706,
+    "ts_max_epoch": 1766214335.6916182,
+    "ts_min_utc": "2025-06-01 02:01:29.297060013+00:00",
+    "ts_max_utc": "2025-12-20 07:05:35.691618204+00:00",
+    "duplicate_rows": 0,
+    "ts_duplicate_count": 0,
+    "ordering": "monotonic_non_decreasing",
+    "ordering_ok": true,
+    "accounts": 6298
+  },
+  "B_split": {
+    "train": {
+      "row_start": 0,
+      "row_end": 138352,
+      "rows": 138352,
+      "fraud": 1158,
+      "legit": 137194,
+      "fraud_rate": 0.00837,
+      "ts_min_epoch": 1748743289.29706,
+      "ts_max_epoch": 1756001152.1232467,
+      "ts_min_utc": "2025-06-01 02:01:29.297060013+00:00",
+      "ts_max_utc": "2025-08-24 02:05:52.123246670+00:00"
+    },
+    "validation": {
+      "row_start": 138352,
+      "row_end": 167998,
+      "rows": 29646,
+      "fraud": 219,
+      "legit": 29427,
+      "fraud_rate": 0.007387,
+      "ts_min_epoch": 1756001215.7559688,
+      "ts_max_epoch": 1757578627.3150635,
+      "ts_min_utc": "2025-08-24 02:06:55.755968809+00:00",
+      "ts_max_utc": "2025-09-11 08:17:07.315063477+00:00"
+    },
+    "final_test": {
+      "row_start": 167998,
+      "row_end": 197645,
+      "rows": 29647,
+      "fraud": 977,
+      "legit": 28670,
+      "fraud_rate": 0.032954,
+      "ts_min_epoch": 1757578650.2488208,
+      "ts_max_epoch": 1766214335.6916182,
+      "ts_min_utc": "2025-09-11 08:17:30.248820782+00:00",
+      "ts_max_utc": "2025-12-20 07:05:35.691618204+00:00"
+    },
+    "_future_contamination_free": true,
+    "_boundary_simultaneous_ts": {
+      "train_val": {
+        "boundary_epoch": 1756001152.1232467,
+        "boundary_utc": "2025-08-24 02:05:52.123246670+00:00",
+        "rows_same_ts_left_of_cut": 1,
+        "rows_same_ts_right_of_cut": 0
+      },
+      "val_test": {
+        "boundary_epoch": 1757578627.3150635,
+        "boundary_utc": "2025-09-11 08:17:07.315063477+00:00",
+        "rows_same_ts_left_of_cut": 1,
+        "rows_same_ts_right_of_cut": 0
+      }
+    }
+  },
+  "B_split_reproducibility_key": "bd87ea08759e84cc",
+  "C_protocol": {
+    "features": [
+      "amount_ratio",
+      "txn_freq_last_24h",
+      "txn_time_unusual",
+      "new_device_flag",
+      "unusual_location_flag",
+      "unusual_recipient_flag",
+      "failed_auth_count_24h",
+      "days_since_last_similar_txn",
+      "gradual_escalation_score",
+      "known_device_count",
+      "account_tenure_days",
+      "hour_of_day",
+      "is_weekend",
+      "shared_device_accounts",
+      "shared_recipient_accounts",
+      "mule_ring_score",
+      "hour_deviation",
+      "amount_zscore",
+      "velocity_deviation",
+      "recipient_novelty",
+      "txn_regularity"
+    ],
+    "classifier": "XGBClassifier (n_estimators 400, lr 0.05, depth 6, subsample 0.8, colsample 0.8, min_child_weight 5, reg_alpha 1, reg_lambda 1, scale_pos_weight=train ratio, early_stopping on VALIDATION, seed 42)",
+    "preprocessing": "StandardScaler fitted on TRAIN only",
+    "calibration": "none (report uses raw probability; ranking metrics unaffected)",
+    "threshold_policy": "validation-only, highest threshold with FPR <= 1% (exact)",
+    "train_rows": 138352,
+    "validation_rows": 29646,
+    "final_test_rows": 29647,
+    "best_iteration": 8,
+    "validation": {
+      "auc": 0.9980988478105328,
+      "pr_auc": 0.979000643247091,
+      "locked_threshold": 0.42760327458381653,
+      "metrics_at_locked": {
+        "threshold": 0.42760327458381653,
+        "tp": 218,
+        "fp": 270,
+        "tn": 29157,
+        "fn": 1,
+        "alerts": 488,
+        "recall": 0.9954337899543378,
+        "precision": 0.44672131147540983,
+        "fpr": 0.009175247221939036,
+        "specificity": 0.9908247527780609,
+        "tpr": 0.9954337899543378
+      },
+      "note": "threshold and all decisions made HERE only"
+    },
+    "final_test": {
+      "auc": 0.9986083120705419,
+      "pr_auc": 0.9741992578486419,
+      "metrics_at_locked": {
+        "threshold": 0.42760327458381653,
+        "tp": 957,
+        "fp": 287,
+        "tn": 28383,
+        "fn": 20,
+        "alerts": 1244,
+        "recall": 0.9795291709314228,
+        "precision": 0.7692926045016077,
+        "fpr": 0.010010463899546565,
+        "specificity": 0.9899895361004535,
+        "tpr": 0.9795291709314228
+      },
+      "exact_fpr_at_locked": 0.010010463899546565,
+      "fpr_le_1pct": false,
+      "disclosure_test_picked_threshold_not_used": 0.4285215139389038,
+      "auc_bootstrap": {
+        "metric": "roc_auc",
+        "n_iter": 2000,
+        "seed": 42,
+        "point_estimate": 0.9986083120705419,
+        "ci95": [
+          0.9980069800773655,
+          0.9990567797015392
+        ],
+        "ci_width": 0.0010497996241736196,
+        "bootstrap_se": 0.0002696328468509479,
+        "resample_prevalence_mean": 0.03293582824569096,
+        "resample_prevalence_sd": 0.001053715352315176,
+        "original_prevalence": 0.03295443046513981,
+        "method": "paired (y, score) row resampling; 2.5/97.5 percentiles; fixed seed"
+      },
+      "pr_auc_bootstrap": {
+        "metric": "pr_auc",
+        "n_iter": 2000,
+        "seed": 42,
+        "point_estimate": 0.9741992578486419,
+        "ci95": [
+          0.9675884885201244,
+          0.9800340722075698
+        ],
+        "ci_width": 0.012445583687445416,
+        "bootstrap_se": 0.0032442207770010728,
+        "resample_prevalence_mean": 0.03293582824569096,
+        "resample_prevalence_sd": 0.001053715352315176,
+        "original_prevalence": 0.03295443046513981,
+        "method": "paired (y, score) row resampling; 2.5/97.5 percentiles; fixed seed"
+      }
+    }
+  },
+  "D_ablation": {
+    "full_causal_21": {
+      "n_features": 21,
+      "features": [
+        "amount_ratio",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "hour_of_day",
+        "is_weekend",
+        "shared_device_accounts",
+        "shared_recipient_accounts",
+        "mule_ring_score",
+        "hour_deviation",
+        "amount_zscore",
+        "velocity_deviation",
+        "recipient_novelty",
+        "txn_regularity"
+      ],
+      "validation_auc": 0.9980988478105328,
+      "final_test_auc": 0.9986083120705419,
+      "final_test_pr_auc": 0.9741992578486419,
+      "locked_threshold": 0.42760327458381653,
+      "final_test_metrics_at_locked": {
+        "threshold": 0.42760327458381653,
+        "tp": 957,
+        "fp": 287,
+        "tn": 28383,
+        "fn": 20,
+        "alerts": 1244,
+        "recall": 0.9795291709314228,
+        "precision": 0.7692926045016077,
+        "fpr": 0.010010463899546565,
+        "specificity": 0.9899895361004535,
+        "tpr": 0.9795291709314228
+      }
+    },
+    "no_amount_history": {
+      "n_features": 18,
+      "features": [
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "known_device_count",
+        "account_tenure_days",
+        "hour_of_day",
+        "is_weekend",
+        "shared_device_accounts",
+        "shared_recipient_accounts",
+        "mule_ring_score",
+        "hour_deviation",
+        "velocity_deviation",
+        "recipient_novelty",
+        "txn_regularity"
+      ],
+      "validation_auc": 0.9994371180568647,
+      "final_test_auc": 0.9991010542798279,
+      "final_test_pr_auc": 0.9772493218693602,
+      "locked_threshold": 0.3646065592765808,
+      "final_test_metrics_at_locked": {
+        "threshold": 0.3646065592765808,
+        "tp": 968,
+        "fp": 345,
+        "tn": 28325,
+        "fn": 9,
+        "alerts": 1313,
+        "recall": 0.9907881269191402,
+        "precision": 0.7372429550647372,
+        "fpr": 0.012033484478549007,
+        "specificity": 0.987966515521451,
+        "tpr": 0.9907881269191402
+      }
+    },
+    "instant_only": {
+      "n_features": 6,
+      "features": [
+        "hour_of_day",
+        "is_weekend",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag"
+      ],
+      "validation_auc": 0.9512981042943043,
+      "final_test_auc": 0.9340297723111153,
+      "final_test_pr_auc": 0.4980625459849714,
+      "locked_threshold": 0.6689509153366089,
+      "final_test_metrics_at_locked": {
+        "threshold": 0.6689509153366089,
+        "tp": 415,
+        "fp": 292,
+        "tn": 28378,
+        "fn": 562,
+        "alerts": 707,
+        "recall": 0.4247697031729785,
+        "precision": 0.5869872701555869,
+        "fpr": 0.010184862225322637,
+        "specificity": 0.9898151377746773,
+        "tpr": 0.4247697031729785
+      }
+    },
+    "flags_only": {
+      "n_features": 5,
+      "features": [
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "is_weekend"
+      ],
+      "validation_auc": 0.9466862740442916,
+      "final_test_auc": 0.9318400826258926,
+      "final_test_pr_auc": 0.4591762145311669,
+      "locked_threshold": 0.6871210932731628,
+      "final_test_metrics_at_locked": {
+        "threshold": 0.6871210932731628,
+        "tp": 410,
+        "fp": 273,
+        "tn": 28397,
+        "fn": 567,
+        "alerts": 683,
+        "recall": 0.4196519959058342,
+        "precision": 0.6002928257686676,
+        "fpr": 0.00952214858737356,
+        "specificity": 0.9904778514126265,
+        "tpr": 0.4196519959058342
+      }
+    }
+  },
+  "E_temporal_windows": {
+    "window_1": {
+      "rows": 7411,
+      "fraud": 93,
+      "fraud_prevalence": 0.012549,
+      "ts_start": "2025-09-11 08:17:30.248820782+00:00",
+      "ts_end": "2025-09-17 15:08:17.507044791+00:00",
+      "auc": 0.9999287366252605,
+      "pr_auc": 0.993305523890111,
+      "metrics_at_locked": {
+        "threshold": 0.42760327458381653,
+        "tp": 93,
+        "fp": 69,
+        "tn": 7249,
+        "fn": 0,
+        "alerts": 162,
+        "recall": 1.0,
+        "precision": 0.5740740740740741,
+        "fpr": 0.009428805684613283,
+        "specificity": 0.9905711943153868,
+        "tpr": 1.0
+      }
+    },
+    "window_2": {
+      "rows": 7411,
+      "fraud": 101,
+      "fraud_prevalence": 0.013628,
+      "ts_start": "2025-09-17 15:09:47.922792673+00:00",
+      "ts_end": "2025-09-25 15:50:00.966405869+00:00",
+      "auc": 0.999893676098116,
+      "pr_auc": 0.994028844365884,
+      "metrics_at_locked": {
+        "threshold": 0.42760327458381653,
+        "tp": 101,
+        "fp": 77,
+        "tn": 7233,
+        "fn": 0,
+        "alerts": 178,
+        "recall": 1.0,
+        "precision": 0.5674157303370787,
+        "fpr": 0.010533515731874145,
+        "specificity": 0.9894664842681259,
+        "tpr": 1.0
+      }
+    },
+    "window_3": {
+      "rows": 7411,
+      "fraud": 99,
+      "fraud_prevalence": 0.013359,
+      "ts_start": "2025-09-25 15:50:24.088515520+00:00",
+      "ts_end": "2025-10-08 01:50:24.668965816+00:00",
+      "auc": 0.9996007669694759,
+      "pr_auc": 0.9827002211201465,
+      "metrics_at_locked": {
+        "threshold": 0.42760327458381653,
+        "tp": 98,
+        "fp": 68,
+        "tn": 7244,
+        "fn": 1,
+        "alerts": 166,
+        "recall": 0.98989898989899,
+        "precision": 0.5903614457831325,
+        "fpr": 0.009299781181619256,
+        "specificity": 0.9907002188183808,
+        "tpr": 0.98989898989899
+      }
+    },
+    "window_4": {
+      "rows": 7414,
+      "fraud": 684,
+      "fraud_prevalence": 0.092258,
+      "ts_start": "2025-10-08 01:51:41.349792957+00:00",
+      "ts_end": "2025-12-20 07:05:35.691618204+00:00",
+      "auc": 0.9979980753021732,
+      "pr_auc": 0.983815604424984,
+      "metrics_at_locked": {
+        "threshold": 0.42760327458381653,
+        "tp": 665,
+        "fp": 73,
+        "tn": 6657,
+        "fn": 19,
+        "alerts": 738,
+        "recall": 0.9722222222222222,
+        "precision": 0.9010840108401084,
+        "fpr": 0.010846953937592867,
+        "specificity": 0.9891530460624072,
+        "tpr": 0.9722222222222222
+      }
+    }
+  }
+}

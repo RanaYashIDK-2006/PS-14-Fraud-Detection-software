@@ -1,0 +1,648 @@
+{
+  "feature_leakage_classification": [
+    {
+      "name": "log_amt",
+      "type": "raw",
+      "uses_target": false,
+      "uses_timestamp": false,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN"
+    },
+    {
+      "name": "amt_sq",
+      "type": "raw",
+      "uses_target": false,
+      "uses_timestamp": false,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN"
+    },
+    {
+      "name": "year",
+      "type": "temporal",
+      "uses_target": false,
+      "uses_timestamp": true,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN"
+    },
+    {
+      "name": "month",
+      "type": "temporal",
+      "uses_target": false,
+      "uses_timestamp": true,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN"
+    },
+    {
+      "name": "day",
+      "type": "temporal",
+      "uses_target": false,
+      "uses_timestamp": true,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN"
+    },
+    {
+      "name": "chip",
+      "type": "raw",
+      "uses_target": false,
+      "uses_timestamp": false,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN"
+    },
+    {
+      "name": "is_online",
+      "type": "raw",
+      "uses_target": false,
+      "uses_timestamp": false,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN"
+    },
+    {
+      "name": "mcc_n",
+      "type": "raw",
+      "uses_target": false,
+      "uses_timestamp": false,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN"
+    },
+    {
+      "name": "has_zip",
+      "type": "raw",
+      "uses_target": false,
+      "uses_timestamp": false,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN"
+    },
+    {
+      "name": "has_state",
+      "type": "raw",
+      "uses_target": false,
+      "uses_timestamp": false,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN"
+    },
+    {
+      "name": "very_high_amt",
+      "type": "raw",
+      "uses_target": false,
+      "uses_timestamp": false,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN"
+    },
+    {
+      "name": "amt_x_mcc",
+      "type": "interaction",
+      "uses_target": false,
+      "uses_timestamp": false,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN"
+    },
+    {
+      "name": "amt_x_online",
+      "type": "interaction",
+      "uses_target": false,
+      "uses_timestamp": false,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN"
+    },
+    {
+      "name": "amt_x_chip",
+      "type": "interaction",
+      "uses_target": false,
+      "uses_timestamp": false,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN"
+    },
+    {
+      "name": "user_tx_count",
+      "type": "expanding",
+      "uses_target": false,
+      "uses_timestamp": true,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN (expanding window, past-only; cold-start: =0 for unseen users)"
+    },
+    {
+      "name": "merch_fraud_rate",
+      "type": "expanding_target",
+      "uses_target": true,
+      "uses_timestamp": true,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": "LABEL_LATENCY",
+      "causal": "CONDITIONAL",
+      "verdict": "REQUIRES LABEL LATENCY ANALYSIS"
+    },
+    {
+      "name": "city_fraud_rate",
+      "type": "expanding_target",
+      "uses_target": true,
+      "uses_timestamp": true,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": "LABEL_LATENCY",
+      "causal": "CONDITIONAL",
+      "verdict": "REQUIRES LABEL LATENCY ANALYSIS"
+    },
+    {
+      "name": "user_fraud_rate",
+      "type": "expanding_target",
+      "uses_target": true,
+      "uses_timestamp": true,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": "LABEL_LATENCY",
+      "causal": "CONDITIONAL",
+      "verdict": "REQUIRES LABEL LATENCY ANALYSIS"
+    },
+    {
+      "name": "mfr_x_ufr",
+      "type": "interaction_target",
+      "uses_target": true,
+      "uses_timestamp": true,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": "LABEL_LATENCY",
+      "causal": "CONDITIONAL",
+      "verdict": "REQUIRES LABEL LATENCY ANALYSIS"
+    },
+    {
+      "name": "merch_popularity",
+      "type": "expanding",
+      "uses_target": false,
+      "uses_timestamp": true,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN (after fix: use expanding median)"
+    },
+    {
+      "name": "city_popularity",
+      "type": "expanding",
+      "uses_target": false,
+      "uses_timestamp": true,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN (after fix: use expanding median)"
+    },
+    {
+      "name": "amt_ratio",
+      "type": "expanding",
+      "uses_target": false,
+      "uses_timestamp": true,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN (cold-start: uses pop_avg_amt as denominator for unseen users)"
+    },
+    {
+      "name": "amt_zscore",
+      "type": "expanding",
+      "uses_target": false,
+      "uses_timestamp": true,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN (cold-start: uses pop_mean/std for unseen users)"
+    },
+    {
+      "name": "amt_acceleration",
+      "type": "expanding",
+      "uses_target": false,
+      "uses_timestamp": true,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN (cold-start: =0 for first transaction of unseen users)"
+    },
+    {
+      "name": "user_merch_diversity",
+      "type": "expanding",
+      "uses_target": false,
+      "uses_timestamp": true,
+      "uses_future": false,
+      "uses_current": false,
+      "available_at_inference": true,
+      "causal": true,
+      "verdict": "CLEAN (cold-start: =0 for unseen users, uses pop fallback)"
+    }
+  ],
+  "dataset_integrity": {
+    "total_rows": 24386900,
+    "fraud_rows": 29757,
+    "legit_rows": 24357143,
+    "fraud_rate_pct": 0.122,
+    "sum_check": true
+  },
+  "temporal_split": {
+    "method": "Chronological 60/20/20 split",
+    "train_rows": 14632140,
+    "val_rows": 4877380,
+    "test_rows": 4877380,
+    "train_end": "2020-02",
+    "val_start": "2020-02",
+    "val_end": "2013-07",
+    "test_start": "2013-07",
+    "train_fraud": 17736,
+    "val_fraud": 6260,
+    "test_fraud": 5761,
+    "train_fraud_rate": 0.1212,
+    "val_fraud_rate": 0.1283,
+    "test_fraud_rate": 0.1181,
+    "chronological_order": true,
+    "test_set_purpose": "FINAL evaluation ONLY - never used for model/threshold selection"
+  },
+  "preprocessing": {
+    "scaler": "StandardScaler",
+    "fit_on": "train only",
+    "transform": "val and test",
+    "no_test_leakage": true
+  },
+  "training": {
+    "model": "XGBClassifier",
+    "params": {
+      "n_estimators": 500,
+      "max_depth": 8,
+      "learning_rate": 0.03,
+      "subsample": 0.8,
+      "colsample_bytree": 0.7,
+      "scale_pos_weight": 30,
+      "gamma": 1,
+      "min_child_weight": 3
+    },
+    "early_stopping_rounds": 50,
+    "early_stopping_on": "validation set (NOT test)",
+    "best_iteration": 481,
+    "training_time_sec": 601.1,
+    "test_set_contamination": "NONE - test never used during training"
+  },
+  "calibration": {
+    "method": "Conformal prediction threshold (score quantile on validation legit)",
+    "fit_on": "validation set only",
+    "note": "Threshold estimated from validation legitimate score distribution, not score recalibration.",
+    "conformal_threshold_fpr_lt_1pct": 0.082884,
+    "conformal_threshold_fpr_lt_05pct": 0.166594,
+    "conformal_threshold_fpr_lt_01pct": 0.490727
+  },
+  "threshold_selection": {
+    "method": "Maximize recall subject to FPR < target, on VALIDATION set only",
+    "validation_fraud": 6260,
+    "validation_legit": 4871120,
+    "locked_thresholds": {
+      "fpr_lt_1pct": 0.09399999999999993,
+      "fpr_lt_05pct": 0.16699999999999987,
+      "fpr_lt_01pct": 0.4909999999999996
+    },
+    "validation_recall_at_fpr_lt_1pct": 0.9348,
+    "test_set_used_for_threshold": "NO"
+  },
+  "final_test_results": {
+    "threshold": 0.09399999999999993,
+    "fpr": 0.009489,
+    "recall": 0.9181,
+    "precision": 0.1027,
+    "specificity": 0.9905,
+    "fnr": 0.0819,
+    "f1": 0.1847,
+    "tp": 5289,
+    "tn": 4825393,
+    "fp": 46226,
+    "fn": 472,
+    "alerts": 51515,
+    "alerts_per_10k": 105.6,
+    "n_test_total": 4877380,
+    "n_test_fraud": 5761,
+    "n_test_legit": 4871619,
+    "fpr_strictly_less_than_1pct": true,
+    "identities_verified": true,
+    "roc_auc": 0.9948,
+    "pr_auc": 0.7965
+  },
+  "threshold_sweep": {
+    "n_thresholds": 177,
+    "key_operating_points": {
+      "fpr_lt_1pct": {
+        "threshold": 0.09,
+        "fpr": 0.00986,
+        "recall": 0.920326,
+        "precision": 0.099409,
+        "tp": 5302,
+        "tn": 4823586,
+        "fp": 48033,
+        "fn": 459,
+        "alerts": 53335,
+        "alerts_per_10k": 109.4
+      },
+      "fpr_lt_05pct": {
+        "threshold": 0.18,
+        "fpr": 0.004982,
+        "recall": 0.893248,
+        "precision": 0.174951,
+        "tp": 5146,
+        "tn": 4847351,
+        "fp": 24268,
+        "fn": 615,
+        "alerts": 29414,
+        "alerts_per_10k": 60.3
+      },
+      "fpr_lt_01pct": {
+        "threshold": 0.53,
+        "fpr": 0.00096,
+        "recall": 0.82017,
+        "precision": 0.502606,
+        "tp": 4725,
+        "tn": 4866943,
+        "fp": 4676,
+        "fn": 1036,
+        "alerts": 9401,
+        "alerts_per_10k": 19.3
+      }
+    },
+    "all_identity_checks_pass": true
+  },
+  "bootstrap_ci": {
+    "n_iterations": 1000,
+    "n_valid": 1000,
+    "method": "Stratified bootstrap 1000 iters on 500,000-row prevalence-preserving subsample (590 fraud + 499,410 legit, prevalence=0.1180% matching original 0.1181%)",
+    "threshold": 0.09399999999999993,
+    "threshold_status": "FIXED (locked threshold from validation, not reselected per bootstrap)",
+    "recall_log_value": 0.9181,
+    "roc_auc": {
+      "point_estimate": 0.9948,
+      "bootstrap_mean": 0.9941,
+      "ci_95_lower": 0.9926,
+      "ci_95_upper": 0.9954
+    },
+    "pr_auc": {
+      "point_estimate": 0.7965,
+      "bootstrap_mean": 0.8321,
+      "ci_95_lower": 0.8119,
+      "ci_95_upper": 0.85
+    },
+    "recall": {
+      "point_estimate": 0.9181,
+      "bootstrap_mean": 0.8988,
+      "ci_95_lower": 0.8808,
+      "ci_95_upper": 0.9163
+    },
+    "fpr": {
+      "point_estimate": 0.009489,
+      "bootstrap_mean": 0.009324,
+      "ci_95_lower": 0.009059,
+      "ci_95_upper": 0.009578
+    }
+  },
+  "causality_test": {
+    "test": "Features for first 100 rows with vs without 50 future rows",
+    "features_identical": true,
+    "max_absolute_difference": 0.0,
+    "verdict": "PASS"
+  },
+  "permutation_test": {
+    "n_permutations": 10,
+    "mean_auc_permuted": 0.4812,
+    "original_auc": 0.9948,
+    "performance_drop": 0.5135,
+    "genuine_signal": true
+  },
+  "feature_ablation": {
+    "all_25_features": {
+      "n_features": 25,
+      "auc": 0.9947,
+      "pr_auc": 0.7964,
+      "threshold": 0.07999999999999999,
+      "recall_at_locked_fpr": 0.9238,
+      "precision_at_locked_fpr": 0.0947,
+      "fpr_at_locked_fpr": 0.010445,
+      "auc_delta": 0.0,
+      "pr_auc_delta": 0.0
+    },
+    "no_target_features": {
+      "n_features": 21,
+      "auc": 0.9907,
+      "pr_auc": 0.6466,
+      "threshold": 0.13999999999999999,
+      "recall_at_locked_fpr": 0.8601,
+      "precision_at_locked_fpr": 0.0979,
+      "fpr_at_locked_fpr": 0.009377,
+      "auc_delta": -0.4,
+      "pr_auc_delta": -14.98
+    },
+    "no_temporal_aggregates": {
+      "n_features": 14,
+      "auc": 0.988,
+      "pr_auc": 0.6334,
+      "threshold": 0.18499999999999997,
+      "recall_at_locked_fpr": 0.8431,
+      "precision_at_locked_fpr": 0.0897,
+      "fpr_at_locked_fpr": 0.010119,
+      "auc_delta": -0.67,
+      "pr_auc_delta": -16.3
+    },
+    "simple_baseline_10": {
+      "n_features": 10,
+      "auc": 0.9865,
+      "pr_auc": 0.5896,
+      "threshold": 0.21999999999999997,
+      "recall_at_locked_fpr": 0.8353,
+      "precision_at_locked_fpr": 0.0891,
+      "fpr_at_locked_fpr": 0.010099,
+      "auc_delta": -0.82,
+      "pr_auc_delta": -20.68
+    }
+  },
+  "temporal_stability": {
+    "windows": [
+      {
+        "window": 1,
+        "rows": 1219345,
+        "n_fraud": 1411,
+        "auc": 0.9958,
+        "pr_auc": 0.7976,
+        "fpr": 0.008555,
+        "recall": 0.9313,
+        "precision": 0.112,
+        "alerts": 11734
+      },
+      {
+        "window": 2,
+        "rows": 1219345,
+        "n_fraud": 1564,
+        "auc": 0.9944,
+        "pr_auc": 0.8159,
+        "fpr": 0.009982,
+        "recall": 0.9252,
+        "precision": 0.1064,
+        "alerts": 13603
+      },
+      {
+        "window": 3,
+        "rows": 1219345,
+        "n_fraud": 1470,
+        "auc": 0.9931,
+        "pr_auc": 0.7615,
+        "fpr": 0.009675,
+        "recall": 0.8871,
+        "precision": 0.0996,
+        "alerts": 13087
+      },
+      {
+        "window": 4,
+        "rows": 1219345,
+        "n_fraud": 1316,
+        "auc": 0.9959,
+        "pr_auc": 0.8135,
+        "fpr": 0.009743,
+        "recall": 0.9301,
+        "precision": 0.0935,
+        "alerts": 13091
+      }
+    ],
+    "auc_range": 0.0028,
+    "recall_range_pct_pts": 4.4,
+    "fpr_range_pct_pts": 0.143,
+    "windows_exceeding_fpr_1pct": 0,
+    "honest_assessment": "AUC varies by 0.0028 (0.28pp), recall varies by 4.4pp (88.7% to 93.1%). 0 of 4 windows exceed FPR 1%. No formal statistical drift test performed."
+  },
+  "label_latency_analysis": {
+    "dataset": "IBM Altman synthetic credit card transactions",
+    "label_column": "Is Fraud? (Yes/No)",
+    "label_availability_in_dataset": "Static - all labels known at dataset creation",
+    "real_world_label_latency": "UNKNOWN - dataset does not contain label-confirmation timestamps",
+    "impact_on_fraud_rate_features": "Features merch_fraud_rate, city_fraud_rate, user_fraud_rate, mfr_x_ufr depend on fraud labels. In production, fraud labels are confirmed hours to days after the transaction. The expanding-window computation assumes labels are available instantly, which is unrealistic. These features would have additional latency in production.",
+    "recommendation": "In production, fraud rate features should use only labels confirmed before the transaction timestamp. Consider a label-availability buffer (e.g., 24h) or use only pre-confirmation features."
+  },
+  "entity_leakage": {
+    "full_duplicate_rows_in_1M_sample": 4,
+    "sample_size": 1000000,
+    "note": "Entity overlap (same users in train/val/test) is expected and intended for temporal split. Users appear across time periods."
+  },
+  "feature_importance": {
+    "method": "XGBoost built-in gain importance",
+    "note": "Gain importance measures total reduction in loss from splits using this feature. NOT permutation importance. NOT SHAP.",
+    "top10": [
+      [
+        "has_zip",
+        0.2383
+      ],
+      [
+        "mfr_x_ufr",
+        0.161
+      ],
+      [
+        "city_fraud_rate",
+        0.1469
+      ],
+      [
+        "merch_fraud_rate",
+        0.0991
+      ],
+      [
+        "chip",
+        0.0506
+      ],
+      [
+        "has_state",
+        0.0464
+      ],
+      [
+        "merch_popularity",
+        0.0388
+      ],
+      [
+        "mcc_n",
+        0.0317
+      ],
+      [
+        "is_online",
+        0.0316
+      ],
+      [
+        "amt_x_online",
+        0.0253
+      ]
+    ],
+    "all_features": {
+      "log_amt": 0.0086,
+      "amt_sq": 0.0087,
+      "year": 0.0221,
+      "month": 0.0072,
+      "day": 0.0039,
+      "chip": 0.0506,
+      "is_online": 0.0316,
+      "mcc_n": 0.0317,
+      "has_zip": 0.2383,
+      "has_state": 0.0464,
+      "user_tx_count": 0.0064,
+      "merch_fraud_rate": 0.0991,
+      "city_fraud_rate": 0.1469,
+      "very_high_amt": 0.0,
+      "amt_x_mcc": 0.0088,
+      "amt_x_online": 0.0253,
+      "merch_popularity": 0.0388,
+      "user_fraud_rate": 0.0135,
+      "amt_ratio": 0.0082,
+      "amt_zscore": 0.0069,
+      "amt_acceleration": 0.0054,
+      "mfr_x_ufr": 0.161,
+      "city_popularity": 0.0122,
+      "user_merch_diversity": 0.0109,
+      "amt_x_chip": 0.0076
+    }
+  },
+  "final_verdict": {
+    "verdict": "VALIDATED",
+    "critical_failures": [],
+    "timestamp": "2026-09-02 18:06:13 UTC",
+    "total_time_sec": 4927.1
+  }
+}

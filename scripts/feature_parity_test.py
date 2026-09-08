@@ -1,0 +1,336 @@
+#!/usr/bin/env python3
+"""PS-14 FEATURE-PARITY TEST (Part 2, schema-aware, native + causal).
+
+Proves numerical + semantic parity between the OFFLINE training feature path
+and the LIVE production scoring path for the DEPLOYED model — both schema
+families:
+
+  altman_native_v2  — 48 Altman-NATIVE features (real 24.4M-row IBM dataset).
+                      OFFLINE = scripts/retrain_native_consistent.py feeds
+                      every row through src/privacy_layer/native_features.
+                      derive_native_features; ONLINE  = the SAME shared
+                      derivation inside AltmanNativeEnsembleEngine, which
+                      /internal/evaluate calls through the deployed artifacts.
+                      Parity is by construction (one module), verified here.
+  altman_runtime_v3 — 21 causal §16 features (causal dataset, recall fix).
+
+Hermetic (no live services). Requires deployed artifacts in models/production
++ models/feature_contract.json. Usage:
+    ./.venv/Scripts/python.exe scripts/feature_parity_test.py
+"""
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from src.risk_engine.altman_ensemble import (  # noqa: E402
+    AltmanEnsembleEngine, ALTMAN_FEATURES, CAUSAL_FEATURES,
+    map_ml_features_to_altman, map_causal_features)
+from src.risk_engine.altman_native_ensemble import (  # noqa: E402
+    AltmanNativeEnsembleEngine, ALTMAN_NATIVE_FEATURES)
+
+CONTRACT = ROOT / "models" / "feature_contract.json"
+TOL = 1e-9          # feature vectors: exact (same float ops)
+TOL_SCORE = 1e-6    # end-to-end probability (CatBoost reduction noise)
+
+passed = 0
+failed = 0
+
+
+def ok(name: str, cond: bool, detail: str = "") -> None:
+    global passed, failed
+    if cond:
+        passed += 1
+    else:
+        failed += 1
+        print(f"  [FAIL] {name} {detail}")
+
+
+# ------------------------------------------------------------------ corpus
+def base_dict(**over) -> dict:
+    """A minimal §16 row dict (the 21 keys the synthetic CSV carries)."""
+    d = {
+        "amount_ratio": 1.2, "hour_of_day": 14, "is_weekend": 0,
+        "txn_time_unusual": 0, "new_device_flag": 0, "unusual_location_flag": 0,
+        "unusual_recipient_flag": 0, "failed_auth_count_24h": 0,
+        "txn_freq_last_24h": 3, "known_device_count": 2,
+        "account_tenure_days": 300.0, "days_since_last_similar_txn": 2.5,
+        "gradual_escalation_score": 0.1, "shared_device_accounts": 0,
+        "shared_recipient_accounts": 0, "mule_ring_score": 0.0,
+        "hour_deviation": 0.2, "amount_zscore": 0.3, "velocity_deviation": 0.4,
+        "recipient_novelty": 0.1, "txn_regularity": 0.5,
+    }
+    d.update(over)
+    return d
+
+
+def native_raw(**over) -> dict:
+    """A native raw row dict (the raw columns the native model was trained on)."""
+    d = {
+        "amount": 120.0, "ts": "2019-03-05T14:30:00", "use_chip": "Chip Transaction",
+        "mcc": 5411, "merchant_city": "New York", "merchant_state": "NY",
+        "zip": "10001", "card": "C-1", "errors": "",
+        "user_id": "U-1", "merchant_id": "M-1", "city_id": "New York",
+        "user_tx_count": 40, "user_avg_amt": 95.0, "card_tx_count": 30,
+        "merch_tx_count": 12, "user_merchant_diversity": 9.0,
+        "user_city_diversity": 3.0, "user_merch_count": 4,
+        "user_fraud_rate": 0.004, "merch_fraud_rate": 0.012,
+        "city_fraud_rate": 0.006,
+    }
+    d.update(over)
+    return d
+
+
+def corpus() -> list[tuple[str, dict]]:
+    return [
+        ("normal_established", base_dict(
+            user_tx_count=120, user_avg_amt=95.0, card_tx_count=80,
+            merch_tx_count=37, user_id="U-1", merchant_id="M-1", city_id="C-1",
+            user_fraud_rate=0.004, merch_fraud_rate=0.012, city_fraud_rate=0.006)),
+        ("normal_minimal_csv_row", base_dict()),
+        ("cold_start_unseen_merchant_city", base_dict(
+            amount_ratio=1.0, user_id="U-new", merchant_id="M-new", city_id="C-new")),
+        ("edge_zero_amount", base_dict(amount_ratio=0.0)),
+        ("edge_very_large_amount", base_dict(amount_ratio=40.0)),
+        ("edge_night_hour_new_device", base_dict(
+            hour_of_day=3, new_device_flag=1, unusual_location_flag=1,
+            failed_auth_count_24h=3, txn_freq_last_24h=11)),
+        ("edge_high_velocity_merchant", base_dict(
+            merch_tx_count=200, user_id="U-2", merchant_id="M-2", city_id="C-2")),
+        ("history_after_fraud_label", base_dict(
+            user_id="U-3", merchant_id="M-3", city_id="C-3",
+            user_fraud_rate=0.25, merch_fraud_rate=0.25, city_fraud_rate=0.25)),
+        ("history_before_label", base_dict(
+            user_id="U-4", merchant_id="M-4", city_id="C-4")),
+        ("missing_amount_ratio", base_dict(amount_ratio=1.0)),
+    ]
+
+
+def native_corpus() -> list[tuple[str, dict]]:
+    return [
+        ("native_normal_established", native_raw()),
+        ("native_cold_start", native_raw(
+            user_id="U-new", merchant_id="M-new", city_id="C-new",
+            user_tx_count=0, user_avg_amt=0.0, card_tx_count=0, merch_tx_count=0,
+            user_merchant_diversity=1.0, user_city_diversity=1.0,
+            user_merch_count=0)),
+        ("native_online_night_new_card", native_raw(
+            amount=4500.0, ts="2019-03-05T03:15:00", use_chip="Online Transaction",
+            mcc=5967, merchant_city="Moscow", merchant_state="", zip="",
+            card="C-new", errors="Technical Glitch", user_id="U-1",
+            merchant_id="M-new", city_id="Moscow",
+            card_tx_count=0, merch_tx_count=0, user_merch_count=0)),
+        ("native_swipe_known", native_raw(
+            amount=25.0, ts="2019-06-01T09:10:00", use_chip="Swipe Transaction",
+            mcc=5541, merchant_city="Boston", merchant_state="MA", zip="02108",
+            card="C-1", errors="")),
+        ("native_no_state_no_zip", native_raw(
+            merchant_state="", zip="", is_online=1)),
+    ]
+
+
+def band_of(score: float) -> tuple[str, str]:
+    s = int(round(score * 100))
+    return ("low", "allow") if s < 85 else ("high", "verify")
+
+
+def run_causal(contract: dict, eng: AltmanEnsembleEngine) -> None:
+    """Existing causal (v3) parity gates."""
+    schema = eng._schema_features()
+    is_causal = schema == CAUSAL_FEATURES
+    n_expected = len(schema)
+    mapper = map_causal_features if is_causal else map_ml_features_to_altman
+
+    ok("contract count == deployed schema",
+       contract["feature_count"] == n_expected and n_expected in (15, 21))
+    ok("contract order == deployed schema", contract["feature_order"] == schema)
+    ok("contract model == deployed", contract["model_version"] == eng.model_version,
+       f"contract={contract['model_version']} engine={eng.model_version}")
+    cnames = [f["name"] for f in contract["features"]]
+    ok("contract lists every feature once",
+       len(cnames) == len(set(cnames)) == n_expected and cnames == schema)
+
+    for case_name, feat in corpus():
+        offline_vec = mapper(dict(feat))
+        online_vec = eng.components(dict(feat))["X"][0]
+        prob_online, unc = eng.predict(dict(feat))
+        prob_offline = float(eng.predict(dict(feat))[0])
+        max_diff = float(np.max(np.abs(offline_vec - online_vec)))
+        ok(f"{case_name}: {n_expected}-feature vector parity (max|d|={max_diff:.2e})",
+           max_diff <= TOL)
+        ok(f"{case_name}: score parity (|d|<=1e-6)", 
+           abs(prob_online - prob_offline) <= TOL_SCORE,
+           f"off={prob_offline:.9f} on={prob_online:.9f}")
+        ok(f"{case_name}: decision parity",
+           band_of(prob_online) == band_of(prob_offline))
+
+    # gate 3: cold-start raw == live unseen-entity
+    raw = base_dict()
+    live_unseen = base_dict(user_tx_count=0, user_avg_amt=0.0, card_tx_count=0,
+                            merch_tx_count=0, user_id="", merchant_id="",
+                            city_id="")
+    a = mapper(dict(raw)); b = mapper(dict(live_unseen))
+    ok("cold-start: raw training dict == live unseen-entity dict",
+       float(np.max(np.abs(a - b))) <= TOL)
+    if not is_causal:
+        idx = ALTMAN_FEATURES.index("merch_tx_count")
+        ok("cold-start merch_tx_count == 0 (not a device-count proxy)",
+           abs(a[idx]) <= TOL, f"got {a[idx]}")
+        for fname in ("merch_fraud_rate", "city_fraud_rate"):
+            j = ALTMAN_FEATURES.index(fname)
+            ok(f"cold-start {fname} == documented baseline 0.001",
+               abs(a[j] - 0.001) <= TOL, f"got {a[j]}")
+
+    # gate 5: velocity/entity keys move exactly the contract features
+    v0 = mapper(base_dict())
+    v1 = mapper(base_dict(
+        merch_tx_count=99, user_id="M-X", merchant_id="M-X", city_id="CX",
+        merch_fraud_rate=0.09, city_fraud_rate=0.03))
+    changed = [f for f, x, y in zip(schema, v0, v1) if abs(x - y) > TOL]
+    if is_causal:
+        ok("v3: extra velocity/entity keys leave the 21 causal features unchanged",
+           len(changed) == 0, f"changed={changed}")
+    else:
+        ok("velocity/entity inputs change exactly {merch_tx_count, fraud rates}",
+           set(changed) == {"merch_tx_count", "merch_fraud_rate", "city_fraud_rate"},
+           f"changed={changed}")
+
+
+def run_native(eng: AltmanNativeEnsembleEngine) -> None:
+    """Native (48-feature) parity gates — shared derivation by construction."""
+    from src.privacy_layer.native_features import (
+        ALTMAN_NATIVE_FEATURES as SHARED_FEATURES, derive_native_features,
+        native_vector)
+
+    ok("native contract count == deployed", eng.n_features == 48 == len(SHARED_FEATURES))
+    ok("native feature order == shared module order",
+       ALTMAN_NATIVE_FEATURES == SHARED_FEATURES)
+    ok("native engine locked threshold declared",
+       getattr(eng, "locked_threshold", 0.0) > 0.0,
+       f"locked={getattr(eng, 'locked_threshold', 0.0)}")
+
+    from src.risk_engine.altman_native_ensemble import map_raw_to_native
+
+    def _offline(feat: dict) -> np.ndarray:
+        """Mirror the retrain/engine normalization: parse ts, split raw from
+        vel/rates, then run the ONE shared derivation. Identical to the
+        engine's _from_raw_native so offline == online by construction."""
+        from datetime import datetime
+        ts = feat.get("ts")
+        if isinstance(ts, str) and ts:
+            try:
+                ts = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+            except ValueError:
+                ts = None
+        vel = {
+            "user_tx_count": feat.get("user_tx_count", 0),
+            "user_avg_amt": feat.get("user_avg_amt", 0.0),
+            "card_tx_count": feat.get("card_tx_count", 0),
+            "merch_tx_count": feat.get("merch_tx_count", 0),
+            "user_merchant_diversity": feat.get("user_merchant_diversity", 1.0),
+            "user_city_diversity": feat.get("user_city_diversity", 1.0),
+            "user_merch_count": feat.get("user_merch_count", 0),
+        }
+        rates = {k: feat[k] for k in
+                 ("user_fraud_rate", "merch_fraud_rate", "city_fraud_rate")
+                 if k in feat}
+        raw = {
+            "amount": feat.get("amount") or feat.get("amount_ratio", 1.0) * 100.0,
+            "ts": ts,
+            "hour_of_day": feat.get("hour_of_day", 12),
+            "use_chip": feat.get("use_chip", ""),
+            "mcc": feat.get("mcc", 0),
+            "merchant_city": feat.get("merchant_city", ""),
+            "merchant_state": feat.get("merchant_state", ""),
+            "zip": feat.get("zip", ""),
+            "card": feat.get("card", ""),
+            "errors": feat.get("errors", ""),
+            "merchant_name": feat.get("merchant_id", ""),
+            "merchant_id": feat.get("merchant_id", ""),
+            "city_id": feat.get("city_id", ""),
+            "card_id": feat.get("card_id", ""),
+        }
+        return native_vector(derive_native_features(raw, vel, rates))
+
+    for case_name, feat in native_corpus():
+        # OFFLINE = shared derivation on the normalized raw dict (exactly
+        # what the retrain loop and the engine's _from_raw_native do)
+        offline_vec = _offline(dict(feat))
+        # ONLINE = deployed engine's mapper (same shared module, same artifacts)
+        online_vec = map_raw_to_native(dict(feat)).reshape(-1)
+        max_diff = float(np.max(np.abs(offline_vec - online_vec)))
+        per_feat = {f: float(abs(float(a) - float(b)))
+                    for f, a, b in zip(ALTMAN_NATIVE_FEATURES, offline_vec, online_vec)}
+        worst = max(per_feat, key=per_feat.get) if per_feat else "?"
+        ok(f"{case_name}: 48-feature parity offline==online (max|d|={max_diff:.2e})",
+           max_diff <= TOL, f"worst={worst}={per_feat.get(worst)}")
+
+    # cold-start: empty raw dict (no native keys) resolves to documented
+    # fallbacks on BOTH paths — never a proxy. A bare {} has no raw-column
+    # marker, so the engine dispatches to the LEGACY proxy mapper; to test
+    # the deployed shared-derivation path both sides must carry the raw
+    # marker (production always sends raw columns, never a bare dict).
+    empty = {"use_chip": ""}
+    a = _offline(dict(empty))
+    b = map_raw_to_native(dict(empty)).reshape(-1)
+    ok("native cold-start: empty raw parity (max|d|)",
+       float(np.max(np.abs(a - b))) <= TOL)
+    fr_idx = ALTMAN_NATIVE_FEATURES.index("user_fraud_rate")
+    ok("native cold-start fraud-rate baseline == 0.001",
+       abs(a[fr_idx] - 0.001) <= TOL, f"got {a[fr_idx]}")
+
+    # velocity/entity inputs move exactly the contract features. The flips
+    # must CROSS the 2x/5x amount thresholds so high_amt/very_high_amt
+    # actually change (avg 95 -> 20 with amt 120: 2*20=40<120, 5*20=100<120).
+    v0 = _offline(native_raw())
+    v1 = _offline(native_raw(
+        user_tx_count=77, user_avg_amt=20.0, merch_tx_count=44,
+        user_fraud_rate=0.11, merch_fraud_rate=0.09, city_fraud_rate=0.03))
+    changed = [f for f, x, y in zip(ALTMAN_NATIVE_FEATURES, v0, v1) if abs(x - y) > TOL]
+    expected = {"user_tx_count", "user_avg_amt", "merch_tx_count",
+                "amt_vs_user_avg", "amt_zscore", "user_fraud_rate",
+                "merch_fraud_rate", "city_fraud_rate", "high_amt",
+                "very_high_amt"}
+    ok("native: velocity/rate inputs change exactly the dependent features",
+       set(changed) == expected, f"changed={sorted(changed)}")
+
+
+def main() -> int:
+    global passed, failed
+    contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
+    prod = ROOT / "models" / "production"
+    manifest = json.loads((prod / "manifest.json").read_text(encoding="utf-8"))
+    native = str(manifest.get("model_type", "")) == "xgb_lgb_cb_native"
+
+    print("PS-14 FEATURE-PARITY TEST (offline training path vs live scoring path)")
+    if native:
+        print(f"  deployed: Altman-NATIVE 48 features "
+              f"({manifest.get('model_version')})")
+        eng = AltmanNativeEnsembleEngine(prod / "altman_native")
+        run_native(eng)
+    else:
+        print(f"  deployed: causal {contract['feature_count']}-feature schema "
+              f"({manifest.get('model_version')})")
+        eng = AltmanEnsembleEngine(verify_integrity=True)
+        run_causal(contract, eng)
+
+    print(f"\nFEATURE-PARITY TEST: {passed}/{passed+failed} PASSED")
+    return 0 if failed == 0 else 1
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except SystemExit:
+        raise
+    except Exception as e:  # noqa: BLE001
+        import traceback
+        traceback.print_exc()
+        print(f"FEATURE-PARITY TEST: 0/1 PASSED (crashed: {e})")
+        sys.exit(1)

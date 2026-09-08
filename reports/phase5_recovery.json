@@ -1,0 +1,65 @@
+{
+  "report": "phase5_recovery",
+  "generated_at": "2026-09-04T22:15:00Z",
+  "cause": "Cloudflare HTTP 524 origin timeout while the Phase-5 mission was in its initial infrastructure-mapping step (read-only file inspection). No Phase-5 experiment job had been launched.",
+  "backend_survived": {
+    "verdict": "YES - all six services are up and healthy",
+    "services": {
+      "front_8000": "ok",
+      "identity_8001": "ok",
+      "privacy_8002": "ok",
+      "risk_8003": "ok - serving altman_native_E_hardneg_cert_20260904 @ threshold 0.018758",
+      "verify_8004": "ok",
+      "audit_8005": "ok"
+    },
+    "processes": "venv launcher + winget python listener pair per service (documented Windows redirector pattern)"
+  },
+  "orphan_processes": {
+    "found": 1,
+    "pid": 7532,
+    "launcher_pid": 16812,
+    "started": "2026-09-04T19:15:44",
+    "description": "Pre-524 heredoc analysis job (python - via bash 5380) burning a full core (~9755 CPU-seconds) with no disk output after 20:44 and an 11MB working set - a stuck job, not a Phase-5 worker and not one of the six services",
+    "action": "terminated with taskkill //PID 7532 //F; launcher exited with its child",
+    "duplicate_risk": "none - Phase 5 never launched any job, so nothing was duplicated"
+  },
+  "status_table": {
+    "data_inventory": "COMPLETE - all Phase-4 frames verified parseable",
+    "merchant_universe": "COMPLETE - data/_merchant_table.npz (63,288 codes) + data/_merchant_volume.npz (99,602 codes x 30 years)",
+    "coverage_5_percent": "COMPLETE - cov_5 + mission_E_hardneg models/scored",
+    "coverage_10_percent": "COMPLETE - cov_10 trained",
+    "coverage_20_percent": "COMPLETE - cov_20 trained",
+    "coverage_40_percent": "COMPLETE - cov_40 trained",
+    "fixed_evaluation_population": "COMPLETE - reports/coverage_fixed_population.json (5%-frame val rows re-scored by every cov model)",
+    "establishment_features": "COMPLETE for the 5% mission frame - cs_frame 54-feature version (6 merchant-novelty features, leakage-audited PASS in Phase 3)",
+    "causal_tests": "COMPLETE (Phase 3) - max |d| ~2e-8 on future/label perturbation",
+    "label_latency_audit": "COMPLETE - reports/label_latency_audit.json - verdict UNVERIFIED",
+    "production_parity": "DOCUMENTED GAP - EntityFraudRateTracker uses decision-proxy labels vs training ground-truth expanding labels",
+    "strategy_C_merchant_aware_frame": "NOT STARTED - Phase 5 was interrupted during design",
+    "ablations_A_B_C_D_E": "NOT STARTED",
+    "model_training_phase5": "NOT STARTED",
+    "validation_phase5": "NOT STARTED",
+    "phase5_reports": "NOT STARTED"
+  },
+  "artifact_integrity": {
+    "mission_frame.npz": "OK 1,246,098 rows",
+    "cs_frame.npz": "OK 1,246,098 rows (54 features)",
+    "cov_frame_10.npz": "OK 2,464,056 rows",
+    "cov_frame_20.npz": "OK 4,898,091 rows",
+    "cov_frame_40.npz": "OK 9,769,341 rows",
+    "merchant_table.npz": "OK",
+    "merchant_volume.npz": "OK",
+    "mission_E_hardneg": "OK config/models/result/scores",
+    "cov_5_10_20_40": "OK models.joblib/result_val.json/scores.npz"
+  },
+  "resource_state": {
+    "free_ram_gb": 6.6,
+    "total_ram_gb": 15.6,
+    "orphan_terminated_freed": "1 full core",
+    "sqlite_contention": "none observed - no Phase-5 DB writes"
+  },
+  "methodology_changes": "NONE - no sampling, validation population, threshold, feature definition, model parameter, or final-test procedure was changed. E_hardneg remains the immutable control. The final 2018-2020 test remains locked.",
+  "label_latency_status": "UNVERIFIED - unchanged; no label-availability timestamp exists in the IBM corpus",
+  "resume_plan": "Restart Phase 5 from its first incomplete stage (Strategy-C frame build). No completed work is being redone. Long-running stages will run detached with checkpoints so an HTTP timeout cannot kill them.",
+  "checkpointing": "experiment manifest + per-stage checkpoint files will be used for every expensive stage"
+}

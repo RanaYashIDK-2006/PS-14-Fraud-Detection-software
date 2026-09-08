@@ -1,0 +1,175 @@
+{
+  "pipeline": "altman_production_269k_oof",
+  "version": "altman_269k_20260829_194628",
+  "dataset_rows_scanned": 24386900,
+  "training_rows": 269000,
+  "n_fraud": 992,
+  "n_features": 37,
+  "cv_performance": {
+    "auc_mean": 0.9999433999999999,
+    "auc_std": 2.5507645912538473e-05,
+    "r1_mean": 1.0,
+    "r1_std": 0.0
+  },
+  "per_fold": [
+    {
+      "fold": 1,
+      "auc": 0.999947,
+      "r1": 1.0,
+      "r05": 1.0,
+      "xgb_auc": 0.999938,
+      "lgb_auc": 0.999908,
+      "cb_auc": 0.999937,
+      "weights": {
+        "xgb": 0.4,
+        "lgb": 0.55,
+        "cb": 0.05
+      },
+      "fraud_test": 199,
+      "time_s": 19.7
+    },
+    {
+      "fold": 2,
+      "auc": 0.999979,
+      "r1": 1.0,
+      "r05": 1.0,
+      "xgb_auc": 0.999978,
+      "lgb_auc": 0.999963,
+      "cb_auc": 0.999965,
+      "weights": {
+        "xgb": 0.6,
+        "lgb": 0.35,
+        "cb": 0.05
+      },
+      "fraud_test": 199,
+      "time_s": 18.4
+    },
+    {
+      "fold": 3,
+      "auc": 0.999958,
+      "r1": 1.0,
+      "r05": 1.0,
+      "xgb_auc": 0.999906,
+      "lgb_auc": 0.999949,
+      "cb_auc": 0.999952,
+      "weights": {
+        "xgb": 0.2,
+        "lgb": 0.45,
+        "cb": 0.35
+      },
+      "fraud_test": 198,
+      "time_s": 17.5
+    },
+    {
+      "fold": 4,
+      "auc": 0.999904,
+      "r1": 1.0,
+      "r05": 1.0,
+      "xgb_auc": 0.999911,
+      "lgb_auc": 0.991863,
+      "cb_auc": 0.99985,
+      "weights": {
+        "xgb": 0.6,
+        "lgb": 0.35,
+        "cb": 0.05
+      },
+      "fraud_test": 198,
+      "time_s": 18.1
+    },
+    {
+      "fold": 5,
+      "auc": 0.999929,
+      "r1": 1.0,
+      "r05": 1.0,
+      "xgb_auc": 0.999929,
+      "lgb_auc": 0.999791,
+      "cb_auc": 0.999898,
+      "weights": {
+        "xgb": 0.6,
+        "lgb": 0.35,
+        "cb": 0.05
+      },
+      "fraud_test": 198,
+      "time_s": 18.3
+    }
+  ],
+  "optimal_threshold": 3.1511343807659575e-06,
+  "feature_importance_top10": [
+    {
+      "name": "user_tx_count",
+      "importance": 0.400756
+    },
+    {
+      "name": "card_tx_count",
+      "importance": 0.379312
+    },
+    {
+      "name": "merch_tx_count",
+      "importance": 0.101469
+    },
+    {
+      "name": "city_fraud_rate",
+      "importance": 0.041351
+    },
+    {
+      "name": "merch_fraud_rate",
+      "importance": 0.009384
+    },
+    {
+      "name": "has_state",
+      "importance": 0.007616
+    },
+    {
+      "name": "is_online",
+      "importance": 0.006835
+    },
+    {
+      "name": "amt_x_merch_rate",
+      "importance": 0.005731
+    },
+    {
+      "name": "amt_zscore",
+      "importance": 0.004647
+    },
+    {
+      "name": "has_zip",
+      "importance": 0.004603
+    }
+  ],
+  "leakage_protection": "OOF target encoding per fold",
+  "targets": {
+    "auc_99": "ACHIEVED",
+    "r1_90": "ACHIEVED"
+  },
+  "ts": "2026-08-29T14:16:28Z",
+  "latency": {
+    "1": {
+      "batch": 1,
+      "median_us": 331,
+      "p95_us": 541,
+      "p99_us": 707,
+      "throughput_tps": 3023
+    },
+    "10": {
+      "batch": 10,
+      "median_us": 494,
+      "p95_us": 670,
+      "p99_us": 952,
+      "throughput_tps": 20247
+    },
+    "100": {
+      "batch": 100,
+      "median_us": 887,
+      "p95_us": 1051,
+      "p99_us": 1141,
+      "throughput_tps": 112765
+    },
+    "1000": {
+      "batch": 1000,
+      "median_us": 2247,
+      "p95_us": 2631,
+      "p99_us": 2744,
+      "throughput_tps": 444939
+    }
+  }
+}

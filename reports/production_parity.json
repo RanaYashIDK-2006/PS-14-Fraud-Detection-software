@@ -1,0 +1,409 @@
+{
+  "runtime": {
+    "engine_loaded": "AltmanEnsembleEngine (15-feature lean, models/production)",
+    "manifest_version": "altman_lean_15feat_20260830_200346",
+    "manifest_type": "xgb_lgb_ensemble_lean",
+    "manifest_n_features": 15,
+    "manifest_features": [
+      "log_amt",
+      "amt_sq",
+      "hour_cos",
+      "is_business_hours",
+      "chip",
+      "is_online",
+      "mcc_n",
+      "has_zip",
+      "has_state",
+      "merch_tx_count",
+      "merch_fraud_rate",
+      "city_fraud_rate",
+      "very_high_amt",
+      "amt_x_mcc",
+      "amt_x_online"
+    ],
+    "feature_list_json": [
+      "log_amt",
+      "amt_sq",
+      "hour_cos",
+      "is_business_hours",
+      "chip",
+      "is_online",
+      "mcc_n",
+      "has_zip",
+      "has_state",
+      "merch_tx_count",
+      "merch_fraud_rate",
+      "city_fraud_rate",
+      "very_high_amt",
+      "amt_x_mcc",
+      "amt_x_online"
+    ],
+    "artifact_hashes": {
+      "xgb_production.joblib": {
+        "size_bytes": 1268668,
+        "sha256_prefix": "d277ad65ba9b6481",
+        "mtime": "2026-08-30 20:03:46"
+      },
+      "lgb_production.joblib": {
+        "size_bytes": 1049940,
+        "sha256_prefix": "4b737db476c16e4c",
+        "mtime": "2026-08-30 20:03:46"
+      },
+      "cb_production.joblib": {
+        "size_bytes": 44265927,
+        "sha256_prefix": "213821a2c8e78122",
+        "mtime": "2026-08-30 20:28:45"
+      },
+      "scaler_production.joblib": {
+        "size_bytes": 719,
+        "sha256_prefix": "ca96142faacf080e",
+        "mtime": "2026-08-30 20:03:46"
+      },
+      "manifest.json": {
+        "size_bytes": 629,
+        "sha256_prefix": "b713e3c90f8f2481",
+        "mtime": "2026-08-30 20:03:46"
+      },
+      "feature_list.json": {
+        "size_bytes": 259,
+        "sha256_prefix": "f1b8573a142acd9c",
+        "mtime": "2026-08-30 20:03:46"
+      }
+    }
+  },
+  "consistency": {
+    "manifest_vs_feature_list": {
+      "pass": true
+    },
+    "manifest_vs_engine_code": {
+      "pass": true,
+      "code_ALTMAN_FEATURES": [
+        "log_amt",
+        "amt_sq",
+        "hour_cos",
+        "is_business_hours",
+        "chip",
+        "is_online",
+        "mcc_n",
+        "has_zip",
+        "has_state",
+        "merch_tx_count",
+        "merch_fraud_rate",
+        "city_fraud_rate",
+        "very_high_amt",
+        "amt_x_mcc",
+        "amt_x_online"
+      ]
+    },
+    "dims": {
+      "n_manifest_features": 15,
+      "scaler_n_features": 15,
+      "xgb_n_features": 15,
+      "lgb_n_features": 15,
+      "cb_n_features": 15,
+      "pass": true
+    },
+    "model_classes": {
+      "xgb": "XGBClassifier",
+      "lgb": "LGBMClassifier",
+      "cb": "CatBoostClassifier"
+    }
+  },
+  "numeric_parity": {
+    "method": "Continuous causal expanding-window recompute over all sorted rows vs cached features_all.parquet (the training data of the deployed lean model), at head/quarter/mid windows.",
+    "rows": 24386900,
+    "window_size": 400000,
+    "features": [
+      {
+        "feature": "user_tx_count",
+        "head": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "quarter": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "mid": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "pass": true
+      },
+      {
+        "feature": "card_tx_count",
+        "head": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "quarter": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "mid": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "pass": true
+      },
+      {
+        "feature": "merch_tx_count",
+        "head": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "quarter": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "mid": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "pass": true
+      },
+      {
+        "feature": "user_avg_amt",
+        "head": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "quarter": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "mid": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "pass": true
+      },
+      {
+        "feature": "amt_zscore",
+        "head": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "quarter": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "mid": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "pass": true
+      },
+      {
+        "feature": "user_fraud_rate",
+        "head": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "quarter": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "mid": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "pass": true
+      },
+      {
+        "feature": "merch_fraud_rate",
+        "head": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "quarter": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "mid": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "pass": true
+      },
+      {
+        "feature": "city_fraud_rate",
+        "head": {
+          "max_abs_diff": 0.0,
+          "n_mismatch_gt_1e-3": 0,
+          "pass": true
+        },
+        "quarter": {
+          "max_abs_diff": 0.999856,
+          "n_mismatch_gt_1e-3": 84872,
+          "pass": false
+        },
+        "mid": {
+          "max_abs_diff": 0.997971,
+          "n_mismatch_gt_1e-3": 77031,
+          "pass": false
+        },
+        "pass": false
+      }
+    ]
+  },
+  "production_causality": {
+    "method": "Keep rows 0..60k unchanged; append 400k LATER rows; recompute; max feature diff on early rows.",
+    "max_feature_diff": 0.0,
+    "pass": true
+  },
+  "runtime_mapper": {
+    "note": "The live /internal/evaluate path does NOT recompute expanding-window features from raw rows. It receives a FeatureVector from the Privacy Layer and map_ml_features_to_altman synthesizes the 15 lean features.",
+    "proxy_derivations": {
+      "mcc_n": "HARDCODED 0 (ML_FEATURES has no MCC)",
+      "has_zip": "HARDCODED 0 (not derivable from FeatureVector)",
+      "has_state": "HARDCODED 0 (not derivable from FeatureVector)",
+      "amt (=>log_amt, amt_sq, amt_x_*)": "DERIVED amt_ratio*100 (proxy, not the real amount)",
+      "chip": "MAPPED new_device_flag (semantic proxy, not chip/swipe/online)",
+      "merch_fraud_rate/city_fraud_rate": "ENTITY TRACKER sliding-window rate (min 5 events) or 0.001 baseline; training cache used FULL expanding history (and had a row-group reset bug for city) -> train/serve skew"
+    },
+    "output_vector_length": 15,
+    "matches_manifest_15": true
+  },
+  "model_versions": {
+    "deployed_artifact": {
+      "path": "models/production/ (xgb+lgb+cb, scaler_production, calibrator from models/artifacts/calibrator.joblib)",
+      "manifest_version": "altman_lean_15feat_20260830_200346",
+      "n_features": 15,
+      "feature_schema": [
+        "log_amt",
+        "amt_sq",
+        "hour_cos",
+        "is_business_hours",
+        "chip",
+        "is_online",
+        "mcc_n",
+        "has_zip",
+        "has_state",
+        "merch_tx_count",
+        "merch_fraud_rate",
+        "city_fraud_rate",
+        "very_high_amt",
+        "amt_x_mcc",
+        "amt_x_online"
+      ],
+      "training_data": "data/_sorted_cache/features_all.parquet (24.39M rows, Altman IBM v2)",
+      "temporal_test_auc_manifest": 0.98584,
+      "ensemble_weights": {
+        "xgb": 0.34,
+        "lgb": 0.33,
+        "cb": 0.33
+      }
+    },
+    "audited_model": {
+      "note": "The forensic revalidation (scripts/forensic_revalidate.py) TRAINED A NEW 25-feature XGB inline from raw CSV and never persisted it; it is NOT the artifact production loads. The audit validated the methodology/pipeline and the causal feature definitions, not the deployed artifact itself.",
+      "n_features": 25,
+      "feature_schema_audit": [
+        "log_amt",
+        "amt_sq",
+        "year",
+        "month",
+        "day",
+        "chip",
+        "is_online",
+        "mcc_n",
+        "has_zip",
+        "has_state",
+        "user_tx_count",
+        "merch_fraud_rate",
+        "city_fraud_rate",
+        "very_high_amt",
+        "amt_x_mcc",
+        "amt_x_online",
+        "merch_popularity",
+        "user_fraud_rate",
+        "amt_ratio",
+        "amt_zscore",
+        "amt_acceleration",
+        "mfr_x_ufr",
+        "city_popularity",
+        "user_merch_diversity",
+        "amt_x_chip"
+      ]
+    }
+  },
+  "schema_overlap": {
+    "n_shared": 12,
+    "shared": [
+      "amt_sq",
+      "amt_x_mcc",
+      "amt_x_online",
+      "chip",
+      "city_fraud_rate",
+      "has_state",
+      "has_zip",
+      "is_online",
+      "log_amt",
+      "mcc_n",
+      "merch_fraud_rate",
+      "very_high_amt"
+    ],
+    "deployed_only": [
+      "hour_cos",
+      "is_business_hours",
+      "merch_tx_count"
+    ],
+    "audit_only": [
+      "amt_acceleration",
+      "amt_ratio",
+      "amt_x_chip",
+      "amt_zscore",
+      "city_popularity",
+      "day",
+      "merch_popularity",
+      "mfr_x_ufr",
+      "month",
+      "user_fraud_rate",
+      "user_merch_diversity",
+      "user_tx_count",
+      "year"
+    ]
+  },
+  "deployed_model_smoke": {
+    "model_version_loaded": "altman_lean_15feat_20260830_200346",
+    "n_features": 15,
+    "sample_predictions": [
+      0.25285,
+      0.25285,
+      0.25285,
+      0.25285,
+      0.25285
+    ],
+    "loads_and_runs": true
+  },
+  "verdict": {
+    "numeric_parity_7_state_features": "PASS",
+    "numeric_parity_city_fraud_rate": "FAIL - training cache city_state resets per parquet row group (train_altman_fullscale.py line 218: city_state = {} INSIDE the row-group loop); cached city_fraud_rate is chunk-local, not a full expanding window",
+    "production_builder_causality": "PASS",
+    "deployed_artifact_internal_consistency": "PASS",
+    "audited_model_is_deployed_artifact": "FAIL - audit model (25 feat, inline, never saved) != deployed lean model (15 feat); shared schema 12/15",
+    "runtime_mapper_feature_fidelity": "PARTIAL - mcc_n/has_zip/has_state hardcoded 0; amt proxied from amount_ratio; entity fraud rates from sliding-window tracker (min 5) vs full-history training features -> train/serve skew",
+    "bottom_line": "Feature-generation parity is near-perfect (7/8 expanding features bit-exact vs the training cache); one REAL production bug: city_fraud_rate resets per parquet row group in the cache builder. The model mismatch remains: the forensic audit evaluated an inline 25-feature XGB, not the deployed 15-feature lean artifact. PRODUCTION PARITY = FAIL (model mismatch + city-rate cache bug)."
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "final_test_accessed": false,
+  "final_test_authorized": false,
+  "e_hardneg_untouched": true,
+  "p11_untouched": true,
+  "production_untouched": true,
+  "2016_used_for_training": false,
+  "2017_used_for_training": false,
+  "2016_used_for_threshold_selection": false,
+  "2017_used_for_threshold_selection": false,
+  "status": "PASS",
+  "cert_time_utc": "2026-09-08T09:47:39Z"
+}

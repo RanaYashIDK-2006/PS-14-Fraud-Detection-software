@@ -1,0 +1,308 @@
+# PS-14 Production Deployment
+# Usage: docker compose -f docker-compose.prod.yml up --build -d
+#
+# Architecture:
+#   nginx (80/443) -> front (8000)
+#                    identity (8001)
+#                    privacy (8002)
+#                    risk (8003) x4 workers
+#                    verify (8004)
+#                    audit (8005)
+#                    inference (8006) x2 workers
+#   redis (6379) <- shared state for sessions, velocity, rate limiting
+#
+# Prerequisites:
+#   1. Set all secrets in .env (copy .env.example and fill in real values)
+#   2. Ensure Docker has 8GB+ RAM allocated
+#   3. For TLS: place cert.pem and key.pem in certs/
+
+name: ps14-prod
+
+services:
+  # ── PostgreSQL: primary database ─────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ps14
+      POSTGRES_USER: ${POSTGRES_USER:-ps14}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      # Performance tuning for fraud detection workloads
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    command: >
+      postgres
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c work_mem=16MB
+      -c maintenance_work_mem=128MB
+      -c max_connections=200
+      -c wal_buffers=16MB
+      -c checkpoint_completion_target=0.9
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c log_min_duration_statement=1000
+      -c log_statement=ddl
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/init_postgres.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ps14} -d ps14"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+    deploy:
+      resources:
+        limits: { memory: 2G }
+    restart: unless-stopped
+
+  # ── Redis: shared state backend ──────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    command: >
+      redis-server
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+      --save 60 1000
+      --appendonly yes
+    ports: ["6379:6379"]
+    volumes: [redisdata:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    deploy:
+      resources:
+        limits: { memory: 1G }
+    restart: unless-stopped
+
+  # ── Nginx: load balancer + TLS termination ──────────────────────────
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      front: { condition: service_healthy }
+      risk: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:80/nginx-health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    deploy:
+      resources:
+        limits: { memory: 256M }
+    restart: unless-stopped
+
+  # ── Front service: landing page + admin ──────────────────────────────
+  front:
+    build: .
+    command: >
+      gunicorn src.front_service.main:app
+      -w 2 -k uvicorn.workers.UvicornWorker
+      --bind 0.0.0.0:8000
+      --timeout 120
+      --graceful-timeout 30
+      --access-logfile -
+      --error-logfile -
+    environment: &prod-env
+      PS14_MODE: production
+      DB_DIR: /app/db
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET}
+      PII_ENCRYPTION_KEY: ${PII_ENCRYPTION_KEY:?Set PII_ENCRYPTION_KEY}
+      EXPORT_SIGNING_KEY: ${EXPORT_SIGNING_KEY:?Set EXPORT_SIGNING_KEY}
+      INTERNAL_TOKEN: ${INTERNAL_TOKEN:?Set INTERNAL_TOKEN}
+      COMPLIANCE_TOKEN: ${COMPLIANCE_TOKEN:?Set COMPLIANCE_TOKEN}
+      ADMIN_USER: ${ADMIN_USER:-admin}
+      ADMIN_PASS: ${ADMIN_PASS:?Set ADMIN_PASS}
+      CORS_ORIGINS: ${CORS_ORIGINS:?Set CORS_ORIGINS to your production domains}
+      IDENTITY_URL: http://identity:8001
+      PRIVACY_URL: http://privacy:8002
+      RISK_URL: http://risk:8003
+      AUDIT_URL: http://audit:8005
+      VERIFY_URL: http://verify:8004
+      # PostgreSQL (shared instance, per-service schemas)
+      DATABASE_URL: postgresql://${POSTGRES_USER:-ps14}:${POSTGRES_PASSWORD}@postgres:5432/ps14
+      DB_SCHEMA: identity
+      SERVICE_NAME: IDENTITY
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    volumes:
+      - dbdata:/app/db
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    deploy:
+      resources:
+        limits: { memory: 1G }
+    restart: unless-stopped
+
+  # ── Identity service ────────────────────────────────────────────────
+  identity:
+    build: .
+    command: >
+      gunicorn src.identity_service.main:app
+      -w 2 -k uvicorn.workers.UvicornWorker
+      --bind 0.0.0.0:8001
+      --timeout 120
+    environment:
+      <<: *prod-env
+      DB_SCHEMA: identity
+      SERVICE_NAME: IDENTITY
+    volumes: [dbdata:/app/db]
+    depends_on:
+      postgres: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits: { memory: 512M }
+    restart: unless-stopped
+
+  # ── Privacy layer ───────────────────────────────────────────────────
+  privacy:
+    build: .
+    command: >
+      gunicorn src.privacy_layer.main:app
+      -w 4 -k uvicorn.workers.UvicornWorker
+      --bind 0.0.0.0:8002
+      --timeout 120
+    environment:
+      <<: *prod-env
+      DB_SCHEMA: privacy
+      SERVICE_NAME: PRIVACY
+    volumes: [dbdata:/app/db]
+    depends_on:
+      postgres: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8002/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits: { memory: 1G }
+    restart: unless-stopped
+
+  # ── Risk engine: 4 workers for high throughput ──────────────────────
+  risk:
+    build: .
+    command: >
+      gunicorn src.risk_engine.main:app
+      -w 4 -k uvicorn.workers.UvicornWorker
+      --bind 0.0.0.0:8003
+      --timeout 30
+      --graceful-timeout 10
+      --max-requests 10000
+      --max-requests-jitter 500
+    environment:
+      <<: *prod-env
+      DB_SCHEMA: risk
+      SERVICE_NAME: RISK
+    volumes:
+      - dbdata:/app/db
+      - ./models:/app/models:ro
+    depends_on:
+      postgres: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8003/health', timeout=3)"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
+    deploy:
+      resources:
+        limits: { memory: 2G }
+    restart: unless-stopped
+
+  # ── Verification service ────────────────────────────────────────────
+  verify:
+    build: .
+    command: >
+      gunicorn src.verification_service.main:app
+      -w 2 -k uvicorn.workers.UvicornWorker
+      --bind 0.0.0.0:8004
+      --timeout 120
+    environment:
+      <<: *prod-env
+      DB_SCHEMA: verification
+      SERVICE_NAME: VERIFY
+    volumes: [dbdata:/app/db]
+    depends_on:
+      postgres: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8004/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits: { memory: 512M }
+    restart: unless-stopped
+
+  # ── Audit service ───────────────────────────────────────────────────
+  audit:
+    build: .
+    command: >
+      gunicorn src.audit_service.main:app
+      -w 2 -k uvicorn.workers.UvicornWorker
+      --bind 0.0.0.0:8005
+      --timeout 120
+    environment:
+      <<: *prod-env
+      DB_SCHEMA: audit
+      SERVICE_NAME: AUDIT
+    volumes: [dbdata:/app/db]
+    depends_on:
+      postgres: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8005/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits: { memory: 512M }
+    restart: unless-stopped
+
+  # ── Inference service: 2 workers for batch scoring ──────────────────
+  inference:
+    build: .
+    command: >
+      gunicorn src.inference.service:app
+      -w 2 -k uvicorn.workers.UvicornWorker
+      --bind 0.0.0.0:8006
+      --timeout 60
+      --max-requests 50000
+    environment:
+      <<: *prod-env
+      REDIS_URL: redis://redis:6379/1
+    volumes:
+      - ./models:/app/models:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8006/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits: { memory: 2G }
+    restart: unless-stopped
+
+volumes:
+  dbdata:
+  pgdata:
+  redisdata:

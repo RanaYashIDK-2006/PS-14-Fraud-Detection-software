@@ -1,0 +1,15 @@
+{
+  "n_requests": 500,
+  "n_succeeded": 406,
+  "concurrency": 50,
+  "tps": 18.7,
+  "total_s": 21.77,
+  "mean_ms": 2047.53,
+  "p50_ms": 1829.0,
+  "p95_ms": 3625.0,
+  "p99_ms": 4125.0,
+  "p999_ms": 4172.0,
+  "max_ms": 4172.0,
+  "errors": 94,
+  "slo_met": false
+}

@@ -1,0 +1,130 @@
+{
+  "title": "ML Benchmark Registry \u2014 Authoritative Verified Results",
+  "disclaimer": "All results generated from actual evaluations. No synthetic inflation.",
+  "timestamp": "2026-08-28",
+  "datasets": {
+    "ulb_creditcard": {
+      "hash": "76274b691b16a6c4",
+      "n_rows": 284807,
+      "n_fraud": 492,
+      "fraud_rate": 0.00173,
+      "type": "SYNTHETIC (PCA-transformed)",
+      "split": "80/20 stratified, random_state=42",
+      "cv": "5-fold stratified",
+      "results": {
+        "xgb_pattern_single_split": {
+          "roc_auc": 0.9758,
+          "pr_auc": 0.8835,
+          "r1_pct_fpr": 0.918,
+          "r05_pct_fpr": 0.898,
+          "r01_pct_fpr": 0.888
+        },
+        "rf_pattern_single_split": {
+          "roc_auc": 0.9837,
+          "pr_auc": 0.8291,
+          "r1_pct_fpr": 0.898
+        },
+        "xgb_pattern_5fold_cv": {
+          "roc_auc_mean": 0.9849,
+          "roc_auc_std": 0.0075,
+          "pr_auc_mean": "varies",
+          "r1_mean": "varies"
+        },
+        "stacker_pattern": {
+          "roc_auc": 0.9769,
+          "pr_auc": 0.8753,
+          "r1_pct_fpr": 0.908,
+          "ci_95": {
+            "roc_auc": [
+              0.958,
+              0.995
+            ],
+            "pr_auc": [
+              0.813,
+              0.929
+            ]
+          }
+        }
+      }
+    },
+    "ibm_altman": {
+      "hash": "b01fa323c98522f8",
+      "n_rows_total": 24386900,
+      "n_rows_sampled": 3000000,
+      "n_fraud": 3421,
+      "fraud_rate": 0.00114,
+      "type": "SYNTHETIC (IBM generated)",
+      "results_user_disjoint_honest": {
+        "xgb": {
+          "roc_auc": 0.96,
+          "pr_auc": 0.5716,
+          "r1_pct_fpr": 0.721,
+          "r05_pct_fpr": 0.692,
+          "r01_pct_fpr": 0.63
+        },
+        "lr": {
+          "roc_auc": 0.8841,
+          "pr_auc": 0.0221,
+          "r1_pct_fpr": 0.26
+        },
+        "note": "User-disjoint: train on 203 users, test on 50 users. No user leakage."
+      },
+      "results_time_based_optimistic": {
+        "xgb": {
+          "roc_auc": 0.8154,
+          "pr_auc": 0.0069,
+          "r1_pct_fpr": 0.132
+        },
+        "lr": {
+          "roc_auc": 0.8191,
+          "pr_auc": 0.0147,
+          "r1_pct_fpr": 0.214
+        },
+        "note": "73.8% user overlap. Temporal drift reduces performance."
+      }
+    },
+    "paysim_1m": {
+      "hash": "fa1df0f1b65905cc",
+      "n_rows": 1200000,
+      "n_fraud": 58800,
+      "fraud_rate": 0.049,
+      "type": "SIMULATED (mobile money)",
+      "results": {
+        "xgb": {
+          "roc_auc": 0.941,
+          "pr_auc": 0.6449,
+          "r1_pct_fpr": 0.488,
+          "r05_pct_fpr": 0.4,
+          "r01_pct_fpr": 0.239
+        },
+        "lr": {
+          "roc_auc": 0.9089,
+          "pr_auc": 0.5448,
+          "r1_pct_fpr": 0.394
+        }
+      }
+    }
+  },
+  "cross_domain": {
+    "status": "IMPOSSIBLE",
+    "reason": "Datasets have incompatible feature spaces (ULB=PCA V1-V28, Altman=merchant/user, PaySim=balance/transaction)"
+  },
+  "honest_claims": {
+    "VERIFIED": [
+      "ULB 5-fold CV ROC-AUC = 0.985 +/- 0.008",
+      "ULB pattern XGB R@1%FPR = 91.8%",
+      "Altman user-disjoint XGB ROC-AUC = 0.960",
+      "PaySim XGB ROC-AUC = 0.941"
+    ],
+    "UNSUPPORTED": [
+      "99%+ ROC-AUC on real data",
+      "cross-domain generalization",
+      "production-ready",
+      "industry-grade"
+    ],
+    "STALE": [
+      "Previous 99.2% claim (different model versions)",
+      "Previous 98.5% claim (stale metadata)"
+    ]
+  }
+}

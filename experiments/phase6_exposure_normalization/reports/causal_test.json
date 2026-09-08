@@ -1,0 +1,27 @@
+{
+  "phase": 6,
+  "step": 8,
+  "claim": "feature(t) is a function of the stream strictly before t; appending future rows or flipping future labels changes nothing",
+  "test": [
+    {
+      "name": "B_future_rows_removed",
+      "perturbation": "stream truncated at 2011-01-01 (t+1..t+1y removed)",
+      "pre_rows": 461131,
+      "max_abs_diff": 0.0,
+      "exact_equal": true
+    },
+    {
+      "name": "D_future_labels_flipped",
+      "perturbation": "post-2010 fraud labels flipped to their opposite",
+      "pre_rows": 461131,
+      "max_abs_diff": 0.0,
+      "exact_equal": true
+    }
+  ],
+  "tolerance": "exact float equality (deterministic derivation over identical prefix)",
+  "result": "PASS",
+  "checked": {
+    "native_features": 48,
+    "rate_features": 6
+  }
+}

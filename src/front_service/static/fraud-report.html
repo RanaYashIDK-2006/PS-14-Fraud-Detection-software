@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PS-14 Fraud Report</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0e17;--card:#111827;--border:#1e293b;--text:#e2e8f0;--dim:#64748b;--accent:#3b82f6;--red:#ef4444;--green:#22c55e;--yellow:#eab308;--orange:#f97316;--purple:#a855f7}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:0;overflow-x:hidden}
+
+/* Scroll progress bar */
+#scroll-progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--purple),var(--green));z-index:9999;transition:width 0.1s linear;box-shadow:0 0 10px rgba(59,130,246,0.5)}
+
+/* Floating TOC */
+#toc{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:6px;opacity:0;transition:opacity 0.3s}
+#toc.visible{opacity:1}
+.toc-dot{width:10px;height:10px;border-radius:50%;background:var(--border);border:2px solid transparent;cursor:pointer;transition:all 0.3s;position:relative}
+.toc-dot.active{background:var(--accent);border-color:var(--accent);box-shadow:0 0 12px rgba(59,130,246,0.5);transform:scale(1.3)}
+.toc-dot:hover{background:var(--accent);transform:scale(1.2)}
+.toc-dot .toc-label{position:absolute;right:20px;top:50%;transform:translateY(-50%);background:var(--card);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.2s;color:var(--dim)}
+.toc-dot:hover .toc-label{opacity:1}
+
+.content{max-width:900px;margin:0 auto;padding:20px 20px 60px}
+
+a{color:var(--accent);text-decoration:none}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;flex-wrap:wrap;gap:12px;padding:20px 0}
+.header h1{font-size:28px;font-weight:800;letter-spacing:-0.5px}
+.header h1 span{background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.back{padding:8px 16px;border:1px solid var(--border);border-radius:8px;font-size:13px;transition:all 0.2s}
+.back:hover{background:var(--card);border-color:var(--accent)}
+.btn-pdf{cursor:pointer;background:linear-gradient(135deg,var(--accent),#6366f1);color:#fff;border-color:transparent;font-weight:600}
+.btn-pdf:hover{box-shadow:0 4px 20px rgba(59,130,246,0.3);transform:translateY(-1px)}
+
+.section-title{font-size:20px;font-weight:700;margin:40px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--border);color:var(--accent);position:relative;padding-left:20px;display:flex;align-items:center;gap:10px}
+.section-title::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--accent),var(--purple));border-radius:2px}
+.section-num{font-size:13px;color:var(--dim);font-weight:400;font-style:italic}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;transition:all 0.3s ease;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;inset:0;border-radius:12px;padding:1px;background:linear-gradient(135deg,transparent 40%,rgba(59,130,246,0.1));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity 0.3s;pointer-events:none}
+.stat:hover::before{opacity:1}
+.stat:hover{transform:translateY(-2px);border-color:rgba(59,130,246,0.25);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+.stat .num{font-size:26px;font-weight:800;line-height:1.1}
+.stat .label{font-size:11px;color:var(--dim);margin-top:6px;text-transform:uppercase;letter-spacing:0.5px}
+.stat.red .num{color:var(--red)} .stat.green .num{color:var(--green)} .stat.blue .num{color:var(--accent)} .stat.yellow .num{color:var(--yellow)} .stat.purple .num{color:var(--purple)} .stat.orange .num{color:var(--orange)}
+
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0 28px}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all 0.3s}
+.chart-card:hover{border-color:rgba(59,130,246,0.2);box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+.chart-card h3{font-size:13px;margin-bottom:14px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:0.3px}
+.chart-card canvas{width:100%!important;height:240px!important}
+
+/* Single full-width chart */
+.chart-full{grid-column:1/-1}
+
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow-x:auto;margin:16px 0 24px;transition:all 0.3s}
+.table-wrap:hover{border-color:rgba(59,130,246,0.15)}
+.table-wrap h3{padding:14px 18px 0;font-size:13px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:0.3px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);color:var(--dim);font-weight:600;white-space:nowrap;font-size:12px;text-transform:uppercase;letter-spacing:0.3px}
+td{padding:10px 14px;border-bottom:1px solid rgba(30,41,59,0.5);white-space:nowrap}
+tr:hover td{background:rgba(59,130,246,0.04)}
+tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:0.3px}
+.badge.high{background:rgba(239,68,68,0.15);color:var(--red)} .badge.borderline{background:rgba(249,115,22,0.15);color:var(--orange)} .badge.subtle{background:rgba(234,179,8,0.15);color:var(--yellow)} .badge.missed{background:rgba(239,68,68,0.08);color:#f87171} .badge.fp{background:rgba(59,130,246,0.15);color:var(--accent)} .badge.legit{background:rgba(34,197,94,0.15);color:var(--green)}
+.bar{height:6px;border-radius:3px;background:var(--border)} .bar-fill{height:100%;border-radius:3px}
+
+.insight{background:linear-gradient(135deg,rgba(59,130,246,0.05),rgba(168,85,247,0.05));border-left:3px solid var(--accent);padding:14px 18px;margin:12px 0 24px;border-radius:0 10px 10px 0;font-size:13px;line-height:1.7}
+.insight strong{color:var(--accent)}
+
+/* Divider */
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:40px 0}
+
+.loading{text-align:center;padding:80px;color:var(--dim);font-size:15px}
+
+/* Print */
+@media print{body{background:#fff!important;color:#111!important;padding:10px!important}#scroll-progress,#toc{display:none!important}.header{background:#fff!important;padding-bottom:8px!important}.header h1{color:#111!important}.header h1 span{-webkit-text-fill-color:#2563eb!important}.section-title{color:#2563eb!important;border-bottom-color:#ccc!important}.stat{background:#f8f9fa!important;border-color:#ddd!important}.stat .num{color:#111!important}.stat.green .num{color:#16a34a!important}.stat.red .num{color:#dc2626!important}.stat.blue .num{color:#2563eb!important}.insight{background:#f0f7ff!important;border-color:#2563eb!important;color:#333!important}.chart-card{background:#fff!important;border-color:#ddd!important}.chart-card h3{color:#333!important}table{color:#111!important}th{background:#e5e7eb!important;color:#111!important;border-color:#ccc!important}td{border-color:#ddd!important;color:#111!important}.back,button{display:none!important}.loading{display:none!important}@page{margin:15mm;size:A4 portrait}}
+
+@media(max-width:768px){.charts{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}#toc{display:none}.content{padding:12px 12px 40px}.header h1{font-size:22px}.stat .num{font-size:22px}}
+</style>
+</head>
+<body>
+<div id="scroll-progress"></div>
+<div id="toc"></div>
+<div class="content">
+<div class="header">
+  <h1><span>PS-14</span> Fraud Transaction Report</h1>
+  <div style="display:flex;gap:8px">
+    <a href="/" class="back">← Back to Dashboard</a>
+    <button class="back btn-pdf" onclick="downloadPDF()">📄 Download PDF</button>
+  </div>
+</div>
+<div id="app"><div class="loading">Loading fraud data...</div></div>
+</div>
+<script src="/anime.min.js"></script>
+<script src="/motion.js"></script>
+<script src="/chart.min.js"></script>
+<script src="/static/fraud-report-app.js?v=3"></script>
+</body>
+</html>

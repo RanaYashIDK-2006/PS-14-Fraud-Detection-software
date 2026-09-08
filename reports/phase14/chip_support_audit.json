@@ -1,0 +1,62 @@
+{
+  "training_support": {
+    "<=2013": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 129403,
+        "fraud": 5534
+      },
+      "Online Transaction": {
+        "total": 25353,
+        "fraud": 11478
+      },
+      "total": 154756,
+      "fraud": 17012
+    },
+    "<=2014": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 144197,
+        "fraud": 5693
+      },
+      "Online Transaction": {
+        "total": 28307,
+        "fraud": 12371
+      },
+      "total": 172504,
+      "fraud": 18064,
+      "chip_fraud_unique_merchants": 0,
+      "chip_fraud_unique_users": 0
+    },
+    "<=2015": {
+      "Chip Transaction": {
+        "total": 12581,
+        "fraud": 301
+      },
+      "Swipe Transaction": {
+        "total": 147232,
+        "fraud": 5896
+      },
+      "Online Transaction": {
+        "total": 33214,
+        "fraud": 15148
+      },
+      "total": 193027,
+      "fraud": 21345,
+      "chip_fraud_merchants": 292,
+      "chip_fraud_users": 187,
+      "chip_fraud_mccs": 32,
+      "chip_fraud_amount_mean": 100.65,
+      "chip_fraud_amount_median": 71.33,
+      "chip_fraud_unique_merchants": 292,
+      "chip_fraud_unique_users": 187
+    }
+  },
+  "cert_time_utc": "2026-09-08T09:47:39Z"
+}

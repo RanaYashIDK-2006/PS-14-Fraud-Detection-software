@@ -1,0 +1,264 @@
+{
+  "methodology": "thresholds selected on the LOCKED validation window only; exact recall constraints (no rounding before the constraint test); E_hardneg point = its certified P2 policy, V_rawplus point = min FPR at the same floor",
+  "floor_operating_points": {
+    "0.99": {
+      "E_hardneg": {
+        "threshold": 0.05355844,
+        "recall": 0.9900886802295253,
+        "fpr": 0.07082767024417679,
+        "precision": 0.23895253682487724,
+        "tp": 3796,
+        "fp": 12090,
+        "fn": 38,
+        "tn": 158606,
+        "alerts": 15886,
+        "alerts_per_1k": 91.02160087091045
+      },
+      "V_rawplus": {
+        "threshold": 0.07077689,
+        "recall": 0.9900886802295253,
+        "fpr": 0.06826756338754277,
+        "precision": 0.24571169654993852,
+        "tp": 3796,
+        "fp": 11653,
+        "fn": 38,
+        "tn": 159043,
+        "alerts": 15449,
+        "alerts_per_1k": 88.5177333409729
+      }
+    },
+    "0.995": {
+      "E_hardneg": {
+        "threshold": 0.01875816,
+        "recall": 0.9950443401147626,
+        "fpr": 0.11530440080611144,
+        "precision": 0.1623611524875516,
+        "tp": 3815,
+        "fp": 19682,
+        "fn": 19,
+        "tn": 151014,
+        "alerts": 23497,
+        "alerts_per_1k": 134.6301495444909
+      },
+      "V_rawplus": {
+        "threshold": 0.02989373,
+        "recall": 0.9950443401147626,
+        "fpr": 0.09923489712705628,
+        "precision": 0.18381998650862486,
+        "tp": 3815,
+        "fp": 16939,
+        "fn": 19,
+        "tn": 153757,
+        "alerts": 20754,
+        "alerts_per_1k": 118.91365381309804
+      }
+    },
+    "0.997": {
+      "E_hardneg": {
+        "threshold": 0.0125026,
+        "recall": 0.9971309337506521,
+        "fpr": 0.13631836715564513,
+        "precision": 0.14111176731138345,
+        "tp": 3823,
+        "fp": 23269,
+        "fn": 11,
+        "tn": 147427,
+        "alerts": 27092,
+        "alerts_per_1k": 155.2283275081648
+      },
+      "V_rawplus": {
+        "threshold": 0.01466686,
+        "recall": 0.9971309337506521,
+        "fpr": 0.13780053428317007,
+        "precision": 0.13980618028890107,
+        "tp": 3823,
+        "fp": 23522,
+        "fn": 11,
+        "tn": 147174,
+        "alerts": 27345,
+        "alerts_per_1k": 156.67793502549705
+      }
+    },
+    "0.998": {
+      "E_hardneg": {
+        "threshold": 0.00802973,
+        "recall": 0.9981742305685968,
+        "fpr": 0.1646670103575948,
+        "precision": 0.11983716925003914,
+        "tp": 3827,
+        "fp": 28108,
+        "fn": 7,
+        "tn": 142588,
+        "alerts": 31935,
+        "alerts_per_1k": 182.97713860081362
+      },
+      "V_rawplus": {
+        "threshold": 0.01030655,
+        "recall": 0.9981742305685968,
+        "fpr": 0.16220063739044852,
+        "precision": 0.12143809100717141,
+        "tp": 3827,
+        "fp": 27687,
+        "fn": 7,
+        "tn": 143009,
+        "alerts": 31514,
+        "alerts_per_1k": 180.56494585458088
+      }
+    },
+    "0.999": {
+      "E_hardneg": {
+        "threshold": 0.00125521,
+        "recall": 0.9992175273865415,
+        "fpr": 0.3747832403805596,
+        "precision": 0.05650025809306099,
+        "tp": 3831,
+        "fp": 63974,
+        "fn": 3,
+        "tn": 106722,
+        "alerts": 67805,
+        "alerts_per_1k": 388.5005443190282
+      },
+      "V_rawplus": {
+        "threshold": 0.00399029,
+        "recall": 0.9992175273865415,
+        "fpr": 0.24434081642217745,
+        "precision": 0.0841256944596939,
+        "tp": 3831,
+        "fp": 41708,
+        "fn": 3,
+        "tn": 128988,
+        "alerts": 45539,
+        "alerts_per_1k": 260.9236234458259
+      }
+    }
+  },
+  "locked": {
+    "E_hardneg": {
+      "threshold": 0.018758,
+      "recall": 0.9950443401147626,
+      "fpr": 0.11530440080611144,
+      "precision": 0.1623611524875516,
+      "tp": 3815,
+      "fp": 19682,
+      "fn": 19,
+      "tn": 151014,
+      "alerts": 23497,
+      "alerts_per_1k": 134.6301495444909
+    },
+    "V_rawplus_frozen": {
+      "threshold": 0.029894,
+      "recall": 0.9947835159102765,
+      "fpr": 0.09923489712705628,
+      "precision": 0.18378065821808895,
+      "tp": 3814,
+      "fp": 16939,
+      "fn": 20,
+      "tn": 153757,
+      "alerts": 20753,
+      "alerts_per_1k": 118.90792413911649
+    }
+  },
+  "reproduced_on_val": {
+    "val_rows": 174530,
+    "val_fraud": 3834,
+    "E_hardneg_at_0.018758": {
+      "threshold": 0.018758,
+      "recall": 0.9950443401147626,
+      "fpr": 0.11530440080611144,
+      "precision": 0.1623611524875516,
+      "tp": 3815,
+      "fp": 19682,
+      "fn": 19,
+      "tn": 151014,
+      "alerts": 23497,
+      "alerts_per_1k": 134.6301495444909
+    },
+    "V_rawplus_at_0.029894": {
+      "threshold": 0.029894,
+      "recall": 0.9947835159102765,
+      "fpr": 0.09923489712705628,
+      "precision": 0.18378065821808895,
+      "tp": 3814,
+      "fp": 16939,
+      "fn": 20,
+      "tn": 153757,
+      "alerts": 20753,
+      "alerts_per_1k": 118.90792413911649
+    },
+    "V_rawplus_rescore_vs_frozen_max_abs_diff": 2.979902657962441e-08,
+    "reproduction_match": false,
+    "certified_control": {
+      "auc": 0.995594,
+      "pr_auc": 0.914337,
+      "P2_recall": 0.995044,
+      "P2_fpr": 0.115304401
+    },
+    "auc": {
+      "E_hardneg": 0.995594,
+      "V_rawplus": 0.995986
+    },
+    "pr_auc": {
+      "E_hardneg": 0.914337,
+      "V_rawplus": 0.920436
+    }
+  },
+  "decision": {
+    "step13_validation_only": "CANDIDATE QUALIFIED FOR FINAL CERTIFICATION",
+    "step9_hypothesis": "PARTIALLY SUPPORTED",
+    "promotion_verdict": "OUTCOME B \u2014 E_HARDNEG REMAINS DEPLOYED",
+    "reason": "Validation frontier at the exact >=99.5% floor favors V_rawplus (FPR 0.1153 -> 0.0992, rel -13.9%; worst segment recall delta -0.0070). The frozen point itself misses the exact floor by 2.7e-7 (one val fraud row, zero alerts \u2014 rounding artifact, see knife_edge). However the Phase-6 one-shot untouched evaluation of this operating point recorded recall 0.9908 (< 0.995) with FN 42 against E_hardneg's 0.9967 / FN 15: V_rawplus's val->test recall transfer is -0.0043 while E_hardneg's is +0.0016, and validation offers NO FN-count analogue (val FN 20 vs 19) \u2014 the gap is distribution shift, not a val-visible weakness. The >=99.5% recall requirement is NOT maintained on untouched data. Promotion rejected (Step 12): E_hardneg stays deployed.",
+    "worst_segment_recall_delta_at_floor_pts": -0.007,
+    "knife_edge_rounding_finding": {
+      "exact_floor_point_tVstar": 0.029893733664,
+      "frozen_point": 0.029894,
+      "gap": 2.66336e-07,
+      "val_fraud_in_gap": 1,
+      "val_legit_in_gap": 0,
+      "V_recall_at_tVstar": 0.9950443401147626,
+      "V_fn_at_tVstar": 19,
+      "V_recall_at_frozen": 0.9947835159102765,
+      "V_fn_at_frozen": 20,
+      "finding": "The Phase-6 freeze at 0.029894 (6-dp rounding of the val P2 point) sits 2.7e-7 above the exact recall>=0.995 floor point; the gap contains exactly ONE val fraud row and ZERO legit alerts \u2014 a rounding artifact, not a substantive deficiency. The candidate's genuine validation floor point (tV*) meets the requirement exactly."
+    },
+    "val_floor_0.995": {
+      "E_hardneg": {
+        "threshold": 0.01875816,
+        "recall": 0.9950443401147626,
+        "fpr": 0.11530440080611144,
+        "precision": 0.1623611524875516,
+        "tp": 3815,
+        "fp": 19682,
+        "fn": 19,
+        "tn": 151014,
+        "alerts": 23497,
+        "alerts_per_1k": 134.6301495444909
+      },
+      "V_rawplus": {
+        "threshold": 0.02989373,
+        "recall": 0.9950443401147626,
+        "fpr": 0.09923489712705628,
+        "precision": 0.18381998650862486,
+        "tp": 3815,
+        "fp": 16939,
+        "fn": 19,
+        "tn": 153757,
+        "alerts": 20754,
+        "alerts_per_1k": 118.91365381309804
+      }
+    },
+    "historical_test_evidence": {
+      "source": "Phase-6 final_test_one_shot.json (already recorded; not recomputed)",
+      "E_hardneg": {
+        "recall": 0.9967,
+        "fpr": 0.1099,
+        "fn": 15
+      },
+      "V_rawplus": {
+        "recall": 0.9908,
+        "fpr": 0.0915,
+        "fn": 42
+      }
+    },
+    "next_action": "No final-test rescoring (consumed once in Phase 6; rule 2). Re-freezing at tV* would be cosmetic (1 val row, 0 alerts). Real blocker = val->test recall transfer of the candidate; next model target = the segments where the transfer degrades (under-covered established merchants, swipe) plus a drift-robust threshold margin."
+  }
+}

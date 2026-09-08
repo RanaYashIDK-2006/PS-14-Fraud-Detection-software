@@ -1,0 +1,113 @@
+# PS14 Security Scanning Workflow
+# Runs automated security scans on every push and pull request
+
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run weekly on Sunday at midnight
+    - cron: '0 0 * * 0'
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better scanning
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install safety bandit semgrep
+      
+      - name: Run Security Scanner
+        run: |
+          python scripts/security_scan.py --full --json --output security-report.json
+        continue-on-error: false
+      
+      - name: Run Bandit (SAST)
+        run: |
+          bandit -r src/ -f json -o bandit-report.json --severity-level medium
+        continue-on-error: false
+      
+      - name: Run Safety (Dependencies)
+        run: |
+          safety check --file requirements.txt --output json > safety-report.json
+        continue-on-error: false
+      
+      - name: Check for Secrets
+        uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --only-verified
+        continue-on-error: false
+      
+      - name: Upload Security Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-reports
+          path: |
+            security-report.json
+            bandit-report.json
+            safety-report.json
+          retention-days: 30
+      
+      - name: Publish Security Summary
+        if: always()
+        run: |
+          echo "## 🔒 Security Scan Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f security-report.json ]; then
+            echo "### PS14 Security Scanner" >> $GITHUB_STEP_SUMMARY
+            python -c "
+          import json
+          with open('security-report.json') as f:
+              report = json.load(f)
+          summary = report['summary']
+          status = '✅ PASSED' if summary['passed'] else '❌ FAILED'
+          print(f'Status: {status}')
+          print(f'Total Issues: {summary[\"total\"]}')
+          print(f'Critical: {summary[\"critical\"]}')
+          print(f'High: {summary[\"high\"]}')
+          print(f'Medium: {summary[\"medium\"]}')
+          print(f'Low: {summary[\"low\"]}')
+          " >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Reports" >> $GITHUB_STEP_SUMMARY
+          echo "Download detailed reports from the artifacts." >> $GITHUB_STEP_SUMMARY
+      
+      - name: Fail on Critical Issues
+        if: always()
+        run: |
+          if [ -f security-report.json ]; then
+            CRITICAL=$(python -c "import json; print(json.load(open('security-report.json'))['summary']['critical'])")
+            HIGH=$(python -c "import json; print(json.load(open('security-report.json'))['summary']['high'])")
+            
+            if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
+              echo "❌ Security scan failed with critical/high issues"
+              exit 1
+            fi
+          fi
+          echo "✅ Security scan passed"

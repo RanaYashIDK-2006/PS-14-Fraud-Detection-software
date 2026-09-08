@@ -1,0 +1,34 @@
+{
+  "dataset": "ulb_creditcard",
+  "n_features": 64,
+  "tuned_params": {
+    "n_estimators": 243,
+    "max_depth": 7,
+    "learning_rate": 0.040263937342956524,
+    "scale_pos_weight": 14.494872437503282,
+    "subsample": 0.6346974706823083,
+    "colsample_bytree": 0.7186675994283909,
+    "min_child_weight": 5,
+    "gamma": 1.873575905081056
+  },
+  "results": {
+    "xgb_tuned": {
+      "roc_auc": 0.983233,
+      "pr_auc": 0.875937,
+      "brier": 0.000422,
+      "r1": 0.897959,
+      "r05": 0.897959,
+      "r01": 0.877551,
+      "opt_thr": 0.0126,
+      "f1_opt": 0.504298,
+      "time": 4.5
+    },
+    "cv_5fold": {
+      "roc_auc_mean": 0.98658,
+      "roc_auc_std": 0.00824,
+      "pr_auc_mean": 0.847226,
+      "r1_mean": 0.898572
+    }
+  },
+  "timestamp": "2026-08-28T13:45:40"
+}

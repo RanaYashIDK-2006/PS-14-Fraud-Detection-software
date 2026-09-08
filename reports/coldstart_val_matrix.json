@@ -1,0 +1,362 @@
+{
+ "mission_E_hardneg": {
+  "candidate": "mission_E_hardneg",
+  "P1": {
+   "threshold": 0.05355844,
+   "overall": {
+    "recall": 0.990089,
+    "fpr": 0.070828,
+    "tp": 3796,
+    "fp": 12090
+   },
+   "seen": {
+    "recall": 0.989838,
+    "fpr": 0.063451,
+    "tp": 3604,
+    "fp": 10686
+   },
+   "unseen": {
+    "recall": 0.994819,
+    "fpr": 0.61525,
+    "tp": 192,
+    "fp": 1404
+   }
+  },
+  "P2": {
+   "threshold": 0.01875816,
+   "overall": {
+    "recall": 0.995044,
+    "fpr": 0.115304,
+    "tp": 3815,
+    "fp": 19682
+   },
+   "seen": {
+    "recall": 0.994782,
+    "fpr": 0.106375,
+    "tp": 3622,
+    "fp": 17915
+   },
+   "unseen": {
+    "recall": 1.0,
+    "fpr": 0.774321,
+    "tp": 193,
+    "fp": 1767
+   }
+  }
+ },
+ "mission_F_nohash": {
+  "candidate": "mission_F_nohash",
+  "P1": {
+   "threshold": 0.05133514,
+   "overall": {
+    "recall": 0.990089,
+    "fpr": 0.076827,
+    "tp": 3796,
+    "fp": 13114
+   },
+   "seen": {
+    "recall": 0.989838,
+    "fpr": 0.068795,
+    "tp": 3604,
+    "fp": 11586
+   },
+   "unseen": {
+    "recall": 0.994819,
+    "fpr": 0.669588,
+    "tp": 192,
+    "fp": 1528
+   }
+  },
+  "P2": {
+   "threshold": 0.02088864,
+   "overall": {
+    "recall": 0.995044,
+    "fpr": 0.114918,
+    "tp": 3815,
+    "fp": 19616
+   },
+   "seen": {
+    "recall": 0.994782,
+    "fpr": 0.105918,
+    "tp": 3622,
+    "fp": 17838
+   },
+   "unseen": {
+    "recall": 1.0,
+    "fpr": 0.779141,
+    "tp": 193,
+    "fp": 1778
+   }
+  }
+ },
+ "mission_CS1": {
+  "candidate": "mission_CS1",
+  "P1": {
+   "threshold": 0.0467576,
+   "overall": {
+    "recall": 0.990089,
+    "fpr": 0.082527,
+    "tp": 3796,
+    "fp": 14087
+   },
+   "seen": {
+    "recall": 0.989838,
+    "fpr": 0.075576,
+    "tp": 3604,
+    "fp": 12728
+   },
+   "unseen": {
+    "recall": 0.994819,
+    "fpr": 0.59553,
+    "tp": 192,
+    "fp": 1359
+   }
+  },
+  "P2": {
+   "threshold": 0.01446054,
+   "overall": {
+    "recall": 0.995044,
+    "fpr": 0.122914,
+    "tp": 3815,
+    "fp": 20981
+   },
+   "seen": {
+    "recall": 0.994782,
+    "fpr": 0.114367,
+    "tp": 3622,
+    "fp": 19261
+   },
+   "unseen": {
+    "recall": 1.0,
+    "fpr": 0.753725,
+    "tp": 193,
+    "fp": 1720
+   }
+  }
+ },
+ "mission_CS2": {
+  "candidate": "mission_CS2",
+  "P1": {
+   "threshold": 0.04436919,
+   "overall": {
+    "recall": 0.990089,
+    "fpr": 0.094296,
+    "tp": 3796,
+    "fp": 16096
+   },
+   "seen": {
+    "recall": 0.989838,
+    "fpr": 0.086454,
+    "tp": 3604,
+    "fp": 14560
+   },
+   "unseen": {
+    "recall": 0.994819,
+    "fpr": 0.673094,
+    "tp": 192,
+    "fp": 1536
+   }
+  },
+  "P2": {
+   "threshold": 0.01197263,
+   "overall": {
+    "recall": 0.995044,
+    "fpr": 0.148416,
+    "tp": 3815,
+    "fp": 25334
+   },
+   "seen": {
+    "recall": 0.994782,
+    "fpr": 0.139169,
+    "tp": 3622,
+    "fp": 23438
+   },
+   "unseen": {
+    "recall": 1.0,
+    "fpr": 0.83085,
+    "tp": 193,
+    "fp": 1896
+   }
+  }
+ },
+ "mission_CS3": {
+  "candidate": "mission_CS3",
+  "P1": {
+   "threshold": 0.04711993,
+   "overall": {
+    "recall": 0.990089,
+    "fpr": 0.081584,
+    "tp": 3796,
+    "fp": 13926
+   },
+   "seen": {
+    "recall": 0.989838,
+    "fpr": 0.074632,
+    "tp": 3604,
+    "fp": 12569
+   },
+   "unseen": {
+    "recall": 0.994819,
+    "fpr": 0.594654,
+    "tp": 192,
+    "fp": 1357
+   }
+  },
+  "P2": {
+   "threshold": 0.01423782,
+   "overall": {
+    "recall": 0.995044,
+    "fpr": 0.122991,
+    "tp": 3815,
+    "fp": 20994
+   },
+   "seen": {
+    "recall": 0.994782,
+    "fpr": 0.114409,
+    "tp": 3622,
+    "fp": 19268
+   },
+   "unseen": {
+    "recall": 1.0,
+    "fpr": 0.756354,
+    "tp": 193,
+    "fp": 1726
+   }
+  }
+ },
+ "mission_CS4": {
+  "candidate": "mission_CS4",
+  "P1": {
+   "threshold": 0.068891,
+   "overall": {
+    "recall": 0.990089,
+    "fpr": 0.081133,
+    "tp": 3796,
+    "fp": 13849
+   },
+   "seen": {
+    "recall": 0.989838,
+    "fpr": 0.073527,
+    "tp": 3604,
+    "fp": 12383
+   },
+   "unseen": {
+    "recall": 0.994819,
+    "fpr": 0.642419,
+    "tp": 192,
+    "fp": 1466
+   }
+  },
+  "P2": {
+   "threshold": 0.02789502,
+   "overall": {
+    "recall": 0.995044,
+    "fpr": 0.113289,
+    "tp": 3815,
+    "fp": 19338
+   },
+   "seen": {
+    "recall": 0.994782,
+    "fpr": 0.104202,
+    "tp": 3622,
+    "fp": 17549
+   },
+   "unseen": {
+    "recall": 1.0,
+    "fpr": 0.783961,
+    "tp": 193,
+    "fp": 1789
+   }
+  }
+ },
+ "mission_CS5": {
+  "candidate": "mission_CS5",
+  "P1": {
+   "threshold": 0.05721122,
+   "overall": {
+    "recall": 0.990089,
+    "fpr": 0.079709,
+    "tp": 3796,
+    "fp": 13606
+   },
+   "seen": {
+    "recall": 0.989838,
+    "fpr": 0.072933,
+    "tp": 3604,
+    "fp": 12283
+   },
+   "unseen": {
+    "recall": 0.994819,
+    "fpr": 0.579755,
+    "tp": 192,
+    "fp": 1323
+   }
+  },
+  "P2": {
+   "threshold": 0.01469898,
+   "overall": {
+    "recall": 0.995044,
+    "fpr": 0.125615,
+    "tp": 3815,
+    "fp": 21442
+   },
+   "seen": {
+    "recall": 0.994782,
+    "fpr": 0.117045,
+    "tp": 3622,
+    "fp": 19712
+   },
+   "unseen": {
+    "recall": 1.0,
+    "fpr": 0.758107,
+    "tp": 193,
+    "fp": 1730
+   }
+  }
+ },
+ "mission_CS6": {
+  "candidate": "mission_CS6",
+  "P1": {
+   "threshold": 0.04741732,
+   "overall": {
+    "recall": 0.990089,
+    "fpr": 0.082152,
+    "tp": 3796,
+    "fp": 14023
+   },
+   "seen": {
+    "recall": 0.989838,
+    "fpr": 0.075202,
+    "tp": 3604,
+    "fp": 12665
+   },
+   "unseen": {
+    "recall": 0.994819,
+    "fpr": 0.595092,
+    "tp": 192,
+    "fp": 1358
+   }
+  },
+  "P2": {
+   "threshold": 0.01445071,
+   "overall": {
+    "recall": 0.995044,
+    "fpr": 0.12292,
+    "tp": 3815,
+    "fp": 20982
+   },
+   "seen": {
+    "recall": 0.994782,
+    "fpr": 0.114367,
+    "tp": 3622,
+    "fp": 19261
+   },
+   "unseen": {
+    "recall": 1.0,
+    "fpr": 0.754163,
+    "tp": 193,
+    "fp": 1721
+   }
+  }
+ }
+}

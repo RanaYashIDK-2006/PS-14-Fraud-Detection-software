@@ -1,0 +1,37 @@
+{
+  "experiment_id": "REAL_PUBLIC_ealtman_full_v1",
+  "category": "REAL_PUBLIC",
+  "dataset": "ealtman2019_credit_card_transactions",
+  "data_type": "REAL_PUBLIC_DATASET",
+  "n_total": 24386900,
+  "n_fraud": 4833,
+  "n_train": 19509520,
+  "n_test": 4877380,
+  "n": 4877380,
+  "n_legit": 4872547,
+  "prevalence": 0.000991,
+  "roc_auc": 0.9851,
+  "pr_auc": 0.1364,
+  "brier": 0.001103,
+  "recall_at_0_01pct_fpr": 0.018,
+  "recall_at_0_1pct_fpr": 0.1946,
+  "recall_at_0_5pct_fpr": 0.5,
+  "recall_at_1pct_fpr": 0.627,
+  "ci": {
+    "roc_auc": [
+      0.9153,
+      0.9536
+    ],
+    "pr_auc": [
+      0.0205,
+      0.0674
+    ],
+    "recall_1pct": [
+      0.2576,
+      0.4445
+    ]
+  },
+  "total_time_seconds": 1136.1,
+  "n_features": 33,
+  "note": "Improved with targeted features: is_high_risk_city (44%), is_intl (26%), recipient_novelty, mcc_fraud_rate"
+}

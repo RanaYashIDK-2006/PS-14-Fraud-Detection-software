@@ -1,0 +1,470 @@
+{
+  "E_hardneg_control": {
+    "threshold_P1": 0.053558438925790416,
+    "channels": [
+      {
+        "segment": "chip",
+        "n": 120641,
+        "n_fraud": 527,
+        "n_legit": 120114,
+        "recall": 0.945,
+        "fpr": 0.0347,
+        "tp": 498,
+        "fp": 4164
+      },
+      {
+        "segment": "online",
+        "n": 24168,
+        "n_fraud": 3073,
+        "n_legit": 21095,
+        "recall": 0.999,
+        "fpr": 0.3024,
+        "tp": 3070,
+        "fp": 6379
+      },
+      {
+        "segment": "swipe",
+        "n": 29721,
+        "n_fraud": 234,
+        "n_legit": 29487,
+        "recall": 0.9744,
+        "fpr": 0.0525,
+        "tp": 228,
+        "fp": 1547
+      },
+      {
+        "segment": "other",
+        "n": 0,
+        "n_fraud": 0,
+        "n_legit": 0,
+        "recall": null,
+        "fpr": null,
+        "tp": 0,
+        "fp": 0
+      }
+    ],
+    "volume_buckets": [
+      {
+        "segment": "v0 (new)",
+        "n": 340,
+        "n_fraud": 55,
+        "n_legit": 285,
+        "recall": 0.9818,
+        "fpr": 0.6175,
+        "tp": 54,
+        "fp": 176
+      },
+      {
+        "segment": "1-5",
+        "n": 908,
+        "n_fraud": 123,
+        "n_legit": 785,
+        "recall": 1.0,
+        "fpr": 0.5898,
+        "tp": 123,
+        "fp": 463
+      },
+      {
+        "segment": "6-20",
+        "n": 1675,
+        "n_fraud": 69,
+        "n_legit": 1606,
+        "recall": 1.0,
+        "fpr": 0.5106,
+        "tp": 69,
+        "fp": 820
+      },
+      {
+        "segment": "21-100",
+        "n": 5664,
+        "n_fraud": 157,
+        "n_legit": 5507,
+        "recall": 0.9682,
+        "fpr": 0.2094,
+        "tp": 152,
+        "fp": 1153
+      },
+      {
+        "segment": "101-1k",
+        "n": 25120,
+        "n_fraud": 303,
+        "n_legit": 24817,
+        "recall": 0.9736,
+        "fpr": 0.052,
+        "tp": 295,
+        "fp": 1291
+      },
+      {
+        "segment": "1k+",
+        "n": 140823,
+        "n_fraud": 3127,
+        "n_legit": 137696,
+        "recall": 0.9923,
+        "fpr": 0.0595,
+        "tp": 3103,
+        "fp": 8187
+      }
+    ],
+    "absent5": {
+      "segment": "absent@5",
+      "n": 2475,
+      "n_fraud": 193,
+      "n_legit": 2282,
+      "recall": 0.9948,
+      "fpr": 0.6152,
+      "tp": 192,
+      "fp": 1404
+    }
+  },
+  "cov_10": {
+    "threshold_P1": 0.10868338407559584,
+    "channels": [
+      {
+        "segment": "chip",
+        "n": 120641,
+        "n_fraud": 527,
+        "n_legit": 120114,
+        "recall": 0.9488,
+        "fpr": 0.0386,
+        "tp": 500,
+        "fp": 4640
+      },
+      {
+        "segment": "online",
+        "n": 24168,
+        "n_fraud": 3073,
+        "n_legit": 21095,
+        "recall": 0.9997,
+        "fpr": 0.4162,
+        "tp": 3072,
+        "fp": 8780
+      },
+      {
+        "segment": "swipe",
+        "n": 29721,
+        "n_fraud": 234,
+        "n_legit": 29487,
+        "recall": 0.9573,
+        "fpr": 0.0571,
+        "tp": 224,
+        "fp": 1684
+      },
+      {
+        "segment": "other",
+        "n": 0,
+        "n_fraud": 0,
+        "n_legit": 0,
+        "recall": null,
+        "fpr": null,
+        "tp": 0,
+        "fp": 0
+      }
+    ],
+    "volume_buckets": [
+      {
+        "segment": "v0 (new)",
+        "n": 340,
+        "n_fraud": 55,
+        "n_legit": 285,
+        "recall": 0.9818,
+        "fpr": 0.5825,
+        "tp": 54,
+        "fp": 166
+      },
+      {
+        "segment": "1-5",
+        "n": 908,
+        "n_fraud": 123,
+        "n_legit": 785,
+        "recall": 0.9837,
+        "fpr": 0.5745,
+        "tp": 121,
+        "fp": 451
+      },
+      {
+        "segment": "6-20",
+        "n": 1675,
+        "n_fraud": 69,
+        "n_legit": 1606,
+        "recall": 1.0,
+        "fpr": 0.4919,
+        "tp": 69,
+        "fp": 790
+      },
+      {
+        "segment": "21-100",
+        "n": 5664,
+        "n_fraud": 157,
+        "n_legit": 5507,
+        "recall": 0.9554,
+        "fpr": 0.2081,
+        "tp": 150,
+        "fp": 1146
+      },
+      {
+        "segment": "101-1k",
+        "n": 25120,
+        "n_fraud": 303,
+        "n_legit": 24817,
+        "recall": 0.9703,
+        "fpr": 0.0539,
+        "tp": 294,
+        "fp": 1337
+      },
+      {
+        "segment": "1k+",
+        "n": 140823,
+        "n_fraud": 3127,
+        "n_legit": 137696,
+        "recall": 0.9939,
+        "fpr": 0.0814,
+        "tp": 3108,
+        "fp": 11214
+      }
+    ],
+    "absent5": {
+      "segment": "absent@5",
+      "n": 2475,
+      "n_fraud": 193,
+      "n_legit": 2282,
+      "recall": 0.9896,
+      "fpr": 0.5903,
+      "tp": 191,
+      "fp": 1347
+    }
+  },
+  "cov_20": {
+    "threshold_P1": 0.24899073672080102,
+    "channels": [
+      {
+        "segment": "chip",
+        "n": 120641,
+        "n_fraud": 527,
+        "n_legit": 120114,
+        "recall": 0.9526,
+        "fpr": 0.0462,
+        "tp": 502,
+        "fp": 5554
+      },
+      {
+        "segment": "online",
+        "n": 24168,
+        "n_fraud": 3073,
+        "n_legit": 21095,
+        "recall": 0.9997,
+        "fpr": 0.4266,
+        "tp": 3072,
+        "fp": 8999
+      },
+      {
+        "segment": "swipe",
+        "n": 29721,
+        "n_fraud": 234,
+        "n_legit": 29487,
+        "recall": 0.9487,
+        "fpr": 0.0705,
+        "tp": 222,
+        "fp": 2080
+      },
+      {
+        "segment": "other",
+        "n": 0,
+        "n_fraud": 0,
+        "n_legit": 0,
+        "recall": null,
+        "fpr": null,
+        "tp": 0,
+        "fp": 0
+      }
+    ],
+    "volume_buckets": [
+      {
+        "segment": "v0 (new)",
+        "n": 340,
+        "n_fraud": 55,
+        "n_legit": 285,
+        "recall": 0.9636,
+        "fpr": 0.5474,
+        "tp": 53,
+        "fp": 156
+      },
+      {
+        "segment": "1-5",
+        "n": 908,
+        "n_fraud": 123,
+        "n_legit": 785,
+        "recall": 0.9837,
+        "fpr": 0.5363,
+        "tp": 121,
+        "fp": 421
+      },
+      {
+        "segment": "6-20",
+        "n": 1675,
+        "n_fraud": 69,
+        "n_legit": 1606,
+        "recall": 0.9855,
+        "fpr": 0.4564,
+        "tp": 68,
+        "fp": 733
+      },
+      {
+        "segment": "21-100",
+        "n": 5664,
+        "n_fraud": 157,
+        "n_legit": 5507,
+        "recall": 0.9363,
+        "fpr": 0.1928,
+        "tp": 147,
+        "fp": 1062
+      },
+      {
+        "segment": "101-1k",
+        "n": 25120,
+        "n_fraud": 303,
+        "n_legit": 24817,
+        "recall": 0.967,
+        "fpr": 0.0496,
+        "tp": 293,
+        "fp": 1230
+      },
+      {
+        "segment": "1k+",
+        "n": 140823,
+        "n_fraud": 3127,
+        "n_legit": 137696,
+        "recall": 0.9958,
+        "fpr": 0.0946,
+        "tp": 3114,
+        "fp": 13031
+      }
+    ],
+    "absent5": {
+      "segment": "absent@5",
+      "n": 2475,
+      "n_fraud": 193,
+      "n_legit": 2282,
+      "recall": 0.9845,
+      "fpr": 0.5517,
+      "tp": 190,
+      "fp": 1259
+    }
+  },
+  "cov_C_merchant_aware": {
+    "threshold_P1": 0.02348074731362385,
+    "channels": [
+      {
+        "segment": "chip",
+        "n": 120641,
+        "n_fraud": 527,
+        "n_legit": 120114,
+        "recall": 0.9677,
+        "fpr": 0.1199,
+        "tp": 510,
+        "fp": 14400
+      },
+      {
+        "segment": "online",
+        "n": 24168,
+        "n_fraud": 3073,
+        "n_legit": 21095,
+        "recall": 0.9958,
+        "fpr": 0.338,
+        "tp": 3060,
+        "fp": 7130
+      },
+      {
+        "segment": "swipe",
+        "n": 29721,
+        "n_fraud": 234,
+        "n_legit": 29487,
+        "recall": 0.9658,
+        "fpr": 0.1906,
+        "tp": 226,
+        "fp": 5620
+      },
+      {
+        "segment": "other",
+        "n": 0,
+        "n_fraud": 0,
+        "n_legit": 0,
+        "recall": null,
+        "fpr": null,
+        "tp": 0,
+        "fp": 0
+      }
+    ],
+    "volume_buckets": [
+      {
+        "segment": "v0 (new)",
+        "n": 340,
+        "n_fraud": 55,
+        "n_legit": 285,
+        "recall": 0.9818,
+        "fpr": 0.5789,
+        "tp": 54,
+        "fp": 165
+      },
+      {
+        "segment": "1-5",
+        "n": 908,
+        "n_fraud": 123,
+        "n_legit": 785,
+        "recall": 0.9837,
+        "fpr": 0.5694,
+        "tp": 121,
+        "fp": 447
+      },
+      {
+        "segment": "6-20",
+        "n": 1675,
+        "n_fraud": 69,
+        "n_legit": 1606,
+        "recall": 1.0,
+        "fpr": 0.4944,
+        "tp": 69,
+        "fp": 794
+      },
+      {
+        "segment": "21-100",
+        "n": 5664,
+        "n_fraud": 157,
+        "n_legit": 5507,
+        "recall": 0.9682,
+        "fpr": 0.2368,
+        "tp": 152,
+        "fp": 1304
+      },
+      {
+        "segment": "101-1k",
+        "n": 25120,
+        "n_fraud": 303,
+        "n_legit": 24817,
+        "recall": 0.9769,
+        "fpr": 0.0723,
+        "tp": 296,
+        "fp": 1795
+      },
+      {
+        "segment": "1k+",
+        "n": 140823,
+        "n_fraud": 3127,
+        "n_legit": 137696,
+        "recall": 0.9926,
+        "fpr": 0.1645,
+        "tp": 3104,
+        "fp": 22645
+      }
+    ],
+    "absent5": {
+      "segment": "absent@5",
+      "n": 2475,
+      "n_fraud": 193,
+      "n_legit": 2282,
+      "recall": 0.9896,
+      "fpr": 0.5876,
+      "tp": 191,
+      "fp": 1341
+    }
+  }
+}

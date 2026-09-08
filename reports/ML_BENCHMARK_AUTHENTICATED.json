@@ -1,0 +1,119 @@
+{
+  "registry_version": "2.0",
+  "generated": "2026-08-27T22:08:36.638486",
+  "description": "Reconciled ML benchmark with artifact-specific SHA256 hashes",
+  "classification": "Research prototype benchmark (NOT production)",
+  "benchmarks": [
+    {
+      "experiment_id": "PS14-SYNTH-TEST-SPLIT",
+      "name": "PS14 synthetic data, in-distribution test split",
+      "dataset": {
+        "id": "ps14_synthetic",
+        "type": "SYNTHETIC",
+        "total_rows": 200000,
+        "test_rows": 30000,
+        "test_fraud_prevalence": 0.0049,
+        "sha256": "37c64721fbdf4c5da3e3231e36557933fe23e59187f481f272bb2fa68f73ea7a"
+      },
+      "artifacts": {
+        "xgboost": "81db86a6a374d843782fdc3b138e27255852a7759c2fa035a69f5df14914de4f",
+        "random_forest": "dedd65e0d1ea8033ca9bb87e92d230ea29de17fdfdd0bb4d422aefc4cfeb0d00",
+        "logistic_regression": "24541cec1754ae9a3c7106d25419ab0127f55981426348a9f2718525636cc1be",
+        "stacker": "39d0a9a97c0e54cd5945a928f69f1d2cda7c413fb48353a41318506c1a306956",
+        "calibrator": "76330ca6c5aafd77d4be96c40fcdbe43a0754bd9457da032a029611213942cb8"
+      },
+      "results": {
+        "xgboost": {
+          "ROC_AUC": 0.777121,
+          "PR_AUC": 0.018249,
+          "status": "VERIFIED"
+        },
+        "random_forest": {
+          "ROC_AUC": 0.603011,
+          "PR_AUC": 0.013329,
+          "status": "VERIFIED"
+        },
+        "logistic_regression": {
+          "ROC_AUC": 0.941724,
+          "PR_AUC": 0.300384,
+          "status": "VERIFIED"
+        },
+        "stacker_ensemble": {
+          "ROC_AUC": 0.8466,
+          "PR_AUC": 0.065895,
+          "status": "VERIFIED"
+        }
+      }
+    },
+    {
+      "experiment_id": "KAGGLE-FRAUD-FULL-TEST",
+      "name": "kaggle_fraud full test set (555K rows)",
+      "dataset": {
+        "id": "kaggle_fraud",
+        "type": "REAL_PUBLIC_DATASET",
+        "test_rows": 555719,
+        "test_fraud_count": 2145,
+        "test_fraud_prevalence": 0.00386
+      },
+      "artifacts": {
+        "xgboost": "81db86a6a374d843782fdc3b138e27255852a7759c2fa035a69f5df14914de4f",
+        "random_forest": "dedd65e0d1ea8033ca9bb87e92d230ea29de17fdfdd0bb4d422aefc4cfeb0d00",
+        "logistic_regression": "24541cec1754ae9a3c7106d25419ab0127f55981426348a9f2718525636cc1be",
+        "stacker": "39d0a9a97c0e54cd5945a928f69f1d2cda7c413fb48353a41318506c1a306956"
+      },
+      "results": {
+        "xgboost": {
+          "ROC_AUC": 0.881318,
+          "PR_AUC": 0.10889,
+          "Recall_at_1pct_FPR": 0.214452,
+          "status": "VERIFIED"
+        },
+        "random_forest": {
+          "ROC_AUC": 0.888151,
+          "PR_AUC": 0.123286,
+          "Recall_at_1pct_FPR": 0.251282,
+          "status": "VERIFIED"
+        },
+        "logistic_regression": {
+          "ROC_AUC": 0.366703,
+          "PR_AUC": 0.003206,
+          "Recall_at_1pct_FPR": 0.012587,
+          "status": "VERIFIED"
+        },
+        "stacker_ensemble": {
+          "ROC_AUC": 0.889906,
+          "PR_AUC": 0.115088,
+          "Recall_at_1pct_FPR": 0.244289,
+          "status": "VERIFIED"
+        }
+      }
+    }
+  ],
+  "reconciliation": {
+    "historical_claims": [
+      {
+        "value": "~99.1%",
+        "status": "STALE - old model version"
+      },
+      {
+        "value": "~98.77%",
+        "status": "STALE - not reproduced"
+      },
+      {
+        "value": "~97.98%",
+        "status": "STALE - not reproduced"
+      }
+    ],
+    "authoritative_in_distribution": {
+      "model": "logistic_regression",
+      "ROC_AUC": 0.941724,
+      "PR_AUC": 0.300384
+    },
+    "authoritative_cross_domain": {
+      "model": "stacker_ensemble",
+      "ROC_AUC": 0.889906,
+      "PR_AUC": 0.115088
+    }
+  },
+  "honest_assessment": "Historical 99.1% claim was from an older model version on a small synthetic test split. Current production LR achieves 94.2% in-distribution and stacker achieves 89.0% on real kaggle_fraud data."
+}

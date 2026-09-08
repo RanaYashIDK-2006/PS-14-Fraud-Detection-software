@@ -1,0 +1,39 @@
+{
+  "model_version": "altman_runtime15_20260903_215158",
+  "model_type": "xgb_lgb_cb_ensemble",
+  "ensemble_members": [
+    "xgb",
+    "lgb",
+    "cb"
+  ],
+  "ensemble_weights": {
+    "xgb": 0.34,
+    "lgb": 0.33,
+    "cb": 0.33
+  },
+  "n_features": 15,
+  "features": [
+    "log_amt",
+    "amt_sq",
+    "hour_cos",
+    "is_business_hours",
+    "chip",
+    "is_online",
+    "mcc_n",
+    "has_zip",
+    "has_state",
+    "merch_tx_count",
+    "merch_fraud_rate",
+    "city_fraud_rate",
+    "very_high_amt",
+    "amt_x_mcc",
+    "amt_x_online"
+  ],
+  "scaler": "scaler_production.joblib",
+  "calibrator": "calibrator_production.joblib (Platt, validation-fitted)",
+  "feature_source": "runtime mapper (map_ml_features_to_altman) - train == prod by construction (#27)",
+  "target_leakage": false,
+  "train_rows": 200000,
+  "train_seed": 42,
+  "governance_record": "models/model_records/altman_runtime15_20260903_215158.json"
+}

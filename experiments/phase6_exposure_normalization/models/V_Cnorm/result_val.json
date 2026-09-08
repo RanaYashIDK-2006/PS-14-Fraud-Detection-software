@@ -1,0 +1,127 @@
+{
+  "candidate": "V_Cnorm",
+  "desc": "Strategy-C merchant-aware frame (100% merchant coverage), NORM layout, scored on 5%-density fixed val",
+  "train_rows": 2330695,
+  "train_fraud": 21345,
+  "val_rows": 174530,
+  "val_fraud": 3834,
+  "trained_seconds": 166.8,
+  "P1": {
+    "threshold": 0.06014559,
+    "val_fpr": 0.187679,
+    "val_recall": 0.990089,
+    "segs": {
+      "overall": {
+        "recall": 0.990089,
+        "fpr": 0.187679,
+        "precision": 0.105939,
+        "tp": 3796,
+        "fp": 32036,
+        "fn": 38,
+        "tn": 138660,
+        "alerts": 35832,
+        "alerts_per_1k": 205.306,
+        "n_fraud": 3834,
+        "n_legit": 170696
+      },
+      "seen_merchant": {
+        "recall": 0.989838,
+        "fpr": 0.181559,
+        "precision": 0.105439,
+        "tp": 3604,
+        "fp": 30577,
+        "fn": 37,
+        "tn": 137837,
+        "alerts": 34181,
+        "alerts_per_1k": 195.846,
+        "n_fraud": 3641,
+        "n_legit": 168414
+      },
+      "absent_at5": {
+        "recall": 0.994819,
+        "fpr": 0.639351,
+        "precision": 0.116293,
+        "tp": 192,
+        "fp": 1459,
+        "fn": 1,
+        "tn": 823,
+        "alerts": 1651,
+        "alerts_per_1k": 9.46,
+        "n_fraud": 193,
+        "n_legit": 2282
+      },
+      "genuinely_new": {
+        "recall": 1.0,
+        "fpr": 0.648746,
+        "precision": 0.21645,
+        "tp": 50,
+        "fp": 181,
+        "fn": 0,
+        "tn": 98,
+        "alerts": 231,
+        "alerts_per_1k": 1.324,
+        "n_fraud": 50,
+        "n_legit": 279
+      }
+    }
+  },
+  "P2": {
+    "threshold": 0.02568487,
+    "val_fpr": 0.279977,
+    "val_recall": 0.995044,
+    "segs": {
+      "overall": {
+        "recall": 0.995044,
+        "fpr": 0.279977,
+        "precision": 0.073926,
+        "tp": 3815,
+        "fp": 47791,
+        "fn": 19,
+        "tn": 122905,
+        "alerts": 51606,
+        "alerts_per_1k": 295.686,
+        "n_fraud": 3834,
+        "n_legit": 170696
+      },
+      "seen_merchant": {
+        "recall": 0.994782,
+        "fpr": 0.273861,
+        "precision": 0.072813,
+        "tp": 3622,
+        "fp": 46122,
+        "fn": 19,
+        "tn": 122292,
+        "alerts": 49744,
+        "alerts_per_1k": 285.017,
+        "n_fraud": 3641,
+        "n_legit": 168414
+      },
+      "absent_at5": {
+        "recall": 1.0,
+        "fpr": 0.731376,
+        "precision": 0.103652,
+        "tp": 193,
+        "fp": 1669,
+        "fn": 0,
+        "tn": 613,
+        "alerts": 1862,
+        "alerts_per_1k": 10.669,
+        "n_fraud": 193,
+        "n_legit": 2282
+      },
+      "genuinely_new": {
+        "recall": 1.0,
+        "fpr": 0.749104,
+        "precision": 0.19305,
+        "tp": 50,
+        "fp": 209,
+        "fn": 0,
+        "tn": 70,
+        "alerts": 259,
+        "alerts_per_1k": 1.484,
+        "n_fraud": 50,
+        "n_legit": 279
+      }
+    }
+  }
+}

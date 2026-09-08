@@ -1,0 +1,134 @@
+{
+  "baseline": {
+    "model_id": "altman_runtime15_20260903_215158",
+    "n_features": 15,
+    "fingerprint": "4b5327afd9e459f670a034cea150773ea908b340a4b295d7780f75d8c45aa42d",
+    "pred_mean": 0.00563
+  },
+  "failure_simulations": [
+    {
+      "scenario": "candidate_corrupt_load",
+      "description": "xgb artifact truncated 50%",
+      "severity": "Critical",
+      "detected": true,
+      "mechanism": "EOFError",
+      "detail": "",
+      "safe": true
+    },
+    {
+      "scenario": "missing_artifact",
+      "description": "lgb_production.joblib deleted",
+      "severity": "Critical",
+      "detected": true,
+      "mechanism": "FileNotFoundError",
+      "detail": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\Rana Yash Singh\\\\OneDrive\\\\Documents\\\\Project\\\\models\\\\_stage_tmp_1788453557185\\\\lgb_production.joblib'",
+      "safe": true
+    },
+    {
+      "scenario": "invalid_artifact",
+      "description": "scaler replaced by garbage bytes",
+      "severity": "Critical",
+      "detected": true,
+      "mechanism": "IndexError",
+      "detail": "pop from empty list",
+      "safe": true
+    },
+    {
+      "scenario": "wrong_feature_schema",
+      "description": "manifest features truncated to 14",
+      "severity": "High",
+      "detected": true,
+      "mechanism": "ModelIntegrityError (governance)",
+      "detail": "Model altman_runtime15_20260903_215158 integrity FAIL: 1/8 checks failed. First: manifest.json size 780 != recorded 958",
+      "safe": true
+    },
+    {
+      "scenario": "hash_mismatch_tamper",
+      "description": "cb artifact bit-flipped",
+      "severity": "Critical",
+      "detected": false,
+      "mechanism": "none - hash mismatch not caught",
+      "safe": false
+    },
+    {
+      "scenario": "nan_propagation",
+      "description": "NaN amount_ratio fed to engine",
+      "severity": "High",
+      "detected": false,
+      "mechanism": "engine output check",
+      "safe": true,
+      "output": [
+        0.0010990611843808063
+      ]
+    },
+    {
+      "scenario": "inf_propagation",
+      "description": "Inf amount_ratio fed to engine",
+      "severity": "High",
+      "detected": false,
+      "safe": true,
+      "output": [
+        0.05930392319904118
+      ]
+    }
+  ],
+  "rollback_test": {
+    "v2_candidate": {
+      "model_version": "altman_clean_20260830_123703",
+      "n_features": 32,
+      "note": "32-feature altman_clean candidate - schema differs from V1"
+    },
+    "v2_loaded": false,
+    "v2_block_reason": "X has 15 features, but RobustScaler is expecting 32 features as input.",
+    "rollback_predictions_identical": true,
+    "max_pred_diff": 0.0
+  },
+  "performance": {
+    "single_row_ms": {
+      "p50": 1.348,
+      "p95": 1.726,
+      "p99": 1.954,
+      "mean": 1.374
+    },
+    "batch_1000": {
+      "n_rows": 1000,
+      "batch_ms": [
+        14.03,
+        14.2,
+        14.3,
+        15.57,
+        14.11
+      ],
+      "mean_ms": 14.44,
+      "p95_ms": 15.32,
+      "rows_per_sec": 69241.7
+    },
+    "batch_5000": {
+      "n_rows": 5000,
+      "batch_ms": [
+        54.56,
+        54.59,
+        50.97,
+        50.04,
+        51.41
+      ],
+      "mean_ms": 52.31,
+      "p95_ms": 54.58,
+      "rows_per_sec": 95578.6
+    },
+    "note": "in-process model inference only (map+scale+3-model ensemble). Service-level latency (HTTP, DB, audit write) is NOT measured here -> UNVERIFIED."
+  },
+  "deployment_gate": {
+    "gate": {
+      "Security": "PASS",
+      "Data validation": "PASS",
+      "Feature parity": "PARTIAL->FAIL",
+      "Model integrity": "PASS",
+      "Performance": "PASS (measured in-process)",
+      "Health checks": "FAIL",
+      "Rollback test": "PASS"
+    },
+    "PRODUCTION_DEPLOYMENT": "BLOCKED",
+    "reason": "Rollback + integrity verified; feature-parity FAIL (city_fraud_rate cache bug + audit-vs-deployed model mismatch) blocks deployment of the UNVALIDATED candidate. The current V1 remains operational."
+  }
+}

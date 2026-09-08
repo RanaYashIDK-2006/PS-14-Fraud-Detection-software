@@ -1,0 +1,35 @@
+{
+  "experiment_id": "REAL_PUBLIC_ealtman_improved_v1",
+  "category": "REAL_PUBLIC",
+  "dataset": "ealtman2019",
+  "data_type": "REAL_PUBLIC_DATASET",
+  "n_total": 2000000,
+  "n_fraud": 370,
+  "n_train": 1600000,
+  "n_test": 400000,
+  "n_features": 33,
+  "n": 400000,
+  "n_legit": 399630,
+  "prevalence": 0.000925,
+  "roc_auc": 0.9851,
+  "pr_auc": 0.1364,
+  "brier": 0.001103,
+  "recall_at_0_01pct_fpr": 0.0757,
+  "recall_at_0_1pct_fpr": 0.1946,
+  "recall_at_0_5pct_fpr": 0.5,
+  "recall_at_1pct_fpr": 0.627,
+  "ci": {
+    "roc_auc": [
+      0.9799,
+      0.9896
+    ],
+    "pr_auc": [
+      0.0855,
+      0.2127
+    ],
+    "recall_1pct": [
+      0.5366,
+      0.7224
+    ]
+  }
+}

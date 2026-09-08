@@ -1,0 +1,449 @@
+{
+ "round": "pre-deployment certification (offline gates)",
+ "candidate": "mission_E_hardneg (models/model_records/mission_E_hardneg)",
+ "selection": "pre-registered rule winner on the state-parse-corrected frame (see mission_results.json)",
+ "1_release_freezes_sha256": {
+  "model_payload": {
+   "path": "models\\model_records\\mission_E_hardneg\\models.joblib",
+   "sha256": "412edaf755848c4ef0b4f6790e7af13186bed2f9e732655d966668d63f198a46"
+  },
+  "train_config": {
+   "path": "models\\model_records\\mission_E_hardneg\\config.json",
+   "sha256": "0babb32e58f57a50e9fa9bb494cb89e659076ab12339aa3b8f273b6eed9c2cf3"
+  },
+  "val_result": {
+   "path": "models\\model_records\\mission_E_hardneg\\result_val.json",
+   "sha256": "385ce05e1024b4ab026f24ee7535b13ae132101ced7c8646cb9b6da48b8b471d"
+  },
+  "scores": {
+   "path": "models\\model_records\\mission_E_hardneg\\scores.npz",
+   "sha256": "cc2a9c79d8abae5a7613f9f6c1d3620bae6f16f7f5f5bf6437f94b91dde35545"
+  },
+  "shared_frame": {
+   "path": "data\\_mission_frame.npz",
+   "sha256": "b2eba29a5c774defeb0e0683796b0d48a9513e7a1f44c1cd33845c651e5ced6b"
+  },
+  "frame_meta": {
+   "path": "data\\_mission_frame_meta.json",
+   "sha256": "1b8cfce330b63178d452f4f317ab7ed112bfabc0e76d17d14ba50da610a9c32d"
+  },
+  "test_lock": {
+   "path": "data\\test_lock.json",
+   "sha256": "71fe9cfe1110048cc264a7b86705dd0eb1388c8e2c595229c7f935d107409d96"
+  },
+  "miner_ids": {
+   "path": "data\\_hardneg_ids.npz",
+   "sha256": "a3be3fff4799617efd5189c1b6a908365aeff9e004f3ade9a5ab728469e6963b"
+  },
+  "code_mission_train": {
+   "path": ".freebuff\\mission_train.py",
+   "sha256": "9957320de592e5bf08f7a70b9b2a2fc1a8d1cc70bb1e550427330d164c3d6b53"
+  },
+  "code_mission_cache": {
+   "path": ".freebuff\\mission_cache.py",
+   "sha256": "3e39d7b81a8233162c195bd0b7f92df64665509da211779b4ed8ff981bf08088"
+  },
+  "code_shared_features": {
+   "path": "src\\privacy_layer\\native_features.py",
+   "sha256": "5760a20376306598312cfaf32d8d12b5e5f3ff268fcc0b4de4baff64e90f57d1"
+  },
+  "code_retrain": {
+   "path": "scripts\\retrain_native_consistent.py",
+   "sha256": "bc4d5af174790b15faf61257b9ac88b1f61e8dd2040af9fd66798c16aae70b25"
+  }
+ },
+ "1_dataset_sha256": "recorded in retrain governance model_records/altman_native_v2_*.json (same data/credit_card_transactions-ibm_v2.csv streamed by mission_cache)",
+ "1_source_control": "NOT a git repo; code hashes above are the frozen source identifiers",
+ "1_threshold_lock": "P2: min val FPR at val recall>=0.995 (pre-registered in data/test_lock.json)",
+ "1_seed": 42,
+ "2_hard_negative_provenance": {
+  "applicable": true,
+  "n_mined_ids": 84639,
+  "all_from_train_window_year_lt_2016": true,
+  "max_year_mined": 2015,
+  "n_overlapping_validation_rows": 0,
+  "n_overlapping_test_rows": 0,
+  "selection_rule": "E_miner: train rows split chronologically 90/10; model trained on first 90% (all <2016); last 10% of TRAIN scored out-of-sample; legit rows ranked by ensemble probability; top-scoring legit emitted as hard negatives. Val/test rows never enter the miner fit, scoring slice, or mined set; no test label is read in mission_train.py (test labels are never scored until final eval).",
+  "miner_reproducible": "seed 42, deterministic -> rerun reproduces identical ids",
+  "final_train_weight": "mined rows weight 3.0 (config.json)"
+ },
+ "3_exact_metrics": {
+  "val": {
+   "rows": 174530,
+   "fraud": 3834,
+   "roc_auc": 0.9955943834257361,
+   "pr_auc": 0.9143373456402429
+  },
+  "test": {
+   "rows": 192372,
+   "fraud": 4578,
+   "roc_auc": 0.9869808107684876,
+   "pr_auc": 0.637788445982705
+  },
+  "locked_threshold_exact": {
+   "P1": 0.05355843901634216,
+   "P2": 0.01875815913081169
+  },
+  "P1_operation_on_test": {
+   "tp": 4473,
+   "fp": 12655,
+   "fn": 105,
+   "tn": 175139,
+   "recall": 0.9770642201834863,
+   "fpr": 0.06738766946760813,
+   "precision": 0.2611513311536665,
+   "alerts": 17128
+  },
+  "P2_operation_on_test": {
+   "tp": 4563,
+   "fp": 20634,
+   "fn": 15,
+   "tn": 167160,
+   "recall": 0.9967234600262124,
+   "fpr": 0.10987571487906962,
+   "precision": 0.18109298726038814,
+   "alerts": 25197
+  },
+  "frontier_min_fpr_on_test": {
+   "0.95": {
+    "min_fpr": 0.050448896130866804,
+    "recall": 0.9501965923984272
+   },
+   "0.97": {
+    "min_fpr": 0.06272298369489973,
+    "recall": 0.9700742682394059
+   },
+   "0.98": {
+    "min_fpr": 0.0722121047530805,
+    "recall": 0.9801223241590215
+   },
+   "0.99": {
+    "min_fpr": 0.08670138556077404,
+    "recall": 0.990170380078637
+   },
+   "0.995": {
+    "min_fpr": 0.09869857396934939,
+    "recall": 0.9951944080384447
+   }
+  },
+  "formula_identities": {
+   "recall_tp/(tp+fn)": true,
+   "fpr_fp/(fp+tn)": true,
+   "precision_tp/(tp+fp)": true
+  }
+ },
+ "4_improvement_vs_v3_exact": {
+  "v3_at_0.027328": {
+   "tp": 4557,
+   "fp": 5940,
+   "fn": 21,
+   "tn": 31478,
+   "recall": 0.9954128440366973,
+   "fpr": 0.15874712705115185,
+   "precision": 0.43412403543869676,
+   "alerts": 10497
+  },
+  "E_hardneg_P2_at_exact_threshold": {
+   "tp": 4563,
+   "fp": 20634,
+   "fn": 15,
+   "tn": 167160,
+   "recall": 0.9967234600262124,
+   "fpr": 0.10987571487906962,
+   "precision": 0.18109298726038814,
+   "alerts": 25197
+  },
+  "absolute_fpr_reduction": 0.048871,
+  "relative_fpr_reduction": 0.307857,
+  "relative_fpr_reduction_pct": 30.79,
+  "recall_difference_v3_minus_E": -0.001311,
+  "alerts_reduction_per_1000_at_prod_prev": 48.81,
+  "claim_check": "'~40% FPR reduction' is supported ONLY as relative FPR at the P2 operating point ((15.87-9.48)/15.87 ~= 40%); it is not an alert-volume or recall claim."
+ },
+ "5_seen_unseen_entities": {
+  "seen_any_entity": {
+   "fraud": 4578,
+   "legit": 187794,
+   "at_P2": {
+    "tp": 4563,
+    "fp": 20634,
+    "fn": 15,
+    "tn": 167160,
+    "recall": 0.9967234600262124,
+    "fpr": 0.10987571487906962,
+    "precision": 0.18109298726038814,
+    "alerts": 25197
+   },
+   "roc_pr": {
+    "roc_auc": 0.9869808107684876,
+    "pr_auc": 0.637788445982705
+   },
+   "description": "entity code(s) appeared among training rows"
+  },
+  "unseen_all_entities": {
+   "fraud": 0,
+   "legit": 0,
+   "at_P2": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 0,
+    "recall": 0.0,
+    "fpr": 0.0,
+    "precision": 0.0,
+    "alerts": 0
+   },
+   "roc_pr": null,
+   "description": "none of the 3 entity codes appeared in training rows"
+  },
+  "merchant_unseen": {
+   "fraud": 273,
+   "legit": 2860,
+   "at_P2": {
+    "tp": 273,
+    "fp": 1845,
+    "fn": 0,
+    "tn": 1015,
+    "recall": 1.0,
+    "fpr": 0.6451048951048951,
+    "precision": 0.12889518413597734,
+    "alerts": 2118
+   },
+   "roc_pr": {
+    "roc_auc": 0.9911972642741873,
+    "pr_auc": 0.9233914998964959
+   },
+   "description": "merchant code not in training rows"
+  },
+  "card_unseen": {
+   "fraud": 0,
+   "legit": 0,
+   "at_P2": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 0,
+    "recall": 0.0,
+    "fpr": 0.0,
+    "precision": 0.0,
+    "alerts": 0
+   },
+   "roc_pr": null,
+   "description": "card code not in training rows"
+  }
+ },
+ "5_definition": "'seen' = the entity's hashed code appears among the rows the model ACTUALLY trained on (sampled train, all fraud + 5% legit <2016). This is the correct criterion for 'did the model have a learned fixed effect for this entity'. A merchant that exists only in the unsampled 95% of legit train is 'unseen' to the model. Diagnostic only \u2014 not used to retune.",
+ "6_channel_and_year": {
+  "channels": {
+   "online": {
+    "rows": 23593,
+    "fraud": 128,
+    "legit": 23465,
+    "at_P2": {
+     "tp": 128,
+     "fp": 9714,
+     "fn": 0,
+     "tn": 13751,
+     "recall": 1.0,
+     "fpr": 0.4139782655018112,
+     "precision": 0.013005486689697216,
+     "alerts": 9842
+    },
+    "roc_pr": {
+     "roc_auc": 0.9930165272746644,
+     "pr_auc": 0.75533122404124
+    }
+   },
+   "chip": {
+    "rows": 136626,
+    "fraud": 4008,
+    "legit": 132618,
+    "at_P2": {
+     "tp": 3993,
+     "fp": 7751,
+     "fn": 15,
+     "tn": 124867,
+     "recall": 0.9962574850299402,
+     "fpr": 0.058446063128685395,
+     "precision": 0.3400034059945504,
+     "alerts": 11744
+    },
+    "roc_pr": {
+     "roc_auc": 0.9947303134610599,
+     "pr_auc": 0.8458901839293013
+    }
+   },
+   "swipe": {
+    "rows": 32153,
+    "fraud": 442,
+    "legit": 31711,
+    "at_P2": {
+     "tp": 442,
+     "fp": 3169,
+     "fn": 0,
+     "tn": 28542,
+     "recall": 1.0,
+     "fpr": 0.09993377692283435,
+     "precision": 0.12240376626973137,
+     "alerts": 3611
+    },
+    "roc_pr": {
+     "roc_auc": 0.9963517377172316,
+     "pr_auc": 0.8664783963734856
+    }
+   },
+   "other": {
+    "rows": 0,
+    "fraud": 0,
+    "legit": 0,
+    "at_P2": {
+     "tp": 0,
+     "fp": 0,
+     "fn": 0,
+     "tn": 0,
+     "recall": 0.0,
+     "fpr": 0.0,
+     "precision": 0.0,
+     "alerts": 0
+    },
+    "roc_pr": null
+   }
+  },
+  "years": {
+   "2018": {
+    "rows": 87758,
+    "fraud": 2491,
+    "legit": 85267,
+    "at_P2": {
+     "tp": 2483,
+     "fp": 9830,
+     "fn": 8,
+     "tn": 75437,
+     "recall": 0.9967884383781613,
+     "fpr": 0.11528492851865317,
+     "precision": 0.20165678551124827,
+     "alerts": 12313
+    },
+    "roc_pr": {
+     "roc_auc": 0.9871612582173162,
+     "pr_auc": 0.7077264260580896
+    }
+   },
+   "2019": {
+    "rows": 87927,
+    "fraud": 2087,
+    "legit": 85840,
+    "at_P2": {
+     "tp": 2080,
+     "fp": 9301,
+     "fn": 7,
+     "tn": 76539,
+     "recall": 0.9966459032103497,
+     "fpr": 0.10835274930102516,
+     "precision": 0.1827607415868553,
+     "alerts": 11381
+    },
+    "roc_pr": {
+     "roc_auc": 0.98592414721944,
+     "pr_auc": 0.567731707272844
+    }
+   },
+   "2020": {
+    "rows": 16687,
+    "fraud": 0,
+    "legit": 16687,
+    "at_P2": {
+     "tp": 0,
+     "fp": 1503,
+     "fn": 0,
+     "tn": 15184,
+     "recall": 0.0,
+     "fpr": 0.09007011446035837,
+     "precision": 0.0,
+     "alerts": 1503
+    },
+    "roc_pr": null
+   }
+  }
+ },
+ "7_feature_contract": {
+  "candidate_feature_list_matches_runtime_contract": true,
+  "n_features": 48,
+  "feature_list_hash": "6884e5fdc24b6482f67aa85f061391eebea85931174fb9628bbbc2e1ef44daee",
+  "dead_feature_status": {
+   "err": "fixed NaN-safe parse (verified 1.7% rate, non-constant)",
+   "mcc_online": "constant-0 dead feature (harmless; schema bump recommended)",
+   "has_state": "constant-1 dead feature (harmless; schema bump recommended)"
+  }
+ },
+ "7_package": {
+  "dir": "models\\production\\altman_native_E_hardneg_cert",
+  "manifest": {
+   "model_version": "altman_native_E_hardneg_cert_20260904",
+   "model_type": "xgb_lgb_cb_native",
+   "n_features": 48,
+   "ensemble_weights": {
+    "xgb": 0.34,
+    "lgb": 0.33,
+    "cb": 0.33
+   },
+   "locked_threshold": 0.018758,
+   "artifacts": {
+    "xgb_native.joblib": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+    "lgb_native.joblib": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+    "cb_native.joblib": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+    "scaler_native.joblib": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+    "feature_list.json": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f"
+   },
+   "training_note": "mission_E_hardneg on the state-parse-corrected frame, seed 42, val-locked P2 threshold (recall>=0.995)"
+  },
+  "engine_file_contract": "xgb_native/lgb_native/cb_native/scaler_native.joblib + feature_list.json + manifest.json (locked_threshold)"
+ },
+ "7_feature_parity_test": {
+  "returncode": 0,
+  "tail": [
+   "PS-14 FEATURE-PARITY TEST (offline training path vs live scoring path)",
+   "  deployed: Altman-NATIVE 48 features (altman_native_v2_20260904_115703)",
+   "",
+   "FEATURE-PARITY TEST: 11/11 PASSED"
+  ],
+  "pass": true
+ },
+ "9_engine_parity_offline": {
+  "engine_model_version": "altman_native_E_hardneg_cert_20260904",
+  "engine_locked_threshold": 0.018758,
+  "n_replayed": 5000,
+  "max_abs_diff_engine_vs_offline": 2.973694279706507e-08,
+  "mean_abs_diff": 6.659151577585696e-10,
+  "tolerance": 1e-06,
+  "path": "raw columns -> map_raw_to_native path1 (shared derivation) -> scaler -> weighted members (the exact production inference route)",
+  "mapper_precedence_note": "map_raw_to_native routes any dict containing 'mcc' to path1 (raw derivation); the already-derived-native-dict branch is shadowed whenever mcc is present. No live impact (live payloads are raw), but the dead branch should be removed or re-ordered at the next refactor."
+ },
+ "11_operational_burden_at_prod_prevalence": {
+  "v2_at_0.78471": {
+   "alerts_per_1k": 13.35245877,
+   "alerts_per_10k": 133.5245877,
+   "alerts_per_100k": 1335.245877,
+   "fraud_caught_per_100k": 53.998065,
+   "legit_alerts_per_100k": 1281.247812,
+   "precision_at_prod_prevalence": 0.040440540525256384
+  },
+  "v3_at_0.027328": {
+   "alerts_per_1k": 159.75949256870433,
+   "alerts_per_10k": 1597.5949256870433,
+   "alerts_per_100k": 15975.949256870434,
+   "fraud_caught_per_100k": 120.44495412844036,
+   "legit_alerts_per_100k": 15855.504302741996,
+   "precision_at_prod_prevalence": 0.0075391422563916306
+  },
+  "E_hardneg_P2": {
+   "alerts_per_1k": 110.94880065069766,
+   "alerts_per_10k": 1109.4880065069767,
+   "alerts_per_100k": 11094.880065069767,
+   "fraud_caught_per_100k": 120.60353866317168,
+   "legit_alerts_per_100k": 10974.276526406595,
+   "precision_at_prod_prevalence": 0.010870197600681619
+  },
+  "note": "production prevalence 0.121% (true test-window rate, not enriched-sample 10.9%)"
+ }
+}

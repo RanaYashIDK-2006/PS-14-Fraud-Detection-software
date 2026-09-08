@@ -1,0 +1,128 @@
+{
+  "candidate": "control_E_hardneg",
+  "features": "48 native (certified)",
+  "val_rows": 174530,
+  "val_fraud": 3834,
+  "P1": {
+    "threshold": 0.05355844,
+    "val_fpr": 0.070828,
+    "val_recall": 0.990089,
+    "segs": {
+      "overall": {
+        "recall": 0.990089,
+        "fpr": 0.070828,
+        "precision": 0.238953,
+        "tp": 3796,
+        "fp": 12090,
+        "fn": 38,
+        "tn": 158606,
+        "alerts": 15886,
+        "alerts_per_1k": 91.022,
+        "n_fraud": 3834,
+        "n_legit": 170696
+      },
+      "seen_merchant": {
+        "recall": 0.989838,
+        "fpr": 0.063451,
+        "precision": 0.252204,
+        "tp": 3604,
+        "fp": 10686,
+        "fn": 37,
+        "tn": 157728,
+        "alerts": 14290,
+        "alerts_per_1k": 81.877,
+        "n_fraud": 3641,
+        "n_legit": 168414
+      },
+      "absent_at5": {
+        "recall": 0.994819,
+        "fpr": 0.61525,
+        "precision": 0.120301,
+        "tp": 192,
+        "fp": 1404,
+        "fn": 1,
+        "tn": 878,
+        "alerts": 1596,
+        "alerts_per_1k": 9.145,
+        "n_fraud": 193,
+        "n_legit": 2282
+      },
+      "genuinely_new": {
+        "recall": 0.98,
+        "fpr": 0.620072,
+        "precision": 0.220721,
+        "tp": 49,
+        "fp": 173,
+        "fn": 1,
+        "tn": 106,
+        "alerts": 222,
+        "alerts_per_1k": 1.272,
+        "n_fraud": 50,
+        "n_legit": 279
+      }
+    }
+  },
+  "P2": {
+    "threshold": 0.01875816,
+    "val_fpr": 0.115304,
+    "val_recall": 0.995044,
+    "segs": {
+      "overall": {
+        "recall": 0.995044,
+        "fpr": 0.115304,
+        "precision": 0.162361,
+        "tp": 3815,
+        "fp": 19682,
+        "fn": 19,
+        "tn": 151014,
+        "alerts": 23497,
+        "alerts_per_1k": 134.63,
+        "n_fraud": 3834,
+        "n_legit": 170696
+      },
+      "seen_merchant": {
+        "recall": 0.994782,
+        "fpr": 0.106375,
+        "precision": 0.168176,
+        "tp": 3622,
+        "fp": 17915,
+        "fn": 19,
+        "tn": 150499,
+        "alerts": 21537,
+        "alerts_per_1k": 123.4,
+        "n_fraud": 3641,
+        "n_legit": 168414
+      },
+      "absent_at5": {
+        "recall": 1.0,
+        "fpr": 0.774321,
+        "precision": 0.098469,
+        "tp": 193,
+        "fp": 1767,
+        "fn": 0,
+        "tn": 515,
+        "alerts": 1960,
+        "alerts_per_1k": 11.23,
+        "n_fraud": 193,
+        "n_legit": 2282
+      },
+      "genuinely_new": {
+        "recall": 1.0,
+        "fpr": 0.756272,
+        "precision": 0.191571,
+        "tp": 50,
+        "fp": 211,
+        "fn": 0,
+        "tn": 68,
+        "alerts": 261,
+        "alerts_per_1k": 1.495,
+        "n_fraud": 50,
+        "n_legit": 279
+      }
+    }
+  },
+  "R_at_FPR2": {
+    "val_recall_at_2pct_fpr": 0.948357,
+    "note": "recall achievable at val FPR <= 2%"
+  }
+}

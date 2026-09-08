@@ -1,0 +1,11 @@
+{
+  "applicable": true,
+  "n_mined_ids": 84639,
+  "all_from_train_window_year_lt_2016": true,
+  "max_year_mined": 2015,
+  "n_overlapping_validation_rows": 0,
+  "n_overlapping_test_rows": 0,
+  "selection_rule": "E_miner: train rows split chronologically 90/10; model trained on first 90% (all <2016); last 10% of TRAIN scored out-of-sample; legit rows ranked by ensemble probability; top-scoring legit emitted as hard negatives. Val/test rows never enter the miner fit, scoring slice, or mined set; no test label is read in mission_train.py (test labels are never scored until final eval).",
+  "miner_reproducible": "seed 42, deterministic -> rerun reproduces identical ids",
+  "final_train_weight": "mined rows weight 3.0 (config.json)"
+}

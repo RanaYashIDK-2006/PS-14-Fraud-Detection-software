@@ -1,0 +1,97 @@
+{
+  "dataset": "ALTMAN_VELOCITY_V2",
+  "n_rows": 99150,
+  "n_features": 32,
+  "n_fraud": 19248,
+  "best_r1": 0.918745,
+  "best_params": {
+    "n_est": 594,
+    "max_depth": 9,
+    "lr": 0.19258530488995634,
+    "subsample": 0.6506718858873486,
+    "colsample": 0.7468310334772996,
+    "min_child": 13,
+    "alpha": 0.005160059851762881,
+    "lambda": 0.3716104172341168,
+    "num_leaves": 116
+  },
+  "cv_auc": 0.996343,
+  "cv_auc_std": 0.000168,
+  "cv_r1": 0.924615,
+  "cv_r1_std": 0.006801,
+  "oof_auc": 0.996336,
+  "metrics": {
+    "roc_auc": 0.996336,
+    "pr_auc": 0.987265,
+    "brier": 0.018466,
+    "r1": 0.924616,
+    "r05": 0.885391,
+    "r01": 0.783822,
+    "f1": 0.942274
+  },
+  "target_r1_92": true,
+  "top15": [
+    {
+      "n": "mcc_n",
+      "i": 4982
+    },
+    {
+      "n": "city_id",
+      "i": 4496
+    },
+    {
+      "n": "state_id",
+      "i": 4081
+    },
+    {
+      "n": "year_n",
+      "i": 4048
+    },
+    {
+      "n": "avg_amount_24h",
+      "i": 3694
+    },
+    {
+      "n": "merchant_id",
+      "i": 3665
+    },
+    {
+      "n": "tx_count_24h",
+      "i": 3339
+    },
+    {
+      "n": "amount_zscore",
+      "i": 3010
+    },
+    {
+      "n": "amount_accel",
+      "i": 2942
+    },
+    {
+      "n": "day_decimal",
+      "i": 2925
+    },
+    {
+      "n": "merchant_diversity_24h",
+      "i": 2921
+    },
+    {
+      "n": "hr",
+      "i": 2547
+    },
+    {
+      "n": "mn",
+      "i": 2426
+    },
+    {
+      "n": "amt",
+      "i": 2308
+    },
+    {
+      "n": "tx_regularity",
+      "i": 2277
+    }
+  ],
+  "elapsed": 373,
+  "ts": "2026-08-29T08:11:54Z"
+}

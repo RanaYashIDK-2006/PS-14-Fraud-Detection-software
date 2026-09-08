@@ -1,0 +1,12 @@
+{
+  "phase": 7,
+  "time_utc": "2026-09-05T10:20:21Z",
+  "production": {
+    "model_version": "altman_native_E_hardneg_cert_20260904",
+    "locked_threshold": 0.018758,
+    "status": "DO NOT CHANGE"
+  },
+  "frozen_candidate": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\experiments\\phase7_generalization\\candidates",
+  "final_test_accessed": false,
+  "production_modified": false
+}

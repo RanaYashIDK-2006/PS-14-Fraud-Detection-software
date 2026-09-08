@@ -1,0 +1,61 @@
+{
+  "model": "XGBoost (600 trees, depth 10)",
+  "n_features": 21,
+  "cold_start_ms": 30.488,
+  "warm_single_normal": {
+    "mean_ms": 0.693,
+    "median_ms": 0.0,
+    "p95_ms": 2.012,
+    "p99_ms": 2.233
+  },
+  "warm_single_suspicious": {
+    "mean_ms": 0.688,
+    "median_ms": 0.0,
+    "p95_ms": 2.012,
+    "p99_ms": 2.175
+  },
+  "batched": [
+    {
+      "batch_size": 1,
+      "total_ms": 0.59,
+      "per_txn_ms": 0.5896,
+      "throughput_tps": 1696.0
+    },
+    {
+      "batch_size": 10,
+      "total_ms": 1.436,
+      "per_txn_ms": 0.1436,
+      "throughput_tps": 6964.3
+    },
+    {
+      "batch_size": 50,
+      "total_ms": 2.758,
+      "per_txn_ms": 0.0552,
+      "throughput_tps": 18127.1
+    },
+    {
+      "batch_size": 100,
+      "total_ms": 2.788,
+      "per_txn_ms": 0.0279,
+      "throughput_tps": 35867.8
+    },
+    {
+      "batch_size": 500,
+      "total_ms": 3.332,
+      "per_txn_ms": 0.0067,
+      "throughput_tps": 150056.0
+    },
+    {
+      "batch_size": 1000,
+      "total_ms": 3.958,
+      "per_txn_ms": 0.004,
+      "throughput_tps": 252621.7
+    }
+  ],
+  "full_pipeline": {
+    "mean_ms": 1.039,
+    "median_ms": 1.012,
+    "p95_ms": 2.065,
+    "throughput_tps": 963.0
+  }
+}

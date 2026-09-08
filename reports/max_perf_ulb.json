@@ -1,0 +1,85 @@
+{
+  "dataset": "ULB",
+  "n_rows": 80492,
+  "n_features": 49,
+  "n_fraud": 492,
+  "fraud_rate": 0.006112,
+  "method": "weighted",
+  "ensemble": {
+    "xgb": {
+      "oof_auc": 0.98494
+    },
+    "lgb": {
+      "oof_auc": 0.982842
+    },
+    "rf": {
+      "oof_auc": 0.975524
+    },
+    "lr": {
+      "oof_auc": 0.976168
+    }
+  },
+  "stacker_auc": 0.979307,
+  "weighted_auc": 0.984913,
+  "best_weights": {
+    "xgb": 0.5,
+    "lgb": 0.5,
+    "rf": 0.0,
+    "lr": 0.0
+  },
+  "final_auc": 0.984913,
+  "metrics_raw": {
+    "roc_auc": 0.984913,
+    "pr_auc": 0.886211,
+    "brier": 0.001222,
+    "r1": 0.902439,
+    "r05": 0.888211,
+    "opt_thr": 0.471971,
+    "f1": 0.891281
+  },
+  "metrics_calibrated": {
+    "cal_roc_auc": 0.982109,
+    "cal_pr_auc": 0.87472,
+    "cal_brier": 0.001191,
+    "cal_r1": 0.892276,
+    "cal_r05": 0.884146,
+    "cal_opt_thr": 0.408105,
+    "cal_f1": 0.889849
+  },
+  "optuna_trials": {
+    "xgb": 25,
+    "lgb": 25,
+    "rf": 25
+  },
+  "optuna_best_params": {
+    "xgb": {
+      "n_estimators": 427,
+      "max_depth": 7,
+      "learning_rate": 0.06259576937494805,
+      "subsample": 0.8957184360234729,
+      "colsample_bytree": 0.7123309056025083,
+      "min_child_weight": 3,
+      "reg_alpha": 0.1959764344127822,
+      "reg_lambda": 4.8649771439856195
+    },
+    "lgb": {
+      "n_estimators": 318,
+      "max_depth": 8,
+      "learning_rate": 0.07334927571268116,
+      "subsample": 0.8249615089091724,
+      "colsample_bytree": 0.7874820875551369,
+      "min_child_samples": 51,
+      "reg_alpha": 0.34593824533029477,
+      "reg_lambda": 0.0620594015050432
+    },
+    "rf": {
+      "n_estimators": 343,
+      "max_depth": 10,
+      "min_samples_split": 12,
+      "min_samples_leaf": 3,
+      "max_features": 0.3
+    }
+  },
+  "data_hash": "b4b9a894d5e0dd86",
+  "timestamp": "2026-08-28T15:30:38Z"
+}

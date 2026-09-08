@@ -1,0 +1,252 @@
+# PS-14 — Full CI/CD Pipeline
+# Runs on every push/PR: test suite → security scan → Docker build → deploy gate
+
+name: CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: write
+  security-events: write
+
+env:
+  PYTHON_VERSION: '3.12'
+  PYTHONIOENCODING: 'utf-8'
+
+jobs:
+  # ──────────────────────────────────────────────────────────────────────────
+  # Phase 1: Unit + Integration tests (fast feedback)
+  # ──────────────────────────────────────────────────────────────────────────
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate synthetic data
+        run: python src/generate_synthetic_data.py
+
+      - name: Train models
+        run: python src/train_compare.py
+
+      - name: Run full regression suite
+        run: python scripts/regression_suite.py --fast
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Run backup/restore test
+        run: python scripts/backup_restore_test.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Phase 2: Security scan
+  # ──────────────────────────────────────────────────────────────────────────
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install bandit pip-audit
+
+      - name: Run Bandit static analysis
+        run: bandit -r src/ -f json -o bandit-results.json
+
+      - name: Run pip-audit dependency scan
+        run: pip-audit --format=json --output=pip-audit-results.json
+
+      - name: Run custom security scanner
+        run: python scripts/security_scan.py --full --json --output security-scan.json
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Run penetration test
+        run: python scripts/penetration_test.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Upload security artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-reports
+          path: |
+            bandit-results.json
+            pip-audit-results.json
+            security-scan.json
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Phase 3: Docker build
+  # ──────────────────────────────────────────────────────────────────────────
+  build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    needs: [test, security]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t ps14:${{ github.sha }} .
+
+      - name: Verify container runs as non-root
+        run: |
+          docker run --rm ps14:${{ github.sha }} whoami | grep -q ps14
+
+      - name: Verify health check works
+        run: |
+          docker run --rm -d --name ps14-test \
+            -e MODULE=src.front_service.main:app \
+            -e PORT=8000 \
+            -e JWT_SECRET=test-secret \
+            -e PII_ENCRYPTION_KEY=test-key \
+            -e EXPORT_SIGNING_KEY=test-sign \
+            -e INTERNAL_TOKEN=test-token \
+            -e COMPLIANCE_TOKEN=test-compliance \
+            -e ADMIN_PASS=test-admin \
+            -e DB_DIR=/tmp/db \
+            ps14:${{ github.sha }}
+          sleep 10
+          docker exec ps14-test python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"
+          docker stop ps14-test
+
+      - name: Save Docker image
+        run: docker save ps14:${{ github.sha }} | gzip > ps14-image.tar.gz
+
+      - name: Upload Docker image
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: ps14-image.tar.gz
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Phase 4: Integration test (full stack in Docker)
+  # ──────────────────────────────────────────────────────────────────────────
+  integration:
+    name: Integration Test
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Docker image
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+
+      - name: Load Docker image
+        run: docker load < ps14-image.tar.gz
+
+      - name: Generate test secrets
+        run: |
+          echo "JWT_SECRET=$(python -c 'import secrets; print(secrets.token_urlsafe(32))')" >> $GITHUB_ENV
+          echo "PII_ENCRYPTION_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(32))')" >> $GITHUB_ENV
+          echo "EXPORT_SIGNING_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(32))')" >> $GITHUB_ENV
+          echo "INTERNAL_TOKEN=$(python -c 'import secrets; print(secrets.token_urlsafe(32))')" >> $GITHUB_ENV
+          echo "COMPLIANCE_TOKEN=$(python -c 'import secrets; print(secrets.token_urlsafe(32))')" >> $GITHUB_ENV
+          echo "ADMIN_PASS=$(python -c 'import secrets; print(secrets.token_urlsafe(32))')" >> $GITHUB_ENV
+          echo "CORS_ORIGINS=http://localhost:8000,http://localhost:8004" >> $GITHUB_ENV
+
+      - name: Start stack
+        run: docker compose up -d
+        env:
+          JWT_SECRET: ${{ env.JWT_SECRET }}
+          PII_ENCRYPTION_KEY: ${{ env.PII_ENCRYPTION_KEY }}
+          EXPORT_SIGNING_KEY: ${{ env.EXPORT_SIGNING_KEY }}
+          INTERNAL_TOKEN: ${{ env.INTERNAL_TOKEN }}
+          COMPLIANCE_TOKEN: ${{ env.COMPLIANCE_TOKEN }}
+          ADMIN_PASS: ${{ env.ADMIN_PASS }}
+          CORS_ORIGINS: ${{ env.CORS_ORIGINS }}
+
+      - name: Wait for health
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8000/health > /dev/null 2>&1; then
+              echo "Front service healthy"
+              break
+            fi
+            echo "Waiting... ($i/30)"
+            sleep 5
+          done
+
+      - name: Run live walkthrough
+        run: bash scripts/live_walkthrough.sh
+
+      - name: Verify audit chain
+        run: |
+          STATUS=$(curl -s -H "X-Internal-Token: $INTERNAL_TOKEN" http://localhost:8005/audit/integrity)
+          echo "Audit integrity: $STATUS"
+          echo "$STATUS" | python -c "import sys,json; d=json.load(sys.stdin); assert d['ok'], f'Chain broken: {d}'"
+
+      - name: Dump logs on failure
+        if: failure()
+        run: docker compose logs --tail=50
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Phase 5: Deploy (only on version tags)
+  # ──────────────────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: [integration]
+    if: startsWith(github.ref, 'refs/tags/v')
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Docker image
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+
+      - name: Load Docker image
+        run: docker load < ps14-image.tar.gz
+
+      - name: Tag image
+        run: |
+          docker tag ps14:${{ github.sha }} ps14:${GITHUB_REF#refs/tags/}
+          docker tag ps14:${{ github.sha }} ps14:latest
+
+      - name: Deploy to production
+        run: |
+          echo "=== Production Deployment ==="
+          echo "Image: ps14:${GITHUB_REF#refs/tags/}"
+          echo "This step should be customized for your deployment target."
+          echo ""
+          echo "Production checklist:"
+          echo "  [ ] All secrets in secrets manager"
+          echo "  [ ] PostgreSQL instances ready"
+          echo "  [ ] Caddy/reverse proxy configured"
+          echo "  [ ] Firewall rules in place"
+          echo "  [ ] Monitoring/alerting configured"
+          echo "  [ ] Backup schedule verified"
+          echo "  [ ] Restore tested"

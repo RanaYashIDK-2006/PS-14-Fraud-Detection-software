@@ -1,0 +1,26 @@
+{
+  "baseline": {
+    "n": 240000,
+    "n_fraud": 11810,
+    "prevalence": 0.049208,
+    "roc_auc": 0.9366,
+    "pr_auc": 0.636,
+    "brier": 0.084007,
+    "recall_at_0_1pct_fpr": 0.2453,
+    "recall_at_0_5pct_fpr": 0.3933,
+    "recall_at_1pct_fpr": 0.4798
+  },
+  "enhanced": {
+    "n": 240000,
+    "n_fraud": 11810,
+    "prevalence": 0.049208,
+    "roc_auc": 0.9379,
+    "pr_auc": 0.6388,
+    "brier": 0.080254,
+    "recall_at_0_1pct_fpr": 0.2412,
+    "recall_at_0_5pct_fpr": 0.3981,
+    "recall_at_1pct_fpr": 0.482
+  },
+  "n_features": 30,
+  "total_time": 99.6
+}

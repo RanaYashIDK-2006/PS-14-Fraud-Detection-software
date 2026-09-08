@@ -1,0 +1,30 @@
+{
+  "uncertainty": {
+    "C0_control": {
+      "recall_2017": 0.572549,
+      "n_fraud_2017": 255,
+      "ci_95_lo": 0.509804,
+      "ci_95_hi": 0.631373
+    },
+    "C1_2014chip": {
+      "recall_2017": 0.376471,
+      "n_fraud_2017": 255,
+      "ci_95_lo": 0.317647,
+      "ci_95_hi": 0.435294
+    },
+    "C2_2015chip": {
+      "recall_2017": 0.333333,
+      "n_fraud_2017": 255,
+      "ci_95_lo": 0.27451,
+      "ci_95_hi": 0.392157
+    },
+    "paired_comparison_C0_vs_C2": {
+      "both_caught": 74,
+      "only_C0": 72,
+      "only_C2": 11,
+      "neither": 98,
+      "net_C2_advantage": -61
+    }
+  },
+  "cert_time_utc": "2026-09-08T09:47:39Z"
+}

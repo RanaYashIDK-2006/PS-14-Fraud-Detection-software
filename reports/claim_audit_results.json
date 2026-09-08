@@ -1,0 +1,284 @@
+{
+  "total_files_scanned": 60,
+  "total_occurrences": 34,
+  "status_counts": {
+    "VERIFIED": 19,
+    "PARTIALLY_VERIFIED": 3,
+    "UNSUPPORTED": 6,
+    "FALSE": 6
+  },
+  "findings": [
+    {
+      "file": "README.md",
+      "line": 1044,
+      "claim": "fail-safe ML",
+      "status": "VERIFIED",
+      "note": "ML_UNAVAILABLE forces score>=31 (step_up)",
+      "context": "- **Fail-safe degraded mode**: if ML fusion raises or the circuit breaker"
+    },
+    {
+      "file": "README.md",
+      "line": 1046,
+      "claim": "fail-safe ML",
+      "status": "VERIFIED",
+      "note": "ML_UNAVAILABLE forces score>=31 (step_up)",
+      "context": "evaluation falls back to the declarative rules with a fail-safe floor"
+    },
+    {
+      "file": "docs\\ACCESS.md",
+      "line": 91,
+      "claim": "tamper-evident audit",
+      "status": "VERIFIED",
+      "note": "Hash chain with append-only triggers",
+      "context": "- **Audit chain is tamper-evident:** `GET /audit/integrity` recomputes the"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 17,
+      "claim": "fail-safe ML",
+      "status": "VERIFIED",
+      "note": "ML_UNAVAILABLE forces score>=31 (step_up)",
+      "context": "| S6 | ML failure is fail-safe | \u2705 VERIFIED | risk_engine_test.py (degraded score \u2265 31) | Rules-only fallback; no ML sig"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 28,
+      "claim": "no raw amounts anywhere",
+      "status": "PARTIALLY_VERIFIED",
+      "note": "Raw amounts exist transiently during processing",
+      "context": "| P2 | No raw amounts in Risk Engine | \u2705 VERIFIED | Privacy Layer strips before scoring | Risk Engine never sees raw amo"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 46,
+      "claim": "industry-grade",
+      "status": "UNSUPPORTED",
+      "note": "No independent industry validation",
+      "context": "| M8 | Industry-grade fraud detection | \u274c UNSUPPORTED | Only synthetic/cross-domain eval | No independent validation |"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 46,
+      "claim": "industry-grade fraud detection",
+      "status": "UNSUPPORTED",
+      "note": "Only synthetic/cross-domain evaluation",
+      "context": "| M8 | Industry-grade fraud detection | \u274c UNSUPPORTED | Only synthetic/cross-domain eval | No independent validation |"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 47,
+      "claim": "generalization claim",
+      "status": "PARTIALLY_VERIFIED",
+      "note": "Cross-domain eval exists but limited",
+      "context": "| M9 | Generalizes to real-world fraud | \u274c UNSUPPORTED | Evaluated on public datasets only | Not validated in production"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 54,
+      "claim": "tamper-evident audit",
+      "status": "VERIFIED",
+      "note": "Hash chain with append-only triggers",
+      "context": "| A2 | Tamper-evident | \u2705 VERIFIED | Hash chain verification | Detection only, not prevention |"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 55,
+      "claim": "tamper-proof",
+      "status": "FALSE",
+      "note": "Hash chains provide tamper-EVIDENT not tamper-PREVENTION",
+      "context": "| A3 | Tamper-proof | \ud83d\udeab FALSE | Hash chain detects but doesn't prevent | Would need immutable storage |"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 55,
+      "claim": "immutable",
+      "status": "FALSE",
+      "note": "SQLite can be modified; triggers prevent app-level deletes only",
+      "context": "| A3 | Tamper-proof | \ud83d\udeab FALSE | Hash chain detects but doesn't prevent | Would need immutable storage |"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 55,
+      "claim": "tamper-proof audit",
+      "status": "FALSE",
+      "note": "Hash chain is tamper-EVIDENT not tamper-PROOF",
+      "context": "| A3 | Tamper-proof | \ud83d\udeab FALSE | Hash chain detects but doesn't prevent | Would need immutable storage |"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 55,
+      "claim": "immutable audit",
+      "status": "FALSE",
+      "note": "SQLite is not immutable",
+      "context": "| A3 | Tamper-proof | \ud83d\udeab FALSE | Hash chain detects but doesn't prevent | Would need immutable storage |"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 79,
+      "claim": "production-ready",
+      "status": "VERIFIED",
+      "note": "System is labeled as research prototype",
+      "context": "**The PS-14 system is a research prototype, NOT production-ready.**"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 87,
+      "claim": "production-ready",
+      "status": "VERIFIED",
+      "note": "System is labeled as research prototype",
+      "context": "- ~~\"Production-ready fraud detection system\"~~"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 88,
+      "claim": "industry-grade",
+      "status": "UNSUPPORTED",
+      "note": "No independent industry validation",
+      "context": "- ~~\"Industry-grade fraud detection\"~~"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 88,
+      "claim": "industry-grade fraud detection",
+      "status": "UNSUPPORTED",
+      "note": "Only synthetic/cross-domain evaluation",
+      "context": "- ~~\"Industry-grade fraud detection\"~~"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 89,
+      "claim": "enterprise-ready",
+      "status": "UNSUPPORTED",
+      "note": "Prototype system",
+      "context": "- ~~\"Enterprise-ready security platform\"~~"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 90,
+      "claim": "fully secure",
+      "status": "UNSUPPORTED",
+      "note": "No system is fully secure",
+      "context": "- ~~\"Fully secure system\"~~"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 91,
+      "claim": "tamper-proof",
+      "status": "FALSE",
+      "note": "Hash chains provide tamper-EVIDENT not tamper-PREVENTION",
+      "context": "- ~~\"Tamper-proof audit trail\"~~"
+    },
+    {
+      "file": "docs\\CLAIMS_MATRIX.md",
+      "line": 91,
+      "claim": "tamper-proof audit",
+      "status": "FALSE",
+      "note": "Hash chain is tamper-EVIDENT not tamper-PROOF",
+      "context": "- ~~\"Tamper-proof audit trail\"~~"
+    },
+    {
+      "file": "docs\\THREAT_MODEL.md",
+      "line": 171,
+      "claim": "tamper-evident audit",
+      "status": "VERIFIED",
+      "note": "Hash chain with append-only triggers",
+      "context": "| **Existing protection** | Hash-chained, tamper-evident. `/audit/integrity` verifies chain. Export signed with HMAC-SHA"
+    },
+    {
+      "file": "reports\\production_readiness.md",
+      "line": 7,
+      "claim": "production-ready",
+      "status": "VERIFIED",
+      "note": "System is labeled as research prototype",
+      "context": "## Overall Status: \u26a0\ufe0f NOT PRODUCTION READY"
+    },
+    {
+      "file": "reports\\production_readiness.md",
+      "line": 9,
+      "claim": "production-ready",
+      "status": "VERIFIED",
+      "note": "System is labeled as research prototype",
+      "context": "The PS-14 system is a **research prototype** demonstrating privacy-oriented fraud detection architecture. It is NOT prod"
+    },
+    {
+      "file": "reports\\production_readiness.md",
+      "line": 47,
+      "claim": "fail-safe ML",
+      "status": "VERIFIED",
+      "note": "ML_UNAVAILABLE forces score>=31 (step_up)",
+      "context": "| Fail-safe ML degraded | \u2705 PASS | risk_engine_test.py (ML_UNAVAILABLE \u2192 score\u226531) |"
+    },
+    {
+      "file": "reports\\production_readiness.md",
+      "line": 87,
+      "claim": "specific test count",
+      "status": "PARTIALLY_VERIFIED",
+      "note": "Count depends on run context",
+      "context": "| Test suite from clean checkout | \u2705 PASS | 11/11 suites pass |"
+    },
+    {
+      "file": "reports\\production_readiness.md",
+      "line": 141,
+      "claim": "production-ready",
+      "status": "VERIFIED",
+      "note": "System is labeled as research prototype",
+      "context": "**Overall: NOT PRODUCTION READY** \u2014 5/11 mandatory categories are FAIL."
+    },
+    {
+      "file": "reports\\production_readiness.md",
+      "line": 167,
+      "claim": "production-ready",
+      "status": "VERIFIED",
+      "note": "System is labeled as research prototype",
+      "context": "> \"A research prototype demonstrating privacy-oriented fraud detection with ML scoring, deterministic rules, tamper-evid"
+    },
+    {
+      "file": "reports\\production_readiness.md",
+      "line": 167,
+      "claim": "tamper-evident audit",
+      "status": "VERIFIED",
+      "note": "Hash chain with append-only triggers",
+      "context": "> \"A research prototype demonstrating privacy-oriented fraud detection with ML scoring, deterministic rules, tamper-evid"
+    },
+    {
+      "file": "src\\audit_service\\models.py",
+      "line": 1,
+      "claim": "tamper-evident audit",
+      "status": "VERIFIED",
+      "note": "Hash chain with append-only triggers",
+      "context": "\"\"\"DB-4 schema (architecture section 13): hash-chained, tamper-evident audit"
+    },
+    {
+      "file": "src\\front_service\\admin_store.py",
+      "line": 12,
+      "claim": "tamper-evident audit",
+      "status": "VERIFIED",
+      "note": "Hash chain with append-only triggers",
+      "context": "Crypto: AES-256-GCM (authenticated encryption \u2014 tamper-evident) with keys"
+    },
+    {
+      "file": "src\\risk_engine\\main.py",
+      "line": 232,
+      "claim": "fail-safe ML",
+      "status": "VERIFIED",
+      "note": "ML_UNAVAILABLE forces score>=31 (step_up)",
+      "context": "# Scoring with fail-safe: ML_UNAVAILABLE never becomes ALLOW"
+    },
+    {
+      "file": "src\\risk_engine\\main.py",
+      "line": 239,
+      "claim": "fail-safe ML",
+      "status": "VERIFIED",
+      "note": "ML_UNAVAILABLE forces score>=31 (step_up)",
+      "context": "score = max(rule_score, 31)  # fail-safe floor"
+    },
+    {
+      "file": "src\\risk_engine\\main.py",
+      "line": 357,
+      "claim": "fail-safe ML",
+      "status": "VERIFIED",
+      "note": "ML_UNAVAILABLE forces score>=31 (step_up)",
+      "context": "# Fail-safe policy: if ML fusion is unavailable (model error, corrupt"
+    }
+  ]
+}

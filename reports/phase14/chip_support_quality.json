@@ -1,0 +1,15 @@
+{
+  "cert_time_utc": "2026-09-08T09:47:39Z",
+  "<=2014": {
+    "count": 0,
+    "assessment": "NONE"
+  },
+  "<=2015": {
+    "count": 301,
+    "unique_merchants": 292,
+    "unique_users": 187,
+    "merchant_concentration_top10_pct": 6.3,
+    "user_concentration_top10_pct": 14.3,
+    "assessment": "BROAD"
+  }
+}

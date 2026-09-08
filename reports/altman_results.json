@@ -1,0 +1,78 @@
+{
+  "dataset": "ibm_altman_v2",
+  "n_rows": 24386900,
+  "n_fraud": 29757,
+  "fraud_rate": 0.0012202042900081602,
+  "n_features": 33,
+  "features": [
+    "amount",
+    "amount_log",
+    "is_negative",
+    "user_amt_mean",
+    "user_amt_std",
+    "user_amt_max",
+    "user_amt_zscore",
+    "user_amt_ratio",
+    "hour",
+    "dow",
+    "is_weekend",
+    "is_night",
+    "is_business",
+    "hours_since_last",
+    "txn_count",
+    "mcc",
+    "mcc_fraud_rate",
+    "merchant_code",
+    "merchant_fraud_rate",
+    "merchant_seen_before",
+    "city_seen_before",
+    "mcc_seen_before",
+    "card_num",
+    "chip_type",
+    "has_error",
+    "city_code",
+    "state_code",
+    "has_zip",
+    "amt_x_night",
+    "amt_x_new_merchant",
+    "is_new_merchant",
+    "is_new_city",
+    "is_new_mcc"
+  ],
+  "results": {
+    "lr": {
+      "roc_auc": 0.9787626094500271,
+      "pr_auc": 0.7786241725144983,
+      "recall_1pct": 0.579230381448496,
+      "recall_0_5pct": 0.44278272559233744,
+      "recall_0_1pct": 0.21593009578222147
+    },
+    "rf": {
+      "roc_auc": 0.9960506377124096,
+      "pr_auc": 0.9594412887055399,
+      "recall_1pct": 0.9309359771466981,
+      "recall_0_5pct": 0.8853974121996303,
+      "recall_0_1pct": 0.7301293900184843
+    },
+    "xgb": {
+      "roc_auc": 0.9978310089189479,
+      "pr_auc": 0.9809244626998095,
+      "recall_1pct": 0.9655520080658713,
+      "recall_0_5pct": 0.9443790959502605,
+      "recall_0_1pct": 0.8796840867081163
+    },
+    "stacker": {
+      "roc_auc": 0.9938973976081108,
+      "pr_auc": 0.9783203727172444,
+      "recall_1pct": 0.9645437741556041,
+      "recall_0_5pct": 0.9443790959502605,
+      "recall_0_1pct": 0.87833977482776
+    }
+  },
+  "best_model": "xgb",
+  "ci_95": [
+    0.9973371684590089,
+    0.9982902812948533
+  ],
+  "timestamp": "2026-08-27T23:54:05"
+}

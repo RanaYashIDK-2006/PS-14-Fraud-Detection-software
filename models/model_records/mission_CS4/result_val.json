@@ -1,0 +1,156 @@
+{
+  "mode": "CS4",
+  "conf": {
+    "mode": "CS4",
+    "spw": 10.0,
+    "seed": 42,
+    "windows": {
+      "train": "<2016",
+      "val": "2016-2017",
+      "test": ">=2018"
+    },
+    "n_features": 54,
+    "features_used": [
+      "amt",
+      "log_amt",
+      "amt_sq",
+      "hr",
+      "mn",
+      "dow",
+      "Month",
+      "Day",
+      "hour_sin",
+      "hour_cos",
+      "is_night",
+      "is_business_hours",
+      "chip",
+      "is_online",
+      "is_swipe",
+      "err",
+      "has_zip",
+      "has_state",
+      "is_online_or_no_state",
+      "mcc",
+      "mcc_high",
+      "mcc_restaurant",
+      "mcc_gas",
+      "mcc_grocery",
+      "mcc_travel",
+      "mcc_online",
+      "merchant_id",
+      "city_id",
+      "card_id",
+      "user_tx_count",
+      "card_tx_count",
+      "user_avg_amt",
+      "amt_vs_user_avg",
+      "amt_zscore",
+      "merch_tx_count",
+      "user_merchant_diversity",
+      "user_city_diversity",
+      "user_fraud_rate",
+      "merch_fraud_rate",
+      "city_fraud_rate",
+      "high_amt",
+      "very_high_amt",
+      "amt_x_hr",
+      "amt_x_mcc",
+      "amt_x_chip",
+      "amt_x_online",
+      "amt_x_night",
+      "user_merch_count",
+      "merchant_age",
+      "is_merchant_new",
+      "merch_prior_rows",
+      "merch_prior_fraud",
+      "merch_prior_rate",
+      "merch_ever_seen_prior"
+    ],
+    "hardneg": {
+      "general_weight": 3.0,
+      "cold_subset_weight": 6.0,
+      "n_cold_mined": 3804
+    }
+  },
+  "val": {
+    "overall": {
+      "rows": 174530,
+      "fraud": 3834,
+      "P1": {
+        "threshold": 0.068891,
+        "recall": 0.990089,
+        "fpr": 0.08113254,
+        "tp": 3796,
+        "fp": 13849,
+        "fn": 38,
+        "tn": 156847,
+        "precision": 0.215132
+      },
+      "P2": {
+        "threshold": 0.02789502,
+        "recall": 0.995044,
+        "fpr": 0.11328912,
+        "tp": 3815,
+        "fp": 19338,
+        "fn": 19,
+        "tn": 151358,
+        "precision": 0.164773
+      },
+      "roc_auc": 0.991061,
+      "pr_auc": 0.844493
+    },
+    "seen": {
+      "rows": 172055,
+      "fraud": 3641,
+      "P1": {
+        "threshold": 0.06838573,
+        "recall": 0.990113,
+        "fpr": 0.07373496,
+        "tp": 3605,
+        "fp": 12418,
+        "fn": 36,
+        "tn": 155996,
+        "precision": 0.224989
+      },
+      "P2": {
+        "threshold": 0.0242782,
+        "recall": 0.995056,
+        "fpr": 0.11033525,
+        "tp": 3623,
+        "fp": 18582,
+        "fn": 18,
+        "tn": 149832,
+        "precision": 0.163161
+      },
+      "roc_auc": 0.992267,
+      "pr_auc": 0.862303
+    },
+    "unseen": {
+      "rows": 2475,
+      "fraud": 193,
+      "P1": {
+        "threshold": 0.068891,
+        "recall": 0.994819,
+        "fpr": 0.64241893,
+        "tp": 192,
+        "fp": 1466,
+        "fn": 1,
+        "tn": 816,
+        "precision": 0.115802
+      },
+      "P2": {
+        "threshold": 0.04499558,
+        "recall": 1.0,
+        "fpr": 0.71647677,
+        "tp": 193,
+        "fp": 1635,
+        "fn": 0,
+        "tn": 647,
+        "precision": 0.10558
+      },
+      "roc_auc": 0.904774,
+      "pr_auc": 0.587208
+    }
+  },
+  "note": "test labels NOT scored in this script"
+}

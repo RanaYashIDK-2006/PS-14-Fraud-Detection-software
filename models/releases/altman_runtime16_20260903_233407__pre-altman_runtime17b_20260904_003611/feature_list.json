@@ -1,0 +1,1 @@
+{"features": ["log_amt", "amt_sq", "hour_cos", "is_business_hours", "chip", "is_online", "mcc_n", "has_zip", "has_state", "merch_tx_count", "merch_fraud_rate", "city_fraud_rate", "very_high_amt", "amt_x_mcc", "amt_x_online"], "schema_version": "altman_runtime_v2"}

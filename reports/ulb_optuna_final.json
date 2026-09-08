@@ -1,0 +1,32 @@
+{
+  "dataset": "ULB creditcard.csv",
+  "n_rows": 284807,
+  "n_features": 48,
+  "xgb_optuna_best_auc": 0.984516,
+  "lgb_optuna_best_auc": 0.983258,
+  "final_cv_auc": 0.975013,
+  "final_cv_auc_std": 0.012298,
+  "final_cv_r1": 0.867883,
+  "final_cv_r1_std": 0.016989,
+  "xgb_params": {
+    "n_est": 636,
+    "md": 10,
+    "lr": 0.010824754622865428,
+    "ss": 0.7042152934346717,
+    "cs": 0.5933515042354742,
+    "g": 1.4910229211410466,
+    "mcw": 20
+  },
+  "lgb_params": {
+    "n_est": 554,
+    "md": 6,
+    "lr": 0.03476398484594351,
+    "ss": 0.6360970381826018,
+    "cs": 0.678528335907069,
+    "mcw": 20
+  },
+  "targets": {
+    "auc_99": "NOT MET (0.9750)",
+    "r1_90": "NOT MET (0.8679)"
+  }
+}

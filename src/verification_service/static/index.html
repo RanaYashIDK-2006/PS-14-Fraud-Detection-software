@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' http://127.0.0.1:* http://localhost:*; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>PS-14 · Account Verification</title>
+<style>
+  :root {
+    --bg: #0f172a; --panel: #1e293b; --panel2: #273449; --text: #e2e8f0;
+    --muted: #94a3b8; --accent: #38bdf8; --danger: #f87171; --ok: #34d399;
+    --warn: #fbbf24; --border: #334155;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg); color: var(--text); min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; padding: 32px 16px;
+  }
+  .wrap { width: 100%; max-width: 560px; }
+  h1 { font-size: 20px; letter-spacing: .5px; margin-bottom: 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; margin-bottom: 16px;
+  }
+  .card.high { border-left: 4px solid var(--danger); }
+  .btn {
+    border: 0; border-radius: 8px; padding: 10px 16px; font-size: 14px;
+    font-weight: 600; cursor: pointer; transition: filter .15s;
+  }
+  .btn:hover { filter: brightness(1.15); }
+  .btn:disabled { opacity: .5; cursor: default; filter: none; }
+  .btn.ok { background: var(--ok); color: #052e16; }
+  .btn.no { background: var(--danger); color: #450a0a; }
+  .btn.ghost { background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
+  .btn.primary { background: var(--accent); color: #082f49; width: 100%; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 6px; }
+  input {
+    width: 100%; background: var(--panel2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 10px 12px; font-size: 14px;
+  }
+  .row { display: flex; gap: 10px; margin-top: 16px; }
+  .row .btn { flex: 1; }
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .8px;
+    padding: 3px 8px; border-radius: 999px; text-transform: uppercase;
+  }
+  .tag.high { background: #7f1d1d; color: #fecaca; }
+  .tag.medium { background: #78350f; color: #fde68a; }
+  .tag.low { background: #14532d; color: #bbf7d0; }
+  .meta { color: var(--muted); font-size: 13px; margin: 8px 0 12px; }
+  ul.reasons { list-style: none; margin: 0 0 4px; }
+  ul.reasons li { padding: 6px 0 6px 26px; position: relative; font-size: 14px; }
+  ul.reasons li::before {
+    content: "⚠"; position: absolute; left: 2px; top: 6px; color: var(--warn); font-size: 14px;
+  }
+  .empty { color: var(--muted); text-align: center; padding: 40px 0; font-size: 14px; }
+  .status { color: var(--ok); font-size: 14px; margin-top: 10px; }
+  .status.error { color: var(--danger); }
+  .recovery { background: #3b1115; border: 1px solid #7f1d1d; border-radius: 10px; padding: 14px; margin-top: 14px; }
+  .recovery h3 { color: #fecaca; font-size: 14px; margin-bottom: 8px; }
+  .recovery ol { margin-left: 18px; font-size: 13px; color: #fca5a5; }
+  .recovery ol li { margin: 4px 0; }
+  .case { font-family: ui-monospace, monospace; color: var(--warn); font-size: 13px; margin-top: 8px; }
+  .hash { font-family: ui-monospace, monospace; color: var(--muted); font-size: 11px; margin-top: 10px; }
+  .banner { border-radius: 10px; padding: 12px 14px; font-size: 13px; font-weight: 600; margin: 12px 0; }
+  .banner.ok { background: #052e16; border: 1px solid var(--ok); color: var(--ok); }
+  .banner.bad { background: #450a0a; border: 1px solid var(--danger); color: var(--danger); }
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .topbar .btns { display: flex; gap: 8px; }
+  .hide { display: none; }
+  .spinner { color: var(--muted); font-size: 13px; margin-top: 10px; }
+  .footer {
+    margin-top: 28px; font-size: 12px; color: var(--muted);
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    font-family: ui-monospace, monospace;
+  }
+  .footer .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); display: inline-block; }
+  .footer.ok { color: var(--ok); }
+  .footer.ok .dot { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
+  .footer.bad { color: var(--danger); font-weight: 600; }
+  .footer.bad .dot { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+  .chainline {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    font-size: 12px; font-family: ui-monospace, monospace; color: var(--muted);
+    margin: 12px 0 6px;
+  }
+  .chainline .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); display: inline-block; }
+  .chainline.ok { color: var(--ok); }
+  .chainline.ok .dot { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
+  .chainline.bad { color: var(--danger); font-weight: 600; }
+  .chainline.bad .dot { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+  /* compact trail cards (compliance view) */
+  .tcard { padding: 12px 14px; }
+  .tcard.slim { padding: 9px 14px; }
+  .rchip-wrap { margin: 4px 0 2px; }
+  .rchip {
+    display: inline-block; background: var(--panel2); border: 1px solid var(--border);
+    border-radius: 999px; padding: 2px 9px; font-size: 11.5px; color: var(--muted);
+    margin: 3px 4px 0 0;
+  }
+  .rchip.none { color: #64748b; border-style: dashed; font-style: italic; }
+  .tmore {
+    background: none; border: 0; color: var(--accent); font-size: 12px;
+    font-weight: 600; padding: 2px 4px; cursor: pointer; font-family: inherit;
+  }
+  .tmore:hover { text-decoration: underline; }
+  .stalehint { text-align: center; color: var(--warn); font-size: 13px; margin: 10px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <h1>🔐 PS-14 · Account Verification</h1>
+      <div class="sub" id="subline">Fraud detection without knowing who you are.</div>
+    </div>
+    <div class="btns">
+      <button class="btn ghost" id="complianceBtn">Compliance</button>
+      <button class="btn ghost hide" id="logoutBtn">Log out</button>
+    </div>
+  </div>
+
+  <!-- Login -->
+  <div class="card" id="loginView">
+    <div class="sub">Sign in with your account credentials (Identity Service).</div>
+    <label for="email">Email</label>
+    <input id="email" type="email" placeholder="you@example.com" autocomplete="email">
+    <label for="password">Password</label>
+    <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+    <div class="row"><button class="btn primary" id="loginBtn">Sign in</button></div>
+    <div style="text-align:center;color:var(--muted);font-size:12px;margin:14px 0 10px">— or —</div>
+    <button class="btn ghost" id="demoLoginBtn" style="width:100%">Try the demo — one click</button>
+    <div class="status" id="loginStatus"></div>
+  </div>
+
+  <!-- Alerts -->
+  <div class="hide" id="alertsView">
+    <div class="row" style="margin-top:0">
+      <button class="btn ghost" id="demoBtn" style="flex:2">Simulate demo activity</button>
+      <button class="btn ghost" id="historyBtn" style="flex:1">History</button>
+      <button class="btn ghost" id="refreshBtn" style="flex:1">Refresh</button>
+    </div>
+    <div class="chainline" id="alertsChainChip" title="Audit trail integrity (live)">
+      <span class="dot"></span><span class="text">Audit chain: checking…</span>
+    </div>
+    <div class="spinner hide" id="spinner">Working…</div>
+    <div id="alertList"></div>
+    <div class="hide" id="caseHistory"></div>
+    <div class="status" id="alertStatus"></div>
+  </div>
+
+  <!-- Account history: every scored event for this account + abnormalities -->
+  <div class="hide" id="historyView">
+    <div class="row" style="margin-top:0">
+      <button class="btn ghost" id="historyBackBtn" style="flex:1">← Back</button>
+      <button class="btn ghost" id="historyRefreshBtn" style="flex:1">Refresh</button>
+    </div>
+    <div class="sub" style="margin-top:12px">
+      Account history · every scored event for this account, newest first, with
+      an abnormality analysis (repeated reasons, dispute patterns, escalation).
+    </div>
+    <div class="banner hide" id="historyFlags"></div>
+    <div class="card hide" id="historyStatsCard" style="padding:14px 16px;margin-bottom:12px">
+      <div class="sub" style="margin:0 0 6px">Summary</div>
+      <div class="rchip-wrap" id="historyStatsChips" style="margin:0 0 6px"></div>
+      <div class="meta" id="historyRepeated" style="margin:0"></div>
+    </div>
+    <div id="historyList"></div>
+    <div class="status" id="historyStatus"></div>
+  </div>
+
+  <footer class="footer" id="chainBadge"><span class="dot"></span><span class="text">Audit chain status: checking…</span></footer>
+
+  <!-- Compliance: pseudonymous decision trail (compliance role) -->
+  <div class="hide" id="complianceView">
+    <div class="row" style="margin-top:0">
+      <button class="btn ghost" id="complianceBackBtn" style="flex:1">← Back</button>
+      <button class="btn primary" id="complianceLoadBtn" style="flex:2">Refresh trail</button>
+    </div>
+    <div class="sub" style="margin-top:12px">
+      Compliance role · pseudonymous decision trail from the hash-chained audit store
+      (DB-4). Scores, category-level reason codes, verification outcomes, and case
+      IDs — no identity data. Every read here is itself logged.
+    </div>
+    <label for="complianceToken">Compliance passphrase</label>
+    <input id="complianceToken" type="password" placeholder="••••••••">
+    <div class="meta" style="margin:4px 0 0">Dev default pre-filled — no need to type it.</div>
+    <div class="banner hide" id="integrityBanner"></div>
+    <div class="card" id="chainStatusCard" style="display:none;padding:14px 16px;margin-bottom:12px">
+      <div class="sub" style="margin:0 0 6px">Chain integrity status</div>
+      <div class="hash" id="chainStatusLine" style="margin:0"></div>
+    </div>
+    <div class="card hide" id="latestCaseCard">
+      <div class="sub" style="margin:0 0 10px">Latest verification case</div>
+      <div id="latestCaseBody"></div>
+    </div>
+    <div id="trailList"></div>
+    <div class="status stalehint hide" id="trailStaleHint">New events landed — press “Refresh trail” to see them.</div>
+    <button class="btn ghost hide" id="trailMoreBtn" style="width:100%;margin-top:12px">Show older events</button>
+    <div class="card" id="graphCard" style="margin-top:14px">
+      <div class="sub" style="margin:0 0 6px">Device graph — link analysis</div>
+      <div class="meta" style="margin:0 0 8px">Look up a hashed device or recipient token and see the pseudonymous accounts that share it (the mule-ring signature). Tokens stay tokenized — no identity data leaves the layer.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input id="graphDevice" type="text" placeholder="device token, e.g. demo-device-…" style="flex:1;min-width:170px">
+        <input id="graphRecipient" type="text" placeholder="recipient token, e.g. R-DEMO-…" style="flex:1;min-width:170px">
+        <button class="btn primary" id="graphBtn">Find shared accounts</button>
+      </div>
+      <div class="meta" id="graphHint" style="margin:6px 0 0"></div>
+      <div id="graphResult" style="margin-top:10px"></div>
+      <div class="status" id="graphStatus"></div>
+    </div>
+    <div class="status" id="complianceStatus"></div>
+  </div>
+</div>
+
+<!-- ?v= bumps force a fresh asset when index.html itself is no-store but
+     the webview already cached an older api.js (no-store only stops
+     caching NEW responses - a previously stored copy can still be served). -->
+<script src="/static/api.js?v=3"></script>
+<script src="/static/app.js?v=1"></script>
+</body>
+</html>

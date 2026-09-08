@@ -1,0 +1,55 @@
+{
+  "report": "label_latency_status",
+  "phase": 5,
+  "mission": "PS-14 Phase-5 label-latency status: current unresolved label-availability evidence (unchanged from Phase 4 - no new evidence found)",
+  "verdict": "UNVERIFIED",
+  "dataset": {
+    "file": "data/credit_card_transactions-ibm_v2.csv",
+    "rows": 24386900,
+    "label_column": "Is Fraud? (Yes/No)",
+    "label_creation": "Assigned at generation time by the IBM synthetic generator (pre-labeled static file). No in-repo label-creation pipeline, investigation step, or confirmation timestamp exists.",
+    "label_availability_timestamp": "ABSENT - no column or metadata records when a label would become available to a real-time scorer"
+  },
+  "feature_inventory": {
+    "count_only_establishment_features": {
+      "merchant_age": "label-free; birth year from full-corpus table; causal",
+      "is_merchant_new": "label-free; age == 0",
+      "merch_prior_rows": "label-free; cumulative corpus rows in years < row year",
+      "merch_ever_seen_prior": "label-free; prior_rows > 0",
+      "status": "SAFE - usable without label-availability evidence"
+    },
+    "label_dependent_fraud_rate_features": {
+      "user_fraud_rate": "uses fraud labels (ground-truth expanding cumsum in training)",
+      "merch_fraud_rate": "uses fraud labels",
+      "city_fraud_rate": "uses fraud labels",
+      "status": "UNVERIFIED - require label-availability evidence before a deployable candidate may rely on them"
+    }
+  },
+  "training_definition": {
+    "source": "retrain_native_consistent.py build_context_and_features",
+    "semantics": "ground-truth expanding fraud counts over the sampled chronological stream (entity-level cumsum over prior rows)",
+    "label_source": "dataset Is Fraud? column (generator truth)",
+    "window": "full history before the current row (expanding)"
+  },
+  "production_definition": {
+    "source": "src/risk_engine/main.py evaluate -> background_tasks.add_task(_record_entity_rates, features, score >= 70) and _seed_entity_tracker (risk_score >= 70)",
+    "semantics": "rolling 100-event window per entity (user/merchant/city), min_events=5, baseline fallback 0.001",
+    "label_source": "PROXY - the risk engine's OWN decision (ml/score >= 70), NOT ground-truth fraud",
+    "window": "rolling 100 events (vs training expanding full history)",
+    "note": "These are different quantities even at zero label latency. The proxy labels are the model's own decisions (self-referential); confirmed-feedback labels would only enter through _record_entity_rates with is_fraud from a real investigation, which no caller currently provides."
+  },
+  "parity": "DIVERGENT - window (100-event rolling vs expanding), label source (proxy decision vs ground truth), and update mechanism all differ",
+  "empirical_exposure_gap": {
+    "user_level": {"p50_days": 0.221, "p90_days": 0.996, "pct_lt_1d": 90.05},
+    "merchant_level": {"p50_days": 6.4, "note": "merchant fraud -> next merchant transaction"},
+    "city_level": {"p50_days": 12.9, "note": "city fraud -> next city transaction"}
+  },
+  "minimum_required_label_delay": "UNDEFINED - the static dataset cannot establish any confirmation delay; a production deployment would need to define it (e.g., confirmed-feedback events only)",
+  "production_can_provide": "Only if confirmed-feedback labels (analyst investigation outcomes) are fed to the tracker. The current score>=70 proxy must be replaced or the three fraud-rate features dropped from any deployable redesign candidate.",
+  "consequence_for_phase5": [
+    "Ablations that keep user_fraud_rate/merch_fraud_rate/city_fraud_rate are development-only diagnostics.",
+    "Any deployable redesigned candidate must either (a) drop the 3 label-dependent fraud-rate features, (b) receive confirmed-feedback labels through the tracker, or (c) keep them with an explicit UNVERIFIED + self-referential-proxy qualification.",
+    "Label-free establishment/exposure features are the safe path and are prioritized."
+  ],
+  "recorded_at": "2026-09-04T22:20:00Z"
+}

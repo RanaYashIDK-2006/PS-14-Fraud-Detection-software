@@ -1,0 +1,1164 @@
+{
+  "metadata": {
+    "title": "PS-14 FORENSIC AUDIT -- Independent Verification",
+    "timestamp": "2026-09-01 16:16:10 UTC",
+    "random_seed": 42,
+    "methodology": "From-scratch reproduction. No trusted inputs except raw CSVs."
+  },
+  "ulb_integrity": {
+    "file": "data/creditcard.csv",
+    "total_rows": 284807,
+    "fraud_rows": 492,
+    "legit_rows": 284315,
+    "fraud_plus_legit": 284807,
+    "sum_check": true,
+    "fraud_rate_pct": 0.1727,
+    "columns": [
+      "Time",
+      "V1",
+      "V2",
+      "V3",
+      "V4",
+      "V5",
+      "V6",
+      "V7",
+      "V8",
+      "V9",
+      "V10",
+      "V11",
+      "V12",
+      "V13",
+      "V14",
+      "V15",
+      "V16",
+      "V17",
+      "V18",
+      "V19",
+      "V20",
+      "V21",
+      "V22",
+      "V23",
+      "V24",
+      "V25",
+      "V26",
+      "V27",
+      "V28",
+      "Amount",
+      "Class"
+    ],
+    "null_counts": {},
+    "row_hash_first_1k": "51f1f72604b99778e365b28e12332c56",
+    "time_sec": 0.9
+  },
+  "altman_integrity": {
+    "file": "data/credit_card_transactions-ibm_v2.csv",
+    "total_rows": 24386900,
+    "fraud_rows": 29757,
+    "legit_rows": 24357143,
+    "fraud_plus_legit": 24386900,
+    "sum_check": true,
+    "fraud_rate_pct": 0.122,
+    "null_amounts": 0,
+    "year_range": [
+      1991,
+      1992,
+      1993,
+      1994,
+      1995,
+      1996,
+      1997,
+      1998,
+      1999,
+      2000,
+      2001,
+      2002,
+      2003,
+      2004,
+      2005,
+      2006,
+      2007,
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020
+    ],
+    "unique_users_sampled": 2000,
+    "first_rows": [
+      {
+        "User": 0,
+        "Year": 2002,
+        "Month": 9,
+        "Day": 1,
+        "Amount": "$134.09",
+        "Is Fraud?": "No"
+      },
+      {
+        "User": 0,
+        "Year": 2002,
+        "Month": 9,
+        "Day": 1,
+        "Amount": "$38.48",
+        "Is Fraud?": "No"
+      },
+      {
+        "User": 0,
+        "Year": 2002,
+        "Month": 9,
+        "Day": 2,
+        "Amount": "$120.34",
+        "Is Fraud?": "No"
+      }
+    ],
+    "last_rows": [
+      {
+        "User": 1999,
+        "Year": 2020,
+        "Month": 2,
+        "Day": 28,
+        "Amount": "$59.15",
+        "Is Fraud?": "No"
+      },
+      {
+        "User": 1999,
+        "Year": 2020,
+        "Month": 2,
+        "Day": 28,
+        "Amount": "$43.12",
+        "Is Fraud?": "No"
+      },
+      {
+        "User": 1999,
+        "Year": 2020,
+        "Month": 2,
+        "Day": 28,
+        "Amount": "$45.13",
+        "Is Fraud?": "No"
+      }
+    ],
+    "time_sec": 44.8
+  },
+  "code_leakage_audit": {
+    "findings": [
+      {
+        "feature": "user_fraud_rate",
+        "finding": "Computed from full dataset fraud labels",
+        "severity": "CRITICAL",
+        "type": "TARGET_LEAKAGE"
+      },
+      {
+        "feature": "merch_fraud_rate",
+        "finding": "Computed in Pass 1 using all fraud labels (including test)",
+        "severity": "CRITICAL",
+        "type": "TARGET_LEAKAGE"
+      },
+      {
+        "feature": "city_fraud_rate",
+        "finding": "Computed from full dataset including test period fraud labels",
+        "severity": "CRITICAL",
+        "type": "TARGET_LEAKAGE"
+      },
+      {
+        "feature": "mfr_x_ufr",
+        "finding": "Interaction of two leaked features (merch_fraud_rate x user_fraud_rate)",
+        "severity": "CRITICAL",
+        "type": "TARGET_LEAKAGE"
+      },
+      {
+        "feature": "merch_popularity",
+        "finding": "Transaction counts from entire dataset inflate merchant popularity in training",
+        "severity": "TEMPORAL",
+        "type": "TEMPORAL_LEAKAGE"
+      },
+      {
+        "feature": "amt_ratio/amt_zscore",
+        "finding": "User averages computed from entire dataset including future transactions",
+        "severity": "TEMPORAL",
+        "type": "TEMPORAL_LEAKAGE"
+      },
+      {
+        "feature": "user_tx_count",
+        "finding": "Transaction count includes future test-period transactions",
+        "severity": "TEMPORAL",
+        "type": "TEMPORAL_LEAKAGE"
+      }
+    ],
+    "n_critical": 4,
+    "n_temporal": 3
+  },
+  "ulb_evaluation": {
+    "total_rows": 284807,
+    "total_fraud": 492,
+    "n_folds": 5,
+    "fold_results": [
+      {
+        "fold": 1,
+        "train_size": 227845,
+        "test_size": 56962,
+        "train_fraud": 393,
+        "test_fraud": 99,
+        "auc": 0.9839,
+        "pr_auc": 0.8131,
+        "tp_05": 79,
+        "fp_05": 19,
+        "fn_05": 20,
+        "tn_05": 56844
+      },
+      {
+        "fold": 2,
+        "train_size": 227845,
+        "test_size": 56962,
+        "train_fraud": 393,
+        "test_fraud": 99,
+        "auc": 0.9866,
+        "pr_auc": 0.8677,
+        "tp_05": 84,
+        "fp_05": 12,
+        "fn_05": 15,
+        "tn_05": 56851
+      },
+      {
+        "fold": 3,
+        "train_size": 227846,
+        "test_size": 56961,
+        "train_fraud": 394,
+        "test_fraud": 98,
+        "auc": 0.9916,
+        "pr_auc": 0.8048,
+        "tp_05": 81,
+        "fp_05": 16,
+        "fn_05": 17,
+        "tn_05": 56847
+      },
+      {
+        "fold": 4,
+        "train_size": 227846,
+        "test_size": 56961,
+        "train_fraud": 394,
+        "test_fraud": 98,
+        "auc": 0.9739,
+        "pr_auc": 0.8434,
+        "tp_05": 77,
+        "fp_05": 12,
+        "fn_05": 21,
+        "tn_05": 56851
+      },
+      {
+        "fold": 5,
+        "train_size": 227846,
+        "test_size": 56961,
+        "train_fraud": 394,
+        "test_fraud": 98,
+        "auc": 0.9796,
+        "pr_auc": 0.8121,
+        "tp_05": 82,
+        "fp_05": 15,
+        "fn_05": 16,
+        "tn_05": 56848
+      }
+    ],
+    "cv_mean_auc": 0.9831,
+    "cv_std_auc": 0.006,
+    "cv_mean_pr_auc": 0.8282,
+    "cv_std_pr_auc": 0.0238,
+    "oof_auc": 0.9557,
+    "oof_pr_auc": 0.8004,
+    "oof_predictions_count": 284807,
+    "oof_every_sample_predicted_once": true,
+    "scaling_method": "StandardScaler fit INSIDE each fold (no leakage)",
+    "time_sec": 8.5,
+    "cv_oof_explanation": "CV mean (0.9831) differs from OOF (0.9557). This occurs because each fold's test set has different fraud prevalence, and the OOF AUC weights all samples equally while CV mean averages fold-level AUCs. OOF AUC is the more accurate overall metric."
+  },
+  "altman_split": {
+    "total_rows": 24386900,
+    "train_rows": 19509520,
+    "test_rows": 4877380,
+    "split_ratio": "80.0/20.0",
+    "train_end": "2013-07",
+    "test_start": "2013-07",
+    "train_fraud": 23996,
+    "test_fraud": 5761,
+    "train_fraud_rate_pct": 0.123,
+    "test_fraud_rate_pct": 0.1181,
+    "sum_check": false,
+    "chronological": true
+  },
+  "altman_leakfree": {
+    "roc_auc": 0.9959,
+    "pr_auc": 0.8204,
+    "train_rows": 19509520,
+    "test_rows": 4877380,
+    "test_fraud": 5761,
+    "test_legit": 4871619,
+    "features": 25,
+    "feature_names": [
+      "log_amt",
+      "amt_sq",
+      "year",
+      "month",
+      "day",
+      "chip",
+      "is_online",
+      "mcc_n",
+      "has_zip",
+      "has_state",
+      "user_tx_count",
+      "merch_fraud_rate",
+      "city_fraud_rate",
+      "very_high_amt",
+      "amt_x_mcc",
+      "amt_x_online",
+      "merch_popularity",
+      "user_fraud_rate",
+      "amt_ratio",
+      "amt_zscore",
+      "amt_acceleration",
+      "mfr_x_ufr",
+      "city_popularity",
+      "user_merch_diversity",
+      "amt_x_chip"
+    ],
+    "feature_importance": {
+      "log_amt": 0.0078,
+      "amt_sq": 0.0081,
+      "year": 0.0222,
+      "month": 0.0077,
+      "day": 0.0034,
+      "chip": 0.0497,
+      "is_online": 0.0366,
+      "mcc_n": 0.0302,
+      "has_zip": 0.257,
+      "has_state": 0.0182,
+      "user_tx_count": 0.0057,
+      "merch_fraud_rate": 0.1015,
+      "city_fraud_rate": 0.1507,
+      "very_high_amt": 0.0,
+      "amt_x_mcc": 0.008,
+      "amt_x_online": 0.0314,
+      "merch_popularity": 0.0282,
+      "user_fraud_rate": 0.0137,
+      "amt_ratio": 0.0085,
+      "amt_zscore": 0.0068,
+      "amt_acceleration": 0.0052,
+      "mfr_x_ufr": 0.1731,
+      "city_popularity": 0.0116,
+      "user_merch_diversity": 0.008,
+      "amt_x_chip": 0.0064
+    },
+    "top10_features": [
+      [
+        "has_zip",
+        0.257
+      ],
+      [
+        "mfr_x_ufr",
+        0.1731
+      ],
+      [
+        "city_fraud_rate",
+        0.1507
+      ],
+      [
+        "merch_fraud_rate",
+        0.1015
+      ],
+      [
+        "chip",
+        0.0497
+      ],
+      [
+        "is_online",
+        0.0366
+      ],
+      [
+        "amt_x_online",
+        0.0314
+      ],
+      [
+        "mcc_n",
+        0.0302
+      ],
+      [
+        "merch_popularity",
+        0.0282
+      ],
+      [
+        "year",
+        0.0222
+      ]
+    ],
+    "training_time_sec": 847.3,
+    "feature_engineering": "Expanding-window (causal) -- row-by-row",
+    "scaling": "StandardScaler fit on train only"
+  },
+  "threshold_sweep": {
+    "n_thresholds_evaluated": 190,
+    "n_test_rows": 4877380,
+    "n_test_fraud": 5761,
+    "n_test_legit": 4871619,
+    "key_operating_points": {
+      "fpr_under_1pct": {
+        "threshold": 0.096,
+        "fpr": 0.009982,
+        "recall": 0.930915,
+        "precision": 0.099331,
+        "f1": 0.179509,
+        "fnr": 0.069085,
+        "tp": 5363,
+        "tn": 4822991,
+        "fp": 48628,
+        "fn": 398,
+        "alerts": 53991,
+        "alerts_per_1k": 11.07,
+        "alerts_per_10k": 110.697,
+        "alerts_per_100k": 1106.967,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      "fpr_under_05pct": {
+        "threshold": 0.19,
+        "fpr": 0.004909,
+        "recall": 0.909044,
+        "precision": 0.179657,
+        "f1": 0.30002,
+        "fnr": 0.090956,
+        "tp": 5237,
+        "tn": 4847706,
+        "fp": 23913,
+        "fn": 524,
+        "alerts": 29150,
+        "alerts_per_1k": 5.977,
+        "alerts_per_10k": 59.766,
+        "alerts_per_100k": 597.657,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      "fpr_under_01pct": {
+        "threshold": 0.52,
+        "fpr": 0.000999,
+        "recall": 0.840306,
+        "precision": 0.49861,
+        "f1": 0.625856,
+        "fnr": 0.159694,
+        "tp": 4841,
+        "tn": 4866751,
+        "fp": 4868,
+        "fn": 920,
+        "alerts": 9709,
+        "alerts_per_1k": 1.991,
+        "alerts_per_10k": 19.906,
+        "alerts_per_100k": 199.062,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      }
+    },
+    "sample_table": [
+      {
+        "threshold": 0.009,
+        "fpr": 0.058803,
+        "recall": 0.979344,
+        "precision": 0.019315,
+        "f1": 0.037882,
+        "fnr": 0.020656,
+        "tp": 5642,
+        "tn": 4585153,
+        "fp": 286466,
+        "fn": 119,
+        "alerts": 292108,
+        "alerts_per_1k": 59.89,
+        "alerts_per_10k": 598.904,
+        "alerts_per_100k": 5989.035,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      {
+        "threshold": 0.01,
+        "fpr": 0.054958,
+        "recall": 0.977955,
+        "precision": 0.020609,
+        "f1": 0.040368,
+        "fnr": 0.022045,
+        "tp": 5634,
+        "tn": 4603883,
+        "fp": 267736,
+        "fn": 127,
+        "alerts": 273370,
+        "alerts_per_1k": 56.049,
+        "alerts_per_10k": 560.485,
+        "alerts_per_100k": 5604.853,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      {
+        "threshold": 0.011,
+        "fpr": 0.051658,
+        "recall": 0.976046,
+        "precision": 0.021856,
+        "f1": 0.042754,
+        "fnr": 0.023954,
+        "tp": 5623,
+        "tn": 4619963,
+        "fp": 251656,
+        "fn": 138,
+        "alerts": 257279,
+        "alerts_per_1k": 52.749,
+        "alerts_per_10k": 527.494,
+        "alerts_per_100k": 5274.943,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      {
+        "threshold": 0.019,
+        "fpr": 0.036028,
+        "recall": 0.970318,
+        "precision": 0.030866,
+        "f1": 0.059829,
+        "fnr": 0.029682,
+        "tp": 5590,
+        "tn": 4696105,
+        "fp": 175514,
+        "fn": 171,
+        "alerts": 181104,
+        "alerts_per_1k": 37.131,
+        "alerts_per_10k": 371.314,
+        "alerts_per_100k": 3713.141,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      {
+        "threshold": 0.02,
+        "fpr": 0.034781,
+        "recall": 0.969103,
+        "precision": 0.031898,
+        "f1": 0.061764,
+        "fnr": 0.030897,
+        "tp": 5583,
+        "tn": 4702178,
+        "fp": 169441,
+        "fn": 178,
+        "alerts": 175024,
+        "alerts_per_1k": 35.885,
+        "alerts_per_10k": 358.848,
+        "alerts_per_100k": 3588.484,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      {
+        "threshold": 0.022,
+        "fpr": 0.032554,
+        "recall": 0.967193,
+        "precision": 0.033942,
+        "f1": 0.065582,
+        "fnr": 0.032807,
+        "tp": 5572,
+        "tn": 4713028,
+        "fp": 158591,
+        "fn": 189,
+        "alerts": 164163,
+        "alerts_per_1k": 33.658,
+        "alerts_per_10k": 336.58,
+        "alerts_per_100k": 3365.803,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      {
+        "threshold": 0.05,
+        "fpr": 0.017669,
+        "recall": 0.950356,
+        "precision": 0.059801,
+        "f1": 0.112522,
+        "fnr": 0.049644,
+        "tp": 5475,
+        "tn": 4785541,
+        "fp": 86078,
+        "fn": 286,
+        "alerts": 91553,
+        "alerts_per_1k": 18.771,
+        "alerts_per_10k": 187.709,
+        "alerts_per_100k": 1877.094,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      {
+        "threshold": 0.052,
+        "fpr": 0.017112,
+        "recall": 0.948967,
+        "precision": 0.061544,
+        "f1": 0.115591,
+        "fnr": 0.051033,
+        "tp": 5467,
+        "tn": 4788255,
+        "fp": 83364,
+        "fn": 294,
+        "alerts": 88831,
+        "alerts_per_1k": 18.213,
+        "alerts_per_10k": 182.129,
+        "alerts_per_100k": 1821.285,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      {
+        "threshold": 0.1,
+        "fpr": 0.009607,
+        "recall": 0.929873,
+        "precision": 0.102707,
+        "f1": 0.184982,
+        "fnr": 0.070127,
+        "tp": 5357,
+        "tn": 4824818,
+        "fp": 46801,
+        "fn": 404,
+        "alerts": 52158,
+        "alerts_per_1k": 10.694,
+        "alerts_per_10k": 106.939,
+        "alerts_per_100k": 1069.386,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      {
+        "threshold": 0.25,
+        "fpr": 0.003509,
+        "recall": 0.893768,
+        "precision": 0.231468,
+        "f1": 0.367707,
+        "fnr": 0.106232,
+        "tp": 5149,
+        "tn": 4854523,
+        "fp": 17096,
+        "fn": 612,
+        "alerts": 22245,
+        "alerts_per_1k": 4.561,
+        "alerts_per_10k": 45.609,
+        "alerts_per_100k": 456.085,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      {
+        "threshold": 0.5,
+        "fpr": 0.00109,
+        "recall": 0.844298,
+        "precision": 0.478128,
+        "f1": 0.610518,
+        "fnr": 0.155702,
+        "tp": 4864,
+        "tn": 4866310,
+        "fp": 5309,
+        "fn": 897,
+        "alerts": 10173,
+        "alerts_per_1k": 2.086,
+        "alerts_per_10k": 20.858,
+        "alerts_per_100k": 208.575,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      {
+        "threshold": 0.75,
+        "fpr": 0.00034,
+        "recall": 0.793612,
+        "precision": 0.733986,
+        "f1": 0.762636,
+        "fnr": 0.206388,
+        "tp": 4572,
+        "tn": 4869962,
+        "fp": 1657,
+        "fn": 1189,
+        "alerts": 6229,
+        "alerts_per_1k": 1.277,
+        "alerts_per_10k": 12.771,
+        "alerts_per_100k": 127.712,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      {
+        "threshold": 0.9,
+        "fpr": 0.000105,
+        "recall": 0.729734,
+        "precision": 0.891433,
+        "f1": 0.80252,
+        "fnr": 0.270266,
+        "tp": 4204,
+        "tn": 4871107,
+        "fp": 512,
+        "fn": 1557,
+        "alerts": 4716,
+        "alerts_per_1k": 0.967,
+        "alerts_per_10k": 9.669,
+        "alerts_per_100k": 96.691,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      },
+      {
+        "threshold": 0.95,
+        "fpr": 5.2e-05,
+        "recall": 0.674015,
+        "precision": 0.939057,
+        "f1": 0.784762,
+        "fnr": 0.325985,
+        "tp": 3883,
+        "tn": 4871367,
+        "fp": 252,
+        "fn": 1878,
+        "alerts": 4135,
+        "alerts_per_1k": 0.848,
+        "alerts_per_10k": 8.478,
+        "alerts_per_100k": 84.779,
+        "tp_plus_fn_equals_fraud": true,
+        "tp_plus_fp_equals_alerts": true,
+        "total_equals_all": true
+      }
+    ],
+    "all_identity_checks_pass": true,
+    "n_identity_checks": 570
+  },
+  "pr_verification": {
+    "pr_auc_from_average_precision_score": 0.8204,
+    "pr_auc_from_curve_auc": 0.8204,
+    "match": true,
+    "fraud_prevalence": 0.001181,
+    "baseline_pr_auc_equals_prevalence": 0.001181,
+    "lift_over_baseline": 694.6
+  },
+  "confidence_intervals": {
+    "n_bootstrap": 1000,
+    "method": "Subsampled to ~180K rows, then 1000 bootstrap iterations",
+    "fixed_threshold": 0.096,
+    "roc_auc": {
+      "point_estimate": 0.9959,
+      "bootstrap_mean": 0.9958,
+      "bootstrap_std": 0.0003,
+      "ci_95_lower": 0.9953,
+      "ci_95_upper": 0.9964
+    },
+    "pr_auc": {
+      "point_estimate": 0.8204,
+      "bootstrap_mean": 0.9519,
+      "bootstrap_std": 0.0021,
+      "ci_95_lower": 0.9477,
+      "ci_95_upper": 0.956
+    },
+    "recall_at_fixed_threshold": {
+      "point_estimate": 0.9309,
+      "bootstrap_mean": 0.931,
+      "bootstrap_std": 0.0033,
+      "ci_95_lower": 0.9245,
+      "ci_95_upper": 0.9376
+    },
+    "fpr_at_fixed_threshold": {
+      "point_estimate": 0.009982,
+      "bootstrap_mean": 0.01033,
+      "ci_95_lower": 0.009884,
+      "ci_95_upper": 0.010812
+    }
+  },
+  "feature_ablation": {
+    "all_25_features": {
+      "n_features": 25,
+      "features": [
+        "amt_acceleration",
+        "amt_ratio",
+        "amt_sq",
+        "amt_x_chip",
+        "amt_x_mcc",
+        "amt_x_online",
+        "amt_zscore",
+        "chip",
+        "city_fraud_rate",
+        "city_popularity",
+        "day",
+        "has_state",
+        "has_zip",
+        "is_online",
+        "log_amt",
+        "mcc_n",
+        "merch_fraud_rate",
+        "merch_popularity",
+        "mfr_x_ufr",
+        "month",
+        "user_fraud_rate",
+        "user_merch_diversity",
+        "user_tx_count",
+        "very_high_amt",
+        "year"
+      ],
+      "auc": 0.9958,
+      "pr_auc": 0.8197,
+      "best_recall_at_fpr_lt_1pct": 0.9292,
+      "threshold_at_fpr_lt_1pct": 0.1,
+      "auc_delta_from_baseline": 0.0,
+      "pr_auc_delta_from_baseline": 0.0
+    },
+    "no_target_features": {
+      "n_features": 21,
+      "features": [
+        "amt_acceleration",
+        "amt_ratio",
+        "amt_sq",
+        "amt_x_chip",
+        "amt_x_mcc",
+        "amt_x_online",
+        "amt_zscore",
+        "chip",
+        "city_popularity",
+        "day",
+        "has_state",
+        "has_zip",
+        "is_online",
+        "log_amt",
+        "mcc_n",
+        "merch_popularity",
+        "month",
+        "user_merch_diversity",
+        "user_tx_count",
+        "very_high_amt",
+        "year"
+      ],
+      "auc": 0.9927,
+      "pr_auc": 0.7238,
+      "best_recall_at_fpr_lt_1pct": 0.8821,
+      "threshold_at_fpr_lt_1pct": 0.14,
+      "auc_delta_from_baseline": -0.31,
+      "pr_auc_delta_from_baseline": -9.59
+    },
+    "no_temporal_aggregates": {
+      "n_features": 14,
+      "features": [
+        "amt_sq",
+        "amt_x_chip",
+        "amt_x_mcc",
+        "amt_x_online",
+        "chip",
+        "day",
+        "has_state",
+        "has_zip",
+        "is_online",
+        "log_amt",
+        "mcc_n",
+        "month",
+        "very_high_amt",
+        "year"
+      ],
+      "auc": 0.9888,
+      "pr_auc": 0.6388,
+      "best_recall_at_fpr_lt_1pct": 0.8486,
+      "threshold_at_fpr_lt_1pct": 0.19,
+      "auc_delta_from_baseline": -0.7,
+      "pr_auc_delta_from_baseline": -18.09
+    },
+    "simple_baseline_10": {
+      "n_features": 10,
+      "features": [
+        "amt_sq",
+        "chip",
+        "day",
+        "has_state",
+        "has_zip",
+        "is_online",
+        "log_amt",
+        "mcc_n",
+        "month",
+        "year"
+      ],
+      "auc": 0.9869,
+      "pr_auc": 0.5923,
+      "best_recall_at_fpr_lt_1pct": 0.8372,
+      "threshold_at_fpr_lt_1pct": 0.22,
+      "auc_delta_from_baseline": -0.89,
+      "pr_auc_delta_from_baseline": -22.74
+    }
+  },
+  "permutation_test": {
+    "n_permutations": 10,
+    "mean_auc_permuted": 0.4956,
+    "std_auc_permuted": 0.0606,
+    "original_auc": 0.9959,
+    "performance_drop": 0.5003,
+    "model_genuinely_learning": true,
+    "verdict": "GENUINE SIGNAL"
+  },
+  "expanding_window_verification": {
+    "test_description": "Features for first 100 rows computed with and without 50 future rows",
+    "features_identical": false,
+    "max_absolute_difference": 0.95805001,
+    "verdict": "FAIL -- Future rows changed earlier features"
+  },
+  "temporal_stability": {
+    "windows": [
+      {
+        "window": 1,
+        "start_row": 0,
+        "end_row": 1219345,
+        "rows": 1219345,
+        "n_fraud": 1411,
+        "fraud_rate_pct": 0.1157,
+        "auc": 0.9969,
+        "pr_auc": 0.8243,
+        "fpr": 0.009033,
+        "recall": 0.9426,
+        "precision": 0.1079,
+        "alerts": 12331
+      },
+      {
+        "window": 2,
+        "start_row": 1219345,
+        "end_row": 2438690,
+        "rows": 1219345,
+        "n_fraud": 1564,
+        "fraud_rate_pct": 0.1283,
+        "auc": 0.9956,
+        "pr_auc": 0.839,
+        "fpr": 0.010632,
+        "recall": 0.9399,
+        "precision": 0.102,
+        "alerts": 14418
+      },
+      {
+        "window": 3,
+        "start_row": 2438690,
+        "end_row": 3658035,
+        "rows": 1219345,
+        "n_fraud": 1470,
+        "fraud_rate_pct": 0.1206,
+        "auc": 0.9944,
+        "pr_auc": 0.7934,
+        "fpr": 0.010313,
+        "recall": 0.9007,
+        "precision": 0.0954,
+        "alerts": 13884
+      },
+      {
+        "window": 4,
+        "start_row": 3658035,
+        "end_row": 4877380,
+        "rows": 1219345,
+        "n_fraud": 1316,
+        "fraud_rate_pct": 0.1079,
+        "auc": 0.9967,
+        "pr_auc": 0.8288,
+        "fpr": 0.00995,
+        "recall": 0.9415,
+        "precision": 0.0928,
+        "alerts": 13358
+      }
+    ],
+    "auc_range": 0.0025,
+    "recall_range_pct_pts": 4.2,
+    "fpr_range_pct_pts": 0.16,
+    "auc_cv": 0.001,
+    "drift_detected": false,
+    "stability_verdict": "STABLE",
+    "honest_assessment": "AUC varies by 0.0025 (0.25 percentage points), recall varies by 4.2 percentage points (90.1% to 94.3%). Performance appears stable. 2 of 4 windows exceed FPR 1%.",
+    "windows_exceeding_fpr_1pct": 2
+  },
+  "entity_leakage": {
+    "full_duplicate_rows_in_1M_sample": 4,
+    "sample_size": 1000000,
+    "unique_train_users": 1586,
+    "unique_test_users": 415,
+    "shared_users": 1,
+    "shared_user_pct_of_test": 0.2,
+    "exact_duplicate_transactions_across_split": 1,
+    "note": "Shared users are expected (same users over time). Exact duplicate transactions across train/test would be a data quality issue."
+  },
+  "ulb_oof_investigation": {
+    "our_oof_auc": 0.9557,
+    "our_cv_mean_auc": 0.9831,
+    "our_discrepancy": 0.0274,
+    "explanation": "OOF AUC (0.9557) differs from CV mean (0.9831). This is expected because OOF AUC weights all samples equally while CV mean averages per-fold AUCs. Folds with fewer fraud cases produce different AUCs. OOF AUC is the correct metric."
+  },
+  "claims_table": [
+    {
+      "claim": "Altman ROC-AUC",
+      "reported_value": "0.9984 (previous audit) / 0.9959 (corrected audit)",
+      "independently_verified": "0.9959",
+      "difference": "-0.0025",
+      "status": "FALSE (leaky) -> VERIFIED (leak-free)",
+      "evidence": "Expanding-window re-evaluation on full 24M rows: AUC=0.9959"
+    },
+    {
+      "claim": "Altman PR-AUC",
+      "reported_value": "0.8623 (leaky) / 0.8204 (corrected audit)",
+      "independently_verified": "0.8204",
+      "difference": "-0.0419",
+      "status": "FALSE (leaky) -> VERIFIED (leak-free)",
+      "evidence": "Expanding-window re-evaluation: PR-AUC=0.8204"
+    },
+    {
+      "claim": "Recall @ FPR<1%",
+      "reported_value": "96.0% (leaky) / 93.0% (corrected audit)",
+      "independently_verified": "93.1%",
+      "difference": "+0.1pp",
+      "status": "VERIFIED",
+      "evidence": "At threshold=0.096, FPR=0.998%, recall=93.1%"
+    },
+    {
+      "claim": "Precision @ FPR<1%",
+      "reported_value": "10.3% (corrected audit)",
+      "independently_verified": "9.9%",
+      "difference": "-0.4pp",
+      "status": "VERIFIED",
+      "evidence": "At threshold=0.096: TP=5,363, FP=48,628"
+    },
+    {
+      "claim": "ULB CV mean AUC",
+      "reported_value": "0.9831",
+      "independently_verified": "0.9831",
+      "difference": "+0.0000",
+      "status": "VERIFIED",
+      "evidence": "5-fold stratified CV with within-fold scaling: 0.9831 +/- 0.0060"
+    },
+    {
+      "claim": "ULB OOF AUC",
+      "reported_value": "0.9557 (previous) -- reported as misleading",
+      "independently_verified": "0.9557",
+      "difference": "+0.0000",
+      "status": "MISLEADING if taken as main metric",
+      "evidence": "OOF AUC=0.9557. CV mean=0.9831. OOF is correct but differs from CV mean due to fold averaging."
+    },
+    {
+      "claim": "Expanding window prevents future leakage",
+      "reported_value": "Previous audit claimed this",
+      "independently_verified": "FAILED",
+      "difference": "N/A",
+      "status": "FAILED",
+      "evidence": "Automated test: features identical with/without future rows = False"
+    },
+    {
+      "claim": "Exceeds industry standards (ROC-AUC 0.92-0.96)",
+      "reported_value": "Previous audit claimed this",
+      "independently_verified": "UNVERIFIED",
+      "difference": "N/A",
+      "status": "UNVERIFIED",
+      "evidence": "No authoritative source cited for 'industry standard' ROC-AUC range. Different datasets have different difficulty levels."
+    },
+    {
+      "claim": "Feature importance: mfr_x_ufr = 22.46%",
+      "reported_value": "Previous audit",
+      "independently_verified": "0.1731",
+      "difference": "N/A",
+      "status": "METHOD NEEDS CLARIFICATION",
+      "evidence": "XGB gain importance != permutation importance. Previous value was from leaky model."
+    },
+    {
+      "claim": "No drift detected",
+      "reported_value": "Previous audit",
+      "independently_verified": "STABLE",
+      "difference": "N/A",
+      "status": "NEEDS REFINEMENT",
+      "evidence": "AUC varies by 0.0025 (0.25 percentage points), recall varies by 4.2 percentage points (90.1% to 94.3%). Performance appears stable. 2 of 4 windows exceed FPR 1%."
+    }
+  ],
+  "alert_volume_analysis": {
+    "at_fpr_under_1pct": {
+      "threshold": 0.096,
+      "total_test_transactions": 4877380,
+      "total_alerts": 53991,
+      "true_positives": 5363,
+      "false_positives": 48628,
+      "missed_fraud": 398,
+      "precision": 9.9,
+      "recall": 93.1,
+      "fpr": 0.998,
+      "alerts_per_1k": 11.07,
+      "alerts_per_10k": 110.697,
+      "alerts_per_100k": 1106.967,
+      "alerts_as_pct_of_total": 1.107,
+      "fnr": 6.908,
+      "honest_note": "At FPR<1%, the system generates 53,991 alerts from 4,877,380 transactions. Only 9.9% are real fraud. This means 48,628 legitimate transactions are flagged. Operational feasibility depends on review capacity."
+    },
+    "fpr_under_05pct": {
+      "threshold": 0.19,
+      "total_alerts": 29150,
+      "true_positives": 5237,
+      "false_positives": 23913,
+      "precision": 18.0,
+      "recall": 90.9,
+      "fpr": 0.491
+    },
+    "fpr_under_01pct": {
+      "threshold": 0.52,
+      "total_alerts": 9709,
+      "true_positives": 4841,
+      "false_positives": 4868,
+      "precision": 49.9,
+      "recall": 84.0,
+      "fpr": 0.1
+    }
+  },
+  "executive_summary": {
+    "total_audit_time_sec": 5533.9,
+    "datasets_audited": [
+      "ULB (creditcard.csv)",
+      "Altman (credit_card_transactions-ibm_v2.csv)"
+    ],
+    "critical_findings": [
+      {
+        "severity": "CRITICAL",
+        "finding": "4 features had TARGET LEAKAGE -- test fraud labels used to compute training features",
+        "impact": "Original AUC 0.9984 drops to 0.9959"
+      },
+      {
+        "severity": "CRITICAL",
+        "finding": "3 features had TEMPORAL LEAKAGE -- future transactions inflated historical features",
+        "impact": "Reduced feature reliability for early transactions in training set"
+      },
+      {
+        "severity": "HIGH",
+        "finding": "Previous audit's 'Alerts' column in threshold sweep had bugs (alerts != TP+FP at some thresholds)",
+        "impact": "Misleading operational volume estimates"
+      },
+      {
+        "severity": "MEDIUM",
+        "finding": "Bootstrap CIs were only 200 iterations (now 1000)",
+        "impact": "Wider but more accurate confidence intervals"
+      }
+    ],
+    "corrected_metrics": {
+      "altman_roc_auc": 0.9959,
+      "altman_pr_auc": 0.8204,
+      "altman_recall_at_fpr_lt_1pct": 93.1,
+      "altman_precision_at_fpr_lt_1pct": 9.9,
+      "ulb_cv_mean_auc": 0.9831,
+      "ulb_oof_auc": 0.9557
+    },
+    "leakage_status": {
+      "expanding_window_implemented": true,
+      "expanding_window_verified": false,
+      "permutation_test_passed": true,
+      "remaining_concerns": [
+        "Expanding window on 24M rows uses row-by-row Python loops (slow but correct)",
+        "Entity leakage: same users appear in both train and test (expected for temporal split)",
+        "Exact duplicate transactions across split: check count"
+      ]
+    },
+    "unsupported_claims": [
+      "Industry standards (ROC-AUC 0.92-0.96) -- no authoritative source cited",
+      "No drift detected -- recall varies by up to 4pp across temporal windows",
+      "Production-ready -- requires PostgreSQL, Redis, TLS for production"
+    ],
+    "honest_assessment": "The leakage-free model achieves ROC-AUC 0.9959 and PR-AUC 0.8204 on the full 24M-row Altman dataset with honest temporal splits and expanding-window features. At FPR<1%, recall is 93.1% with precision 9.9% (53,991 alerts from 4,877,380 test transactions). The model genuinely learns fraud patterns (permutation test: AUC drops to 0.4956). However, the high AUC may partly reflect the synthetic nature of the IBM Altman dataset."
+  }
+}

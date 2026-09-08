@@ -1,0 +1,297 @@
+{
+  "C_merchant_aware": {
+    "strategy": "C_merchant_aware",
+    "fixed_pop": {
+      "P1": {
+        "threshold": 0.023481,
+        "overall": {
+          "recall": 0.9901,
+          "fpr": 0.1591,
+          "tp": 3796,
+          "fp": 27150,
+          "n_fraud": 3834,
+          "n_legit": 170696
+        },
+        "seen": {
+          "recall": 0.9901,
+          "fpr": 0.1532,
+          "tp": 3605,
+          "fp": 25809,
+          "n_fraud": 3641,
+          "n_legit": 168414
+        },
+        "absent5": {
+          "recall": 0.9896,
+          "fpr": 0.5876,
+          "tp": 191,
+          "fp": 1341,
+          "n_fraud": 193,
+          "n_legit": 2282
+        }
+      },
+      "P2": {
+        "threshold": 0.010268,
+        "overall": {
+          "recall": 0.995,
+          "fpr": 0.2495,
+          "tp": 3815,
+          "fp": 42596,
+          "n_fraud": 3834,
+          "n_legit": 170696
+        },
+        "seen": {
+          "recall": 0.9948,
+          "fpr": 0.2435,
+          "tp": 3622,
+          "fp": 41013,
+          "n_fraud": 3641,
+          "n_legit": 168414
+        },
+        "absent5": {
+          "recall": 1.0,
+          "fpr": 0.6937,
+          "tp": 193,
+          "fp": 1583,
+          "n_fraud": 193,
+          "n_legit": 2282
+        }
+      }
+    }
+  },
+  "cov_10": {
+    "strategy": "cov_10",
+    "fixed_pop": {
+      "P1": {
+        "threshold": 0.108683,
+        "overall": {
+          "recall": 0.9901,
+          "fpr": 0.0885,
+          "tp": 3796,
+          "fp": 15104,
+          "n_fraud": 3834,
+          "n_legit": 170696
+        },
+        "seen": {
+          "recall": 0.9901,
+          "fpr": 0.0817,
+          "tp": 3605,
+          "fp": 13757,
+          "n_fraud": 3641,
+          "n_legit": 168414
+        },
+        "absent5": {
+          "recall": 0.9896,
+          "fpr": 0.5903,
+          "tp": 191,
+          "fp": 1347,
+          "n_fraud": 193,
+          "n_legit": 2282
+        }
+      },
+      "P2": {
+        "threshold": 0.046286,
+        "overall": {
+          "recall": 0.995,
+          "fpr": 0.1263,
+          "tp": 3815,
+          "fp": 21553,
+          "n_fraud": 3834,
+          "n_legit": 170696
+        },
+        "seen": {
+          "recall": 0.9948,
+          "fpr": 0.118,
+          "tp": 3622,
+          "fp": 19877,
+          "n_fraud": 3641,
+          "n_legit": 168414
+        },
+        "absent5": {
+          "recall": 1.0,
+          "fpr": 0.7344,
+          "tp": 193,
+          "fp": 1676,
+          "n_fraud": 193,
+          "n_legit": 2282
+        }
+      }
+    }
+  },
+  "cov_20": {
+    "strategy": "cov_20",
+    "fixed_pop": {
+      "P1": {
+        "threshold": 0.248991,
+        "overall": {
+          "recall": 0.9901,
+          "fpr": 0.0974,
+          "tp": 3796,
+          "fp": 16633,
+          "n_fraud": 3834,
+          "n_legit": 170696
+        },
+        "seen": {
+          "recall": 0.9904,
+          "fpr": 0.0913,
+          "tp": 3606,
+          "fp": 15374,
+          "n_fraud": 3641,
+          "n_legit": 168414
+        },
+        "absent5": {
+          "recall": 0.9845,
+          "fpr": 0.5517,
+          "tp": 190,
+          "fp": 1259,
+          "n_fraud": 193,
+          "n_legit": 2282
+        }
+      },
+      "P2": {
+        "threshold": 0.134751,
+        "overall": {
+          "recall": 0.995,
+          "fpr": 0.1396,
+          "tp": 3815,
+          "fp": 23821,
+          "n_fraud": 3834,
+          "n_legit": 170696
+        },
+        "seen": {
+          "recall": 0.9956,
+          "fpr": 0.1322,
+          "tp": 3625,
+          "fp": 22265,
+          "n_fraud": 3641,
+          "n_legit": 168414
+        },
+        "absent5": {
+          "recall": 0.9845,
+          "fpr": 0.6819,
+          "tp": 190,
+          "fp": 1556,
+          "n_fraud": 193,
+          "n_legit": 2282
+        }
+      }
+    }
+  },
+  "cov_40": {
+    "strategy": "cov_40",
+    "fixed_pop": {
+      "P1": {
+        "threshold": 0.243194,
+        "overall": {
+          "recall": 0.9901,
+          "fpr": 0.1478,
+          "tp": 3796,
+          "fp": 25224,
+          "n_fraud": 3834,
+          "n_legit": 170696
+        },
+        "seen": {
+          "recall": 0.9923,
+          "fpr": 0.1416,
+          "tp": 3613,
+          "fp": 23841,
+          "n_fraud": 3641,
+          "n_legit": 168414
+        },
+        "absent5": {
+          "recall": 0.9482,
+          "fpr": 0.606,
+          "tp": 183,
+          "fp": 1383,
+          "n_fraud": 193,
+          "n_legit": 2282
+        }
+      },
+      "P2": {
+        "threshold": 0.137226,
+        "overall": {
+          "recall": 0.995,
+          "fpr": 0.2357,
+          "tp": 3815,
+          "fp": 40229,
+          "n_fraud": 3834,
+          "n_legit": 170696
+        },
+        "seen": {
+          "recall": 0.9956,
+          "fpr": 0.2285,
+          "tp": 3625,
+          "fp": 38488,
+          "n_fraud": 3641,
+          "n_legit": 168414
+        },
+        "absent5": {
+          "recall": 0.9845,
+          "fpr": 0.7629,
+          "tp": 190,
+          "fp": 1741,
+          "n_fraud": 193,
+          "n_legit": 2282
+        }
+      }
+    }
+  },
+  "cov_5": {
+    "strategy": "cov_5",
+    "fixed_pop": {
+      "P1": {
+        "threshold": 0.083003,
+        "overall": {
+          "recall": 0.9901,
+          "fpr": 0.0669,
+          "tp": 3796,
+          "fp": 11424,
+          "n_fraud": 3834,
+          "n_legit": 170696
+        },
+        "seen": {
+          "recall": 0.9901,
+          "fpr": 0.0592,
+          "tp": 3605,
+          "fp": 9972,
+          "n_fraud": 3641,
+          "n_legit": 168414
+        },
+        "absent5": {
+          "recall": 0.9896,
+          "fpr": 0.6363,
+          "tp": 191,
+          "fp": 1452,
+          "n_fraud": 193,
+          "n_legit": 2282
+        }
+      },
+      "P2": {
+        "threshold": 0.030247,
+        "overall": {
+          "recall": 0.995,
+          "fpr": 0.1051,
+          "tp": 3815,
+          "fp": 17934,
+          "n_fraud": 3834,
+          "n_legit": 170696
+        },
+        "seen": {
+          "recall": 0.9948,
+          "fpr": 0.0958,
+          "tp": 3622,
+          "fp": 16140,
+          "n_fraud": 3641,
+          "n_legit": 168414
+        },
+        "absent5": {
+          "recall": 1.0,
+          "fpr": 0.7862,
+          "tp": 193,
+          "fp": 1794,
+          "n_fraud": 193,
+          "n_legit": 2282
+        }
+      }
+    }
+  }
+}

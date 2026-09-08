@@ -1,0 +1,33 @@
+{
+  "title": "PS-14 Full Code Audit Report",
+  "generated": "2026-08-27T21:21:53.931381",
+  "classification": "Research prototype - NOT production-ready",
+  "honest_summary": {
+    "regression_tests": "18/18 PASS",
+    "penetration_tests": "42/42 PASS (all executed, none blocked)",
+    "security_scan_score": "MISLEADING (100/100 based on findings, not coverage)",
+    "independent_bandit": "0 HIGH, 1 MEDIUM (false positive), 23 LOW",
+    "test_coverage": "69.4% (17/62 security tests NOT_RUN)",
+    "pass_rate_of_executed": "94.6% (42/44 pass or partial)",
+    "claims_verified": 19,
+    "claims_partially_verified": 6,
+    "claims_unsupported": 5,
+    "claims_false": 1,
+    "do_not_claim": 8
+  },
+  "security_controls": {
+    "jwt_authentication": "VERIFIED",
+    "sql_injection_prevention": "PARTIALLY_VERIFIED",
+    "pii_in_features": "VERIFIED",
+    "pii_in_scores": "VERIFIED",
+    "pii_in_audit": "VERIFIED",
+    "fail_safe_ml": "VERIFIED",
+    "rate_limiting": "PARTIALLY_VERIFIED",
+    "session_management": "UNSUPPORTED (process-local)",
+    "tls_https": "NOT_APPLICABLE (HTTP only)",
+    "tamper_proof_audit": "FALSE (tamper-EVIDENT only)",
+    "industry_grade": "UNSUPPORTED",
+    "enterprise_ready": "UNSUPPORTED",
+    "production_ready": "UNSUPPORTED"
+  }
+}

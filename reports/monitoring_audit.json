@@ -1,0 +1,637 @@
+{
+  "check": 29,
+  "generated_at": "2026-09-03 20:20:59",
+  "sections": {
+    "A_wiring": {
+      "runtime_detector_baseline_path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\models\\data\\drift_baseline.json",
+      "runtime_baseline_exists": false,
+      "drift_monitor_default_path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\data\\drift_baseline.json",
+      "offline_baseline_exists": true,
+      "runtime_detector_armed": false,
+      "finding": "risk_engine/main.py loads models/data/drift_baseline.json; that file/dir does not exist -> DriftDetector(baseline_path =missing) is a NO-OP passthrough, so the deployed service has NO drift fallback armed. The only baseline that exists (data/drift_baseline.json) sits in a path the service never reads.",
+      "offline_baseline_meta": {
+        "n_events": 9759,
+        "date_min": "2025-06-01 09:16:17.076152736",
+        "date_max": "2025-12-09 12:32:16.060145223",
+        "features": [
+          "amount_ratio",
+          "txn_freq_last_24h",
+          "txn_time_unusual",
+          "new_device_flag",
+          "unusual_location_flag",
+          "unusual_recipient_flag",
+          "failed_auth_count_24h",
+          "days_since_last_similar_txn",
+          "gradual_escalation_score",
+          "known_device_count",
+          "account_tenure_days",
+          "hour_of_day",
+          "is_weekend"
+        ],
+        "bins": 10,
+        "built_at": "2026-08-16T07:52:56+00:00"
+      }
+    },
+    "B_data_quality": {
+      "n_rows": 199,
+      "missing_rates": {
+        "amount_ratio": 0.0,
+        "txn_freq_last_24h": 0.0,
+        "txn_time_unusual": 0.0,
+        "new_device_flag": 0.0,
+        "unusual_location_flag": 0.0,
+        "unusual_recipient_flag": 0.0,
+        "failed_auth_count_24h": 0.0,
+        "days_since_last_similar_txn": 0.0,
+        "gradual_escalation_score": 0.0,
+        "known_device_count": 0.0,
+        "account_tenure_days": 0.0,
+        "hour_of_day": 0.0,
+        "is_weekend": 0.0,
+        "shared_device_accounts": 0.0,
+        "shared_recipient_accounts": 0.0,
+        "mule_ring_score": 0.0,
+        "hour_deviation": 0.0,
+        "amount_zscore": 0.0,
+        "velocity_deviation": 0.0,
+        "recipient_novelty": 0.0,
+        "txn_regularity": 0.0
+      },
+      "features_any_missing": [],
+      "duplicate_event_ids": 0,
+      "invalid_value_counts": {},
+      "timestamp_anomaly_note": "created_at monotone by construction of the query; backdated events (demo ageing) are intentional; a production monitor must flag |ts - ingest| > horizon \u2014 no source ts is persisted, so real-time lag is UNVERIFIED from DB-2 alone",
+      "unique_tokens": {
+        "devices": 3,
+        "locations": 5,
+        "recipients": 4
+      },
+      "known_token_reference_note": "no persisted 'known at deploy' token registry -> novel-token rate not computable retrospectively; monitor must snapshot on first boot",
+      "schema_columns": [
+        "event_id",
+        "fraud_id",
+        "amount_ratio",
+        "txn_amount_bucket",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "hour_of_day",
+        "is_weekend",
+        "shared_device_accounts",
+        "shared_recipient_accounts",
+        "mule_ring_score",
+        "hour_deviation",
+        "amount_zscore",
+        "velocity_deviation",
+        "recipient_novelty",
+        "txn_regularity",
+        "baseline_committed",
+        "device_hash",
+        "location_id",
+        "recipient_id",
+        "created_at"
+      ]
+    },
+    "C_feature_drift": {
+      "psi_vs_recorded_baseline": {
+        "amount_ratio": 0.0012,
+        "txn_freq_last_24h": 4.8586,
+        "txn_time_unusual": 0.0,
+        "new_device_flag": 0.0,
+        "unusual_location_flag": 0.0,
+        "unusual_recipient_flag": 0.0,
+        "failed_auth_count_24h": 0.0,
+        "days_since_last_similar_txn": 13.106,
+        "gradual_escalation_score": 0.0662,
+        "known_device_count": 11.4629,
+        "account_tenure_days": 0.0,
+        "hour_of_day": 14.0894,
+        "is_weekend": 0.0
+      },
+      "max_psi": 14.0894,
+      "features_warning_plus": {
+        "txn_freq_last_24h": 4.8586,
+        "days_since_last_similar_txn": 13.106,
+        "known_device_count": 11.4629,
+        "hour_of_day": 14.0894
+      },
+      "features_critical": {
+        "txn_freq_last_24h": 4.8586,
+        "days_since_last_similar_txn": 13.106,
+        "known_device_count": 11.4629,
+        "hour_of_day": 14.0894
+      },
+      "live_quantiles": {
+        "amount_ratio": {
+          "mean": 325.879397,
+          "median": 350.0,
+          "p90": 510.0,
+          "p99": 550.0,
+          "min": 100.0,
+          "max": 550.0
+        },
+        "txn_freq_last_24h": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "txn_time_unusual": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "new_device_flag": {
+          "mean": 1.0,
+          "median": 1.0,
+          "p90": 1.0,
+          "p99": 1.0,
+          "min": 1.0,
+          "max": 1.0
+        },
+        "unusual_location_flag": {
+          "mean": 0.79397,
+          "median": 1.0,
+          "p90": 1.0,
+          "p99": 1.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "unusual_recipient_flag": {
+          "mean": 0.748744,
+          "median": 1.0,
+          "p90": 1.0,
+          "p99": 1.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "failed_auth_count_24h": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "days_since_last_similar_txn": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "gradual_escalation_score": {
+          "mean": 0.091347,
+          "median": 0.0,
+          "p90": 0.2796,
+          "p99": 0.504436,
+          "min": 0.0,
+          "max": 0.6082
+        },
+        "known_device_count": {
+          "mean": 2.0,
+          "median": 2.0,
+          "p90": 2.0,
+          "p99": 2.0,
+          "min": 2.0,
+          "max": 2.0
+        },
+        "account_tenure_days": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "hour_of_day": {
+          "mean": 12.0,
+          "median": 12.0,
+          "p90": 12.0,
+          "p99": 12.0,
+          "min": 12.0,
+          "max": 12.0
+        },
+        "is_weekend": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "shared_device_accounts": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "shared_recipient_accounts": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "mule_ring_score": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "hour_deviation": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "amount_zscore": {
+          "mean": 3.0,
+          "median": 3.0,
+          "p90": 3.0,
+          "p99": 3.0,
+          "min": 3.0,
+          "max": 3.0
+        },
+        "velocity_deviation": {
+          "mean": 0.0,
+          "median": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "recipient_novelty": {
+          "mean": 0.748744,
+          "median": 1.0,
+          "p90": 1.0,
+          "p99": 1.0,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "txn_regularity": {
+          "mean": 0.5,
+          "median": 0.5,
+          "p90": 0.5,
+          "p99": 0.5,
+          "min": 0.5,
+          "max": 0.5
+        }
+      },
+      "missingness_change": "reference stores no missing rate -> change UNVERIFIED",
+      "runtime_baseline_built_from_db2": {
+        "n_samples": 199,
+        "n_features": 21,
+        "note": "this is the baseline the runtime detector needs but does not have; built from the 199-row DB-2 population (small-n caveat: histogram bins are coarse)"
+      }
+    },
+    "D_score_drift": {
+      "n_scores": 574,
+      "risk_score": {
+        "mean": 10.660279,
+        "median": 1.0,
+        "p90": 16.0,
+        "p99": 80.0,
+        "min": 1.0,
+        "max": 80.0
+      },
+      "ml_score": {
+        "mean": 0.062747,
+        "median": 0.0095,
+        "p90": 0.158,
+        "p99": 0.1833,
+        "min": 0.0095,
+        "max": 0.1833
+      },
+      "high_band_alert_rate": 0.0697,
+      "high_band_count": 40,
+      "alert_volume_per_1000": 69.7,
+      "hourly_alert_rates": {
+        "10": 0.201,
+        "13": 0.0
+      },
+      "note": "rows predate the current artifacts (2026-08-29..30); 7.0% high-band rate vs the <1% FPR budget is an alert-volume finding on this era and would trigger the threshold monitor"
+    },
+    "E_threshold_monitor": {
+      "band_threshold_85_pct_above": 0.0,
+      "ml_0_007_recall_gate_pct_above": 1.0,
+      "budget": {
+        "fpr_cap": 0.01,
+        "note": "FPR<1% band budget from checks #19/#13"
+      }
+    },
+    "F_delayed_label_monitor": {
+      "verified_outcomes_available": 0,
+      "risk_scores_have_label_column": false,
+      "observed_metrics": "NONE \u2014 no confirmed labels exist in the local stores (verification_outcomes=0, no label column on risk_scores); live precision/recall/FPR/PR-AUC/calibration are NOT-YET-OBSERVABLE (labels arrive only after human verification).",
+      "monitor_design": "label horizon = verification resolution time; rows < horizon from 'now' are excluded from observed metrics and counted as pending",
+      "capability_test": {
+        "n_simulated": 2000,
+        "n_observed_after_horizon": 1513,
+        "fraud_rate_observed": 0.2148,
+        "roc_auc_observed": 0.5884,
+        "pr_auc_observed": 0.3175,
+        "n_pending_unlabeled": 487,
+        "note": "capability test only \u2014 simulated labels with a 7-day horizon; live equivalents are NOT-YET-OBSERVABLE because no confirmed labels exist locally",
+        "decision_point_97pct": {
+          "threshold": 0.2525,
+          "tp": 19,
+          "fp": 28,
+          "tn": 1160,
+          "fn": 306,
+          "recall": 0.0585,
+          "fpr": 0.0236,
+          "precision": 0.4043
+        }
+      }
+    },
+    "G_segment_monitor": {
+      "note": "DB-2 (features, 199 rows) and DB-3 (risk_scores, 574 rows) are separate stores from different eras with no shared join window in the local demo state -> segment x score join not possible on real data; segment monitor below runs on the risk-score side by feature proxies persisted there (none) \u2014 capability demonstrated on simulated labeled batch per segment instead",
+      "simulated_segment_capability": {
+        "night_hours_0_3": {
+          "n": 340,
+          "fraud_rate": 0.2794,
+          "mean_score": 0.0623
+        },
+        "new_device": {
+          "n": 383,
+          "fraud_rate": 0.3969,
+          "mean_score": 0.2442
+        },
+        "high_amount": {
+          "n": 546,
+          "fraud_rate": 0.2967,
+          "mean_score": 0.0611
+        },
+        "combo_newdev_night": {
+          "n": 66,
+          "fraud_rate": 0.4848,
+          "mean_score": 0.2365
+        }
+      }
+    },
+    "H_injection_tests": {
+      "reference": {
+        "source": "data/transactions.csv",
+        "n_samples": 200000,
+        "constant_features_skipped": [
+          "new_device_flag",
+          "unusual_location_flag",
+          "failed_auth_count_24h",
+          "known_device_count",
+          "shared_device_accounts",
+          "shared_recipient_accounts",
+          "mule_ring_score"
+        ]
+      },
+      "normal_stream_after_420": {
+        "state": "normal",
+        "max_psi": 0.0307,
+        "should_fallback": false
+      },
+      "drift_stream": [
+        {
+          "after": 520,
+          "state": "critical",
+          "max_psi": 0.2533
+        },
+        {
+          "after": 620,
+          "state": "critical",
+          "max_psi": 0.8526
+        },
+        {
+          "after": 720,
+          "state": "critical",
+          "max_psi": 1.7717
+        }
+      ],
+      "drift_final": {
+        "state": "critical",
+        "should_fallback": true,
+        "max_psi": 1.7717
+      },
+      "missingness_all_absent": {
+        "state": "critical",
+        "max_psi": 14.9454,
+        "detected": true,
+        "finding": "0-fill substitution is caught only INCIDENTALLY when 0 falls outside reference bins (here days_since_last_similar_txn etc. explode); where 0 is a legitimate in-range value the outage is indistinguishable from normal traffic"
+      },
+      "attack_wave_on_constant_features": {
+        "state": "normal",
+        "max_psi": 0.0399,
+        "detected": false,
+        "constant_skipped_features": [
+          "new_device_flag",
+          "unusual_location_flag",
+          "failed_auth_count_24h",
+          "known_device_count",
+          "shared_device_accounts",
+          "shared_recipient_accounts",
+          "mule_ring_score"
+        ],
+        "finding": "PSI never measures constant-marked features: an attack wave that only flips new_device/unusual_location/failed_auth/known_device/mule-ring reads NORMAL. The reference itself is blind to the domain's own attack flags (the generator produced zero variance on them). A DQ/categorical channel is required."
+      },
+      "dq_missing_rate_monitor": {
+        "row_missing_rate": 1.0,
+        "dq_threshold": 0.5,
+        "dq_alert": true,
+        "flag_attack_rate": 1.0,
+        "flag_threshold": 0.1,
+        "flag_alert": true
+      },
+      "live_db2_vs_training_reference": {
+        "state": "critical",
+        "max_psi": 13.901,
+        "finding": "stored live rows (legacy era) are CRITICALLY drifted vs the training-domain reference \u2014 if armed, the monitor would pause ML on current stored traffic. Baseline must match the deployed model's training distribution, which itself is UNVERIFIED (checks #16/#21/#27)"
+      },
+      "staleness_guard": {
+        "detector_state_without_guard": "normal",
+        "guard_assessment": {
+          "status": "UNKNOWN (insufficient data)",
+          "healthy": false
+        },
+        "finding": "the raw detector reports state=normal with 1 event and no recent data \u2014 monitoring must never report healthy from silence; the freshness guard above is the required wrapper (UNKNOWN until >=30 events and <24h fresh)"
+      }
+    },
+    "I_alerts": [
+      {
+        "what": "Runtime drift fallback unarmed (no baseline at models/data/)",
+        "magnitude": "detector no-op on every request",
+        "population": "all scored transactions",
+        "detected_at": "2026-09-03 20:21:06",
+        "recommended_action": "wire models/data/drift_baseline.json (or fix path) so CRITICAL drift can pause ML",
+        "status": "CRITICAL"
+      },
+      {
+        "what": "Alert volume above budget",
+        "magnitude": "7.0% high-band vs <1% budget",
+        "population": "Aug 2026 era scores (n=574)",
+        "detected_at": "2026-09-03 20:21:06",
+        "recommended_action": "threshold review / re-segment by era",
+        "status": "WARNING"
+      },
+      {
+        "what": "Live features drift vs recorded baseline",
+        "magnitude": "max PSI 14.09 (warn 0.1)",
+        "population": "txn_freq_last_24h, days_since_last_similar_txn, known_device_count, hour_of_day",
+        "detected_at": "2026-09-03 20:21:06",
+        "recommended_action": "investigate distribution shift / rebuild baseline",
+        "status": "CRITICAL"
+      },
+      {
+        "what": "Monitoring failure test",
+        "magnitude": "100% missing-feature outage reads NORMAL on PSI",
+        "population": "all features",
+        "detected_at": "2026-09-03 20:21:06",
+        "recommended_action": "add DQ missing-rate channel + staleness guard",
+        "status": "CRITICAL"
+      },
+      {
+        "what": "Delayed labels",
+        "magnitude": "0 confirmed outcomes in store",
+        "population": "all verified transactions",
+        "detected_at": "2026-09-03 20:21:06",
+        "recommended_action": "label latency monitor active once verification flows (design ready, nothing observable yet)",
+        "status": "WARNING"
+      }
+    ],
+    "J_table": [
+      {
+        "metric": "PSI:amount_ratio",
+        "baseline": "recorded bins",
+        "current": "0.0012",
+        "change": "live-vs-recorded 0.0012",
+        "threshold": "warn 0.1 / crit 0.25",
+        "status": "NORMAL"
+      },
+      {
+        "metric": "PSI:txn_freq_last_24h",
+        "baseline": "recorded bins",
+        "current": "4.8586",
+        "change": "live-vs-recorded 4.8586",
+        "threshold": "warn 0.1 / crit 0.25",
+        "status": "CRITICAL"
+      },
+      {
+        "metric": "PSI:txn_time_unusual",
+        "baseline": "recorded bins",
+        "current": "0.0000",
+        "change": "live-vs-recorded 0.0000",
+        "threshold": "warn 0.1 / crit 0.25",
+        "status": "NORMAL"
+      },
+      {
+        "metric": "PSI:new_device_flag",
+        "baseline": "recorded bins",
+        "current": "0.0000",
+        "change": "live-vs-recorded 0.0000",
+        "threshold": "warn 0.1 / crit 0.25",
+        "status": "NORMAL"
+      },
+      {
+        "metric": "PSI:unusual_location_flag",
+        "baseline": "recorded bins",
+        "current": "0.0000",
+        "change": "live-vs-recorded 0.0000",
+        "threshold": "warn 0.1 / crit 0.25",
+        "status": "NORMAL"
+      },
+      {
+        "metric": "PSI:unusual_recipient_flag",
+        "baseline": "recorded bins",
+        "current": "0.0000",
+        "change": "live-vs-recorded 0.0000",
+        "threshold": "warn 0.1 / crit 0.25",
+        "status": "NORMAL"
+      },
+      {
+        "metric": "PSI:failed_auth_count_24h",
+        "baseline": "recorded bins",
+        "current": "0.0000",
+        "change": "live-vs-recorded 0.0000",
+        "threshold": "warn 0.1 / crit 0.25",
+        "status": "NORMAL"
+      },
+      {
+        "metric": "PSI:days_since_last_similar_txn",
+        "baseline": "recorded bins",
+        "current": "13.1060",
+        "change": "live-vs-recorded 13.1060",
+        "threshold": "warn 0.1 / crit 0.25",
+        "status": "CRITICAL"
+      },
+      {
+        "metric": "PSI:gradual_escalation_score",
+        "baseline": "recorded bins",
+        "current": "0.0662",
+        "change": "live-vs-recorded 0.0662",
+        "threshold": "warn 0.1 / crit 0.25",
+        "status": "NORMAL"
+      },
+      {
+        "metric": "PSI:known_device_count",
+        "baseline": "recorded bins",
+        "current": "11.4629",
+        "change": "live-vs-recorded 11.4629",
+        "threshold": "warn 0.1 / crit 0.25",
+        "status": "CRITICAL"
+      },
+      {
+        "metric": "PSI:account_tenure_days",
+        "baseline": "recorded bins",
+        "current": "0.0000",
+        "change": "live-vs-recorded 0.0000",
+        "threshold": "warn 0.1 / crit 0.25",
+        "status": "NORMAL"
+      },
+      {
+        "metric": "PSI:hour_of_day",
+        "baseline": "recorded bins",
+        "current": "14.0894",
+        "change": "live-vs-recorded 14.0894",
+        "threshold": "warn 0.1 / crit 0.25",
+        "status": "CRITICAL"
+      },
+      {
+        "metric": "PSI:is_weekend",
+        "baseline": "recorded bins",
+        "current": "0.0000",
+        "change": "live-vs-recorded 0.0000",
+        "threshold": "warn 0.1 / crit 0.25",
+        "status": "NORMAL"
+      }
+    ],
+    "K_verdict": {
+      "monitor_wiring": "FAIL (runtime drift unarmed; path mismatch)",
+      "dq_monitor": "PASS on stored data (gaps: token registry, real-time ts)",
+      "feature_drift_tested": true,
+      "score_drift_tested": true,
+      "threshold_monitor_tested": true,
+      "delayed_label_monitor": "DESIGNED + capability-tested; live metrics NOT-YET-OBSERVABLE (0 confirmed labels)",
+      "segment_monitor": "CAPABILITY on simulated batch; real join blocked by DB-era split",
+      "injection_tests": "normal stays normal (PSI 0.03); structural drift -> CRITICAL + should_fallback (PSI 1.77); attack wave on constant-marked features INVISIBLE (PSI 0.04); 0-fill outage caught only incidentally; staleness guard proven",
+      "overall": "PARTIAL"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "dataset": "ULB",
+  "n_rows": 284807,
+  "n_features": 95,
+  "train_rows": 227845,
+  "test_rows": 56962,
+  "n_fraud_test": 98,
+  "method": "weighted",
+  "best_weights": {
+    "xgb": 0.6,
+    "lgb": 0.1,
+    "rf": 0.25,
+    "lr": 0.05
+  },
+  "individual_test_aucs": {
+    "xgb": 0.974941,
+    "lgb": 0.897689,
+    "rf": 0.973115,
+    "lr": 0.971883
+  },
+  "weighted_auc": 0.978525,
+  "metrics": {
+    "roc_auc": 0.978525,
+    "pr_auc": 0.87933,
+    "brier": 0.000655,
+    "r1": 0.897959,
+    "r05": 0.897959,
+    "r01": 0.887755,
+    "f1": 0.871508
+  },
+  "elapsed_s": 153,
+  "ts": "2026-08-28T18:49:34Z"
+}

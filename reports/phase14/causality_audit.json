@@ -1,0 +1,9 @@
+{
+  "strict_temporal_ordering": true,
+  "future_perturbation": "PASS",
+  "no_future_rows_in_feature_construction": true,
+  "no_current_row_label_in_features": true,
+  "no_2016_2017_labels_in_training": true,
+  "status": "PASS",
+  "cert_time_utc": "2026-09-08T09:47:39Z"
+}

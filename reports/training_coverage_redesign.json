@@ -1,0 +1,653 @@
+{
+  "mission": "Phase-5 training-coverage redesign & causal merchant history",
+  "control": {
+    "model": "altman_native_E_hardneg_cert_20260904",
+    "threshold": 0.018758,
+    "deployed": true,
+    "untouched": true
+  },
+  "integrity_fix": {
+    "bug": "_merchant_volume.npz was built by hashing str((name, year)) TUPLES instead of the merchant name - its 99,602 codes lived in a different hash space than every frame's merchant_id and were validated wrong (code 65721 = 228 rows in table vs 1.13M in file).",
+    "fix": "cs_merch_volume.py corrected to hash the merchant name; table rebuilt (63,288 codes x 30 years, 53s) and validated against awk ground truth and _merchant_table.npz (identical sorted code sets).",
+    "corrected_universe": {
+      "name_hash_codes": 63288,
+      "pre2016_active": 57882,
+      "full_corpus_legit_pre2016": 17151218
+    },
+    "impact": "5% pool coverage is 47.0% of active merchants (not 27.6%); 53.0% absent (not ~31%). Taxonomy re-derived: 12.2% of absent legit val rows genuinely new (not ~2%); D bucket 423->7 (misalignment artifact). CS novelty features (merch_prior_*) rebuilt on the corrected table. E_hardneg (48 self-derived native features) UNAFFECTED. Coverage-simulation model metrics UNAFFECTED (they were frame-derived, never used the volume table)."
+  },
+  "corrected_coverage": {
+    "universe": {
+      "total_codes": 63288,
+      "pre2016_active": 57882,
+      "merchants_with_train_fraud": 2350,
+      "full_corpus_train_legit_rows": 17151218,
+      "full_corpus_train_fraud_rows": 21345
+    },
+    "strategies": {
+      "A_5pct": {
+        "train_merchants": 27190,
+        "merchant_coverage_pct_active": 47.0,
+        "train_rows_sampled": 879196,
+        "train_fraud_sampled": 21345,
+        "full_corpus_rows_of_present_merchants": 17003564,
+        "full_corpus_fraud_of_present_merchants": 21345,
+        "txn_coverage_pct": 99.0,
+        "fraud_coverage_pct": 100.0,
+        "legit_coverage_pct": 99.0
+      },
+      "B_10pct": {
+        "train_merchants": 33632,
+        "merchant_coverage_pct_active": 58.1,
+        "train_rows_sampled": 1736255,
+        "train_fraud_sampled": 21345,
+        "full_corpus_rows_of_present_merchants": 17081149,
+        "full_corpus_fraud_of_present_merchants": 21345,
+        "txn_coverage_pct": 99.5,
+        "fraud_coverage_pct": 100.0,
+        "legit_coverage_pct": 99.5
+      },
+      "B_20pct": {
+        "train_merchants": 40920,
+        "merchant_coverage_pct_active": 70.7,
+        "train_rows_sampled": 3449530,
+        "train_fraud_sampled": 21345,
+        "full_corpus_rows_of_present_merchants": 17129075,
+        "full_corpus_fraud_of_present_merchants": 21345,
+        "txn_coverage_pct": 99.7,
+        "fraud_coverage_pct": 100.0,
+        "legit_coverage_pct": 99.7
+      },
+      "B_40pct": {
+        "train_merchants": 48462,
+        "merchant_coverage_pct_active": 83.7,
+        "train_rows_sampled": 6879384,
+        "train_fraud_sampled": 21345,
+        "full_corpus_rows_of_present_merchants": 17156301,
+        "full_corpus_fraud_of_present_merchants": 21345,
+        "txn_coverage_pct": 99.9,
+        "fraud_coverage_pct": 100.0,
+        "legit_coverage_pct": 99.9
+      },
+      "C_merchant_aware": {
+        "train_merchants": 57882,
+        "merchant_coverage_pct_active": 100.0,
+        "train_rows_sampled": 2330695,
+        "train_fraud_sampled": 21345,
+        "full_corpus_rows_of_present_merchants": 17172563,
+        "full_corpus_fraud_of_present_merchants": 21345,
+        "txn_coverage_pct": 100.0,
+        "fraud_coverage_pct": 100.0,
+        "legit_coverage_pct": 100.0
+      }
+    },
+    "absence_expectation": [
+      {
+        "coverage": 0.05,
+        "pct": 5,
+        "E_absent_merchant_frac": 0.5453,
+        "E_absent_legit_txn_frac": 0.0101
+      },
+      {
+        "coverage": 0.1,
+        "pct": 10,
+        "E_absent_merchant_frac": 0.4284,
+        "E_absent_legit_txn_frac": 0.0054
+      },
+      {
+        "coverage": 0.2,
+        "pct": 20,
+        "E_absent_merchant_frac": 0.2995,
+        "E_absent_legit_txn_frac": 0.0026
+      },
+      {
+        "coverage": 0.4,
+        "pct": 40,
+        "E_absent_merchant_frac": 0.1659,
+        "E_absent_legit_txn_frac": 0.001
+      },
+      {
+        "coverage": 0.6,
+        "pct": 60,
+        "E_absent_merchant_frac": 0.0899,
+        "E_absent_legit_txn_frac": 0.0004
+      },
+      {
+        "coverage": 0.8,
+        "pct": 80,
+        "E_absent_merchant_frac": 0.0383,
+        "E_absent_legit_txn_frac": 0.0001
+      },
+      {
+        "coverage": 1.0,
+        "pct": 100,
+        "E_absent_merchant_frac": 0.0,
+        "E_absent_legit_txn_frac": 0.0
+      }
+    ],
+    "val_absent_taxonomy": {
+      "A_truly_new": {
+        "rows": 329,
+        "fraud": 50
+      },
+      "B_established_absent_low": {
+        "rows": 748,
+        "fraud": 93
+      },
+      "B_established_absent": {
+        "rows": 879,
+        "fraud": 36
+      },
+      "C_low_history_absent": {
+        "rows": 512,
+        "fraud": 14
+      },
+      "D_well_observed_absent": {
+        "rows": 7,
+        "fraud": 0
+      }
+    },
+    "test_absent_taxonomy": {
+      "A_truly_new": {
+        "rows": 397,
+        "fraud": 28
+      },
+      "B_established_absent_low": {
+        "rows": 1129,
+        "fraud": 164
+      },
+      "B_established_absent": {
+        "rows": 1056,
+        "fraud": 81
+      },
+      "C_low_history_absent": {
+        "rows": 541,
+        "fraud": 0
+      },
+      "D_well_observed_absent": {
+        "rows": 10,
+        "fraud": 0
+      }
+    },
+    "val_absent_legit": {
+      "established": 2003,
+      "truly_new": 279
+    }
+  },
+  "strategy_C": {
+    "frame": {
+      "rows": 2330695,
+      "fraud": 21345,
+      "merchants": 57882,
+      "sampling": "all fraud + per-merchant legit cap 200 (L<=200 all kept, L>200 w.p. 200/L) keyed on full-corpus pre-2016 legit volume; TRAIN-ONLY; seed 42"
+    },
+    "merchant_coverage": {
+      "5pct_pool": 27190,
+      "C_pool": 57882,
+      "active_universe": 57882
+    },
+    "fixed_pop_val": {
+      "auc": 0.9868,
+      "pr_auc": 0.7446,
+      "P1": {
+        "threshold": 0.023481,
+        "recall": 0.9901,
+        "fpr": 0.1591,
+        "overall": {
+          "recall": 0.9901,
+          "fpr": 0.1591,
+          "tp": 3796,
+          "fp": 27150,
+          "n_fraud": 3834,
+          "n_legit": 170696
+        },
+        "seen": {
+          "recall": 0.9901,
+          "fpr": 0.1532,
+          "tp": 3605,
+          "fp": 25809,
+          "n_fraud": 3641,
+          "n_legit": 168414
+        },
+        "absent5": {
+          "recall": 0.9896,
+          "fpr": 0.5876,
+          "tp": 191,
+          "fp": 1341,
+          "n_fraud": 193,
+          "n_legit": 2282
+        }
+      },
+      "P2": {
+        "threshold": 0.010268,
+        "recall": 0.995,
+        "fpr": 0.2495,
+        "overall": {
+          "recall": 0.995,
+          "fpr": 0.2495,
+          "tp": 3815,
+          "fp": 42596,
+          "n_fraud": 3834,
+          "n_legit": 170696
+        },
+        "seen": {
+          "recall": 0.9948,
+          "fpr": 0.2435,
+          "tp": 3622,
+          "fp": 41013,
+          "n_fraud": 3641,
+          "n_legit": 168414
+        },
+        "absent5": {
+          "recall": 1.0,
+          "fpr": 0.6937,
+          "tp": 193,
+          "fp": 1583,
+          "n_fraud": 193,
+          "n_legit": 2282
+        }
+      }
+    }
+  },
+  "fixed_population_comparison": [
+    {
+      "label": "cov_5",
+      "thr": 0.083003,
+      "overall_fpr": 0.0669,
+      "seen_fpr": 0.0592,
+      "absent_fpr": 0.6363,
+      "absent_rec": 0.9896,
+      "absent_tp": 191,
+      "absent_n_fraud": 193
+    },
+    {
+      "label": "cov_10",
+      "thr": 0.108683,
+      "overall_fpr": 0.0885,
+      "seen_fpr": 0.0817,
+      "absent_fpr": 0.5903,
+      "absent_rec": 0.9896,
+      "absent_tp": 191,
+      "absent_n_fraud": 193
+    },
+    {
+      "label": "cov_20",
+      "thr": 0.248991,
+      "overall_fpr": 0.0974,
+      "seen_fpr": 0.0913,
+      "absent_fpr": 0.5517,
+      "absent_rec": 0.9845,
+      "absent_tp": 190,
+      "absent_n_fraud": 193
+    },
+    {
+      "label": "cov_40",
+      "thr": 0.243194,
+      "overall_fpr": 0.1478,
+      "seen_fpr": 0.1416,
+      "absent_fpr": 0.606,
+      "absent_rec": 0.9482,
+      "absent_tp": 183,
+      "absent_n_fraud": 193
+    },
+    {
+      "label": "C_merchant_aware",
+      "thr": 0.023481,
+      "overall_fpr": 0.1591,
+      "seen_fpr": 0.1532,
+      "absent_fpr": 0.5876,
+      "absent_rec": 0.9896,
+      "absent_tp": 191,
+      "absent_n_fraud": 193
+    }
+  ],
+  "segments_fixed_pop": {
+    "E_hardneg_control": {
+      "channels": [
+        {
+          "segment": "chip",
+          "n": 120641,
+          "n_fraud": 527,
+          "n_legit": 120114,
+          "recall": 0.945,
+          "fpr": 0.0347,
+          "tp": 498,
+          "fp": 4164
+        },
+        {
+          "segment": "online",
+          "n": 24168,
+          "n_fraud": 3073,
+          "n_legit": 21095,
+          "recall": 0.999,
+          "fpr": 0.3024,
+          "tp": 3070,
+          "fp": 6379
+        },
+        {
+          "segment": "swipe",
+          "n": 29721,
+          "n_fraud": 234,
+          "n_legit": 29487,
+          "recall": 0.9744,
+          "fpr": 0.0525,
+          "tp": 228,
+          "fp": 1547
+        },
+        {
+          "segment": "other",
+          "n": 0,
+          "n_fraud": 0,
+          "n_legit": 0,
+          "recall": null,
+          "fpr": null,
+          "tp": 0,
+          "fp": 0
+        }
+      ],
+      "volume_buckets": [
+        {
+          "segment": "v0 (new)",
+          "n": 340,
+          "n_fraud": 55,
+          "n_legit": 285,
+          "recall": 0.9818,
+          "fpr": 0.6175,
+          "tp": 54,
+          "fp": 176
+        },
+        {
+          "segment": "1-5",
+          "n": 908,
+          "n_fraud": 123,
+          "n_legit": 785,
+          "recall": 1.0,
+          "fpr": 0.5898,
+          "tp": 123,
+          "fp": 463
+        },
+        {
+          "segment": "6-20",
+          "n": 1675,
+          "n_fraud": 69,
+          "n_legit": 1606,
+          "recall": 1.0,
+          "fpr": 0.5106,
+          "tp": 69,
+          "fp": 820
+        },
+        {
+          "segment": "21-100",
+          "n": 5664,
+          "n_fraud": 157,
+          "n_legit": 5507,
+          "recall": 0.9682,
+          "fpr": 0.2094,
+          "tp": 152,
+          "fp": 1153
+        },
+        {
+          "segment": "101-1k",
+          "n": 25120,
+          "n_fraud": 303,
+          "n_legit": 24817,
+          "recall": 0.9736,
+          "fpr": 0.052,
+          "tp": 295,
+          "fp": 1291
+        },
+        {
+          "segment": "1k+",
+          "n": 140823,
+          "n_fraud": 3127,
+          "n_legit": 137696,
+          "recall": 0.9923,
+          "fpr": 0.0595,
+          "tp": 3103,
+          "fp": 8187
+        }
+      ]
+    },
+    "cov_C_merchant_aware": {
+      "channels": [
+        {
+          "segment": "chip",
+          "n": 120641,
+          "n_fraud": 527,
+          "n_legit": 120114,
+          "recall": 0.9677,
+          "fpr": 0.1199,
+          "tp": 510,
+          "fp": 14400
+        },
+        {
+          "segment": "online",
+          "n": 24168,
+          "n_fraud": 3073,
+          "n_legit": 21095,
+          "recall": 0.9958,
+          "fpr": 0.338,
+          "tp": 3060,
+          "fp": 7130
+        },
+        {
+          "segment": "swipe",
+          "n": 29721,
+          "n_fraud": 234,
+          "n_legit": 29487,
+          "recall": 0.9658,
+          "fpr": 0.1906,
+          "tp": 226,
+          "fp": 5620
+        },
+        {
+          "segment": "other",
+          "n": 0,
+          "n_fraud": 0,
+          "n_legit": 0,
+          "recall": null,
+          "fpr": null,
+          "tp": 0,
+          "fp": 0
+        }
+      ],
+      "volume_buckets": [
+        {
+          "segment": "v0 (new)",
+          "n": 340,
+          "n_fraud": 55,
+          "n_legit": 285,
+          "recall": 0.9818,
+          "fpr": 0.5789,
+          "tp": 54,
+          "fp": 165
+        },
+        {
+          "segment": "1-5",
+          "n": 908,
+          "n_fraud": 123,
+          "n_legit": 785,
+          "recall": 0.9837,
+          "fpr": 0.5694,
+          "tp": 121,
+          "fp": 447
+        },
+        {
+          "segment": "6-20",
+          "n": 1675,
+          "n_fraud": 69,
+          "n_legit": 1606,
+          "recall": 1.0,
+          "fpr": 0.4944,
+          "tp": 69,
+          "fp": 794
+        },
+        {
+          "segment": "21-100",
+          "n": 5664,
+          "n_fraud": 157,
+          "n_legit": 5507,
+          "recall": 0.9682,
+          "fpr": 0.2368,
+          "tp": 152,
+          "fp": 1304
+        },
+        {
+          "segment": "101-1k",
+          "n": 25120,
+          "n_fraud": 303,
+          "n_legit": 24817,
+          "recall": 0.9769,
+          "fpr": 0.0723,
+          "tp": 296,
+          "fp": 1795
+        },
+        {
+          "segment": "1k+",
+          "n": 140823,
+          "n_fraud": 3127,
+          "n_legit": 137696,
+          "recall": 0.9926,
+          "fpr": 0.1645,
+          "tp": 3104,
+          "fp": 22645
+        }
+      ]
+    }
+  },
+  "label_latency": {
+    "report": "label_latency_status",
+    "phase": 5,
+    "mission": "PS-14 Phase-5 label-latency status: current unresolved label-availability evidence (unchanged from Phase 4 - no new evidence found)",
+    "verdict": "UNVERIFIED",
+    "dataset": {
+      "file": "data/credit_card_transactions-ibm_v2.csv",
+      "rows": 24386900,
+      "label_column": "Is Fraud? (Yes/No)",
+      "label_creation": "Assigned at generation time by the IBM synthetic generator (pre-labeled static file). No in-repo label-creation pipeline, investigation step, or confirmation timestamp exists.",
+      "label_availability_timestamp": "ABSENT - no column or metadata records when a label would become available to a real-time scorer"
+    },
+    "feature_inventory": {
+      "count_only_establishment_features": {
+        "merchant_age": "label-free; birth year from full-corpus table; causal",
+        "is_merchant_new": "label-free; age == 0",
+        "merch_prior_rows": "label-free; cumulative corpus rows in years < row year",
+        "merch_ever_seen_prior": "label-free; prior_rows > 0",
+        "status": "SAFE - usable without label-availability evidence"
+      },
+      "label_dependent_fraud_rate_features": {
+        "user_fraud_rate": "uses fraud labels (ground-truth expanding cumsum in training)",
+        "merch_fraud_rate": "uses fraud labels",
+        "city_fraud_rate": "uses fraud labels",
+        "status": "UNVERIFIED - require label-availability evidence before a deployable candidate may rely on them"
+      }
+    },
+    "training_definition": {
+      "source": "retrain_native_consistent.py build_context_and_features",
+      "semantics": "ground-truth expanding fraud counts over the sampled chronological stream (entity-level cumsum over prior rows)",
+      "label_source": "dataset Is Fraud? column (generator truth)",
+      "window": "full history before the current row (expanding)"
+    },
+    "production_definition": {
+      "source": "src/risk_engine/main.py evaluate -> background_tasks.add_task(_record_entity_rates, features, score >= 70) and _seed_entity_tracker (risk_score >= 70)",
+      "semantics": "rolling 100-event window per entity (user/merchant/city), min_events=5, baseline fallback 0.001",
+      "label_source": "PROXY - the risk engine's OWN decision (ml/score >= 70), NOT ground-truth fraud",
+      "window": "rolling 100 events (vs training expanding full history)",
+      "note": "These are different quantities even at zero label latency. The proxy labels are the model's own decisions (self-referential); confirmed-feedback labels would only enter through _record_entity_rates with is_fraud from a real investigation, which no caller currently provides."
+    },
+    "parity": "DIVERGENT - window (100-event rolling vs expanding), label source (proxy decision vs ground truth), and update mechanism all differ",
+    "empirical_exposure_gap": {
+      "user_level": {
+        "p50_days": 0.221,
+        "p90_days": 0.996,
+        "pct_lt_1d": 90.05
+      },
+      "merchant_level": {
+        "p50_days": 6.4,
+        "note": "merchant fraud -> next merchant transaction"
+      },
+      "city_level": {
+        "p50_days": 12.9,
+        "note": "city fraud -> next city transaction"
+      }
+    },
+    "minimum_required_label_delay": "UNDEFINED - the static dataset cannot establish any confirmation delay; a production deployment would need to define it (e.g., confirmed-feedback events only)",
+    "production_can_provide": "Only if confirmed-feedback labels (analyst investigation outcomes) are fed to the tracker. The current score>=70 proxy must be replaced or the three fraud-rate features dropped from any deployable redesign candidate.",
+    "consequence_for_phase5": [
+      "Ablations that keep user_fraud_rate/merch_fraud_rate/city_fraud_rate are development-only diagnostics.",
+      "Any deployable redesigned candidate must either (a) drop the 3 label-dependent fraud-rate features, (b) receive confirmed-feedback labels through the tracker, or (c) keep them with an explicit UNVERIFIED + self-referential-proxy qualification.",
+      "Label-free establishment/exposure features are the safe path and are prioritized."
+    ],
+    "recorded_at": "2026-09-04T22:20:00Z"
+  },
+  "decision_matrix": [
+    {
+      "question": "Labels available causally?",
+      "finding": "UNVERIFIED - static generator labels, no availability timestamp",
+      "evidence": "label_latency_status.json",
+      "consequence": "fraud-rate features stay UNVERIFIED; count-only features safe"
+    },
+    {
+      "question": "Corrected merchant coverage?",
+      "finding": "63,288 name-hash codes; 57,882 pre-2016 active; 5% pool = 47.0%",
+      "evidence": "merchant_coverage_manifest.json + matrix (corrected)",
+      "consequence": "coverage gap real but 5% pool is NOT as small as previously claimed"
+    },
+    {
+      "question": "Are 'unseen' merchants new?",
+      "finding": "12.2% genuinely new, 87.8% established-but-unsampled (val)",
+      "evidence": "corrected taxonomy",
+      "consequence": "coverage redesign must help BOTH; new merchants stay ~76% flagged"
+    },
+    {
+      "question": "Does greater coverage reduce absent FPR?",
+      "finding": "YES on identical rows: 0.636 -> 0.552 (cov_20) / 0.588 (C) at P1",
+      "evidence": "coverage_fixed_population.json + segments",
+      "consequence": "coverage lever CONFIRMED as primary cause"
+    },
+    {
+      "question": "Does Strategy C dominate?",
+      "finding": "NO on fixed population - overall FPR 0.159 vs 0.067 control (count-scale confound)",
+      "evidence": "coverage_fixed_population.json cov_C row",
+      "consequence": "C proves coverage mechanism but needs exposure-normalized count features (#15-16) before deployment"
+    },
+    {
+      "question": "Establishment history helps?",
+      "finding": "2-3 pts absent FPR at ~1 pt overall cost (phase-2/3); C includes full small-merchant coverage",
+      "evidence": "phase-2/3 frontier",
+      "consequence": "secondary lever, keep"
+    },
+    {
+      "question": "Is global threshold appropriate?",
+      "finding": "No - absent-code rows 74-86% flagged at all history depths",
+      "evidence": "threshold subgroups (phase 4)",
+      "consequence": "conditional thresholding is an output of the redesign, not a fix"
+    },
+    {
+      "question": "Is another model justified now?",
+      "finding": "Not yet - count-scale control (#15) must land first",
+      "evidence": "cov_C fixed-pop row",
+      "consequence": "OUTCOME B: keep E_hardneg; build exposure-normalized features next"
+    }
+  ],
+  "verdict": {
+    "control": "altman_native_E_hardneg_cert_20260904 @ 0.018758 (DEPLOYED, untouched)",
+    "strategy_C": {
+      "coverage_pct_active": 100.0,
+      "merchants": 57882,
+      "train_rows": 2330695,
+      "train_fraud": 21345,
+      "fixed_pop_auc": 0.9868,
+      "fixed_pop_pr_auc": 0.7446
+    },
+    "fixed_population_P1_absent5_fpr": {
+      "cov_5": 0.6363,
+      "cov_10": 0.5903,
+      "cov_20": 0.5517,
+      "cov_40": 0.606,
+      "C_merchant_aware": 0.5876
+    },
+    "finding": "Coverage reduces absent-merchant FPR on identical rows (0.636 -> 0.552-0.588 at 10-20%/C) BUT naive coverage scaling moves the COUNT-feature distribution away from the 5%-scale evaluation population, so seen/overall FPR rises (0.059 -> 0.09-0.15). This is the sampling-scale confound mission #15 predicted: count/velocity features encode how many rows were SAMPLED, not merchant behavior. A deployment-safe redesign therefore requires exposure-normalized / rate-based count features (#15/#16) so a model trained at one scale scores rows at any scale identically.",
+    "outcome": "OUTCOME A/B boundary - KEEP E_hardneg deployed. Strategy C PROVES the coverage lever (100% merchant coverage with 2.33M train rows) but does NOT yet dominate E_hardneg on the fixed population because count features are sampling-scale-sensitive. Next experiment (mission #15-16): exposure-aware normalization of the 20+ count/velocity features, then re-run the identical fixed-population protocol."
+  }
+}

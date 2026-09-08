@@ -1,0 +1,41 @@
+{
+  "model_version": "altman_lean_15feat_20260830_200346",
+  "model_type": "altman_xgb_lgb_cb_clean",
+  "ensemble_members": [
+    "xgb",
+    "lgb",
+    "cb"
+  ],
+  "ensemble_weights": {
+    "xgb": 0.34,
+    "lgb": 0.33,
+    "cb": 0.33
+  },
+  "n_features": 15,
+  "features": [
+    "log_amt",
+    "amt_sq",
+    "hour_cos",
+    "is_business_hours",
+    "chip",
+    "is_online",
+    "mcc_n",
+    "has_zip",
+    "has_state",
+    "merch_tx_count",
+    "merch_fraud_rate",
+    "city_fraud_rate",
+    "very_high_amt",
+    "amt_x_mcc",
+    "amt_x_online"
+  ],
+  "scaler": "scaler_production.joblib",
+  "calibrator": "models/artifacts/calibrator.joblib (Platt)",
+  "target_leakage": false,
+  "temporal_test_auc": 0.98584,
+  "temporal_test_r1": 0.0,
+  "cv_auc_mean": 0.98584,
+  "metrics_note": "AUC figures are the XGB+LGB lean-pair evaluation recorded by retrain_15feat. The CatBoost member and the combined trio have NO standalone untouched-test evaluation - see models/model_records/altman_lean_15feat_20260830_200346.json promotion.untouched_test (UNVERIFIED).",
+  "lean": false,
+  "governance_note": "Re-synced 2026-09-03 (model-release audit #28): this manifest now declares the ensemble actually served (xgb+lgb+cb at 0.34/0.33/0.33) and src/risk_engine/altman_ensemble.py reads ensemble_members + ensemble_weights from this file. Changing membership or weights here is the ONLY way to change what the engine blends; the engine ignores undeclared artifact files."
+}

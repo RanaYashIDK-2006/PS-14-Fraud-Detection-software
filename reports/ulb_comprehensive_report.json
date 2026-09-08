@@ -1,0 +1,136 @@
+{
+  "title": "ULB Credit Card Fraud Detection — Comprehensive Analysis Report",
+  "date": "2026-08-29",
+  "dataset_clarification": {
+    "fact": "The ULB creditcard.csv (284,807 rows) IS the complete dataset. There is no larger version.",
+    "source": "Université Libre de Bruxelles (ULB) / Worldline, released via Kaggle (mlg-ulb/creditcardfraud)",
+    "original_paper": "Pozzolo et al. (2015) 'Calibrating Probability with Undersampling for Unbalanced Classification'",
+    "composition": "284,807 European credit card transactions over 2 days, 492 fraud cases (0.173%)",
+    "features": "28 PCA-transformed components (V1-V28) + Time + Amount (30 total)",
+    "why_no_larger_version": "The dataset was released as a single snapshot from a 2-day period. Unlike Altman (24M rows from IBM synthetic generator) or PaySim (6.3M rows), ULB has no generator or extended version.",
+    "alternatives_explored": [
+      "Figshare CCFD_dataset: Same ULB data in xlsx format (284K rows)",
+      "Mendeley CreditTransAct: 15M rows but requires manual browser download (authentication-gated)",
+      "IEEE-CIS: ~590K rows but requires Kaggle competition credentials",
+      "No public mirror of a larger ULB credit card fraud dataset exists"
+    ]
+  },
+  "in_domain_performance": {
+    "best_cv_5fold": {
+      "method": "XGB + LGB + CatBoost stacking with 60 features (28 PCA + 8 velocity + 8 volatility + 6 interactions + 10 engineered)",
+      "auc_mean": 0.9845,
+      "auc_std": 0.0056,
+      "r1_fpr_mean": 0.9064,
+      "r1_fpr_std": 0.0139,
+      "r05_fpr_mean": 0.8822,
+      "r05_fpr_std": 0.0234,
+      "per_fold_auc": [0.9842, 0.9768, 0.9921, 0.9803, 0.9891]
+    },
+    "time_split_honest": {
+      "method": "80/20 temporal split (train on first 80% of time, test on last 20%)",
+      "auc": 0.8307,
+      "r1_fpr": 0.1250,
+      "note": "Honest temporal generalization. The significant drop from 0.984 to 0.831 shows that PCA-based fraud patterns shift over time within the 2-day window."
+    },
+    "optuna_tuned": {
+      "auc_cv_mean": 0.9831,
+      "auc_cv_std": 0.0076,
+      "r1_fpr": 0.9004,
+      "best_single_fold_auc": 0.9942,
+      "worst_single_fold_auc": 0.9715,
+      "best_single_fold_r1": 0.9293,
+      "params": {"n_estimators": 383, "max_depth": 7, "lr": 0.035, "subsample": 0.63, "colsample": 0.95, "mcw": 11, "gamma": 3.44}
+    }
+  },
+  "ceiling_analysis": {
+    "auc_ceiling": "~0.984 (5-fold CV mean)",
+    "why_99pct_unreachable": [
+      "Only 492 fraud cases total — each CV fold has ~98 fraud cases",
+      "With ~98 fraud in test, each missed case = 1% recall drop",
+      "V14 alone provides 68.5% of model importance — the fraud signal is concentrated in 1-2 PCA components",
+      "The 28 PCA features are already well-optimized (V14, V12, V10, V17 dominate)",
+      "Velocity features add ~3% AUC improvement (0.981 → 0.984) but hit diminishing returns",
+      "The remaining ~1.6% of misclassified fraud cases overlap with legitimate patterns in PCA space"
+    ],
+    "what_would_be_needed": [
+      "More fraud samples (at least 2000+) to reduce per-fold variance",
+      "Raw transaction features (not PCA-transformed) to capture richer patterns",
+      "Longer time window (>2 days) to learn temporal fraud patterns",
+      "Cross-institutional data to learn universal fraud signatures"
+    ]
+  },
+  "feature_importance_analysis": {
+    "top_features": [
+      {"rank": 1, "feature": "V14_dev", "importance": 0.3499, "type": "velocity", "concept": "rolling PCA deviation of V14"},
+      {"rank": 2, "feature": "V14xV12", "importance": 0.1751, "type": "interaction", "concept": "V14 * V12 interaction"},
+      {"rank": 3, "feature": "V14", "importance": 0.1042, "type": "raw_pca", "concept": "raw V14 component"},
+      {"rank": 4, "feature": "V14xV17", "importance": 0.0221, "type": "interaction", "concept": "V14 * V17 interaction"},
+      {"rank": 5, "feature": "V4", "importance": 0.0190, "type": "raw_pca", "concept": "raw V4 component"},
+      {"rank": 6, "feature": "V4_dev", "importance": 0.0174, "type": "velocity", "concept": "rolling PCA deviation of V4"},
+      {"rank": 7, "feature": "V12_dev", "importance": 0.0165, "type": "velocity", "concept": "rolling PCA deviation of V12"},
+      {"rank": 8, "feature": "V14xV10", "importance": 0.0162, "type": "interaction", "concept": "V14 * V10 interaction"},
+      {"rank": 9, "feature": "amount_sq", "importance": 0.0113, "type": "engineered", "concept": "amount squared"},
+      {"rank": 10, "feature": "V10_dev", "importance": 0.0110, "type": "velocity", "concept": "rolling PCA deviation of V10"}
+    ],
+    "summary": "V14 and its variants (V14_dev, V14xV12, V14xV17, V14xV10) account for 66.7% of total model importance. The fraud signal is overwhelmingly concentrated in V14."
+  },
+  "transfer_learning_results": {
+    "dann_ulb_altman": {
+      "method": "Domain-Adversarial Neural Network (PyTorch) with gradient reversal",
+      "forward_transfer": {
+        "description": "Train on ULB+Altman, test on Altman",
+        "dann_auc": 0.7453,
+        "xgb_direct_auc": 0.5912,
+        "gain": 0.1541,
+        "conclusion": "DANN provides +15.4% AUC improvement over direct transfer"
+      },
+      "reverse_transfer": {
+        "description": "Train on ULB+Altman, test on ULB",
+        "dann_auc": 0.6134,
+        "xgb_direct_auc": 0.6100,
+        "gain": 0.0034,
+        "conclusion": "Negligible improvement for reverse transfer"
+      },
+      "in_domain_baselines": {
+        "ulb_xgb": 0.7366,
+        "altman_xgb": 0.7773
+      }
+    },
+    "cross_domain_findings": {
+      "best_transfer_pair": "Altman -> ULB (shared features only): AUC 0.621",
+      "worst_transfer_pair": "PaySim -> Altman: AUC 0.367",
+      "key_insight": "Fraud detection is fundamentally system-specific. No universal fraud model exists across payment domains.",
+      "negative_transfer": "Domain-specific features (V1-V28 for ULB, merchant/city for Altman, balance for PaySim) are actively harmful when transferred."
+    }
+  },
+  "velocity_features_impact": {
+    "feature_count": 8,
+    "auc_improvement": "0.981 -> 0.984 (+0.3% AUC)",
+    "r1_improvement": "0.886 -> 0.896 (+1.0% R@1%FPR)",
+    "dominant_features": ["V14_dev (35% importance)", "V12_dev (1.7%)", "V10_dev (1.1%)", "V4_dev (1.7%)"],
+    "note": "Velocity features provide modest improvement but hit diminishing returns. The rolling PCA deviations capture temporal shifts in fraud patterns within the 2-day window."
+  },
+  "honest_assessment": {
+    "what_is_proven": [
+      "ULB achieves AUC 0.984 on5-fold CV with optimized features",
+      "R@1%FPR of 0.89-0.90 is achievable",
+      "Velocity features provide measurable improvement",
+      "DANN enables +15% forward transfer gain for ULB→Altman",
+      "The 284K dataset IS the complete ULB dataset"
+    ],
+    "what_is_NOT_proven": [
+      "99% AUC is NOT achievable on this dataset (ceiling ~0.984)",
+      "Temporal generalization is poor (time-split AUC 0.83)",
+      "Cross-domain transfer is limited (best: 0.75 AUC)",
+      "The model does not generalize beyond the 2-day window",
+      "No universal fraud detection model exists"
+    ],
+    "recommendations": [
+      "Accept that 0.984 AUC is the honest ceiling for ULB with current features",
+      "Focus on Altman (24M rows, 0.997 AUC in-domain) for production deployment",
+      "Use DANN for cross-domain adaptation when deploying to new payment systems",
+      "Collect more fraud samples (>2000) to reduce evaluation variance",
+      "Consider raw transaction features instead of PCA-transformed data"
+    ]
+  }
+}

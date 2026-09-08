@@ -1,0 +1,145 @@
+{
+  "experiments": [],
+  "in_domain": {
+    "ULB": {
+      "auc": 0.969477,
+      "r1": 0.882114,
+      "r05": 0.857724,
+      "n_features": 37
+    },
+    "Altman": {
+      "auc": 0.985592,
+      "r1": 0.821488,
+      "r05": 0.770729,
+      "n_features": 19
+    },
+    "PaySim": {
+      "auc": 0.941417,
+      "r1": 0.485595,
+      "r05": 0.401071,
+      "n_features": 16
+    }
+  },
+  "transfer_matrix": {
+    "ULB->Altman": {
+      "shared": {
+        "auc": 0.594095,
+        "r1": 0.014859,
+        "r05": 0.001351,
+        "n_features": 10
+      },
+      "shared+vel": {
+        "auc": 0.5,
+        "r1": 0.0,
+        "r05": 0.0,
+        "n_features": 15
+      },
+      "domain": {
+        "auc": 0.446991,
+        "r1": 0.010858,
+        "r05": 0.000156,
+        "n_features": 19
+      }
+    },
+    "ULB->PaySim": {
+      "shared": {
+        "auc": 0.498003,
+        "r1": 0.0,
+        "r05": 0.0,
+        "n_features": 10
+      },
+      "shared+vel": {
+        "auc": 0.5,
+        "r1": 0.0,
+        "r05": 0.0,
+        "n_features": 15
+      },
+      "domain": {
+        "auc": 0.48335,
+        "r1": 0.0,
+        "r05": 0.0,
+        "n_features": 16
+      }
+    },
+    "Altman->ULB": {
+      "shared": {
+        "auc": 0.624946,
+        "r1": 0.006098,
+        "r05": 0.004065,
+        "n_features": 10
+      },
+      "shared+vel": {
+        "auc": 0.767511,
+        "r1": 0.028455,
+        "r05": 0.01626,
+        "n_features": 15
+      },
+      "domain": {
+        "auc": 0.294333,
+        "r1": 0.0,
+        "r05": 0.0,
+        "n_features": 19
+      }
+    },
+    "Altman->PaySim": {
+      "shared": {
+        "auc": 0.519844,
+        "r1": 0.068265,
+        "r05": 0.046463,
+        "n_features": 10
+      },
+      "shared+vel": {
+        "auc": 0.461306,
+        "r1": 0.001344,
+        "r05": 0.000884,
+        "n_features": 15
+      },
+      "domain": {
+        "auc": 0.351319,
+        "r1": 0.0,
+        "r05": 0.0,
+        "n_features": 16
+      }
+    },
+    "PaySim->ULB": {
+      "shared": {
+        "auc": 0.594077,
+        "r1": 0.056911,
+        "r05": 0.038618,
+        "n_features": 10
+      },
+      "shared+vel": {
+        "auc": 0.695561,
+        "r1": 0.0,
+        "r05": 0.0,
+        "n_features": 15
+      },
+      "domain": {
+        "auc": 0.33339,
+        "r1": 0.0,
+        "r05": 0.0,
+        "n_features": 16
+      }
+    },
+    "PaySim->Altman": {
+      "shared": {
+        "auc": 0.458168,
+        "r1": 0.005715,
+        "r05": 0.002909,
+        "n_features": 10
+      },
+      "shared+vel": {
+        "auc": 0.372695,
+        "r1": 0.000935,
+        "r05": 0.000623,
+        "n_features": 15
+      },
+      "domain": {
+        "auc": 0.268588,
+        "r1": 0.021976,
+        "r05": 0.015326,
+        "n_features": 16
+      }
+    }
+  }
+}

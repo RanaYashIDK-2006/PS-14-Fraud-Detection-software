@@ -1,0 +1,80 @@
+{
+  "n_transactions": 1000,
+  "latency_mean_ms": 0.178,
+  "throughput_per_sec": 5582.0,
+  "ml_active": 1000,
+  "ml_mean_fraud": 0.0776,
+  "ml_mean_legit": 0.0792,
+  "score_separation": -0.0016,
+  "best_f1": 0.6468,
+  "best_threshold": 0.5,
+  "decisions": {
+    "block": 874,
+    "verify": 69,
+    "allow": 57
+  },
+  "status": {
+    "loaded": true,
+    "load_time_ms": 643.6,
+    "subsystems": {
+      "ml_fusion": "ready",
+      "rules": "ready",
+      "velocity_limits": "ready",
+      "ab_testing": "ready",
+      "drift_detection": "ready"
+    },
+    "drift": {
+      "drift_detector_ready": true,
+      "reference_path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\models\\production\\drift_reference.json",
+      "reference_exists": true,
+      "n_scored": 0,
+      "check_interval": 200,
+      "window_size": 500,
+      "buffer_size": 0,
+      "n_checks": 0,
+      "n_alerts": 0,
+      "last_check": null,
+      "recent_alerts": [],
+      "reference": {
+        "n_samples": 272810,
+        "n_features": 32,
+        "feature_names": [
+          "amt",
+          "log_amt",
+          "amt_sq",
+          "hr",
+          "mn",
+          "dow",
+          "Month",
+          "Day",
+          "hour_sin",
+          "hour_cos",
+          "is_night",
+          "is_business_hours",
+          "chip",
+          "is_online",
+          "err",
+          "mcc_n",
+          "user_tx_count",
+          "card_tx_count",
+          "user_avg_amt",
+          "amt_vs_user_avg",
+          "amt_zscore",
+          "merch_tx_count",
+          "has_zip",
+          "has_state",
+          "is_online_or_no_state",
+          "high_amt",
+          "very_high_amt",
+          "amt_x_hr",
+          "amt_x_mcc",
+          "amt_x_chip",
+          "amt_x_online",
+          "amt_x_night"
+        ]
+      }
+    },
+    "registered_models": 4,
+    "errors": []
+  }
+}

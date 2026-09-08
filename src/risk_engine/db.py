@@ -1,0 +1,30 @@
+"""DB-3: Risk & Model Store. Uses shared database factory."""
+
+from __future__ import annotations
+
+from sqlalchemy import Engine
+from sqlalchemy.orm import sessionmaker
+
+from src.settings import settings
+from src.shared_db import (
+    make_engine,
+    make_pg_engine,
+    make_session_local,
+    ensure_schema,
+    create_all_tables,
+)
+
+if settings.use_postgres:
+    engine = make_pg_engine(
+        settings.database_url, settings.db_schema,
+        use_pooler=settings.use_pg_pooler,
+        pool_size=15,
+        max_overflow=25,
+    )
+    ensure_schema(engine, settings.db_schema)
+    from src.risk_engine.models import Base
+    create_all_tables(engine, Base.metadata)
+else:
+    engine = make_engine(settings.risk_db_path)
+
+SessionLocal: sessionmaker = make_session_local(engine)

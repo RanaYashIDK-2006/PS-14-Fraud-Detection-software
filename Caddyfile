@@ -1,0 +1,77 @@
+# PS-14 — Caddy reverse proxy
+# Automatic HTTPS via Let's Encrypt.
+# Only the browser-facing services go through Caddy; internal services
+# (privacy :8002, risk :8003) stay on the Docker network.
+#
+# Usage:
+#   Set DOMAIN in .env (e.g. ps14.example.com)
+#   docker compose -f docker-compose.prod.yml up -d
+
+# --- Front page (landing + status + admin) ----------------------------------
+{$DOMAIN} {
+    reverse_proxy front:8000
+
+    # Security headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    # Rate limit login attempts
+    rate_limit {
+        zone login {
+            key    {remote_host}
+            events 10
+            window 1m
+        }
+    }
+}
+
+# --- Verification UI (alerts) -----------------------------------------------
+alerts.{$DOMAIN} {
+    reverse_proxy verify:8004
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+}
+
+# --- Compliance trail --------------------------------------------------------
+compliance.{$DOMAIN} {
+    reverse_proxy audit:8005
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+}
+
+# --- Identity Service (register/login API only) ------------------------------
+auth.{$DOMAIN} {
+    reverse_proxy identity:8001
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        -Server
+    }
+
+    # Stricter rate limit for auth endpoints
+    rate_limit {
+        zone auth {
+            key    {remote_host}
+            events 20
+            window 1m
+        }
+    }
+}

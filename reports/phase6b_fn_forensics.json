@@ -1,0 +1,1905 @@
+{
+  "method": "validation only; operating points = min-FPR at exact recall >= 0.995 per model (tE and tV)",
+  "E_hardneg_pt": {
+    "threshold": 0.01875816,
+    "recall": 0.9950443401147626,
+    "fpr": 0.11530440080611144,
+    "precision": 0.1623611524875516,
+    "tp": 3815,
+    "fp": 19682,
+    "fn": 19,
+    "tn": 151014,
+    "alerts": 23497,
+    "alerts_per_1k": 134.6301495444909
+  },
+  "V_rawplus_pt": {
+    "threshold": 0.02989373,
+    "recall": 0.9950443401147626,
+    "fpr": 0.09923489712705628,
+    "precision": 0.18381998650862486,
+    "tp": 3815,
+    "fp": 16939,
+    "fn": 19,
+    "tn": 153757,
+    "alerts": 20754,
+    "alerts_per_1k": 118.91365381309804
+  },
+  "fn_counts": {
+    "E_hardneg": 19,
+    "V_rawplus": 19,
+    "E_caught_V_missed": 3,
+    "V_caught_E_missed": 3,
+    "both_missed": 16
+  },
+  "critical_set_E_caught_V_missed": {
+    "n": 3,
+    "pct_under_covered": 0.3333,
+    "pct_genuinely_new": 0.0,
+    "pct_seen": 0.6667,
+    "median_full_history_depth": 61520,
+    "pct_frame_zero_history": 0.3333,
+    "channel": {
+      "chip": 0.6667,
+      "swipe": 0.3333,
+      "online": 0.0,
+      "other": 0.0
+    },
+    "median_amount": 22.4,
+    "mean_amount": 179.68,
+    "median_merch_tx_count": 4119,
+    "median_user_tx_count": 404,
+    "median_merch_tx_rate": 0.468625,
+    "median_score_drop_V_minus_E": -0.041606,
+    "mean_score_drop_V_minus_E": -0.036802,
+    "median_amount_z": -0.4606
+  },
+  "all_val_fraud_baseline": {
+    "n": 3834,
+    "pct_under_covered": 0.0373,
+    "pct_genuinely_new": 0.0143,
+    "pct_seen": 0.9497,
+    "median_full_history_depth": 20802,
+    "pct_frame_zero_history": 0.0618,
+    "channel": {
+      "chip": 0.1375,
+      "swipe": 0.061,
+      "online": 0.8015,
+      "other": 0.0
+    },
+    "median_amount": 83.19,
+    "mean_amount": 135.98,
+    "median_merch_tx_count": 1271,
+    "median_user_tx_count": 589,
+    "median_merch_tx_rate": 0.161231,
+    "median_score_drop_V_minus_E": 0.005603,
+    "mean_score_drop_V_minus_E": 0.039586,
+    "median_amount_z": 0.8243
+  },
+  "detail": {
+    "E_hardneg_FN": {
+      "count": 19,
+      "rows": [
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 213,
+            "in_frame_prior_merch_rows": 7,
+            "channel": "chip"
+          },
+          "amount": 70.63,
+          "mcc": 5912,
+          "merchant_code": 7095,
+          "city_code": 59787,
+          "card_code": 30554,
+          "raw_counts": {
+            "user_tx_count": 552,
+            "card_tx_count": 156942,
+            "merch_tx_count": 7,
+            "user_merchant_diversity": 87,
+            "user_city_diversity": 39,
+            "user_merch_count": 6
+          },
+          "rates": {
+            "user_tx_rate": 0.107429,
+            "card_tx_rate": 17.418354,
+            "merch_tx_rate": 0.001918,
+            "user_merch_rate": 0.001644,
+            "user_merchant_diversity_rate": 0.016932,
+            "user_city_diversity_rate": 0.00759
+          },
+          "fraud_rates": {
+            "user": 0.054348,
+            "merchant": 0.001,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.00904,
+            "V_rawplus": 0.016761,
+            "score_diff_V_minus_E": 0.007721
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 2890,
+            "in_frame_prior_merch_rows": 157,
+            "channel": "swipe"
+          },
+          "amount": 3.1,
+          "mcc": 5812,
+          "merchant_code": 38720,
+          "city_code": 91302,
+          "card_code": 89619,
+          "raw_counts": {
+            "user_tx_count": 729,
+            "card_tx_count": 239589,
+            "merch_tx_count": 157,
+            "user_merchant_diversity": 126,
+            "user_city_diversity": 65,
+            "user_merch_count": 95
+          },
+          "rates": {
+            "user_tx_rate": 0.124114,
+            "card_tx_rate": 26.042553,
+            "merch_tx_rate": 0.023444,
+            "user_merch_rate": 0.017001,
+            "user_merchant_diversity_rate": 0.021452,
+            "user_city_diversity_rate": 0.011066
+          },
+          "fraud_rates": {
+            "user": 0.038409,
+            "merchant": 0.001,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.00062,
+            "V_rawplus": 0.00105,
+            "score_diff_V_minus_E": 0.00043
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 2013,
+            "in_frame_prior_merch_rows": 109,
+            "channel": "swipe"
+          },
+          "amount": 4.4,
+          "mcc": 5411,
+          "merchant_code": 90412,
+          "city_code": 70141,
+          "card_code": 98117,
+          "raw_counts": {
+            "user_tx_count": 1617,
+            "card_tx_count": 108095,
+            "merch_tx_count": 109,
+            "user_merchant_diversity": 118,
+            "user_city_diversity": 54,
+            "user_merch_count": 108
+          },
+          "rates": {
+            "user_tx_rate": 0.24994,
+            "card_tx_rate": 13.376557,
+            "merch_tx_rate": 0.017097,
+            "user_merch_rate": 0.01694,
+            "user_merchant_diversity_rate": 0.018239,
+            "user_city_diversity_rate": 0.008347
+          },
+          "fraud_rates": {
+            "user": 0.0235,
+            "merchant": 0.001,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.001255,
+            "V_rawplus": 0.000387,
+            "score_diff_V_minus_E": -0.000868
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 1532,
+            "in_frame_prior_merch_rows": 79,
+            "channel": "swipe"
+          },
+          "amount": 85.99,
+          "mcc": 5300,
+          "merchant_code": 12839,
+          "city_code": 84232,
+          "card_code": 30554,
+          "raw_counts": {
+            "user_tx_count": 259,
+            "card_tx_count": 161154,
+            "merch_tx_count": 79,
+            "user_merchant_diversity": 65,
+            "user_city_diversity": 21,
+            "user_merch_count": 6
+          },
+          "rates": {
+            "user_tx_rate": 0.078941,
+            "card_tx_rate": 17.697889,
+            "merch_tx_rate": 0.010747,
+            "user_merch_rate": 0.001988,
+            "user_merchant_diversity_rate": 0.019811,
+            "user_city_diversity_rate": 0.006401
+          },
+          "fraud_rates": {
+            "user": 0.003861,
+            "merchant": 0.050633,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.018525,
+            "V_rawplus": 0.008342,
+            "score_diff_V_minus_E": -0.010183
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 1194,
+            "in_frame_prior_merch_rows": 59,
+            "channel": "chip"
+          },
+          "amount": 0.63,
+          "mcc": 5411,
+          "merchant_code": 19165,
+          "city_code": 63414,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 1131,
+            "card_tx_count": 319483,
+            "merch_tx_count": 59,
+            "user_merchant_diversity": 176,
+            "user_city_diversity": 95,
+            "user_merch_count": 59
+          },
+          "rates": {
+            "user_tx_rate": 0.215383,
+            "card_tx_rate": 37.564648,
+            "merch_tx_rate": 0.011729,
+            "user_merch_rate": 0.011729,
+            "user_merchant_diversity_rate": 0.033517,
+            "user_city_diversity_rate": 0.018091
+          },
+          "fraud_rates": {
+            "user": 0.023873,
+            "merchant": 0.001,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.006532,
+            "V_rawplus": 0.019009,
+            "score_diff_V_minus_E": 0.012477
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 55,
+            "in_frame_prior_merch_rows": 4,
+            "channel": "chip"
+          },
+          "amount": 36.62,
+          "mcc": 5310,
+          "merchant_code": 31320,
+          "city_code": 97825,
+          "card_code": 30554,
+          "raw_counts": {
+            "user_tx_count": 333,
+            "card_tx_count": 164158,
+            "merch_tx_count": 4,
+            "user_merchant_diversity": 83,
+            "user_city_diversity": 49,
+            "user_merch_count": 4
+          },
+          "rates": {
+            "user_tx_rate": 0.082291,
+            "card_tx_rate": 17.893145,
+            "merch_tx_rate": 0.001236,
+            "user_merch_rate": 0.001236,
+            "user_merchant_diversity_rate": 0.020511,
+            "user_city_diversity_rate": 0.012109
+          },
+          "fraud_rates": {
+            "user": 0.024024,
+            "merchant": 0.001,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.000732,
+            "V_rawplus": 0.00399,
+            "score_diff_V_minus_E": 0.003258
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 1094,
+            "in_frame_prior_merch_rows": 60,
+            "channel": "chip"
+          },
+          "amount": 19.22,
+          "mcc": 5300,
+          "merchant_code": 77105,
+          "city_code": 18810,
+          "card_code": 89619,
+          "raw_counts": {
+            "user_tx_count": 831,
+            "card_tx_count": 252230,
+            "merch_tx_count": 60,
+            "user_merchant_diversity": 134,
+            "user_city_diversity": 62,
+            "user_merch_count": 0
+          },
+          "rates": {
+            "user_tx_rate": 0.137967,
+            "card_tx_rate": 26.837961,
+            "merch_tx_rate": 0.01044,
+            "user_merch_rate": 0.0,
+            "user_merchant_diversity_rate": 0.022247,
+            "user_city_diversity_rate": 0.010294
+          },
+          "fraud_rates": {
+            "user": 0.052948,
+            "merchant": 0.016667,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.017299,
+            "V_rawplus": 0.139359,
+            "score_diff_V_minus_E": 0.12206
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 1211,
+            "in_frame_prior_merch_rows": 66,
+            "channel": "chip"
+          },
+          "amount": 134.81,
+          "mcc": 7538,
+          "merchant_code": 87658,
+          "city_code": 41541,
+          "card_code": 89619,
+          "raw_counts": {
+            "user_tx_count": 1344,
+            "card_tx_count": 252956,
+            "merch_tx_count": 66,
+            "user_merchant_diversity": 102,
+            "user_city_diversity": 39,
+            "user_merch_count": 0
+          },
+          "rates": {
+            "user_tx_rate": 0.379807,
+            "card_tx_rate": 26.88068,
+            "merch_tx_rate": 0.008655,
+            "user_merch_rate": 0.0,
+            "user_merchant_diversity_rate": 0.028825,
+            "user_city_diversity_rate": 0.011021
+          },
+          "fraud_rates": {
+            "user": 0.013393,
+            "merchant": 0.001,
+            "city": 0.015251
+          },
+          "scores": {
+            "E_hardneg": 0.00906,
+            "V_rawplus": 0.045664,
+            "score_diff_V_minus_E": 0.036604
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 201,
+            "in_frame_prior_merch_rows": 10,
+            "channel": "chip"
+          },
+          "amount": 0.21,
+          "mcc": 5812,
+          "merchant_code": 75412,
+          "city_code": 36484,
+          "card_code": 89619,
+          "raw_counts": {
+            "user_tx_count": 403,
+            "card_tx_count": 254817,
+            "merch_tx_count": 10,
+            "user_merchant_diversity": 87,
+            "user_city_diversity": 44,
+            "user_merch_count": 9
+          },
+          "rates": {
+            "user_tx_rate": 0.122687,
+            "card_tx_rate": 26.993649,
+            "merch_tx_rate": 0.003879,
+            "user_merch_rate": 0.003491,
+            "user_merchant_diversity_rate": 0.026486,
+            "user_city_diversity_rate": 0.013395
+          },
+          "fraud_rates": {
+            "user": 0.047146,
+            "merchant": 0.001,
+            "city": 0.002729
+          },
+          "scores": {
+            "E_hardneg": 0.003345,
+            "V_rawplus": 0.008739,
+            "score_diff_V_minus_E": 0.005394
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 77,
+            "in_frame_prior_merch_rows": 2,
+            "channel": "swipe"
+          },
+          "amount": 103.05,
+          "mcc": 5310,
+          "merchant_code": 32495,
+          "city_code": 90993,
+          "card_code": 98117,
+          "raw_counts": {
+            "user_tx_count": 320,
+            "card_tx_count": 113223,
+            "merch_tx_count": 2,
+            "user_merchant_diversity": 72,
+            "user_city_diversity": 38,
+            "user_merch_count": 2
+          },
+          "rates": {
+            "user_tx_rate": 0.087462,
+            "card_tx_rate": 13.682764,
+            "merch_tx_rate": 0.001592,
+            "user_merch_rate": 0.001592,
+            "user_merchant_diversity_rate": 0.019679,
+            "user_city_diversity_rate": 0.010386
+          },
+          "fraud_rates": {
+            "user": 0.001,
+            "merchant": 0.001,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.012503,
+            "V_rawplus": 0.010307,
+            "score_diff_V_minus_E": -0.002196
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 1630,
+            "in_frame_prior_merch_rows": 93,
+            "channel": "chip"
+          },
+          "amount": 5.42,
+          "mcc": 5812,
+          "merchant_code": 95054,
+          "city_code": 73744,
+          "card_code": 30554,
+          "raw_counts": {
+            "user_tx_count": 1164,
+            "card_tx_count": 169411,
+            "merch_tx_count": 93,
+            "user_merchant_diversity": 147,
+            "user_city_diversity": 93,
+            "user_merch_count": 20
+          },
+          "rates": {
+            "user_tx_rate": 0.22067,
+            "card_tx_rate": 18.225622,
+            "merch_tx_rate": 0.011326,
+            "user_merch_rate": 0.004017,
+            "user_merchant_diversity_rate": 0.027868,
+            "user_city_diversity_rate": 0.017631
+          },
+          "fraud_rates": {
+            "user": 0.036942,
+            "merchant": 0.001,
+            "city": 0.006061
+          },
+          "scores": {
+            "E_hardneg": 0.000996,
+            "V_rawplus": 0.002979,
+            "score_diff_V_minus_E": 0.001983
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 487196,
+            "in_frame_prior_merch_rows": 28686,
+            "channel": "chip"
+          },
+          "amount": 14.45,
+          "mcc": 5541,
+          "merchant_code": 44320,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 446,
+            "card_tx_count": 366057,
+            "merch_tx_count": 28686,
+            "user_merchant_diversity": 80,
+            "user_city_diversity": 35,
+            "user_merch_count": 0
+          },
+          "rates": {
+            "user_tx_rate": 0.076343,
+            "card_tx_rate": 40.560547,
+            "merch_tx_rate": 2.978807,
+            "user_merch_rate": 0.0,
+            "user_merchant_diversity_rate": 0.013694,
+            "user_city_diversity_rate": 0.005991
+          },
+          "fraud_rates": {
+            "user": 0.002242,
+            "merchant": 0.00115,
+            "city": 0.016949
+          },
+          "scores": {
+            "E_hardneg": 0.017219,
+            "V_rawplus": 0.010409,
+            "score_diff_V_minus_E": -0.00681
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 129315,
+            "in_frame_prior_merch_rows": 7596,
+            "channel": "chip"
+          },
+          "amount": 9.76,
+          "mcc": 5814,
+          "merchant_code": 78,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 757,
+            "card_tx_count": 366797,
+            "merch_tx_count": 7596,
+            "user_merchant_diversity": 131,
+            "user_city_diversity": 71,
+            "user_merch_count": 18
+          },
+          "rates": {
+            "user_tx_rate": 0.192929,
+            "card_tx_rate": 40.606342,
+            "merch_tx_rate": 0.818558,
+            "user_merch_rate": 0.004894,
+            "user_merchant_diversity_rate": 0.033387,
+            "user_city_diversity_rate": 0.018095
+          },
+          "fraud_rates": {
+            "user": 0.040951,
+            "merchant": 0.000658,
+            "city": 0.114213
+          },
+          "scores": {
+            "E_hardneg": 0.015106,
+            "V_rawplus": 0.018585,
+            "score_diff_V_minus_E": 0.003479
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 806484,
+            "in_frame_prior_merch_rows": 47877,
+            "channel": "chip"
+          },
+          "amount": 11.4,
+          "mcc": 5499,
+          "merchant_code": 90304,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 686,
+            "card_tx_count": 366898,
+            "merch_tx_count": 47877,
+            "user_merchant_diversity": 124,
+            "user_city_diversity": 52,
+            "user_merch_count": 26
+          },
+          "rates": {
+            "user_tx_rate": 0.138051,
+            "card_tx_rate": 40.612949,
+            "merch_tx_rate": 5.002238,
+            "user_merch_rate": 0.006611,
+            "user_merchant_diversity_rate": 0.024954,
+            "user_city_diversity_rate": 0.010464
+          },
+          "fraud_rates": {
+            "user": 0.042274,
+            "merchant": 0.000815,
+            "city": 0.125313
+          },
+          "scores": {
+            "E_hardneg": 0.00803,
+            "V_rawplus": 0.02723,
+            "score_diff_V_minus_E": 0.0192
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 498021,
+            "in_frame_prior_merch_rows": 29189,
+            "channel": "chip"
+          },
+          "amount": 59.0,
+          "mcc": 5499,
+          "merchant_code": 65096,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 558,
+            "card_tx_count": 366914,
+            "merch_tx_count": 29189,
+            "user_merchant_diversity": 96,
+            "user_city_diversity": 40,
+            "user_merch_count": 2
+          },
+          "rates": {
+            "user_tx_rate": 0.124988,
+            "card_tx_rate": 40.613972,
+            "merch_tx_rate": 3.025622,
+            "user_merch_rate": 0.001269,
+            "user_merchant_diversity_rate": 0.021503,
+            "user_city_diversity_rate": 0.00896
+          },
+          "fraud_rates": {
+            "user": 0.09319,
+            "merchant": 0.000754,
+            "city": 0.136139
+          },
+          "scores": {
+            "E_hardneg": 0.017958,
+            "V_rawplus": 0.015372,
+            "score_diff_V_minus_E": -0.002586
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 806484,
+            "in_frame_prior_merch_rows": 47975,
+            "channel": "chip"
+          },
+          "amount": 7.82,
+          "mcc": 5499,
+          "merchant_code": 90304,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 457,
+            "card_tx_count": 367830,
+            "merch_tx_count": 47975,
+            "user_merchant_diversity": 128,
+            "user_city_diversity": 67,
+            "user_merch_count": 3
+          },
+          "rates": {
+            "user_tx_rate": 0.104075,
+            "card_tx_rate": 40.670502,
+            "merch_tx_rate": 5.007177,
+            "user_merch_rate": 0.001842,
+            "user_merchant_diversity_rate": 0.02915,
+            "user_city_diversity_rate": 0.015258
+          },
+          "fraud_rates": {
+            "user": 0.102845,
+            "merchant": 0.000834,
+            "city": 0.251073
+          },
+          "scores": {
+            "E_hardneg": 0.014,
+            "V_rawplus": 0.034485,
+            "score_diff_V_minus_E": 0.020485
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 806484,
+            "in_frame_prior_merch_rows": 47976,
+            "channel": "chip"
+          },
+          "amount": 64.0,
+          "mcc": 5499,
+          "merchant_code": 90304,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 458,
+            "card_tx_count": 367833,
+            "merch_tx_count": 47976,
+            "user_merchant_diversity": 128,
+            "user_city_diversity": 67,
+            "user_merch_count": 4
+          },
+          "rates": {
+            "user_tx_rate": 0.104302,
+            "card_tx_rate": 40.670811,
+            "merch_tx_rate": 5.007279,
+            "user_merch_rate": 0.002456,
+            "user_merchant_diversity_rate": 0.02915,
+            "user_city_diversity_rate": 0.015258
+          },
+          "fraud_rates": {
+            "user": 0.104803,
+            "merchant": 0.000855,
+            "city": 0.254274
+          },
+          "scores": {
+            "E_hardneg": 0.011582,
+            "V_rawplus": 0.013876,
+            "score_diff_V_minus_E": 0.002294
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 806484,
+            "in_frame_prior_merch_rows": 48002,
+            "channel": "chip"
+          },
+          "amount": 34.13,
+          "mcc": 5499,
+          "merchant_code": 90304,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 632,
+            "card_tx_count": 368002,
+            "merch_tx_count": 48002,
+            "user_merchant_diversity": 92,
+            "user_city_diversity": 42,
+            "user_merch_count": 34
+          },
+          "rates": {
+            "user_tx_rate": 0.13998,
+            "card_tx_rate": 40.68124,
+            "merch_tx_rate": 5.009033,
+            "user_merch_rate": 0.008072,
+            "user_merchant_diversity_rate": 0.020377,
+            "user_city_diversity_rate": 0.009302
+          },
+          "fraud_rates": {
+            "user": 0.044304,
+            "merchant": 0.000875,
+            "city": 0.268344
+          },
+          "scores": {
+            "E_hardneg": 0.013058,
+            "V_rawplus": 0.014667,
+            "score_diff_V_minus_E": 0.001609
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 487196,
+            "in_frame_prior_merch_rows": 28853,
+            "channel": "chip"
+          },
+          "amount": 20.83,
+          "mcc": 5541,
+          "merchant_code": 44320,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 803,
+            "card_tx_count": 368608,
+            "merch_tx_count": 28853,
+            "user_merchant_diversity": 120,
+            "user_city_diversity": 64,
+            "user_merch_count": 121
+          },
+          "rates": {
+            "user_tx_rate": 0.105213,
+            "card_tx_rate": 40.716511,
+            "merch_tx_rate": 2.987437,
+            "user_merch_rate": 0.016109,
+            "user_merchant_diversity_rate": 0.015723,
+            "user_city_diversity_rate": 0.008386
+          },
+          "fraud_rates": {
+            "user": 0.052304,
+            "merchant": 0.001213,
+            "city": 0.337761
+          },
+          "scores": {
+            "E_hardneg": 0.006481,
+            "V_rawplus": 0.017733,
+            "score_diff_V_minus_E": 0.011253
+          }
+        }
+      ]
+    },
+    "V_rawplus_FN": {
+      "count": 19,
+      "rows": [
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 213,
+            "in_frame_prior_merch_rows": 7,
+            "channel": "chip"
+          },
+          "amount": 70.63,
+          "mcc": 5912,
+          "merchant_code": 7095,
+          "city_code": 59787,
+          "card_code": 30554,
+          "raw_counts": {
+            "user_tx_count": 552,
+            "card_tx_count": 156942,
+            "merch_tx_count": 7,
+            "user_merchant_diversity": 87,
+            "user_city_diversity": 39,
+            "user_merch_count": 6
+          },
+          "rates": {
+            "user_tx_rate": 0.107429,
+            "card_tx_rate": 17.418354,
+            "merch_tx_rate": 0.001918,
+            "user_merch_rate": 0.001644,
+            "user_merchant_diversity_rate": 0.016932,
+            "user_city_diversity_rate": 0.00759
+          },
+          "fraud_rates": {
+            "user": 0.054348,
+            "merchant": 0.001,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.00904,
+            "V_rawplus": 0.016761,
+            "score_diff_V_minus_E": 0.007721
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 2890,
+            "in_frame_prior_merch_rows": 157,
+            "channel": "swipe"
+          },
+          "amount": 3.1,
+          "mcc": 5812,
+          "merchant_code": 38720,
+          "city_code": 91302,
+          "card_code": 89619,
+          "raw_counts": {
+            "user_tx_count": 729,
+            "card_tx_count": 239589,
+            "merch_tx_count": 157,
+            "user_merchant_diversity": 126,
+            "user_city_diversity": 65,
+            "user_merch_count": 95
+          },
+          "rates": {
+            "user_tx_rate": 0.124114,
+            "card_tx_rate": 26.042553,
+            "merch_tx_rate": 0.023444,
+            "user_merch_rate": 0.017001,
+            "user_merchant_diversity_rate": 0.021452,
+            "user_city_diversity_rate": 0.011066
+          },
+          "fraud_rates": {
+            "user": 0.038409,
+            "merchant": 0.001,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.00062,
+            "V_rawplus": 0.00105,
+            "score_diff_V_minus_E": 0.00043
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 2013,
+            "in_frame_prior_merch_rows": 109,
+            "channel": "swipe"
+          },
+          "amount": 4.4,
+          "mcc": 5411,
+          "merchant_code": 90412,
+          "city_code": 70141,
+          "card_code": 98117,
+          "raw_counts": {
+            "user_tx_count": 1617,
+            "card_tx_count": 108095,
+            "merch_tx_count": 109,
+            "user_merchant_diversity": 118,
+            "user_city_diversity": 54,
+            "user_merch_count": 108
+          },
+          "rates": {
+            "user_tx_rate": 0.24994,
+            "card_tx_rate": 13.376557,
+            "merch_tx_rate": 0.017097,
+            "user_merch_rate": 0.01694,
+            "user_merchant_diversity_rate": 0.018239,
+            "user_city_diversity_rate": 0.008347
+          },
+          "fraud_rates": {
+            "user": 0.0235,
+            "merchant": 0.001,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.001255,
+            "V_rawplus": 0.000387,
+            "score_diff_V_minus_E": -0.000868
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": false,
+            "under_covered": true,
+            "genuinely_new": false,
+            "full_history_depth": 17,
+            "in_frame_prior_merch_rows": 0,
+            "channel": "swipe"
+          },
+          "amount": 22.4,
+          "mcc": 7531,
+          "merchant_code": 82440,
+          "city_code": 1074,
+          "card_code": 98117,
+          "raw_counts": {
+            "user_tx_count": 707,
+            "card_tx_count": 108473,
+            "merch_tx_count": 0,
+            "user_merchant_diversity": 108,
+            "user_city_diversity": 61,
+            "user_merch_count": 0
+          },
+          "rates": {
+            "user_tx_rate": 0.276717,
+            "card_tx_rate": 13.399899,
+            "merch_tx_rate": 0.0,
+            "user_merch_rate": 0.0,
+            "user_merchant_diversity_rate": 0.042271,
+            "user_city_diversity_rate": 0.023875
+          },
+          "fraud_rates": {
+            "user": 0.001414,
+            "merchant": 0.001,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.059513,
+            "V_rawplus": 0.017907,
+            "score_diff_V_minus_E": -0.041606
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 1532,
+            "in_frame_prior_merch_rows": 79,
+            "channel": "swipe"
+          },
+          "amount": 85.99,
+          "mcc": 5300,
+          "merchant_code": 12839,
+          "city_code": 84232,
+          "card_code": 30554,
+          "raw_counts": {
+            "user_tx_count": 259,
+            "card_tx_count": 161154,
+            "merch_tx_count": 79,
+            "user_merchant_diversity": 65,
+            "user_city_diversity": 21,
+            "user_merch_count": 6
+          },
+          "rates": {
+            "user_tx_rate": 0.078941,
+            "card_tx_rate": 17.697889,
+            "merch_tx_rate": 0.010747,
+            "user_merch_rate": 0.001988,
+            "user_merchant_diversity_rate": 0.019811,
+            "user_city_diversity_rate": 0.006401
+          },
+          "fraud_rates": {
+            "user": 0.003861,
+            "merchant": 0.050633,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.018525,
+            "V_rawplus": 0.008342,
+            "score_diff_V_minus_E": -0.010183
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 1194,
+            "in_frame_prior_merch_rows": 59,
+            "channel": "chip"
+          },
+          "amount": 0.63,
+          "mcc": 5411,
+          "merchant_code": 19165,
+          "city_code": 63414,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 1131,
+            "card_tx_count": 319483,
+            "merch_tx_count": 59,
+            "user_merchant_diversity": 176,
+            "user_city_diversity": 95,
+            "user_merch_count": 59
+          },
+          "rates": {
+            "user_tx_rate": 0.215383,
+            "card_tx_rate": 37.564648,
+            "merch_tx_rate": 0.011729,
+            "user_merch_rate": 0.011729,
+            "user_merchant_diversity_rate": 0.033517,
+            "user_city_diversity_rate": 0.018091
+          },
+          "fraud_rates": {
+            "user": 0.023873,
+            "merchant": 0.001,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.006532,
+            "V_rawplus": 0.019009,
+            "score_diff_V_minus_E": 0.012477
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 55,
+            "in_frame_prior_merch_rows": 4,
+            "channel": "chip"
+          },
+          "amount": 36.62,
+          "mcc": 5310,
+          "merchant_code": 31320,
+          "city_code": 97825,
+          "card_code": 30554,
+          "raw_counts": {
+            "user_tx_count": 333,
+            "card_tx_count": 164158,
+            "merch_tx_count": 4,
+            "user_merchant_diversity": 83,
+            "user_city_diversity": 49,
+            "user_merch_count": 4
+          },
+          "rates": {
+            "user_tx_rate": 0.082291,
+            "card_tx_rate": 17.893145,
+            "merch_tx_rate": 0.001236,
+            "user_merch_rate": 0.001236,
+            "user_merchant_diversity_rate": 0.020511,
+            "user_city_diversity_rate": 0.012109
+          },
+          "fraud_rates": {
+            "user": 0.024024,
+            "merchant": 0.001,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.000732,
+            "V_rawplus": 0.00399,
+            "score_diff_V_minus_E": 0.003258
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 201,
+            "in_frame_prior_merch_rows": 10,
+            "channel": "chip"
+          },
+          "amount": 0.21,
+          "mcc": 5812,
+          "merchant_code": 75412,
+          "city_code": 36484,
+          "card_code": 89619,
+          "raw_counts": {
+            "user_tx_count": 403,
+            "card_tx_count": 254817,
+            "merch_tx_count": 10,
+            "user_merchant_diversity": 87,
+            "user_city_diversity": 44,
+            "user_merch_count": 9
+          },
+          "rates": {
+            "user_tx_rate": 0.122687,
+            "card_tx_rate": 26.993649,
+            "merch_tx_rate": 0.003879,
+            "user_merch_rate": 0.003491,
+            "user_merchant_diversity_rate": 0.026486,
+            "user_city_diversity_rate": 0.013395
+          },
+          "fraud_rates": {
+            "user": 0.047146,
+            "merchant": 0.001,
+            "city": 0.002729
+          },
+          "scores": {
+            "E_hardneg": 0.003345,
+            "V_rawplus": 0.008739,
+            "score_diff_V_minus_E": 0.005394
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 77,
+            "in_frame_prior_merch_rows": 2,
+            "channel": "swipe"
+          },
+          "amount": 103.05,
+          "mcc": 5310,
+          "merchant_code": 32495,
+          "city_code": 90993,
+          "card_code": 98117,
+          "raw_counts": {
+            "user_tx_count": 320,
+            "card_tx_count": 113223,
+            "merch_tx_count": 2,
+            "user_merchant_diversity": 72,
+            "user_city_diversity": 38,
+            "user_merch_count": 2
+          },
+          "rates": {
+            "user_tx_rate": 0.087462,
+            "card_tx_rate": 13.682764,
+            "merch_tx_rate": 0.001592,
+            "user_merch_rate": 0.001592,
+            "user_merchant_diversity_rate": 0.019679,
+            "user_city_diversity_rate": 0.010386
+          },
+          "fraud_rates": {
+            "user": 0.001,
+            "merchant": 0.001,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.012503,
+            "V_rawplus": 0.010307,
+            "score_diff_V_minus_E": -0.002196
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 1630,
+            "in_frame_prior_merch_rows": 93,
+            "channel": "chip"
+          },
+          "amount": 5.42,
+          "mcc": 5812,
+          "merchant_code": 95054,
+          "city_code": 73744,
+          "card_code": 30554,
+          "raw_counts": {
+            "user_tx_count": 1164,
+            "card_tx_count": 169411,
+            "merch_tx_count": 93,
+            "user_merchant_diversity": 147,
+            "user_city_diversity": 93,
+            "user_merch_count": 20
+          },
+          "rates": {
+            "user_tx_rate": 0.22067,
+            "card_tx_rate": 18.225622,
+            "merch_tx_rate": 0.011326,
+            "user_merch_rate": 0.004017,
+            "user_merchant_diversity_rate": 0.027868,
+            "user_city_diversity_rate": 0.017631
+          },
+          "fraud_rates": {
+            "user": 0.036942,
+            "merchant": 0.001,
+            "city": 0.006061
+          },
+          "scores": {
+            "E_hardneg": 0.000996,
+            "V_rawplus": 0.002979,
+            "score_diff_V_minus_E": 0.001983
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 61520,
+            "in_frame_prior_merch_rows": 4119,
+            "channel": "chip"
+          },
+          "amount": 510.24,
+          "mcc": 5712,
+          "merchant_code": 46926,
+          "city_code": 31705,
+          "card_code": 89619,
+          "raw_counts": {
+            "user_tx_count": 404,
+            "card_tx_count": 277816,
+            "merch_tx_count": 4119,
+            "user_merchant_diversity": 117,
+            "user_city_diversity": 70,
+            "user_merch_count": 2
+          },
+          "rates": {
+            "user_tx_rate": 0.102435,
+            "card_tx_rate": 28.302582,
+            "merch_tx_rate": 0.468625,
+            "user_merch_rate": 0.000787,
+            "user_merchant_diversity_rate": 0.029666,
+            "user_city_diversity_rate": 0.017749
+          },
+          "fraud_rates": {
+            "user": 0.027228,
+            "merchant": 0.099296,
+            "city": 0.005714
+          },
+          "scores": {
+            "E_hardneg": 0.057817,
+            "V_rawplus": 0.005892,
+            "score_diff_V_minus_E": -0.051926
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 487196,
+            "in_frame_prior_merch_rows": 28686,
+            "channel": "chip"
+          },
+          "amount": 14.45,
+          "mcc": 5541,
+          "merchant_code": 44320,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 446,
+            "card_tx_count": 366057,
+            "merch_tx_count": 28686,
+            "user_merchant_diversity": 80,
+            "user_city_diversity": 35,
+            "user_merch_count": 0
+          },
+          "rates": {
+            "user_tx_rate": 0.076343,
+            "card_tx_rate": 40.560547,
+            "merch_tx_rate": 2.978807,
+            "user_merch_rate": 0.0,
+            "user_merchant_diversity_rate": 0.013694,
+            "user_city_diversity_rate": 0.005991
+          },
+          "fraud_rates": {
+            "user": 0.002242,
+            "merchant": 0.00115,
+            "city": 0.016949
+          },
+          "scores": {
+            "E_hardneg": 0.017219,
+            "V_rawplus": 0.010409,
+            "score_diff_V_minus_E": -0.00681
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 129315,
+            "in_frame_prior_merch_rows": 7596,
+            "channel": "chip"
+          },
+          "amount": 9.76,
+          "mcc": 5814,
+          "merchant_code": 78,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 757,
+            "card_tx_count": 366797,
+            "merch_tx_count": 7596,
+            "user_merchant_diversity": 131,
+            "user_city_diversity": 71,
+            "user_merch_count": 18
+          },
+          "rates": {
+            "user_tx_rate": 0.192929,
+            "card_tx_rate": 40.606342,
+            "merch_tx_rate": 0.818558,
+            "user_merch_rate": 0.004894,
+            "user_merchant_diversity_rate": 0.033387,
+            "user_city_diversity_rate": 0.018095
+          },
+          "fraud_rates": {
+            "user": 0.040951,
+            "merchant": 0.000658,
+            "city": 0.114213
+          },
+          "scores": {
+            "E_hardneg": 0.015106,
+            "V_rawplus": 0.018585,
+            "score_diff_V_minus_E": 0.003479
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 806484,
+            "in_frame_prior_merch_rows": 47877,
+            "channel": "chip"
+          },
+          "amount": 11.4,
+          "mcc": 5499,
+          "merchant_code": 90304,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 686,
+            "card_tx_count": 366898,
+            "merch_tx_count": 47877,
+            "user_merchant_diversity": 124,
+            "user_city_diversity": 52,
+            "user_merch_count": 26
+          },
+          "rates": {
+            "user_tx_rate": 0.138051,
+            "card_tx_rate": 40.612949,
+            "merch_tx_rate": 5.002238,
+            "user_merch_rate": 0.006611,
+            "user_merchant_diversity_rate": 0.024954,
+            "user_city_diversity_rate": 0.010464
+          },
+          "fraud_rates": {
+            "user": 0.042274,
+            "merchant": 0.000815,
+            "city": 0.125313
+          },
+          "scores": {
+            "E_hardneg": 0.00803,
+            "V_rawplus": 0.02723,
+            "score_diff_V_minus_E": 0.0192
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 498021,
+            "in_frame_prior_merch_rows": 29189,
+            "channel": "chip"
+          },
+          "amount": 59.0,
+          "mcc": 5499,
+          "merchant_code": 65096,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 558,
+            "card_tx_count": 366914,
+            "merch_tx_count": 29189,
+            "user_merchant_diversity": 96,
+            "user_city_diversity": 40,
+            "user_merch_count": 2
+          },
+          "rates": {
+            "user_tx_rate": 0.124988,
+            "card_tx_rate": 40.613972,
+            "merch_tx_rate": 3.025622,
+            "user_merch_rate": 0.001269,
+            "user_merchant_diversity_rate": 0.021503,
+            "user_city_diversity_rate": 0.00896
+          },
+          "fraud_rates": {
+            "user": 0.09319,
+            "merchant": 0.000754,
+            "city": 0.136139
+          },
+          "scores": {
+            "E_hardneg": 0.017958,
+            "V_rawplus": 0.015372,
+            "score_diff_V_minus_E": -0.002586
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 806484,
+            "in_frame_prior_merch_rows": 47976,
+            "channel": "chip"
+          },
+          "amount": 64.0,
+          "mcc": 5499,
+          "merchant_code": 90304,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 458,
+            "card_tx_count": 367833,
+            "merch_tx_count": 47976,
+            "user_merchant_diversity": 128,
+            "user_city_diversity": 67,
+            "user_merch_count": 4
+          },
+          "rates": {
+            "user_tx_rate": 0.104302,
+            "card_tx_rate": 40.670811,
+            "merch_tx_rate": 5.007279,
+            "user_merch_rate": 0.002456,
+            "user_merchant_diversity_rate": 0.02915,
+            "user_city_diversity_rate": 0.015258
+          },
+          "fraud_rates": {
+            "user": 0.104803,
+            "merchant": 0.000855,
+            "city": 0.254274
+          },
+          "scores": {
+            "E_hardneg": 0.011582,
+            "V_rawplus": 0.013876,
+            "score_diff_V_minus_E": 0.002294
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 806484,
+            "in_frame_prior_merch_rows": 48002,
+            "channel": "chip"
+          },
+          "amount": 34.13,
+          "mcc": 5499,
+          "merchant_code": 90304,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 632,
+            "card_tx_count": 368002,
+            "merch_tx_count": 48002,
+            "user_merchant_diversity": 92,
+            "user_city_diversity": 42,
+            "user_merch_count": 34
+          },
+          "rates": {
+            "user_tx_rate": 0.13998,
+            "card_tx_rate": 40.68124,
+            "merch_tx_rate": 5.009033,
+            "user_merch_rate": 0.008072,
+            "user_merchant_diversity_rate": 0.020377,
+            "user_city_diversity_rate": 0.009302
+          },
+          "fraud_rates": {
+            "user": 0.044304,
+            "merchant": 0.000875,
+            "city": 0.268344
+          },
+          "scores": {
+            "E_hardneg": 0.013058,
+            "V_rawplus": 0.014667,
+            "score_diff_V_minus_E": 0.001609
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 487196,
+            "in_frame_prior_merch_rows": 28853,
+            "channel": "chip"
+          },
+          "amount": 20.83,
+          "mcc": 5541,
+          "merchant_code": 44320,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 803,
+            "card_tx_count": 368608,
+            "merch_tx_count": 28853,
+            "user_merchant_diversity": 120,
+            "user_city_diversity": 64,
+            "user_merch_count": 121
+          },
+          "rates": {
+            "user_tx_rate": 0.105213,
+            "card_tx_rate": 40.716511,
+            "merch_tx_rate": 2.987437,
+            "user_merch_rate": 0.016109,
+            "user_merchant_diversity_rate": 0.015723,
+            "user_city_diversity_rate": 0.008386
+          },
+          "fraud_rates": {
+            "user": 0.052304,
+            "merchant": 0.001213,
+            "city": 0.337761
+          },
+          "scores": {
+            "E_hardneg": 0.006481,
+            "V_rawplus": 0.017733,
+            "score_diff_V_minus_E": 0.011253
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 732092,
+            "in_frame_prior_merch_rows": 43753,
+            "channel": "chip"
+          },
+          "amount": 6.39,
+          "mcc": 5541,
+          "merchant_code": 98774,
+          "city_code": 31705,
+          "card_code": 89619,
+          "raw_counts": {
+            "user_tx_count": 123,
+            "card_tx_count": 280425,
+            "merch_tx_count": 43753,
+            "user_merchant_diversity": 44,
+            "user_city_diversity": 8,
+            "user_merch_count": 17
+          },
+          "rates": {
+            "user_tx_rate": 0.094455,
+            "card_tx_rate": 28.446089,
+            "merch_tx_rate": 4.446264,
+            "user_merch_rate": 0.013055,
+            "user_merchant_diversity_rate": 0.033789,
+            "user_city_diversity_rate": 0.006143
+          },
+          "fraud_rates": {
+            "user": 0.02439,
+            "merchant": 0.000571,
+            "city": 0.415282
+          },
+          "scores": {
+            "E_hardneg": 0.031038,
+            "V_rawplus": 0.014163,
+            "score_diff_V_minus_E": -0.016875
+          }
+        }
+      ]
+    },
+    "E_caught_V_missed": {
+      "count": 3,
+      "rows": [
+        {
+          "segment": {
+            "seen_pool": false,
+            "under_covered": true,
+            "genuinely_new": false,
+            "full_history_depth": 17,
+            "in_frame_prior_merch_rows": 0,
+            "channel": "swipe"
+          },
+          "amount": 22.4,
+          "mcc": 7531,
+          "merchant_code": 82440,
+          "city_code": 1074,
+          "card_code": 98117,
+          "raw_counts": {
+            "user_tx_count": 707,
+            "card_tx_count": 108473,
+            "merch_tx_count": 0,
+            "user_merchant_diversity": 108,
+            "user_city_diversity": 61,
+            "user_merch_count": 0
+          },
+          "rates": {
+            "user_tx_rate": 0.276717,
+            "card_tx_rate": 13.399899,
+            "merch_tx_rate": 0.0,
+            "user_merch_rate": 0.0,
+            "user_merchant_diversity_rate": 0.042271,
+            "user_city_diversity_rate": 0.023875
+          },
+          "fraud_rates": {
+            "user": 0.001414,
+            "merchant": 0.001,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.059513,
+            "V_rawplus": 0.017907,
+            "score_diff_V_minus_E": -0.041606
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 61520,
+            "in_frame_prior_merch_rows": 4119,
+            "channel": "chip"
+          },
+          "amount": 510.24,
+          "mcc": 5712,
+          "merchant_code": 46926,
+          "city_code": 31705,
+          "card_code": 89619,
+          "raw_counts": {
+            "user_tx_count": 404,
+            "card_tx_count": 277816,
+            "merch_tx_count": 4119,
+            "user_merchant_diversity": 117,
+            "user_city_diversity": 70,
+            "user_merch_count": 2
+          },
+          "rates": {
+            "user_tx_rate": 0.102435,
+            "card_tx_rate": 28.302582,
+            "merch_tx_rate": 0.468625,
+            "user_merch_rate": 0.000787,
+            "user_merchant_diversity_rate": 0.029666,
+            "user_city_diversity_rate": 0.017749
+          },
+          "fraud_rates": {
+            "user": 0.027228,
+            "merchant": 0.099296,
+            "city": 0.005714
+          },
+          "scores": {
+            "E_hardneg": 0.057817,
+            "V_rawplus": 0.005892,
+            "score_diff_V_minus_E": -0.051926
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 732092,
+            "in_frame_prior_merch_rows": 43753,
+            "channel": "chip"
+          },
+          "amount": 6.39,
+          "mcc": 5541,
+          "merchant_code": 98774,
+          "city_code": 31705,
+          "card_code": 89619,
+          "raw_counts": {
+            "user_tx_count": 123,
+            "card_tx_count": 280425,
+            "merch_tx_count": 43753,
+            "user_merchant_diversity": 44,
+            "user_city_diversity": 8,
+            "user_merch_count": 17
+          },
+          "rates": {
+            "user_tx_rate": 0.094455,
+            "card_tx_rate": 28.446089,
+            "merch_tx_rate": 4.446264,
+            "user_merch_rate": 0.013055,
+            "user_merchant_diversity_rate": 0.033789,
+            "user_city_diversity_rate": 0.006143
+          },
+          "fraud_rates": {
+            "user": 0.02439,
+            "merchant": 0.000571,
+            "city": 0.415282
+          },
+          "scores": {
+            "E_hardneg": 0.031038,
+            "V_rawplus": 0.014163,
+            "score_diff_V_minus_E": -0.016875
+          }
+        }
+      ]
+    },
+    "V_caught_E_missed": {
+      "count": 3,
+      "rows": [
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 1094,
+            "in_frame_prior_merch_rows": 60,
+            "channel": "chip"
+          },
+          "amount": 19.22,
+          "mcc": 5300,
+          "merchant_code": 77105,
+          "city_code": 18810,
+          "card_code": 89619,
+          "raw_counts": {
+            "user_tx_count": 831,
+            "card_tx_count": 252230,
+            "merch_tx_count": 60,
+            "user_merchant_diversity": 134,
+            "user_city_diversity": 62,
+            "user_merch_count": 0
+          },
+          "rates": {
+            "user_tx_rate": 0.137967,
+            "card_tx_rate": 26.837961,
+            "merch_tx_rate": 0.01044,
+            "user_merch_rate": 0.0,
+            "user_merchant_diversity_rate": 0.022247,
+            "user_city_diversity_rate": 0.010294
+          },
+          "fraud_rates": {
+            "user": 0.052948,
+            "merchant": 0.016667,
+            "city": 0.001
+          },
+          "scores": {
+            "E_hardneg": 0.017299,
+            "V_rawplus": 0.139359,
+            "score_diff_V_minus_E": 0.12206
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 1211,
+            "in_frame_prior_merch_rows": 66,
+            "channel": "chip"
+          },
+          "amount": 134.81,
+          "mcc": 7538,
+          "merchant_code": 87658,
+          "city_code": 41541,
+          "card_code": 89619,
+          "raw_counts": {
+            "user_tx_count": 1344,
+            "card_tx_count": 252956,
+            "merch_tx_count": 66,
+            "user_merchant_diversity": 102,
+            "user_city_diversity": 39,
+            "user_merch_count": 0
+          },
+          "rates": {
+            "user_tx_rate": 0.379807,
+            "card_tx_rate": 26.88068,
+            "merch_tx_rate": 0.008655,
+            "user_merch_rate": 0.0,
+            "user_merchant_diversity_rate": 0.028825,
+            "user_city_diversity_rate": 0.011021
+          },
+          "fraud_rates": {
+            "user": 0.013393,
+            "merchant": 0.001,
+            "city": 0.015251
+          },
+          "scores": {
+            "E_hardneg": 0.00906,
+            "V_rawplus": 0.045664,
+            "score_diff_V_minus_E": 0.036604
+          }
+        },
+        {
+          "segment": {
+            "seen_pool": true,
+            "under_covered": false,
+            "genuinely_new": false,
+            "full_history_depth": 806484,
+            "in_frame_prior_merch_rows": 47975,
+            "channel": "chip"
+          },
+          "amount": 7.82,
+          "mcc": 5499,
+          "merchant_code": 90304,
+          "city_code": 31705,
+          "card_code": 62278,
+          "raw_counts": {
+            "user_tx_count": 457,
+            "card_tx_count": 367830,
+            "merch_tx_count": 47975,
+            "user_merchant_diversity": 128,
+            "user_city_diversity": 67,
+            "user_merch_count": 3
+          },
+          "rates": {
+            "user_tx_rate": 0.104075,
+            "card_tx_rate": 40.670502,
+            "merch_tx_rate": 5.007177,
+            "user_merch_rate": 0.001842,
+            "user_merchant_diversity_rate": 0.02915,
+            "user_city_diversity_rate": 0.015258
+          },
+          "fraud_rates": {
+            "user": 0.102845,
+            "merchant": 0.000834,
+            "city": 0.251073
+          },
+          "scores": {
+            "E_hardneg": 0.014,
+            "V_rawplus": 0.034485,
+            "score_diff_V_minus_E": 0.020485
+          }
+        }
+      ]
+    }
+  },
+  "step7_note": "The Phase-6 one-shot final test recorded FN 15 (E) vs FN 42 (V) at the locked test thresholds. Test labels are NOT used here; the VALIDATION analogue of the failure is the E_caught_V_missed set above."
+}

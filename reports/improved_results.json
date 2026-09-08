@@ -1,0 +1,77 @@
+{
+  "ulb": {
+    "error": "\"['v1_div_v4', 'v0_div_v3'] not in index\""
+  },
+  "altman": {
+    "dataset": "ibm_altman",
+    "sampled": 3000000,
+    "n_features": 36,
+    "n_features_added": 15,
+    "user_disjoint": {
+      "train_users": 203,
+      "test_users": 50
+    },
+    "results": {
+      "xgb_optuna": {
+        "roc_auc": 0.997151,
+        "pr_auc": 0.838522,
+        "brier": 0.00032,
+        "recall_1pct_fpr": 0.936644,
+        "recall_0_5pct_fpr": 0.919521,
+        "recall_0_1pct_fpr": 0.859589,
+        "optimal_threshold": 0.005391,
+        "precision_at_optimal": 0.096609,
+        "f1_at_optimal": 0.175152,
+        "f1_at_0_5": 0.811567,
+        "roc_auc_95ci": [
+          0.996228,
+          0.998006
+        ],
+        "pr_auc_95ci": [
+          0.815141,
+          0.864185
+        ],
+        "n_pos": 584,
+        "n_neg": 540551,
+        "time_s": 22.26
+      },
+      "xgb_calibrated": {
+        "roc_auc": 0.996916,
+        "pr_auc": 0.834046,
+        "brier": 0.000333,
+        "recall_1pct_fpr": 0.936644,
+        "recall_0_5pct_fpr": 0.916096,
+        "recall_0_1pct_fpr": 0.861301,
+        "optimal_threshold": 0.002553,
+        "precision_at_optimal": 0.096746,
+        "f1_at_optimal": 0.175377,
+        "f1_at_0_5": 0.784736,
+        "roc_auc_95ci": [
+          0.99597,
+          0.997908
+        ],
+        "pr_auc_95ci": [
+          0.810883,
+          0.860773
+        ],
+        "n_pos": 584,
+        "n_neg": 540551,
+        "time_s": 54.05
+      }
+    },
+    "best_params": {
+      "n_estimators": 370,
+      "max_depth": 9,
+      "learning_rate": 0.07741938898902603,
+      "subsample": 0.8366645688782314,
+      "colsample_bytree": 0.5846110612740385,
+      "min_child_weight": 5,
+      "gamma": 4.2760922659877805,
+      "scale_pos_weight": 1.575216791630151
+    },
+    "timestamp": "2026-08-28T13:40:17"
+  },
+  "paysim": {
+    "error": "'step'"
+  }
+}

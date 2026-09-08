@@ -1,0 +1,42 @@
+{
+  "control": "E_hardneg_phase6_control",
+  "method": "certified artifacts rescored on locked mission-frame val",
+  "certified": {
+    "rows": 174530,
+    "fraud": 3834,
+    "auc": 0.995594,
+    "pr_auc": 0.914337,
+    "P1": {
+      "threshold": 0.053558,
+      "fpr": 0.07082767,
+      "recall": 0.990089
+    },
+    "P2": {
+      "threshold": 0.018758,
+      "fpr": 0.115304401,
+      "recall": 0.995044
+    }
+  },
+  "replayed": {
+    "auc": 0.995594,
+    "pr_auc": 0.914337,
+    "P1": {
+      "threshold": 0.053558,
+      "fpr": 0.070828,
+      "recall": 0.990089
+    },
+    "P2": {
+      "threshold": 0.018758,
+      "fpr": 0.115304,
+      "recall": 0.995044
+    }
+  },
+  "gate": {
+    "auc_match": true,
+    "pr_auc_match": true,
+    "p2_recall_match": true,
+    "p2_fpr_match": true,
+    "p2_threshold_match": true
+  },
+  "result": "PASS"
+}

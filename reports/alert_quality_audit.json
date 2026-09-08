@@ -1,0 +1,251 @@
+{
+  "check": 30,
+  "generated_at": "2026-09-03 20:31:05",
+  "sandbox": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\db\\_sandbox_tmp\\ps14_alert_audit_y6g4cp20",
+  "sections": {
+    "A_generation": {
+      "alert_definition": "alert == risk_scores row with risk_band='high' (verification_service/main.py /alerts)",
+      "risk_scores_event_id_unique": true,
+      "max_alerts_per_event": 1,
+      "auto_case_creation_wired": false,
+      "auto_case_finding": "create_investigator_case docstring claims it is 'called automatically when a score_generated event is high-risk', but no caller exists in src/ \u2014 case creation is manual/UI-only; a high-risk score alone never opens an investigator case",
+      "n_scores_pre": 574,
+      "n_high_pre": 40
+    },
+    "D_explainability": {
+      "engine": "xgb pred_contribs (native TreeSHAP, margin scale)",
+      "top_feature": "mcc_n",
+      "top_contribution": 3.48138,
+      "shap_additivity_check": 7.9e-08,
+      "top_shap_feature_unmovable_at_runtime": {
+        "top_feature": "mcc_n",
+        "unmovable_top_contributors": [
+          "mcc_n",
+          "has_zip",
+          "city_fraud_rate"
+        ],
+        "finding": "the per-row explanation is dominated by features that have no real-time input to move (constant zeros in the runtime mapper) \u2014 a sensitivity test against the raw input is only possible for the next-ranked movable feature"
+      },
+      "sensitivity": {
+        "moved_input": "amount_ratio",
+        "contribution_of_feature": 1.78466,
+        "margin_base": 4.52767,
+        "margin_up": 4.57527,
+        "margin_down": 5.35085,
+        "score_base": 0.98931,
+        "score_up": 0.9898,
+        "score_down": 0.99528,
+        "up_direction_consistent": true,
+        "down_direction_inverts": false,
+        "measured_response_curve": [
+          3.925,
+          4.215,
+          5.351,
+          4.913,
+          4.528,
+          4.575,
+          4.647
+        ],
+        "verdict": "PARTIAL \u2014 the explanation is exact and additive on the margin (additivity 7.9e-08) and the up-move follows the contribution sign; the down-move INVERTS because the deployed model's amount response is non-monotone (margin dips near ratio ~4 and rises toward 1.0-1.6 and toward ~0.2). SHAP attributes exactly but is not linear advice: 'reduce this feature to lower risk' is false for this feature. And the top-3 contributors (mcc_n, has_zip, city_fraud_rate) are constant zeros at runtime with no input to move at all."
+      }
+    },
+    "E_dedup_and_confirm": {
+      "duplicate_same_event_inserts": [
+        1,
+        2
+      ],
+      "db_level_dedup": false,
+      "finding": "NO unique constraint on investigator_cases.event_id \u2014 two rows for one event insert cleanly; the only dedup is the in-code SELECT check inside the broken create endpoint. Retries on a fixed endpoint still need a DB constraint or an upsert."
+    },
+    "B_live_create_endpoint": {
+      "live_create_codes": [
+        500,
+        500,
+        500
+      ],
+      "endpoint_works": false,
+      "root_cause": "investigator_cases.score_id is NOT NULL with no default, but POST /investigator/cases never sets it -> sqlite3.IntegrityError on every create. The case-creation workflow has never been exercised against the live schema.",
+      "fix": "resolve score_id from risk_scores by event_id (or accept it)"
+    },
+    "B2_priority_order": {
+      "server_sorted_desc": true,
+      "priorities": [
+        135.0,
+        96.0,
+        90.0,
+        70.0,
+        60.0,
+        40.0
+      ],
+      "ranking_rule": "priority = risk_score * confidence weight (high 1.0 / medium 1.2 / low 1.5) from ml_score uncertainty; low-confidence cases surface first \u2014 server orders desc by priority"
+    },
+    "B3_case_payload_trace": {
+      "has_model_version": false,
+      "has_feature_version": false,
+      "has_locked_threshold": false,
+      "has_ml_score": false,
+      "has_feature_values": false,
+      "has_explanation": false,
+      "payload_keys": [
+        "case_id",
+        "confidence",
+        "created_at",
+        "event_id",
+        "fraud_id",
+        "investigator_id",
+        "notes",
+        "priority",
+        "reason_codes",
+        "risk_score",
+        "status",
+        "updated_at"
+      ]
+    },
+    "F_case_lifecycle": {
+      "legal_chain": [
+        [
+          "REVIEWING",
+          200
+        ],
+        [
+          "USER_VERIFICATION",
+          200
+        ],
+        [
+          "CONFIRMED_SUSPICIOUS",
+          200
+        ],
+        [
+          "CLOSED",
+          200
+        ]
+      ],
+      "closed_then_anything_illegal": [
+        [
+          "USER_VERIFICATION",
+          400
+        ],
+        [
+          "CONFIRMED_LEGITIMATE",
+          400
+        ],
+        [
+          "CLOSED",
+          400
+        ]
+      ],
+      "new_to_confirmed_illegal": 400,
+      "all_illegal_400": true,
+      "transition_gate_source": "in-code CASE_TRANSITIONS map (no DB constraint \u2014 a concurrent/skip write could bypass the gate; single-process transitions are correct)"
+    },
+    "F2_investigator_resolution_labels": {
+      "outcomes_after_confirm_suspicious": 0,
+      "finding": "transition to CONFIRMED_SUSPICIOUS/LEGITIMATE writes NO verification_outcome row \u2014 investigator verdicts never become labels; only the user-side /alerts/.../confirm path feeds the retraining pool"
+    },
+    "I_capacity_stress": {
+      "requested": 300,
+      "inserted_ok": 300,
+      "no_drops": true,
+      "wall_seconds": 0.004,
+      "rate_per_second": 76587.0,
+      "db_rows_after": 310,
+      "expected_rows": 310,
+      "note": "store-level stress (the API cannot create cases \u2014 see case_creation); the case-management STORE handles the flood without drops"
+    },
+    "G2_feedback_status_endpoint": {
+      "resolved": 0,
+      "confirmed": 0,
+      "disputed": 0,
+      "retrain_disputed_threshold": 5
+    },
+    "E_confirm_dedup": {
+      "note": "requires JWT for /alerts; skipped in sandbox because identity service not booted \u2014 confirm dedup is enforced server-side by 409 on existing VerificationOutcome (code) and by score_id FK + no duplicate outcome row under SQLite serialization",
+      "sample_high_event": [
+        "load-000000",
+        "FLOADXXXXXXXXXXA"
+      ]
+    },
+    "H_operational_burden": {
+      "n_scores": 574,
+      "n_high": 40,
+      "span_days": 1.12,
+      "alerts_per_day": 35.6,
+      "alerts_per_1000_txns": 69.7,
+      "confirmed_fraud_rate_among_alerts": "UNVERIFIED \u2014 0 confirmed labels exist (sandbox outcomes 0)",
+      "open_case_backlog_post_drill": "309 non-closed cases after the drill (300 stress + seeded) \u2014 every alert-seeded case sits NEW because nothing auto-creates or auto-triages them",
+      "investigators": "0 in demo state \u2014 alerts-per-investigator not computable (UNVERIFIED)"
+    },
+    "J_auditability": {
+      "events_added": 4,
+      "case_event_counts": {
+        "case_transition": 4
+      },
+      "append_only_enforced": true,
+      "actor_trace": "case_transition payload carries pseudonymous investigator_id; no real identity in any payload",
+      "access_control": "investigator endpoints gated by X-Compliance-Token (server-side compare); feedback-status is unauthenticated read-only counts"
+    },
+    "G_feedback_loop": {
+      "label_definition": "confirm 'this_was_me' -> outcome confirmed -> label 0 (legit); 'this_wasnt_me' -> disputed -> label 1 (fraud) (scripts/export_feedback.py)",
+      "investigator_verdict_to_label": "NOT WIRED (see F finding)",
+      "labels_timestamped": true,
+      "labels_cannot_modify_history": "export_feedback reads DB-2 stored feature vectors + writes NEW dated snapshots; historical features immutable; trainer consumes snapshot at retrain time",
+      "future_label_leak": "stored features were computed at ingest time (privacy layer) before any label existed; velocity windows anchored pre-event \u2014 no future-label path into past feature computation",
+      "retrain_trigger": "disputed count >= 5 appends retrain_trigger audit event; pool gate min-outcomes 10 (default)"
+    },
+    "C_traceability": {
+      "risk_score_row_has": [
+        "event_id",
+        "fraud_id",
+        "risk_score",
+        "risk_band",
+        "model_version",
+        "ml_score",
+        "rule_score",
+        "reason_codes",
+        "degraded",
+        "scored_at"
+      ],
+      "alert_payload_missing": [
+        "model_version",
+        "feature_version",
+        "locked threshold",
+        "ml_score",
+        "feature values",
+        "explanation"
+      ],
+      "case_payload_missing": [
+        "model_version",
+        "feature_version",
+        "locked threshold",
+        "ml_score",
+        "feature values",
+        "explanation"
+      ],
+      "audit_score_generated_has": [
+        "model_version",
+        "feature_version",
+        "rule_version",
+        "ml_score",
+        "odds",
+        "degraded",
+        "reason_codes",
+        "drift_state"
+      ],
+      "verdict": "PARTIAL \u2014 the audit chain and risk_scores row retain model/feature/rule versions and scores, but neither the user alert nor the investigator case carries them; no row stores the feature values used or the locked threshold, and no per-alert SHAP/explanation is surfaced in the workflow"
+    },
+    "K_verdict": {
+      "generation_max_1_alert_per_event": true,
+      "prioritization_consistent": true,
+      "traceability": "PARTIAL \u2014 the audit chain and risk_scores row retain model/feature/rule versions and scores, but neither the user alert nor the investigator case carries them; no row stores the feature values used or the locked threshold, and no per-alert SHAP/explanation is surfaced in the workflow",
+      "explainability_validation": "PARTIAL \u2014 the explanation is exact and additive on the margin (additivity 7.9e-08) and the up-move follows the contribution sign; the down-move INVERTS because the deployed model's amount response is non-monotone (margin dips near ratio ~4 and rises toward 1.0-1.6 and toward ~0.2). SHAP attributes exactly but is not linear advice: 'reduce this feature to lower risk' is false for this feature. And the top-3 contributors (mcc_n, has_zip, city_fraud_rate) are constant zeros at runtime with no input to move at all.",
+      "case_create_endpoint_works": false,
+      "db_level_case_dedup": true,
+      "lifecycle_illegal_blocks": true,
+      "feedback_investigator_verdict_to_label": "NOT WIRED",
+      "capacity_no_drops": true,
+      "auditable": true,
+      "overall": "FAIL",
+      "headline": "Alert GENERATION is clean (1 per event, unique), priority ranking is server-side and consistent, lifecycle transition gates enforce legality, and the case store absorbs a 300-alert flood without drops. But the investigator WORKFLOW fails: POST /investigator/cases 500s on every call (score_id NOT NULL never supplied) \u2014 cases cannot be created through the API at all; nothing auto-creates cases from high-risk scores; alerts and cases carry no model version / feature version / locked threshold / feature values / explanation; investigator verdicts never become labels; case dedup has no DB-level constraint; and confirmed-fraud rates among alerts are unmeasurable (0 labels)."
+    }
+  }
+}

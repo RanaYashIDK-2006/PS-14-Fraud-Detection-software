@@ -1,0 +1,68 @@
+{
+  "timestamp": "2026-08-29T15:51:01Z",
+  "config": {
+    "requests": 500,
+    "concurrency": 20,
+    "batch_size": 50,
+    "batch_count": 20
+  },
+  "health": {
+    "status": "ok",
+    "service": "inference-service",
+    "model_loaded": true,
+    "model_version": "altman_lgb_20260829_145406",
+    "model_type": "LGBMClassifier",
+    "active_users": 0,
+    "state_backend": "redis",
+    "redis_connected": true,
+    "redis_memory_mb": 0.69,
+    "uptime_s": 95.2,
+    "registered_models": 4,
+    "ab_experiments": 1
+  },
+  "single_score": {
+    "label": "single-score",
+    "n": 500,
+    "errors": 0,
+    "mean_ms": 53.632,
+    "median_ms": 52.532,
+    "p95_ms": 64.206,
+    "p99_ms": 140.286,
+    "min_ms": 5.102,
+    "max_ms": 211.338,
+    "throughput_tps": 19.0
+  },
+  "batch_score": {
+    "label": "batch-score",
+    "n": 20,
+    "errors": 0,
+    "mean_ms": 532.313,
+    "median_ms": 559.062,
+    "p95_ms": 568.786,
+    "p99_ms": 568.786,
+    "min_ms": 30.403,
+    "max_ms": 568.786,
+    "throughput_tps": 2.0,
+    "total_scored": 1000
+  },
+  "ab_score": {
+    "label": "ab-score",
+    "n": 500,
+    "errors": 0,
+    "mean_ms": 62.589,
+    "median_ms": 62.762,
+    "p95_ms": 69.66,
+    "p99_ms": 90.741,
+    "min_ms": 25.601,
+    "max_ms": 94.564,
+    "throughput_tps": 16.0,
+    "version_distribution": {
+      "altman_lgb_20260829_145406": 500
+    }
+  },
+  "state_consistency": {
+    "tx_count": 11,
+    "pass": true
+  },
+  "total_errors": 0
+}

@@ -1,0 +1,52 @@
+{
+  "operating_point_table": [
+    {
+      "model": "OLD v2 (pre-native reference)",
+      "threshold": null,
+      "note": "superseded; see governance record"
+    },
+    {
+      "model": "E_hardneg (certified production)",
+      "threshold": 0.018758,
+      "metrics": {
+        "recall": 0.996723,
+        "fpr": 0.109876,
+        "precision": 0.181093,
+        "tp": 4563,
+        "fp": 20634,
+        "fn": 15,
+        "tn": 167160,
+        "alerts": 25197
+      }
+    },
+    {
+      "model": "E_hardneg_exposure_norm_v1 (V_rawplus, frozen)",
+      "threshold": 0.029894,
+      "metrics": {
+        "recall": 0.990826,
+        "fpr": 0.091457,
+        "precision": 0.208926,
+        "tp": 4536,
+        "fp": 17175,
+        "fn": 42,
+        "tn": 170619,
+        "alerts": 21711
+      }
+    }
+  ],
+  "frontier": {
+    "model": [
+      "E_hardneg",
+      "V_rawplus_frozen"
+    ],
+    "recall_at_fpr_5pct": [
+      0.9497597204019222,
+      0.9294451725644386
+    ],
+    "recall_at_fpr_10pct": [
+      0.9951944080384447,
+      0.9941022280471822
+    ],
+    "note": "descriptive summary of the one-shot locked evaluation; no threshold selected from the test window"
+  }
+}

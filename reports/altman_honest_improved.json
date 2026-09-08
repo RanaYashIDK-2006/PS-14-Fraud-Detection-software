@@ -1,0 +1,44 @@
+{
+  "dataset": "ibm_altman_honest",
+  "n_features": 32,
+  "leakage_free": true,
+  "tuned_params": {
+    "n_estimators": 473,
+    "max_depth": 10,
+    "learning_rate": 0.09008739994720713,
+    "scale_pos_weight": 6.470386746561389,
+    "subsample": 0.6503501588045121,
+    "colsample_bytree": 0.8027158008389278,
+    "min_child_weight": 2,
+    "gamma": 1.4273783089711172
+  },
+  "results": {
+    "xgb_tuned": {
+      "roc_auc": 0.929828,
+      "pr_auc": 0.530495,
+      "brier": 0.000712,
+      "r1": 0.707192,
+      "r05": 0.662671,
+      "r01": 0.52911,
+      "opt_thr": 0.0122,
+      "f1_opt": 0.134091,
+      "time": 55.3
+    },
+    "xgb_calibrated": {
+      "roc_auc": 0.914721,
+      "pr_auc": 0.317142,
+      "brier": 0.000903,
+      "r1": 0.633562,
+      "r05": 0.628425,
+      "r01": 0.296233,
+      "opt_thr": 0.0309,
+      "f1_opt": 0.124161,
+      "time": 119.8
+    }
+  },
+  "user_disjoint": {
+    "train_users": 203,
+    "test_users": 50
+  },
+  "timestamp": "2026-08-28T14:43:24"
+}

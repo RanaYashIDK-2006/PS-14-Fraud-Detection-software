@@ -1,0 +1,198 @@
+{
+  "title": "Unified Cross-Domain Evaluation",
+  "unified_features": [
+    "amount_log",
+    "amount_zscore",
+    "hour_sin",
+    "hour_cos",
+    "is_night",
+    "is_weekend",
+    "pca_magnitude",
+    "pca_skew",
+    "pca_extreme_count",
+    "balance_drain_ratio",
+    "dest_balance_change",
+    "entity_seen_before",
+    "chip_transaction",
+    "is_new_entity",
+    "has_error"
+  ],
+  "n_features": 15,
+  "in_domain": {
+    "ulb": {
+      "ulb_roc_auc": 0.953881,
+      "ulb_pr_auc": 0.640973,
+      "ulb_brier": 0.000968,
+      "ulb_r1": 0.836735,
+      "ulb_r05": 0.806122,
+      "ulb_r01": 0.653061,
+      "ulb_opt_thr": 0.0228,
+      "ulb_f1": 0.233618,
+      "ulb_n_pos": 98,
+      "ulb_n_neg": 56864,
+      "ulb_time": 4.68
+    },
+    "altman": {
+      "alt_roc_auc": 0.499206,
+      "alt_pr_auc": 0.001155,
+      "alt_brier": 0.001217,
+      "alt_r1": 0.007092,
+      "alt_r05": 0.004255,
+      "alt_r01": 0.0,
+      "alt_opt_thr": 0.0237,
+      "alt_f1": 0.001599,
+      "alt_n_pos": 705,
+      "alt_n_neg": 599295,
+      "alt_time": 47.81
+    },
+    "paysim": {
+      "pay_roc_auc": 0.922042,
+      "pay_pr_auc": 0.546705,
+      "pay_brier": 0.047534,
+      "pay_r1": 0.407313,
+      "pay_r05": 0.309354,
+      "pay_r01": 0.185969,
+      "pay_opt_thr": 0.7737,
+      "pay_f1": 0.496962,
+      "pay_n_pos": 11760,
+      "pay_n_neg": 228240,
+      "pay_time": 14.29
+    }
+  },
+  "cross_domain": {
+    "ulb_to_altman": {
+      "ulb_to_altman_roc_auc": 0.491198,
+      "ulb_to_altman_pr_auc": 0.001096,
+      "ulb_to_altman_brier": 0.00114,
+      "ulb_to_altman_r1": 0.010816,
+      "ulb_to_altman_r05": 0.004677,
+      "ulb_to_altman_r01": 0.000585,
+      "ulb_to_altman_opt_thr": 0.0003,
+      "ulb_to_altman_f1": 0.002057,
+      "ulb_to_altman_n_pos": 3421,
+      "ulb_to_altman_n_neg": 2996579,
+      "ulb_to_altman_time": 7.12
+    },
+    "ulb_to_paysim": {
+      "ulb_to_paysim_roc_auc": 0.529987,
+      "ulb_to_paysim_pr_auc": 0.05273,
+      "ulb_to_paysim_brier": 0.048998,
+      "ulb_to_paysim_r1": 0.011514,
+      "ulb_to_paysim_r05": 0.004184,
+      "ulb_to_paysim_r01": 0.000884,
+      "ulb_to_paysim_opt_thr": 0.0001,
+      "ulb_to_paysim_f1": 0.007122,
+      "ulb_to_paysim_n_pos": 58800,
+      "ulb_to_paysim_n_neg": 1141200,
+      "ulb_to_paysim_time": 6.26
+    },
+    "altman_to_ulb": {
+      "altman_to_ulb_roc_auc": 0.516129,
+      "altman_to_ulb_pr_auc": 0.002086,
+      "altman_to_ulb_brier": 0.001759,
+      "altman_to_ulb_r1": 0.010163,
+      "altman_to_ulb_r05": 0.010163,
+      "altman_to_ulb_r01": 0.00813,
+      "altman_to_ulb_opt_thr": 0.0254,
+      "altman_to_ulb_f1": 0.005872,
+      "altman_to_ulb_n_pos": 492,
+      "altman_to_ulb_n_neg": 284315,
+      "altman_to_ulb_time": 51.85
+    },
+    "altman_to_paysim": {
+      "altman_to_paysim_roc_auc": 0.288058,
+      "altman_to_paysim_pr_auc": 0.03753,
+      "altman_to_paysim_brier": 0.048396,
+      "altman_to_paysim_r1": 0.030765,
+      "altman_to_paysim_r05": 0.01233,
+      "altman_to_paysim_r01": 0.01233,
+      "altman_to_paysim_opt_thr": 0.0326,
+      "altman_to_paysim_f1": 0.023306,
+      "altman_to_paysim_n_pos": 58800,
+      "altman_to_paysim_n_neg": 1141200,
+      "altman_to_paysim_time": 53.49
+    },
+    "paysim_to_ulb": {
+      "paysim_to_ulb_roc_auc": 0.544935,
+      "paysim_to_ulb_pr_auc": 0.002932,
+      "paysim_to_ulb_brier": 0.021912,
+      "paysim_to_ulb_r1": 0.069106,
+      "paysim_to_ulb_r05": 0.069106,
+      "paysim_to_ulb_r01": 0.002033,
+      "paysim_to_ulb_opt_thr": 0.2484,
+      "paysim_to_ulb_f1": 0.002503,
+      "paysim_to_ulb_n_pos": 492,
+      "paysim_to_ulb_n_neg": 284315,
+      "paysim_to_ulb_time": 17.79
+    },
+    "paysim_to_altman": {
+      "paysim_to_altman_roc_auc": 0.485474,
+      "paysim_to_altman_pr_auc": 0.001105,
+      "paysim_to_altman_brier": 0.078934,
+      "paysim_to_altman_r1": 0.03537,
+      "paysim_to_altman_r05": 0.03537,
+      "paysim_to_altman_r01": 0.03537,
+      "paysim_to_altman_opt_thr": Infinity,
+      "paysim_to_altman_f1": 0.0,
+      "paysim_to_altman_n_pos": 3421,
+      "paysim_to_altman_n_neg": 2996579,
+      "paysim_to_altman_time": 19.82
+    }
+  },
+  "combined_training": {
+    "ulb": {
+      "combined_ulb_roc_auc": 0.954747,
+      "combined_ulb_pr_auc": 0.599134,
+      "combined_ulb_brier": 0.001143,
+      "combined_ulb_r1": 0.806122,
+      "combined_ulb_r05": 0.734694,
+      "combined_ulb_r01": 0.602041,
+      "combined_ulb_opt_thr": 0.0609,
+      "combined_ulb_f1": 0.223796,
+      "combined_ulb_n_pos": 98,
+      "combined_ulb_n_neg": 56864
+    },
+    "altman": {
+      "combined_altman_roc_auc": 0.488782,
+      "combined_altman_pr_auc": 0.001133,
+      "combined_altman_brier": 0.001206,
+      "combined_altman_r1": 0.002837,
+      "combined_altman_r05": 0.001418,
+      "combined_altman_r01": 0.001418,
+      "combined_altman_opt_thr": 0.0209,
+      "combined_altman_f1": 0.000928,
+      "combined_altman_n_pos": 705,
+      "combined_altman_n_neg": 599295
+    },
+    "paysim": {
+      "combined_paysim_roc_auc": 0.922848,
+      "combined_paysim_pr_auc": 0.547109,
+      "combined_paysim_brier": 0.047558,
+      "combined_paysim_r1": 0.402466,
+      "combined_paysim_r05": 0.320323,
+      "combined_paysim_r01": 0.153401,
+      "combined_paysim_opt_thr": 0.7788,
+      "combined_paysim_f1": 0.492535,
+      "combined_paysim_n_pos": 11760,
+      "combined_paysim_n_neg": 228240
+    }
+  },
+  "datasets": {
+    "ulb": {
+      "rows": 284807,
+      "fraud": 492,
+      "features": "PCA V1-V28 \u2192 unified"
+    },
+    "altman": {
+      "rows": 3000000,
+      "fraud": 3421,
+      "features": "merchant/user \u2192 unified"
+    },
+    "paysim": {
+      "rows": 1200000,
+      "fraud": 58800,
+      "features": "balance/transaction \u2192 unified"
+    }
+  },
+  "timestamp": "2026-08-28T14:44:06"
+}

@@ -1,0 +1,13 @@
+[Unit]
+Description=PS-14 Audit Chain Integrity Check
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/curl -sf -H "X-Internal-Token: $(cat /opt/ps14/.env | grep INTERNAL_TOKEN | cut -d= -f2)" http://localhost:8005/audit/integrity | /usr/bin/python3 -c "import sys,json; d=json.load(sys.stdin); exit(0 if d.get('ok') else 1)"
+WorkingDirectory=/opt/ps14
+User=ps14
+Group=ps14
+StandardOutput=journal
+StandardError=journal

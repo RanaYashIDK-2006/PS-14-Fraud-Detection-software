@@ -1,0 +1,592 @@
+# Declarative rule engine config
+#
+# Composition: score = 100 * max(ml_fusion, rule_score)
+# severity_scale: global multiplier on rule severities
+# severity_floor: critical rules push the score to at least this
+
+severity_floor: 85
+severity_scale: 1.00
+
+rules:
+  - id: RULE_AMOUNT_HIGH
+    description: Transaction amount notably above the account's typical range
+    reason_code: AMOUNT_UNUSUAL
+    severity: 0.25
+    condition:
+      feature: amount_ratio
+      op: ">="
+      value: 1.8
+
+  - id: RULE_AMOUNT_EXTREME
+    description: Transaction amount far above the account's typical range
+    reason_code: AMOUNT_UNUSUAL
+    severity: 0.55
+    condition:
+      feature: amount_ratio
+      op: ">="
+      value: 2.5
+
+  - id: RULE_NEW_DEVICE
+    description: New device detected
+    reason_code: NEW_DEVICE
+    severity: 0.35
+    condition:
+      feature: new_device_flag
+      op: "=="
+      value: 1
+
+  - id: RULE_UNUSUAL_TIME
+    description: Unusual time of day for this account
+    reason_code: UNUSUAL_TIME
+    severity: 0.20
+    condition:
+      feature: txn_time_unusual
+      op: "=="
+      value: 1
+
+  - id: RULE_UNUSUAL_LOCATION
+    description: Unusual location combined with unusual time or amount
+    reason_code: LOCATION_UNUSUAL
+    severity: 0.25
+    condition:
+      any_of:
+        - all_of:
+            - { feature: unusual_location_flag, op: "==", value: 1 }
+            - { feature: txn_time_unusual, op: "==", value: 1 }
+        - all_of:
+            - { feature: unusual_location_flag, op: "==", value: 1 }
+            - { feature: amount_ratio, op: ">=", value: 2.0 }
+
+  - id: RULE_UNUSUAL_RECIPIENT
+    description: Unusual recipient combined with unusual time or frequency
+    reason_code: RECIPIENT_UNUSUAL
+    severity: 0.25
+    condition:
+      any_of:
+        - all_of:
+            - { feature: unusual_recipient_flag, op: "==", value: 1 }
+            - { feature: txn_time_unusual, op: "==", value: 1 }
+        - all_of:
+            - { feature: unusual_recipient_flag, op: "==", value: 1 }
+            - { feature: txn_freq_last_24h, op: ">=", value: 3 }
+
+  - id: RULE_AUTH_FAILURES
+    description: Elevated failed authentication attempts
+    reason_code: AUTH_ANOMALY
+    severity: 0.45
+    condition:
+      feature: failed_auth_count_24h
+      op: ">="
+      value: 3
+
+  - id: RULE_HIGH_FREQUENCY
+    description: Transaction frequency is abnormal
+    reason_code: FREQUENCY_ABNORMAL
+    severity: 0.35
+    condition:
+      feature: txn_freq_last_24h
+      op: ">="
+      value: 5
+
+  - id: RULE_ESCALATION
+    description: Behavior differs from your usual pattern (gradual escalation)
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 1.0
+    condition:
+      feature: gradual_escalation_score
+      op: ">="
+      value: 0.5
+
+  - id: RULE_NEW_ACCOUNT_LARGE
+    description: Large transaction from a newly created account
+    reason_code: AMOUNT_UNUSUAL
+    severity: 0.60
+    condition:
+      all_of:
+        - { feature: account_tenure_days, op: "<=", value: 7 }
+        - { feature: amount_ratio, op: ">=", value: 2.5 }
+
+  - id: RULE_CNP_SIGNATURE
+    description: Rapid small transactions to new merchants at odd hours
+    reason_code: FREQUENCY_ABNORMAL
+    severity: 0.55
+    condition:
+      all_of:
+        - { feature: txn_freq_last_24h, op: ">=", value: 3 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+        - { feature: txn_time_unusual, op: "==", value: 1 }
+
+  - id: RULE_ATO_SIGNATURE
+    description: Failed logins + new device + unusual location (account takeover)
+    reason_code: AUTH_ANOMALY
+    severity: 0.90
+    level: critical
+    condition:
+      all_of:
+        - { feature: failed_auth_count_24h, op: ">=", value: 2 }
+        - { feature: new_device_flag, op: "==", value: 1 }
+        - { feature: unusual_location_flag, op: "==", value: 1 }
+
+  - id: RULE_MULE_RING
+    description: Device or recipient shared with other accounts
+    reason_code: MULE_RING
+    severity: 0.60
+    condition:
+      any_of:
+        - all_of:
+            - { feature: shared_device_accounts, op: ">=", value: 1 }
+            - { feature: shared_recipient_accounts, op: ">=", value: 1 }
+            - { feature: unusual_recipient_flag, op: "==", value: 1 }
+        - all_of:
+            - { feature: shared_device_accounts, op: ">=", value: 2 }
+
+  - id: RULE_FAILED_AUTH_MODERATE
+    description: Multiple failed auth attempts (lower threshold than critical ATO)
+    reason_code: AUTH_ANOMALY
+    severity: 0.45
+    condition:
+      feature: failed_auth_count_24h
+      op: ">="
+      value: 2
+
+  # --- Chameleon fraud detection rules ---
+
+  - id: RULE_CHAMELEON_MULTI_FLAG
+    description: Multiple anomaly flags active simultaneously
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.65
+    condition:
+      all_of:
+        - { feature: new_device_flag, op: "==", value: 1 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+        - { feature: txn_time_unusual, op: "==", value: 1 }
+
+  - id: RULE_CHAMELEON_NIGHT_STEALTH
+    description: Unusual hour + new device + unusual location
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.60
+    condition:
+      all_of:
+        - { feature: txn_time_unusual, op: "==", value: 1 }
+        - { feature: new_device_flag, op: "==", value: 1 }
+        - { feature: unusual_location_flag, op: "==", value: 1 }
+
+  - id: RULE_CHAMELEON_MICRO_TEST
+    description: Small amount with multiple anomaly signals
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.45
+    condition:
+      all_of:
+        - { feature: amount_ratio, op: "<", value: 0.5 }
+        - { feature: new_device_flag, op: "==", value: 1 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+
+  - id: RULE_CHAMELEON_FREQ_NEW_RECIPIENT
+    description: High frequency transactions to new recipients
+    reason_code: FREQUENCY_ABNORMAL
+    severity: 0.50
+    condition:
+      all_of:
+        - { feature: txn_freq_last_24h, op: ">=", value: 3 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+        - { feature: unusual_location_flag, op: "==", value: 1 }
+
+  - id: RULE_CHAMELEON_COLD_ESCALATION
+    description: New account + high frequency + unusual patterns
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.50
+    condition:
+      all_of:
+        - { feature: account_tenure_days, op: "<=", value: 14 }
+        - { feature: txn_freq_last_24h, op: ">=", value: 2 }
+        - { feature: new_device_flag, op: "==", value: 1 }
+
+  - id: RULE_CHAMELEON_HIGH_AMOUNT_ANOMALY
+    description: High amount with unusual device and recipient
+    reason_code: AMOUNT_UNUSUAL
+    severity: 0.55
+    condition:
+      all_of:
+        - { feature: amount_ratio, op: ">=", value: 2.0 }
+        - { feature: new_device_flag, op: "==", value: 1 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+
+  - id: RULE_CHAMELEON_V4_DEVIATION
+    description: New device + unusual recipient (common chameleon pattern)
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.55
+    condition:
+      all_of:
+        - { feature: new_device_flag, op: "==", value: 1 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+
+  - id: RULE_CHAMELEON_SPREAD_WEAK
+    description: Many features mildly anomalous (spread-weak)
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.60
+    condition:
+      all_of:
+        - { feature: new_device_flag, op: "==", value: 1 }
+        - { feature: txn_time_unusual, op: "==", value: 1 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+        - { feature: gradual_escalation_score, op: ">", value: 0.1 }
+
+  - id: RULE_CHAMELEON_DEVICE_RECIPIENT
+    description: New device + unusual recipient + failed auth
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.40
+    condition:
+      all_of:
+        - { feature: new_device_flag, op: "==", value: 1 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+        - { feature: failed_auth_count_24h, op: ">", value: 0 }
+
+  # --- Small-transaction fraud rules ---
+
+  - id: RULE_SMALL_FRAUD_CARD_TESTING
+    description: Small amount + new device + unusual recipient + failed auth
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.65
+    condition:
+      all_of:
+        - { feature: amount_ratio, op: "<", value: 0.3 }
+        - { feature: new_device_flag, op: "==", value: 1 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+        - { feature: failed_auth_count_24h, op: ">", value: 0 }
+
+  # --- Borderline chameleon catchers ---
+
+  - id: RULE_NEW_ACCOUNT_MULTI_SIGNAL
+    description: Low-tenure account with multiple weak anomalies
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.65
+    condition:
+      all_of:
+        - { feature: account_tenure_days, op: "<=", value: 10 }
+        - { feature: txn_freq_last_24h, op: ">=", value: 2 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+
+  - id: RULE_FREQ_TENURE_BURST
+    description: High frequency on a very new account
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.70
+    condition:
+      all_of:
+        - { feature: txn_freq_last_24h, op: ">=", value: 3 }
+        - { feature: account_tenure_days, op: "<=", value: 5 }
+
+  - id: RULE_MICRO_FAILED_AUTH
+    description: Micro-amount with failed authentication
+    reason_code: AUTH_ANOMALY
+    severity: 0.60
+    condition:
+      all_of:
+        - { feature: amount_ratio, op: "<", value: 0.5 }
+        - { feature: failed_auth_count_24h, op: ">=", value: 1 }
+
+  - id: RULE_YOUNG_ACCOUNT_ACTIVITY
+    description: Very young account with moderate transaction activity
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.60
+    condition:
+      all_of:
+        - { feature: account_tenure_days, op: "<=", value: 5 }
+        - { feature: txn_freq_last_24h, op: ">=", value: 2 }
+
+  # --- Enhanced financial fraud patterns (correlation > 0.2) ---
+
+  - id: RULE_STRONG_AUTH_ANOMALY
+    description: Multiple failed auth attempts (strongest fraud signal, r=0.448)
+    reason_code: AUTH_ANOMALY
+    severity: 0.85
+    level: critical
+    condition:
+      feature: failed_auth_count_24h
+      op: ">="
+      value: 4
+
+  - id: RULE_MULTI_SIGNAL_FRAUD
+    description: Three or more anomaly signals active (40.9% fraud vs 1.2% legit)
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.80
+    level: critical
+    condition:
+      all_of:
+        - { feature: new_device_flag, op: "==", value: 1 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+        - { feature: unusual_location_flag, op: "==", value: 1 }
+
+  - id: RULE_MULE_RING_STRONG
+    description: Device AND recipient shared with other accounts (r=0.406)
+    reason_code: MULE_RING
+    severity: 0.85
+    level: critical
+    condition:
+      all_of:
+        - { feature: shared_device_accounts, op: ">=", value: 2 }
+        - { feature: shared_recipient_accounts, op: ">=", value: 1 }
+
+  - id: RULE_NIGHT_DEVICE_FRAUD
+    description: Night transaction + new device + unusual recipient (21.5% of fraud)
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.70
+    condition:
+      all_of:
+        - { feature: hour_of_day, op: "<", value: 6 }
+        - { feature: new_device_flag, op: "==", value: 1 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+
+  - id: RULE_COLD_ACCOUNT_HIGH_FREQ
+    description: Very new account (<7 days) with high activity (29.8% of fraud)
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.75
+    condition:
+      all_of:
+        - { feature: account_tenure_days, op: "<=", value: 7 }
+        - { feature: txn_freq_last_24h, op: ">=", value: 2 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+
+  - id: RULE_GRADUAL_ESCALATION_STRONG
+    description: Strong gradual escalation pattern (boiling frog attack)
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.75
+    condition:
+      feature: gradual_escalation_score
+      op: ">="
+      value: 0.4
+
+  - id: RULE_AMOUNT_FREQ_COMBINED
+    description: High amount + high frequency (double anomaly)
+    reason_code: AMOUNT_UNUSUAL
+    severity: 0.65
+    condition:
+      all_of:
+        - { feature: amount_ratio, op: ">=", value: 1.5 }
+        - { feature: txn_freq_last_24h, op: ">=", value: 2 }
+
+  # --- Industry-standard patterns (Stripe, PayPal, banking) ---
+
+  - id: RULE_RAPID_FIRE
+    description: Very high transaction frequency suggests card testing or bot activity
+    reason_code: FREQUENCY_ABNORMAL
+    severity: 0.80
+    level: critical
+    condition:
+      feature: txn_freq_last_24h
+      op: ">="
+      value: 8
+
+  - id: RULE_SILENT_ACCOUNT_WAKE
+    description: Account suddenly active after long dormancy with new device
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.70
+    condition:
+      all_of:
+        - { feature: days_since_last_similar_txn, op: ">=", value: 30 }
+        - { feature: new_device_flag, op: "==", value: 1 }
+        - { feature: amount_ratio, op: ">=", value: 1.5 }
+
+  - id: RULE_THRESHOLD_HOPPING
+    description: Amount just below common verification thresholds (card testing)
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.50
+    condition:
+      all_of:
+        - { feature: amount_ratio, op: ">=", value: 0.8 }
+        - { feature: amount_ratio, op: "<", value: 1.0 }
+        - { feature: txn_freq_last_24h, op: ">=", value: 3 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+
+  - id: RULE_FIRST_TIME_LARGE
+    description: First significant transaction on new account to new recipient
+    reason_code: AMOUNT_UNUSUAL
+    severity: 0.70
+    condition:
+      all_of:
+        - { feature: account_tenure_days, op: "<=", value: 3 }
+        - { feature: amount_ratio, op: ">=", value: 2.0 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+
+  - id: RULE_WEEKEND_NIGHT_BURST
+    description: Weekend night activity with multiple signals (low oversight hours)
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.65
+    condition:
+      all_of:
+        - { feature: is_weekend, op: "==", value: 1 }
+        - { feature: hour_of_day, op: "<", value: 6 }
+        - { feature: new_device_flag, op: "==", value: 1 }
+
+  # --- High-correlation signal rules (from dataset analysis) ---
+
+  - id: RULE_FAILED_AUTH_SINGLE
+    description: Even a single failed auth is 18.9x more likely fraud
+    reason_code: AUTH_ANOMALY
+    severity: 0.40
+    condition:
+      feature: failed_auth_count_24h
+      op: ">="
+      value: 1
+
+  - id: RULE_SHARED_DEVICE
+    description: Device shared with other accounts (23.86x fraud signal)
+    reason_code: MULE_RING
+    severity: 0.65
+    condition:
+      feature: shared_device_accounts
+      op: ">"
+      value: 0
+
+  - id: RULE_SHARED_RECIPIENT
+    description: Recipient shared with other accounts (243x fraud signal)
+    reason_code: MULE_RING
+    severity: 0.70
+    level: critical
+    condition:
+      feature: shared_recipient_accounts
+      op: ">"
+      value: 0
+
+  - id: RULE_MULE_RING_SCORE
+    description: High mule ring composite score (47.7x fraud signal)
+    reason_code: MULE_RING
+    severity: 0.60
+    condition:
+      feature: mule_ring_score
+      op: ">"
+      value: 0.05
+
+  - id: RULE_HIGH_FREQ_LOW_TENURE
+    description: High transaction frequency on young account
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.55
+    condition:
+      all_of:
+        - { feature: txn_freq_last_24h, op: ">=", value: 3 }
+        - { feature: account_tenure_days, op: "<=", value: 14 }
+
+  - id: RULE_LONG_DORMANT
+    description: Long time since last similar transaction + new device
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.50
+    condition:
+      all_of:
+        - { feature: days_since_last_similar_txn, op: ">=", value: 20 }
+        - { feature: new_device_flag, op: "==", value: 1 }
+
+  - id: RULE_TYPICAL_AMOUNT_FRAUD
+    description: Typical amount but with subtle anomaly signals (catches disguised fraud)
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.45
+    condition:
+      all_of:
+        - { feature: amount_ratio, op: "<", value: 1.5 }
+        - { feature: new_device_flag, op: "==", value: 1 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+        - { feature: failed_auth_count_24h, op: ">", value: 0 }
+
+  # --- Young account + behavioral signals (catches real chameleons) ---
+
+  - id: RULE_YOUNG_LOC_RECIP
+    description: New account (<14d) with unusual location AND recipient
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.80
+    level: critical
+    condition:
+      all_of:
+        - { feature: account_tenure_days, op: "<=", value: 14 }
+        - { feature: unusual_location_flag, op: "==", value: 1 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+
+  - id: RULE_YOUNG_RECIP
+    description: New account (<7d) with unusual recipient (even without other flags)
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.65
+    condition:
+      all_of:
+        - { feature: account_tenure_days, op: "<=", value: 7 }
+        - { feature: unusual_recipient_flag, op: "==", value: 1 }
+
+  - id: RULE_YOUNG_LOC_AUTH
+    description: New account with unusual location + any failed auth
+    reason_code: AUTH_ANOMALY
+    severity: 0.70
+    condition:
+      all_of:
+        - { feature: account_tenure_days, op: "<=", value: 14 }
+        - { feature: unusual_location_flag, op: "==", value: 1 }
+        - { feature: failed_auth_count_24h, op: ">", value: 0 }
+
+  - id: RULE_YOUNG_LOC_ONLY
+    description: Very new account (<3d) with unusual location
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.60
+    condition:
+      all_of:
+        - { feature: account_tenure_days, op: "<=", value: 3 }
+        - { feature: unusual_location_flag, op: "==", value: 1 }
+
+  # --- Velocity rules (use account_daily_spend_ratio & device_daily_count) ---
+
+  - id: RULE_VELOCITY_HIGH_DAILY_SPEND
+    description: Account daily spend ratio unusually high (>3x typical)
+    reason_code: FREQUENCY_ABNORMAL
+    severity: 0.60
+    condition:
+      feature: account_daily_spend_ratio
+      op: ">"
+      value: 3.0
+
+  - id: RULE_VELOCITY_EXTREME_DAILY_SPEND
+    description: Account daily spend ratio extreme (>5x typical)
+    reason_code: FREQUENCY_ABNORMAL
+    severity: 0.75
+    level: critical
+    condition:
+      feature: account_daily_spend_ratio
+      op: ">"
+      value: 5.0
+
+  - id: RULE_VELOCITY_DEVICE_BURST
+    description: Device handling many transactions in one day (>10)
+    reason_code: FREQUENCY_ABNORMAL
+    severity: 0.50
+    condition:
+      feature: device_daily_count
+      op: ">"
+      value: 10
+
+  - id: RULE_VELOCITY_DEVICE_EXTREME
+    description: Device handling extreme transaction volume (>20/day)
+    reason_code: FREQUENCY_ABNORMAL
+    severity: 0.70
+    level: critical
+    condition:
+      feature: device_daily_count
+      op: ">"
+      value: 20
+
+  - id: RULE_VELOCITY_SPEND_NEW_DEVICE
+    description: High daily spend on a new device (compounding risk)
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.65
+    condition:
+      all_of:
+        - { feature: account_daily_spend_ratio, op: ">", value: 2.0 }
+        - { feature: new_device_flag, op: "==", value: 1 }
+
+  - id: RULE_VELOCITY_NIGHT_BURST
+    description: High device transaction count during unusual hours
+    reason_code: BEHAVIOR_DEVIATION
+    severity: 0.60
+    condition:
+      all_of:
+        - { feature: device_daily_count, op: ">", value: 5 }
+        - { feature: txn_time_unusual, op: "==", value: 1 }
+
+velocity_limits:
+  per_account:
+    daily_count: 10
+    daily_spend_ratio: 3.0
+  per_device:
+    daily_count: 20

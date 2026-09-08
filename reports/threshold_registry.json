@@ -1,0 +1,152 @@
+{
+  "procedure": [
+    "1. Constraints stated: FPR < 1% hard cap; validation selection targets FPR < 0.9%; recall >= 85% floor.",
+    "2. Sweep thresholds on VALIDATION data only (no test touch).",
+    "3. Select the boundary operating point (max recall under the FPR cap).",
+    "4. LOCK threshold into the per-model registry entry.",
+    "5. Evaluate locked threshold once on the untouched final test.",
+    "6. Multi-window stability: same locked threshold across forward windows; stable iff FPR < cap and recall > floor everywhere.",
+    "7. Threshold change => new model version + full revalidation."
+  ],
+  "constraints": {
+    "fpr_hard_cap": 0.01,
+    "fpr_val_strict_target": 0.009,
+    "min_recall_floor": 0.85,
+    "alert_capacity_per_10k": null,
+    "note": "PS-14 operational thresholds: FPR < 1% hard cap; validation selection targets FPR < 0.9% to leave a buffer for drift; recall floor 85% from the Check-12 retraining rules. No claim that these are industry standards."
+  },
+  "generated_at": "2026-09-03 06:49:47 UTC",
+  "models": [
+    {
+      "model_id": "audit_25feat_xgb_inline (forensic_revalidate.py - NOT the deployed artifact)",
+      "feature_schema": "25-feature expanding-window causal features",
+      "thresholds_selected_on_validation": {
+        "fpr_lt_1pct": 0.094,
+        "fpr_lt_05pct": 0.167,
+        "fpr_lt_01pct": 0.491
+      },
+      "selection_method": "Maximize recall subject to FPR < target, on VALIDATION set only",
+      "validation_recall_at_1pct": 0.9348,
+      "test_set_used_for_selection": "NO",
+      "final_test_at_locked_1pct_threshold": {
+        "threshold": 0.094,
+        "fpr_pct": 0.9489,
+        "recall_pct": 91.81,
+        "precision_pct": 10.27,
+        "tp": 5289,
+        "fp": 46226,
+        "tn": 4825393,
+        "fn": 472,
+        "alerts": 51515,
+        "alerts_per_10k": 105.6,
+        "strictly_under_1pct": true
+      },
+      "key_operating_points_test": {
+        "fpr_lt_1pct": {
+          "threshold": 0.09,
+          "fpr": 0.0099,
+          "recall": 0.9203,
+          "precision": 0.0994,
+          "tp": 5302,
+          "tn": 4823586,
+          "fp": 48033,
+          "fn": 459,
+          "alerts": 53335,
+          "alerts_per_10k": 109.4
+        },
+        "fpr_lt_05pct": {
+          "threshold": 0.18,
+          "fpr": 0.005,
+          "recall": 0.8932,
+          "precision": 0.175,
+          "tp": 5146,
+          "tn": 4847351,
+          "fp": 24268,
+          "fn": 615,
+          "alerts": 29414,
+          "alerts_per_10k": 60.3
+        },
+        "fpr_lt_01pct": {
+          "threshold": 0.53,
+          "fpr": 0.001,
+          "recall": 0.8202,
+          "precision": 0.5026,
+          "tp": 4725,
+          "tn": 4866943,
+          "fp": 4676,
+          "fn": 1036,
+          "alerts": 9401,
+          "alerts_per_10k": 19.3
+        }
+      },
+      "multi_window_stability": {
+        "locked_threshold": 0.111,
+        "locked_on": "Window 1",
+        "forward_windows": [
+          "Window 2",
+          "Window 3",
+          "Window 4",
+          "Window 5"
+        ],
+        "fpr_min_max_pct": [
+          0.609,
+          0.841
+        ],
+        "recall_min_max_pct": [
+          90.68,
+          92.68
+        ],
+        "alerts_per_10k_min_max": [
+          72.0,
+          95.0
+        ],
+        "stable": true,
+        "verdict": "STABLE - FPR stayed under the 1% cap and recall above the 85% floor in every forward window."
+      },
+      "threshold_lock_status": "LOCKED (0.094, val-selected; 0.111 in rolling protocol)"
+    },
+    {
+      "model_id": "altman_lean_15feat_20260830_200346",
+      "feature_schema": "altman_lean_v1 (15 features)",
+      "deployed": true,
+      "threshold_evidence": {
+        "governance_record_selected_threshold": null,
+        "manifest_metric_temporal_test_r1": 0.0,
+        "manifest_temporal_test_auc": 0.98584
+      },
+      "threshold_lock_status": "NOT LOCKED - no threshold was ever selected/validated against THIS artifact on untouched data. The manifest records no recall@1%FPR (r1 = 0.0) and the governance record has selected_threshold = None.",
+      "governance_verdict": "FAIL - production is running a decision threshold that has no validated provenance on the deployed artifact. See also production_parity (Check 16): the audited 25-feature model was never the deployed model."
+    }
+  ],
+  "production_decision_point_audit": [
+    {
+      "location": "src/risk_engine/main.py band_of()",
+      "decision_threshold": "score >= 85 (docstring: ml_prob >= 0.85 -> FPR ~0.80%, recall ~78.4% Altman)",
+      "provenance": "Hardcoded comment in code. No registry entry ties 0.85 to a validated model version. The audit model's locked 1% threshold was 0.094/0.111 on a DIFFERENT score scale (calibrated probability of the 25-feature model) - the scales do not even match the deployed 15-feature model.",
+      "verdict": "UNVERIFIED / NOT TRACEABLE"
+    },
+    {
+      "location": "src/risk_engine/main.py recall-gate (module var vs set_recall_gate vs endpoint)",
+      "decision_threshold": "conflicting: 0.85 vs 0.007",
+      "provenance": {
+        "module_default": 0.85,
+        "function_default_param": 0.007,
+        "endpoint_default_param": 0.007,
+        "issue": "_RECALL_GATE_THRESHOLD initialized to 0.85 (comment: 'FPR < 1% default for Altman') but set_recall_gate() and the /internal/recall-gate endpoint default to 0.007 (comment: '98.5% recall at ~8% FPR'). Enabling the gate without an explicit threshold silently flips the operating point from FPR<1% to ~8% FPR.",
+        "verdict": "INCONSISTENT DEFAULTS - latent misconfiguration hazard"
+      },
+      "verdict": "INCONSISTENT DEFAULTS - latent misconfiguration hazard",
+      "fixed": true,
+      "fix": "Module default aligned to 0.007 (documented ~8% FPR / 98.5% recall point); band_of() score>=85 remains the FPR<1% decision. Comment corrected. (scripts/threshold_governance.py run + risk_engine/smoke suites pass.)"
+    },
+    {
+      "location": "models/artifacts/threshold_config.json",
+      "decision_threshold": {
+        "05fpr": 0.9415623545646667,
+        "01fpr": 0.8599944114685059
+      },
+      "provenance": "Orphan config. Values (~0.86-0.94) are on a different score scale than both the audit model's locked thresholds (0.094) and the lean model's unregistered band (0.85). No loader found in src/.",
+      "verdict": "ORPHANED - no model-version linkage, not loaded by any service"
+    }
+  ]
+}

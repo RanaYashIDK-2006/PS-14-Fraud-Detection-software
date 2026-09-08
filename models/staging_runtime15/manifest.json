@@ -1,0 +1,47 @@
+{
+  "model_version": "altman_runtime17c_20260904_003850",
+  "model_type": "xgb_lgb_cb_ensemble",
+  "ensemble_members": [
+    "xgb",
+    "lgb",
+    "cb"
+  ],
+  "ensemble_weights": {
+    "xgb": 0.34,
+    "lgb": 0.33,
+    "cb": 0.33
+  },
+  "n_features": 21,
+  "features": [
+    "amount_ratio",
+    "txn_freq_last_24h",
+    "txn_time_unusual",
+    "new_device_flag",
+    "unusual_location_flag",
+    "unusual_recipient_flag",
+    "failed_auth_count_24h",
+    "days_since_last_similar_txn",
+    "gradual_escalation_score",
+    "known_device_count",
+    "account_tenure_days",
+    "hour_of_day",
+    "is_weekend",
+    "shared_device_accounts",
+    "shared_recipient_accounts",
+    "mule_ring_score",
+    "hour_deviation",
+    "amount_zscore",
+    "velocity_deviation",
+    "recipient_novelty",
+    "txn_regularity"
+  ],
+  "scaler": "scaler_production.joblib",
+  "calibrator": "calibrator_production.joblib (Platt, validation-fitted)",
+  "feature_source": "runtime mapper (map_causal_features - 21 causal section-16, schema v3) - train == prod by construction; causal training dataset (#27/#P2/#P5)",
+  "feature_schema_version": "altman_runtime_v3",
+  "training_dataset": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\data\\transactions_causal.csv",
+  "target_leakage": false,
+  "train_rows": 197645,
+  "train_seed": 42,
+  "governance_record": "models/model_records/altman_runtime17c_20260904_003850.json"
+}

@@ -1,0 +1,11 @@
+Found 4 known vulnerabilities in 1 package
+Name       Version ID              Fix Versions
+---------- ------- --------------- ------------
+setuptools 78.1.0  PYSEC-2025-49   78.1.1
+setuptools 78.1.0  PYSEC-2025-49   78.1.1
+setuptools 78.1.0  PYSEC-2026-3447 83.0.0
+setuptools 78.1.0  PYSEC-2026-3447 83.0.0
+
+Name  Skip Reason
+----- -------------------------------------------------------------------------
+torch Dependency not found on PyPI and could not be audited: torch (2.13.0+cpu)

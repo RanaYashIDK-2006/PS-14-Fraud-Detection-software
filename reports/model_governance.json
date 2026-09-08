@@ -1,0 +1,158 @@
+{
+  "record_path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\models\\model_records\\altman_lean_15feat_20260830_200346.json",
+  "model_id": "altman_lean_15feat_20260830_200346",
+  "artifact_verification": {
+    "pass": true,
+    "n_checks": 13,
+    "failures": []
+  },
+  "promotion_gate": {
+    "model_id": "altman_lean_15feat_20260830_200346",
+    "gate": [
+      {
+        "gate": "leakage_checks",
+        "status": "PASS (future-row perturbation max diff 0.0 on production builder; audit pipeline causality PASS)"
+      },
+      {
+        "gate": "data_quality",
+        "status": "PASS (data-quality monitor HEALTHY/WARNING; DQ CRITICAL on timestamps investigated as dataset artifact)"
+      },
+      {
+        "gate": "validation_performance",
+        "status": "PASS (val AUC ~0.9959)"
+      },
+      {
+        "gate": "untouched_test",
+        "status": "PASS for audit model (25-feat); DEPLOYED 15-feat artifact's own untouched-test eval NOT rerun -> UNVERIFIED below"
+      },
+      {
+        "gate": "robustness",
+        "status": "PASS (stress matrix 24/24, calibration/segment audits)"
+      },
+      {
+        "gate": "production_parity",
+        "status": "PARTIAL -> FAIL documented: city_fraud_rate cache reset + audit-vs-deployed model mismatch (see production_parity.json)"
+      },
+      {
+        "gate": "security",
+        "status": "PASS (security audit 13/13)"
+      },
+      {
+        "gate": "approval",
+        "status": "UNVERIFIED (no human approval record)"
+      }
+    ],
+    "approved": false,
+    "reason": "Deployed lean artifact predates the forensic revalidation. Audit validated an inline 25-feature XGB, NOT this artifact. Promotion to 'fully validated' status requires running the untouched-test protocol against THIS artifact.",
+    "higher_auc_alone_is_insufficient": true
+  },
+  "record": {
+    "model_id": "altman_lean_15feat_20260830_200346",
+    "created_at": "2026-09-03 06:38:32 UTC",
+    "training_dataset_path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\data\\_sorted_cache\\features_all.parquet",
+    "training_dataset_sha256": "4ea9050120be4883e8d5ffe080aab59fa10bf642c02a3b9068035283562396ac",
+    "training_dataset_rows": 24386900,
+    "code_version": "models/production + src/risk_engine/altman_ensemble.py",
+    "feature_schema_version": "altman_lean_v1",
+    "features": [
+      "log_amt",
+      "amt_sq",
+      "hour_cos",
+      "is_business_hours",
+      "chip",
+      "is_online",
+      "mcc_n",
+      "has_zip",
+      "has_state",
+      "merch_tx_count",
+      "merch_fraud_rate",
+      "city_fraud_rate",
+      "very_high_amt",
+      "amt_x_mcc",
+      "amt_x_online"
+    ],
+    "algorithm": "xgb_lgb_ensemble_lean",
+    "hyperparameters": {
+      "note": "could not introspect: int() argument must be a string, a bytes-like object or a real number, not 'method'"
+    },
+    "training_seed": 42,
+    "training_period": "",
+    "validation_period": "",
+    "final_test_period": "",
+    "selected_threshold": null,
+    "calibration_version": "calibrator.joblib (models/artifacts)",
+    "performance_metrics": {
+      "temporal_test_auc": 0.98584,
+      "temporal_test_r1": 0.0,
+      "cv_auc_mean": 0.98584
+    },
+    "artifact_files": {
+      "cb_production.joblib": {
+        "sha256": "213821a2c8e78122721fa927965d9eaa70cbefec3d89ef83c65c8eaffefab57e",
+        "size": 44265927
+      },
+      "drift_reference.json": {
+        "sha256": "353e90415fe1dd62b0596b9f9e78765fc24b5350e3fc3cb4a989733ca7ca16b6",
+        "size": 6574
+      },
+      "drift_reference.npy": {
+        "sha256": "58de8fd028b4f94b1daec4aa189426ba6b54e5475805de83fa3c714801b4332a",
+        "size": 34919808
+      },
+      "feature_list.json": {
+        "sha256": "f1b8573a142acd9c28d863bfafdc6f001967d2e164f2662f63b61566f4e7dace",
+        "size": 259
+      },
+      "latest": {
+        "sha256": "ff64ec7651200681dd489bff29f0eecc0f30a1c0135cd04e377cbbdd66ead874",
+        "size": 30
+      },
+      "lgb_production.joblib": {
+        "sha256": "4b737db476c16e4ce925ff057d6c11c888c36ca2c8e35883b75a6d651ee14d8b",
+        "size": 1049940
+      },
+      "logistic_regression.joblib": {
+        "sha256": "9532409e2215bd99bd73ed5720ca9a895c5c888d96d732a0b4483f0c93d43846",
+        "size": 1039
+      },
+      "manifest.json": {
+        "sha256": "b713e3c90f8f2481786d634b53914f3539607ba270bec2a9d7b8bd71ce358eb4",
+        "size": 629
+      },
+      "model.joblib": {
+        "sha256": "61169fee582799831a47c5b383a23be5b0d561f1c0f7634a1ab37a7a78165906",
+        "size": 727454
+      },
+      "random_forest.joblib": {
+        "sha256": "c1d39b6268828f6484022550d5f4946fea7b1568477baea6f56fcacd65a41072",
+        "size": 17226313
+      },
+      "scaler.joblib": {
+        "sha256": "95bac31b70c671e1b72126efe774d27515ff4be293bec4b043f8fb947170a0ee",
+        "size": 1071
+      },
+      "scaler_production.joblib": {
+        "sha256": "ca96142faacf080ec49c5d6fb2849f91b83097fa7324ef86acc6394bb4665e4a",
+        "size": 719
+      },
+      "xgb_production.joblib": {
+        "sha256": "d277ad65ba9b64816c279c32e2a9b52711347880a5d103aac60e5e14eab88522",
+        "size": 1268668
+      }
+    },
+    "promotion": {
+      "gates": {
+        "leakage_checks": "PASS (future-row perturbation max diff 0.0 on production builder; audit pipeline causality PASS)",
+        "data_quality": "PASS (data-quality monitor HEALTHY/WARNING; DQ CRITICAL on timestamps investigated as dataset artifact)",
+        "validation_performance": "PASS (val AUC ~0.9959)",
+        "untouched_test": "PASS for audit model (25-feat); DEPLOYED 15-feat artifact's own untouched-test eval NOT rerun -> UNVERIFIED below",
+        "robustness": "PASS (stress matrix 24/24, calibration/segment audits)",
+        "production_parity": "PARTIAL -> FAIL documented: city_fraud_rate cache reset + audit-vs-deployed model mismatch (see production_parity.json)",
+        "security": "PASS (security audit 13/13)",
+        "approval": "UNVERIFIED (no human approval record)"
+      },
+      "reason": "Deployed lean artifact predates the forensic revalidation. Audit validated an inline 25-feature XGB, NOT this artifact. Promotion to 'fully validated' status requires running the untouched-test protocol against THIS artifact."
+    },
+    "parent_model_id": ""
+  }
+}

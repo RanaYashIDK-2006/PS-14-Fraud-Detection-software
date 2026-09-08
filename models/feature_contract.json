@@ -1,0 +1,611 @@
+{
+  "contract_name": "ps14_altman_runtime_feature_contract",
+  "schema_version": "altman_native_v2",
+  "model_version": "altman_native_v2_20260904_115703",
+  "model_type": "xgb_lgb_cb_native",
+  "feature_count": 48,
+  "feature_order": [
+    "amt",
+    "log_amt",
+    "amt_sq",
+    "hr",
+    "mn",
+    "dow",
+    "Month",
+    "Day",
+    "hour_sin",
+    "hour_cos",
+    "is_night",
+    "is_business_hours",
+    "chip",
+    "is_online",
+    "is_swipe",
+    "err",
+    "has_zip",
+    "has_state",
+    "is_online_or_no_state",
+    "mcc",
+    "mcc_high",
+    "mcc_restaurant",
+    "mcc_gas",
+    "mcc_grocery",
+    "mcc_travel",
+    "mcc_online",
+    "merchant_id",
+    "city_id",
+    "card_id",
+    "user_tx_count",
+    "card_tx_count",
+    "user_avg_amt",
+    "amt_vs_user_avg",
+    "amt_zscore",
+    "merch_tx_count",
+    "user_merchant_diversity",
+    "user_city_diversity",
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate",
+    "high_amt",
+    "very_high_amt",
+    "amt_x_hr",
+    "amt_x_mcc",
+    "amt_x_chip",
+    "amt_x_online",
+    "amt_x_night",
+    "user_merch_count"
+  ],
+  "model_artifact_sha256": {
+    "xgb_native.joblib": "1722e450b818842970cbd5c2c43dd627eb0abc1b7dee9ada4b9e33373273b467",
+    "lgb_native.joblib": "50589360427913af5ee042dfcc88ece4e996c8bbb5c7d74d7bc3a51872d23134",
+    "cb_native.joblib": "ac5c3de67d3a3dd14eebfb5f227b6bbfbdd20ba939e313f36953e72eb569005f",
+    "scaler_native.joblib": "eeff644cad921465fbe1625a30d14b8dd139b0c6b936fb2eec9c75e466f80d3c",
+    "feature_list.json": "643a9b71b8cbda566fa6bd62ea56609d9467992a8705b1ea039a8e068be88a88"
+  },
+  "shared_implementation": "src/privacy_layer/native_features.derive_native_features (single derivation used by offline training AND live scoring)",
+  "generated_at": "2026-09-04T06:56:51.403367+00:00",
+  "features": [
+    {
+      "name": "amt",
+      "type": "float",
+      "units": "dollars",
+      "formula": "raw amount (clamped >= 0)",
+      "source_keys": [
+        "amount"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "log_amt",
+      "type": "float",
+      "units": "log dollars",
+      "formula": "log1p(amt)",
+      "source_keys": [
+        "amount"
+      ],
+      "causal_rule": "derived from instant field",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "amt_sq",
+      "type": "float",
+      "units": "dollars^2",
+      "formula": "amt ** 2",
+      "source_keys": [
+        "amount"
+      ],
+      "causal_rule": "derived from instant field",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "hr",
+      "type": "float",
+      "units": "hour [0,24)",
+      "formula": "event hour",
+      "source_keys": [
+        "ts",
+        "hour_of_day"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 12.0"
+    },
+    {
+      "name": "mn",
+      "type": "float",
+      "units": "minute [0,60)",
+      "formula": "event minute",
+      "source_keys": [
+        "ts"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "dow",
+      "type": "float",
+      "units": "day-of-week [0,6]",
+      "formula": "event weekday",
+      "source_keys": [
+        "ts"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "Month",
+      "type": "float",
+      "units": "month [1,12]",
+      "formula": "event month",
+      "source_keys": [
+        "ts"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 8.0"
+    },
+    {
+      "name": "Day",
+      "type": "float",
+      "units": "day-of-month [1,31]",
+      "formula": "event day",
+      "source_keys": [
+        "ts"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 15.0"
+    },
+    {
+      "name": "hour_sin",
+      "type": "float",
+      "units": "sin(2*pi*hour/24)",
+      "formula": "sin transform of hr",
+      "source_keys": [
+        "ts",
+        "hour_of_day"
+      ],
+      "causal_rule": "derived from instant field",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "hour_cos",
+      "type": "float",
+      "units": "cos(2*pi*hour/24)",
+      "formula": "cos transform of hr",
+      "source_keys": [
+        "ts",
+        "hour_of_day"
+      ],
+      "causal_rule": "derived from instant field",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "is_night",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "1 if hr < 6 or hr >= 22",
+      "source_keys": [
+        "ts"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "is_business_hours",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "1 if 9 <= hr <= 17",
+      "source_keys": [
+        "ts"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 1"
+    },
+    {
+      "name": "chip",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "use_chip == 'Chip Transaction'",
+      "source_keys": [
+        "use_chip"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "is_online",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "use_chip == 'Online Transaction'",
+      "source_keys": [
+        "use_chip"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "is_swipe",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "use_chip == 'Swipe Transaction'",
+      "source_keys": [
+        "use_chip"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "err",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "errors field non-empty",
+      "source_keys": [
+        "errors"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "has_zip",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "zip field non-empty",
+      "source_keys": [
+        "zip"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "has_state",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "merchant_state field non-empty",
+      "source_keys": [
+        "merchant_state"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "is_online_or_no_state",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "is_online OR has_state == 0",
+      "source_keys": [
+        "use_chip",
+        "merchant_state"
+      ],
+      "causal_rule": "derived from instant fields",
+      "missing_value_behavior": "absent -> 1"
+    },
+    {
+      "name": "mcc",
+      "type": "float",
+      "units": "merchant category code",
+      "formula": "raw mcc",
+      "source_keys": [
+        "mcc"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "mcc_high",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "mcc >= 5000",
+      "source_keys": [
+        "mcc"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "mcc_restaurant",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "5812 <= mcc <= 5814",
+      "source_keys": [
+        "mcc"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "mcc_gas",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "5541 <= mcc <= 5542",
+      "source_keys": [
+        "mcc"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "mcc_grocery",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "5411 <= mcc <= 5422",
+      "source_keys": [
+        "mcc"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "mcc_travel",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "3000 <= mcc <= 3350",
+      "source_keys": [
+        "mcc"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "mcc_online",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "5967 <= mcc <= 5969",
+      "source_keys": [
+        "mcc"
+      ],
+      "causal_rule": "instant event field",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "merchant_id",
+      "type": "float",
+      "units": "stable code [0,100000)",
+      "formula": "sha256(merchant name) mod 100000; same code train==prod",
+      "source_keys": [
+        "merchant_id"
+      ],
+      "causal_rule": "entity identifier; code stable across split",
+      "missing_value_behavior": "absent -> 0.0 (cold-start bucket)"
+    },
+    {
+      "name": "city_id",
+      "type": "float",
+      "units": "stable code [0,100000)",
+      "formula": "sha256(merchant_city) mod 100000",
+      "source_keys": [
+        "city_id"
+      ],
+      "causal_rule": "entity identifier; code stable across split",
+      "missing_value_behavior": "absent -> 0.0 (cold-start bucket)"
+    },
+    {
+      "name": "card_id",
+      "type": "float",
+      "units": "stable code [0,100000)",
+      "formula": "sha256(card) mod 100000",
+      "source_keys": [
+        "card_id"
+      ],
+      "causal_rule": "entity identifier; code stable across split",
+      "missing_value_behavior": "absent -> 0.0 (cold-start bucket)"
+    },
+    {
+      "name": "user_tx_count",
+      "type": "float",
+      "units": "count",
+      "formula": "prior events for user_id (velocity tracker, shifted)",
+      "source_keys": [
+        "user_tx_count"
+      ],
+      "causal_rule": "prior-only history; event excluded",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "card_tx_count",
+      "type": "float",
+      "units": "count",
+      "formula": "prior events for card (velocity tracker, shifted)",
+      "source_keys": [
+        "card_tx_count"
+      ],
+      "causal_rule": "prior-only history; event excluded",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "user_avg_amt",
+      "type": "float",
+      "units": "dollars",
+      "formula": "prior mean amount for user (shifted average)",
+      "source_keys": [
+        "user_avg_amt"
+      ],
+      "causal_rule": "prior-only; event excluded",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "amt_vs_user_avg",
+      "type": "float",
+      "units": "ratio",
+      "formula": "amt / user_avg_amt (prior mean)",
+      "source_keys": [
+        "amount",
+        "user_avg_amt"
+      ],
+      "causal_rule": "prior-only average; event excluded",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "amt_zscore",
+      "type": "float",
+      "units": "z-score",
+      "formula": "(amt - prior mean) / prior std (shifted)",
+      "source_keys": [
+        "amount",
+        "user_avg_amt"
+      ],
+      "causal_rule": "prior-only stats; event excluded",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "merch_tx_count",
+      "type": "float",
+      "units": "count",
+      "formula": "prior events for merchant (velocity tracker, shifted)",
+      "source_keys": [
+        "merch_tx_count"
+      ],
+      "causal_rule": "prior-only history; event excluded",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "user_merchant_diversity",
+      "type": "float",
+      "units": "count",
+      "formula": "distinct prior merchants for user",
+      "source_keys": [
+        "user_merchant_diversity"
+      ],
+      "causal_rule": "prior-only",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "user_city_diversity",
+      "type": "float",
+      "units": "count",
+      "formula": "distinct prior cities for user",
+      "source_keys": [
+        "user_city_diversity"
+      ],
+      "causal_rule": "prior-only",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "user_fraud_rate",
+      "type": "float",
+      "units": "rate [0,1]",
+      "formula": "prior fraud rate for user (entity tracker, shifted; labels recorded only after the scored event)",
+      "source_keys": [
+        "user_fraud_rate"
+      ],
+      "causal_rule": "prior-only; label can never precede the scored event",
+      "missing_value_behavior": "absent -> 0.001 cold-start baseline"
+    },
+    {
+      "name": "merch_fraud_rate",
+      "type": "float",
+      "units": "rate [0,1]",
+      "formula": "prior fraud rate for merchant (shifted)",
+      "source_keys": [
+        "merch_fraud_rate"
+      ],
+      "causal_rule": "prior-only; label post-event",
+      "missing_value_behavior": "absent -> 0.001 cold-start baseline"
+    },
+    {
+      "name": "city_fraud_rate",
+      "type": "float",
+      "units": "rate [0,1]",
+      "formula": "prior fraud rate for city (shifted)",
+      "source_keys": [
+        "city_fraud_rate"
+      ],
+      "causal_rule": "prior-only; label post-event",
+      "missing_value_behavior": "absent -> 0.001 cold-start baseline"
+    },
+    {
+      "name": "high_amt",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "amt > 2 * user_avg_amt",
+      "source_keys": [
+        "amount",
+        "user_avg_amt"
+      ],
+      "causal_rule": "prior-only average",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "very_high_amt",
+      "type": "int {0,1}",
+      "units": "bool",
+      "formula": "amt > 5 * user_avg_amt",
+      "source_keys": [
+        "amount",
+        "user_avg_amt"
+      ],
+      "causal_rule": "prior-only average",
+      "missing_value_behavior": "absent -> 0"
+    },
+    {
+      "name": "amt_x_hr",
+      "type": "float",
+      "units": "dollars*hour",
+      "formula": "amt * hr",
+      "source_keys": [
+        "amount",
+        "ts"
+      ],
+      "causal_rule": "derived from instant fields",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "amt_x_mcc",
+      "type": "float",
+      "units": "dollars*code",
+      "formula": "amt * mcc",
+      "source_keys": [
+        "amount",
+        "mcc"
+      ],
+      "causal_rule": "derived from instant fields",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "amt_x_chip",
+      "type": "float",
+      "units": "dollars*bool",
+      "formula": "amt * chip",
+      "source_keys": [
+        "amount",
+        "use_chip"
+      ],
+      "causal_rule": "derived from instant fields",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "amt_x_online",
+      "type": "float",
+      "units": "dollars*bool",
+      "formula": "amt * is_online",
+      "source_keys": [
+        "amount",
+        "use_chip"
+      ],
+      "causal_rule": "derived from instant fields",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "amt_x_night",
+      "type": "float",
+      "units": "dollars*bool",
+      "formula": "amt * is_night",
+      "source_keys": [
+        "amount",
+        "ts"
+      ],
+      "causal_rule": "derived from instant fields",
+      "missing_value_behavior": "absent -> 0.0"
+    },
+    {
+      "name": "user_merch_count",
+      "type": "float",
+      "units": "count",
+      "formula": "prior merchant count for user (velocity tracker, shifted)",
+      "source_keys": [
+        "user_merch_count"
+      ],
+      "causal_rule": "prior-only; event excluded",
+      "missing_value_behavior": "absent -> 0.0"
+    }
+  ],
+  "historical_feature_rule": "for event t only events with ts < t contribute; no future rows/labels; verified by the Part-1 causality gates",
+  "label_latency_rule": "entity fraud rates are recorded only after an evaluation outcome/label exists (tracker.record is called post-score), so a label can never influence an earlier or concurrent score"
+}

@@ -1,0 +1,37 @@
+{
+  "cold_start_ms": 2756.7,
+  "single_p50": 56.955,
+  "single_p95": 65.641,
+  "single_p99": 68.529,
+  "single_tps": 18.0,
+  "batch": {
+    "10": {
+      "avg_ms": 54.89,
+      "per_txn_ms": 5.4892,
+      "tps": 182.0
+    },
+    "50": {
+      "avg_ms": 61.42,
+      "per_txn_ms": 1.2285,
+      "tps": 814.0
+    },
+    "100": {
+      "avg_ms": 65.05,
+      "per_txn_ms": 0.6505,
+      "tps": 1537.0
+    },
+    "500": {
+      "avg_ms": 84.15,
+      "per_txn_ms": 0.1683,
+      "tps": 5942.0
+    },
+    "1000": {
+      "avg_ms": 85.81,
+      "per_txn_ms": 0.0858,
+      "tps": 11654.0
+    }
+  },
+  "model_size_mb": 34.4,
+  "n_features": 21,
+  "timestamp": "2026-08-28T15:29:46"
+}

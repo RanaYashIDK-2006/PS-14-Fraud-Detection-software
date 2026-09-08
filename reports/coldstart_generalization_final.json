@@ -1,0 +1,26 @@
+{
+ "mission": "phase-2 unseen-merchant & cold-start generalization",
+ "test_lock_respected": true,
+ "test_used_for_development": false,
+ "decision": "KEEP E_HARDNEG (deployed model unchanged)",
+ "reproduced_unseen_test_fpr": 0.645105,
+ "reproduced_unseen_val_fpr": 0.774321,
+ "root_cause": "unseen population is dominated by established merchants (mean age ~11y, 99.6% with prior full-corpus activity) absent from the 5%-sampled training pool; model lacks a merchant-establishment feature",
+ "frontier": "every candidate improving unseen-merchant FPR regresses overall FPR ~1pt at matched recall on validation; no dominant candidate",
+ "best_unseen_candidates": {
+  "CS1_P1_unseen_fpr": 0.59553,
+  "E_hardneg_P1_unseen_fpr": 0.61525,
+  "E_hardneg_P1_overall_fpr": 0.070828,
+  "CS1_P1_overall_fpr": 0.082527
+ },
+ "artifacts": [
+  "COLD_START_GENERALIZATION_AUDIT.md",
+  "reports/coldstart_val_matrix.json",
+  "reports/coldstart_seen_unseen_diagnostic.json",
+  "data/_merchant_table.npz",
+  "data/_merchant_volume.npz",
+  "data/_cs_frame.npz",
+  "models/model_records/mission_CS{1,2,3,4,5,6}"
+ ],
+ "deployed_model_untouched": "altman_native_E_hardneg_cert_20260904 (thr 0.018758)"
+}

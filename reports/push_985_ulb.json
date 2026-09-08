@@ -1,0 +1,63 @@
+{
+  "dataset": "ulb_creditcard",
+  "target_recall": 0.985,
+  "roc_auc_meta": 0.9729,
+  "individual_aucs": {
+    "XGB": 0.981,
+    "LGB": 0.9656,
+    "CB": 0.9805,
+    "IF": 0.9537,
+    "LOF": 0.7932
+  },
+  "meta_985": {
+    "threshold": 0.072919,
+    "recall": 0.99,
+    "fpr": 0.56239,
+    "precision": 0.003,
+    "flagged": 32077,
+    "tp": 97,
+    "fp": 31980,
+    "fn": 1,
+    "n_fraud": 98,
+    "n_neg": 56864,
+    "missed": 1
+  },
+  "key_finding": "ULB 98.5% recall requires 34%+ FPR due to 0.17% fraud rate and 30-feature PCA space. The model catches 97/98 fraud.",
+  "recall_curve": [
+    {
+      "recall": 90.8,
+      "thr": 0.5,
+      "FPR": 1.01,
+      "flagged": 662,
+      "missed": 9
+    },
+    {
+      "recall": 94.9,
+      "thr": 0.112,
+      "FPR": 19.99,
+      "flagged": 11457,
+      "missed": 5
+    },
+    {
+      "recall": 98.0,
+      "thr": 0.076,
+      "FPR": 52.08,
+      "flagged": 29710,
+      "missed": 2
+    },
+    {
+      "recall": 99.0,
+      "thr": 0.073,
+      "FPR": 56.24,
+      "flagged": 32077,
+      "missed": 1
+    },
+    {
+      "recall": 100.0,
+      "thr": 0.065,
+      "FPR": 69.75,
+      "flagged": 39760,
+      "missed": 0
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "dataset": "ALTMAN_VELOCITY",
+  "n_rows": 99150,
+  "n_features": 29,
+  "n_fraud": 19248,
+  "optuna_best": 0.9283,
+  "best_params": {
+    "n_est": 264,
+    "max_depth": 10,
+    "lr": 0.1516501021280342,
+    "subsample": 0.8248094400752193,
+    "colsample": 0.7220340844909406,
+    "min_child": 14,
+    "alpha": 0.09208901765593015,
+    "lambda": 0.14897042384753575,
+    "num_leaves": 123
+  },
+  "cv_5fold_auc_mean": 0.995878,
+  "cv_5fold_auc_std": 0.000427,
+  "cv_5fold_r1_mean": 0.919005,
+  "cv_5fold_r1_std": 0.00757,
+  "overall_oof": 0.995871,
+  "metrics": {
+    "roc_auc": 0.995871,
+    "pr_auc": 0.986006,
+    "brier": 0.018469,
+    "r1": 0.919005,
+    "r05": 0.882793,
+    "r01": 0.775821,
+    "f1": 0.939043
+  },
+  "target_r1_92_achieved": false,
+  "velocity_features": [
+    "tx_count_1h",
+    "tx_count_24h",
+    "amount_accel",
+    "merchant_diversity_24h",
+    "avg_amount_24h",
+    "tx_gap_mean",
+    "tx_regularity"
+  ],
+  "top15_features": [
+    {
+      "name": "mcc_n",
+      "importance": 2552
+    },
+    {
+      "name": "city_id",
+      "importance": 2390
+    },
+    {
+      "name": "state_id",
+      "importance": 2352
+    },
+    {
+      "name": "year_n",
+      "importance": 2178
+    },
+    {
+      "name": "merchant_id",
+      "importance": 1751
+    },
+    {
+      "name": "tx_count_24h",
+      "importance": 1710
+    },
+    {
+      "name": "avg_amount_24h",
+      "importance": 1598
+    },
+    {
+      "name": "tx_gap_mean",
+      "importance": 1424
+    },
+    {
+      "name": "amount_accel",
+      "importance": 1382
+    },
+    {
+      "name": "tx_regularity",
+      "importance": 1346
+    },
+    {
+      "name": "hr",
+      "importance": 1311
+    },
+    {
+      "name": "merchant_diversity_24h",
+      "importance": 1304
+    },
+    {
+      "name": "amt",
+      "importance": 1266
+    },
+    {
+      "name": "day_decimal",
+      "importance": 1183
+    },
+    {
+      "name": "tx_count_1h",
+      "importance": 1148
+    }
+  ],
+  "elapsed": 411,
+  "ts": "2026-08-29T07:59:09Z"
+}

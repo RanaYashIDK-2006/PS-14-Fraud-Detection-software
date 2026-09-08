@@ -1,0 +1,7 @@
+{
+  "test_auc": 0.9858121317221524,
+  "test_r1": 0.8469591226321037,
+  "test_apr": 0.6467405042558458,
+  "elapsed_s": 276.1,
+  "model_version": "altman_optuna_tuned_20260830_194959"
+}

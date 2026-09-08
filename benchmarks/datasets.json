@@ -1,0 +1,32 @@
+{
+  "kaggle_fraud_train": {
+    "path": "data/kaggle_fraud/fraudTrain.csv",
+    "hash": "fd7139200dbfcbed",
+    "size_bytes": 351238196,
+    "rows": 1296675
+  },
+  "kaggle_fraud_test": {
+    "path": "data/kaggle_fraud/fraudTest.csv",
+    "hash": "12d553ab19440c75",
+    "size_bytes": 150354339,
+    "rows": 555719
+  },
+  "paysim_1m": {
+    "path": "data/paysim_1m.csv",
+    "hash": "fa1df0f1b65905cc",
+    "size_bytes": 63358199,
+    "rows": 1200000
+  },
+  "ulb_creditcard": {
+    "path": "data/creditcard.csv",
+    "hash": "76274b691b16a6c4",
+    "size_bytes": 150828752,
+    "rows": 284807
+  },
+  "fraud_data": {
+    "path": "data/fraud_data.csv",
+    "hash": "3702c41af6f706f9",
+    "size_bytes": 7699716,
+    "rows": 21693
+  }
+}

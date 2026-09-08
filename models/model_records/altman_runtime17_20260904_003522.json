@@ -1,0 +1,151 @@
+{
+  "model_id": "altman_runtime17_20260904_003522",
+  "created_at": "2026-09-03 19:05:22 UTC",
+  "training_dataset_path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\data\\transactions_causal.csv",
+  "training_dataset_sha256": "c81c26cff1b3f39d31b1ca08dd1047ee97b4621b210e8381f2737134e88e4616",
+  "training_dataset_rows": 197645,
+  "code_version": "scripts/retrain_runtime_consistent.py + src/risk_engine/altman_ensemble.py",
+  "feature_schema_version": "altman_runtime_v3",
+  "features": [
+    "amount_ratio",
+    "txn_freq_last_24h",
+    "txn_time_unusual",
+    "new_device_flag",
+    "unusual_location_flag",
+    "unusual_recipient_flag",
+    "failed_auth_count_24h",
+    "days_since_last_similar_txn",
+    "gradual_escalation_score",
+    "known_device_count",
+    "account_tenure_days",
+    "hour_of_day",
+    "is_weekend",
+    "shared_device_accounts",
+    "shared_recipient_accounts",
+    "mule_ring_score",
+    "hour_deviation",
+    "amount_zscore",
+    "velocity_deviation",
+    "recipient_novelty",
+    "txn_regularity"
+  ],
+  "algorithm": "xgb_lgb_cb_ensemble (runtime-consistent features)",
+  "hyperparameters": {
+    "xgb": {
+      "n_estimators": 300,
+      "max_depth": 6,
+      "learning_rate": 0.1
+    },
+    "lgb": {
+      "n_estimators": 300,
+      "max_depth": 8,
+      "learning_rate": 0.1
+    },
+    "cb": {
+      "iterations": 300,
+      "depth": 6,
+      "learning_rate": 0.1,
+      "auto_class_weights": "Balanced"
+    },
+    "ensemble_weights": {
+      "xgb": 0.34,
+      "lgb": 0.33,
+      "cb": 0.33
+    }
+  },
+  "training_seed": 42,
+  "training_period": "2025-06-01 02:01:29.297060081-2025-08-24 02:04:32.791405112",
+  "validation_period": "2025-08-24 02:05:52.123246703-2025-09-11 08:17:07.315063609",
+  "final_test_period": "2025-09-11 08:17:30.248820726-2025-12-20 07:05:35.691618308",
+  "selected_threshold": 0.24929776465878253,
+  "calibration_version": "calibrator_production.joblib (Platt/sigmoid, validation-only)",
+  "performance_metrics": {
+    "test": {
+      "auc": 0.9993636692408122,
+      "pr_auc": 0.9889388535193709,
+      "recall_at_1pct_fpr_reference": 0.9907881269191402,
+      "at_locked_threshold": {
+        "threshold": 0.24929776465878253,
+        "recall": 0.962128966223132,
+        "fpr": 0.002127659574468085,
+        "tp": 940,
+        "fp": 61
+      },
+      "band85": {
+        "score_band": 85,
+        "recall": 0.7553735926305015,
+        "precision": 1.0,
+        "fpr": 0.0,
+        "tp": 738,
+        "fp": 0,
+        "fn": 239,
+        "alerts_per_1000": 24.89
+      },
+      "brier_calibrated": 0.005462781691891033,
+      "ece_calibrated": 0.314413154315785
+    },
+    "val": {
+      "auc": 0.9998868843576428,
+      "pr_auc": 0.9931537131068103,
+      "locked_threshold_fpr_1pct": 0.24929776465878253,
+      "recall_at_threshold": 0.9908675799086758,
+      "fpr_at_threshold": 0.0016310996330025826,
+      "precision_at_threshold": 0.8188679245283019,
+      "threshold_policy": "min recall >= 0.99 (validation-only)",
+      "band85": {
+        "score_band": 85,
+        "recall": 0.9497716894977168,
+        "precision": 0.9904761904761905,
+        "fpr": 6.796248470844094e-05,
+        "tp": 208,
+        "fp": 2,
+        "fn": 11,
+        "alerts_per_1000": 7.08
+      }
+    }
+  },
+  "artifact_files": {
+    "calibrator_production.joblib": {
+      "sha256": "f7bc197ab296d54753c36b7617823c99dc6781eeeb49fe23581e7beb1993d1e0",
+      "size": 929
+    },
+    "cb_production.joblib": {
+      "sha256": "93bdb496bc452d11c35741230139bdb5f97cfbf67758ec842b32dcda0c4b3309",
+      "size": 399069
+    },
+    "feature_list.json": {
+      "sha256": "5c56a24586bf8cf0498c54c12970239dad7205c42f80c10362a321c68f6e54a1",
+      "size": 264
+    },
+    "lgb_production.joblib": {
+      "sha256": "e7bb3fc86ef628dbb49121db36a8175e701f64b5014baa320a5a5e021656b8b8",
+      "size": 986212
+    },
+    "manifest.json": {
+      "sha256": "f47c9f980beaf6287e31d846c27132dcaceac285742636c91b80f23e909536af",
+      "size": 1457
+    },
+    "scaler_production.joblib": {
+      "sha256": "264fb4807164ff99ce5552db2eb3f540c10c34d2787de71ff25ba4f0c006f80b",
+      "size": 831
+    },
+    "xgb_production.joblib": {
+      "sha256": "be0cebf176d76e94216c7add4fb5bedd88b9250510f4e85e43d5eff0c8144e7c",
+      "size": 388283
+    }
+  },
+  "promotion": {
+    "gates": {
+      "leakage_checks": "PASS (chronological split; features computed by the same runtime mapper; causal dataset; no label-derived inputs)",
+      "data_quality": "PASS (transactions_causal.csv DQ: no missing labels; duplicates checked in audit)",
+      "validation_performance": "PASS (val AUC 0.9999, PR-AUC 0.9932)",
+      "untouched_test": "PASS (test AUC 0.9994, FPR<1% threshold locked from val only)",
+      "production_parity": "PASS BY CONSTRUCTION (train features == runtime mapper output; same scaler/calibrator artifacts shipped)",
+      "robustness": "UNVERIFIED (stress matrix not rerun for this artifact)",
+      "security": "UNVERIFIED (no new security scan for this artifact)",
+      "approval": "UNVERIFIED (no human approval record)"
+    },
+    "reason": "#27 runtime-consistent retrain: previous artifact was trained on offline semantics that differ from the serving mapper (only 2/15 features matched). This model trains on the exact mapper output the engine computes at inference. Part-2 parity rebuild: retrained on the CAUSAL dataset (transactions_causal.csv) so amount_ratio/log_amt/amt_sq semantics match live prior-only computation, and merch_tx_count cold-start is 0 on both paths. Part-5 recall fix: schema v3 trains the ensemble on the FULL 21 causal section-16 features the privacy layer actually computes (the 15-feature projection had 7 constant columns that collapsed deployed recall to ~36%); protocol model on this set reached ~98% test recall at 1% FPR."
+  },
+  "parent_model_id": "altman_lean_15feat_20260830_200346"
+}

@@ -1,0 +1,436 @@
+{
+ "mission": "Phase-3 conditional entity + behavior",
+ "control": {
+  "model": "altman_native_E_hardneg_cert_20260904",
+  "threshold": 0.018758,
+  "test": {
+   "recall": 0.9967,
+   "fpr": 0.1099,
+   "tp": 4563,
+   "fn": 15,
+   "fp": 20634,
+   "tn": 167160
+  }
+ },
+ "bug_found": "cs_train.py PB code-drop dead code (drop appended after keep/X built); PB1==PB2==CS1 bit-identical; fixed + retrained",
+ "verdict": "KEEP E_HARDNEG",
+ "val_matrix": {
+  "E_hardneg": {
+   "candidate": "E_hardneg",
+   "P1": {
+    "threshold": 0.05355844,
+    "overall": {
+     "recall": 0.990089,
+     "fpr": 0.070828,
+     "tp": 3796,
+     "fp": 12090
+    },
+    "seen": {
+     "recall": 0.989838,
+     "fpr": 0.063451,
+     "tp": 3604,
+     "fp": 10686
+    },
+    "absent": {
+     "recall": 0.994819,
+     "fpr": 0.61525,
+     "tp": 192,
+     "fp": 1404
+    }
+   },
+   "P2": {
+    "threshold": 0.01875816,
+    "overall": {
+     "recall": 0.995044,
+     "fpr": 0.115304,
+     "tp": 3815,
+     "fp": 19682
+    },
+    "seen": {
+     "recall": 0.994782,
+     "fpr": 0.106375,
+     "tp": 3622,
+     "fp": 17915
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.774321,
+     "tp": 193,
+     "fp": 1767
+    }
+   }
+  },
+  "PB1_nocodes": {
+   "candidate": "PB1_nocodes",
+   "P1": {
+    "threshold": 0.05016911,
+    "overall": {
+     "recall": 0.990089,
+     "fpr": 0.091865,
+     "tp": 3796,
+     "fp": 15681
+    },
+    "seen": {
+     "recall": 0.989563,
+     "fpr": 0.084393,
+     "tp": 3603,
+     "fp": 14213
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.643295,
+     "tp": 193,
+     "fp": 1468
+    }
+   },
+   "P2": {
+    "threshold": 0.0184078,
+    "overall": {
+     "recall": 0.995044,
+     "fpr": 0.137707,
+     "tp": 3815,
+     "fp": 23506
+    },
+    "seen": {
+     "recall": 0.994782,
+     "fpr": 0.128825,
+     "tp": 3622,
+     "fp": 21696
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.793164,
+     "tp": 193,
+     "fp": 1810
+    }
+   }
+  },
+  "PB2_nomerchant": {
+   "candidate": "PB2_nomerchant",
+   "P1": {
+    "threshold": 0.06372269,
+    "overall": {
+     "recall": 0.990089,
+     "fpr": 0.08627,
+     "tp": 3796,
+     "fp": 14726
+    },
+    "seen": {
+     "recall": 0.989563,
+     "fpr": 0.07918,
+     "tp": 3603,
+     "fp": 13335
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.609553,
+     "tp": 193,
+     "fp": 1391
+    }
+   },
+   "P2": {
+    "threshold": 0.01875712,
+    "overall": {
+     "recall": 0.995044,
+     "fpr": 0.140542,
+     "tp": 3815,
+     "fp": 23990
+    },
+    "seen": {
+     "recall": 0.994782,
+     "fpr": 0.131687,
+     "tp": 3622,
+     "fp": 22178
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.79404,
+     "tp": 193,
+     "fp": 1812
+    }
+   }
+  },
+  "CS1_entity+behav": {
+   "candidate": "CS1_entity+behav",
+   "P1": {
+    "threshold": 0.0467576,
+    "overall": {
+     "recall": 0.990089,
+     "fpr": 0.082527,
+     "tp": 3796,
+     "fp": 14087
+    },
+    "seen": {
+     "recall": 0.989838,
+     "fpr": 0.075576,
+     "tp": 3604,
+     "fp": 12728
+    },
+    "absent": {
+     "recall": 0.994819,
+     "fpr": 0.59553,
+     "tp": 192,
+     "fp": 1359
+    }
+   },
+   "P2": {
+    "threshold": 0.01446054,
+    "overall": {
+     "recall": 0.995044,
+     "fpr": 0.122914,
+     "tp": 3815,
+     "fp": 20981
+    },
+    "seen": {
+     "recall": 0.994782,
+     "fpr": 0.114367,
+     "tp": 3622,
+     "fp": 19261
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.753725,
+     "tp": 193,
+     "fp": 1720
+    }
+   }
+  },
+  "GATE_PB1_absent": {
+   "candidate": "GATE_PB1_absent",
+   "P1": {
+    "threshold": 0.05355844,
+    "overall": {
+     "recall": 0.990089,
+     "fpr": 0.071056,
+     "tp": 3796,
+     "fp": 12129
+    },
+    "seen": {
+     "recall": 0.989838,
+     "fpr": 0.063451,
+     "tp": 3604,
+     "fp": 10686
+    },
+    "absent": {
+     "recall": 0.994819,
+     "fpr": 0.63234,
+     "tp": 192,
+     "fp": 1443
+    }
+   },
+   "P2": {
+    "threshold": 0.01875816,
+    "overall": {
+     "recall": 0.995044,
+     "fpr": 0.115515,
+     "tp": 3815,
+     "fp": 19718
+    },
+    "seen": {
+     "recall": 0.994782,
+     "fpr": 0.106375,
+     "tp": 3622,
+     "fp": 17915
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.790096,
+     "tp": 193,
+     "fp": 1803
+    }
+   }
+  },
+  "GATE_PB2_absent": {
+   "candidate": "GATE_PB2_absent",
+   "P1": {
+    "threshold": 0.05781718,
+    "overall": {
+     "recall": 0.990089,
+     "fpr": 0.068566,
+     "tp": 3796,
+     "fp": 11704
+    },
+    "seen": {
+     "recall": 0.989563,
+     "fpr": 0.06104,
+     "tp": 3603,
+     "fp": 10280
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.624014,
+     "tp": 193,
+     "fp": 1424
+    }
+   },
+   "P2": {
+    "threshold": 0.01875816,
+    "overall": {
+     "recall": 0.995044,
+     "fpr": 0.115568,
+     "tp": 3815,
+     "fp": 19727
+    },
+    "seen": {
+     "recall": 0.994782,
+     "fpr": 0.106375,
+     "tp": 3622,
+     "fp": 17915
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.79404,
+     "tp": 193,
+     "fp": 1812
+    }
+   }
+  },
+  "GATE_CS1_absent": {
+   "candidate": "GATE_CS1_absent",
+   "P1": {
+    "threshold": 0.05355844,
+    "overall": {
+     "recall": 0.990089,
+     "fpr": 0.070365,
+     "tp": 3796,
+     "fp": 12011
+    },
+    "seen": {
+     "recall": 0.989838,
+     "fpr": 0.063451,
+     "tp": 3604,
+     "fp": 10686
+    },
+    "absent": {
+     "recall": 0.994819,
+     "fpr": 0.580631,
+     "tp": 192,
+     "fp": 1325
+    }
+   },
+   "P2": {
+    "threshold": 0.01852472,
+    "overall": {
+     "recall": 0.995044,
+     "fpr": 0.115275,
+     "tp": 3815,
+     "fp": 19677
+    },
+    "seen": {
+     "recall": 0.995056,
+     "fpr": 0.10701,
+     "tp": 3623,
+     "fp": 18022
+    },
+    "absent": {
+     "recall": 0.994819,
+     "fpr": 0.725241,
+     "tp": 192,
+     "fp": 1655
+    }
+   }
+  }
+ },
+ "fixed_threshold_gate": {
+  "P1_0.053558": {
+   "E": {
+    "absent_fpr": 0.6152
+   },
+   "CS1_gate": {
+    "absent_fpr": 0.5806
+   },
+   "PB1_gate": {
+    "absent_fpr": 0.6323
+   },
+   "PB2_gate": {
+    "absent_fpr": 0.6372
+   }
+  },
+  "P2_0.018758": {
+   "E": {
+    "absent_fpr": 0.7743
+   },
+   "CS1_gate": {
+    "absent_fpr": 0.723
+   },
+   "PB1_gate": {
+    "absent_fpr": 0.7901
+   },
+   "PB2_gate": {
+    "absent_fpr": 0.794
+   }
+  }
+ },
+ "cold_start_sanity": {
+  "E_normal_flag": 0.757,
+  "CS1_gate_normal_flag": 0.739,
+  "PB2_normal_flag": 0.797,
+  "absent_fraud_caught": {
+   "E": "193/193",
+   "CS1_gate": "192/193"
+  }
+ },
+ "leakage": {
+  "future_removal_max_abs_d": 1.99e-08,
+  "label_delay_max_abs_d": 1.99e-08,
+  "own_year_max_abs_d": 1.19e-08,
+  "result": "PASS (float32 rounding only)"
+ },
+ "label_latency": "UNVERIFIED",
+ "history_buckets": [
+  {
+   "bucket": "0-0",
+   "n": 28,
+   "fraud": 3,
+   "E_rec": 1.0,
+   "G_rec": 1.0,
+   "E_fpr": 0.88,
+   "G_fpr": 0.8
+  },
+  {
+   "bucket": "1-5",
+   "n": 255,
+   "fraud": 16,
+   "E_rec": 1.0,
+   "G_rec": 1.0,
+   "E_fpr": 0.8033,
+   "G_fpr": 0.7448
+  },
+  {
+   "bucket": "6-20",
+   "n": 647,
+   "fraud": 55,
+   "E_rec": 1.0,
+   "G_rec": 1.0,
+   "E_fpr": 0.8007,
+   "G_fpr": 0.75
+  },
+  {
+   "bucket": "21-100",
+   "n": 1107,
+   "fraud": 90,
+   "E_rec": 1.0,
+   "G_rec": 0.9889,
+   "E_fpr": 0.7443,
+   "G_fpr": 0.6971
+  },
+  {
+   "bucket": "101-1000",
+   "n": 381,
+   "fraud": 26,
+   "E_rec": 1.0,
+   "G_rec": 1.0,
+   "E_fpr": 0.7775,
+   "G_fpr": 0.7239
+  },
+  {
+   "bucket": "1001-+",
+   "n": 57,
+   "fraud": 3,
+   "E_rec": 1.0,
+   "G_rec": 1.0,
+   "E_fpr": 0.8519,
+   "G_fpr": 0.7778
+  }
+ ]
+}

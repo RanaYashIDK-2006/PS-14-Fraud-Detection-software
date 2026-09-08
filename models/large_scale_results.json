@@ -1,0 +1,530 @@
+{
+  "in_domain": {
+    "lr": {
+      "roc_auc": 0.9793,
+      "pr_auc": 0.838,
+      "precision": 0.2873,
+      "recall": 0.8901,
+      "f1": 0.4344,
+      "recall_at_01pct_fpr": 0.6967,
+      "recall_at_05pct_fpr": 0.7779,
+      "recall_at_1pct_fpr": 0.8225,
+      "brier": 0.033,
+      "ece": 0.0822,
+      "threshold": 0.5,
+      "n_samples": 72099,
+      "n_fraud": 1256,
+      "n_legit": 70843,
+      "prevalence": 0.0174,
+      "ci_roc_auc": [
+        0.9753,
+        0.9836
+      ],
+      "ci_pr_auc": [
+        0.821,
+        0.8577
+      ],
+      "ci_recall": [
+        0.8751,
+        0.9081
+      ]
+    },
+    "rf": {
+      "roc_auc": 0.9878,
+      "pr_auc": 0.8978,
+      "precision": 0.5442,
+      "recall": 0.9076,
+      "f1": 0.6804,
+      "recall_at_01pct_fpr": 0.7842,
+      "recall_at_05pct_fpr": 0.8511,
+      "recall_at_1pct_fpr": 0.8901,
+      "brier": 0.02,
+      "ece": 0.0882,
+      "threshold": 0.5,
+      "n_samples": 72099,
+      "n_fraud": 1256,
+      "n_legit": 70843,
+      "prevalence": 0.0174,
+      "ci_roc_auc": [
+        0.9842,
+        0.9916
+      ],
+      "ci_pr_auc": [
+        0.8839,
+        0.9125
+      ],
+      "ci_recall": [
+        0.8916,
+        0.9253
+      ]
+    },
+    "xgb": {
+      "roc_auc": 0.9906,
+      "pr_auc": 0.9212,
+      "precision": 0.5363,
+      "recall": 0.9299,
+      "f1": 0.6803,
+      "recall_at_01pct_fpr": 0.8296,
+      "recall_at_05pct_fpr": 0.8901,
+      "recall_at_1pct_fpr": 0.9148,
+      "brier": 0.0125,
+      "ece": 0.0354,
+      "threshold": 0.5,
+      "n_samples": 72099,
+      "n_fraud": 1256,
+      "n_legit": 70843,
+      "prevalence": 0.0174,
+      "ci_roc_auc": [
+        0.9879,
+        0.9934
+      ],
+      "ci_pr_auc": [
+        0.9067,
+        0.9331
+      ],
+      "ci_recall": [
+        0.9158,
+        0.9457
+      ]
+    },
+    "stack": {
+      "roc_auc": 0.9896,
+      "pr_auc": 0.9062,
+      "precision": 0.5122,
+      "recall": 0.9196,
+      "f1": 0.6579,
+      "recall_at_01pct_fpr": 0.7986,
+      "recall_at_05pct_fpr": 0.8654,
+      "recall_at_1pct_fpr": 0.8925,
+      "brier": 0.0179,
+      "ece": 0.0686,
+      "threshold": 0.5,
+      "n_samples": 72099,
+      "n_fraud": 1256,
+      "n_legit": 70843,
+      "prevalence": 0.0174,
+      "ci_roc_auc": [
+        0.9864,
+        0.9925
+      ],
+      "ci_pr_auc": [
+        0.893,
+        0.9206
+      ],
+      "ci_recall": [
+        0.9059,
+        0.9347
+      ]
+    },
+    "per_archetype": {
+      "ato": {
+        "roc_auc": 0.0,
+        "pr_auc": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "recall_at_01pct_fpr": 0.0,
+        "recall_at_05pct_fpr": 0.0,
+        "recall_at_1pct_fpr": 0.0,
+        "brier": 0.0,
+        "ece": 0.0,
+        "threshold": 0.5,
+        "n_samples": 630,
+        "n_fraud": 630,
+        "n_legit": 0,
+        "prevalence": 1.0,
+        "ci_roc_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_pr_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_recall": [
+          0.0,
+          0.0
+        ]
+      },
+      "cnp": {
+        "roc_auc": 0.0,
+        "pr_auc": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "recall_at_01pct_fpr": 0.0,
+        "recall_at_05pct_fpr": 0.0,
+        "recall_at_1pct_fpr": 0.0,
+        "brier": 0.0,
+        "ece": 0.0,
+        "threshold": 0.5,
+        "n_samples": 117,
+        "n_fraud": 117,
+        "n_legit": 0,
+        "prevalence": 1.0,
+        "ci_roc_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_pr_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_recall": [
+          0.0,
+          0.0
+        ]
+      },
+      "credential_abuse": {
+        "roc_auc": 0.0,
+        "pr_auc": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "recall_at_01pct_fpr": 0.0,
+        "recall_at_05pct_fpr": 0.0,
+        "recall_at_1pct_fpr": 0.0,
+        "brier": 0.0,
+        "ece": 0.0,
+        "threshold": 0.5,
+        "n_samples": 53,
+        "n_fraud": 53,
+        "n_legit": 0,
+        "prevalence": 1.0,
+        "ci_roc_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_pr_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_recall": [
+          0.0,
+          0.0
+        ]
+      },
+      "device_compromise": {
+        "roc_auc": 0.0,
+        "pr_auc": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "recall_at_01pct_fpr": 0.0,
+        "recall_at_05pct_fpr": 0.0,
+        "recall_at_1pct_fpr": 0.0,
+        "brier": 0.0,
+        "ece": 0.0,
+        "threshold": 0.5,
+        "n_samples": 54,
+        "n_fraud": 54,
+        "n_legit": 0,
+        "prevalence": 1.0,
+        "ci_roc_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_pr_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_recall": [
+          0.0,
+          0.0
+        ]
+      },
+      "gradual_escalation": {
+        "roc_auc": 0.0,
+        "pr_auc": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "recall_at_01pct_fpr": 0.0,
+        "recall_at_05pct_fpr": 0.0,
+        "recall_at_1pct_fpr": 0.0,
+        "brier": 0.0,
+        "ece": 0.0,
+        "threshold": 0.5,
+        "n_samples": 96,
+        "n_fraud": 96,
+        "n_legit": 0,
+        "prevalence": 1.0,
+        "ci_roc_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_pr_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_recall": [
+          0.0,
+          0.0
+        ]
+      },
+      "legit": {
+        "roc_auc": 0.0,
+        "pr_auc": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "recall_at_01pct_fpr": 0.0,
+        "recall_at_05pct_fpr": 0.0,
+        "recall_at_1pct_fpr": 0.0,
+        "brier": 0.0,
+        "ece": 0.0,
+        "threshold": 0.5,
+        "n_samples": 70843,
+        "n_fraud": 0,
+        "n_legit": 70843,
+        "prevalence": 0.0,
+        "ci_roc_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_pr_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_recall": [
+          0.0,
+          0.0
+        ]
+      },
+      "merchant_fraud": {
+        "roc_auc": 0.0,
+        "pr_auc": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "recall_at_01pct_fpr": 0.0,
+        "recall_at_05pct_fpr": 0.0,
+        "recall_at_1pct_fpr": 0.0,
+        "brier": 0.0,
+        "ece": 0.0,
+        "threshold": 0.5,
+        "n_samples": 50,
+        "n_fraud": 50,
+        "n_legit": 0,
+        "prevalence": 1.0,
+        "ci_roc_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_pr_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_recall": [
+          0.0,
+          0.0
+        ]
+      },
+      "mule": {
+        "roc_auc": 0.0,
+        "pr_auc": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "recall_at_01pct_fpr": 0.0,
+        "recall_at_05pct_fpr": 0.0,
+        "recall_at_1pct_fpr": 0.0,
+        "brier": 0.0,
+        "ece": 0.0,
+        "threshold": 0.5,
+        "n_samples": 114,
+        "n_fraud": 114,
+        "n_legit": 0,
+        "prevalence": 1.0,
+        "ci_roc_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_pr_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_recall": [
+          0.0,
+          0.0
+        ]
+      },
+      "synthetic_id": {
+        "roc_auc": 0.0,
+        "pr_auc": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "recall_at_01pct_fpr": 0.0,
+        "recall_at_05pct_fpr": 0.0,
+        "recall_at_1pct_fpr": 0.0,
+        "brier": 0.0,
+        "ece": 0.0,
+        "threshold": 0.5,
+        "n_samples": 61,
+        "n_fraud": 61,
+        "n_legit": 0,
+        "prevalence": 1.0,
+        "ci_roc_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_pr_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_recall": [
+          0.0,
+          0.0
+        ]
+      },
+      "velocity": {
+        "roc_auc": 0.0,
+        "pr_auc": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "recall_at_01pct_fpr": 0.0,
+        "recall_at_05pct_fpr": 0.0,
+        "recall_at_1pct_fpr": 0.0,
+        "brier": 0.0,
+        "ece": 0.0,
+        "threshold": 0.5,
+        "n_samples": 81,
+        "n_fraud": 81,
+        "n_legit": 0,
+        "prevalence": 1.0,
+        "ci_roc_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_pr_auc": [
+          0.0,
+          0.0
+        ],
+        "ci_recall": [
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "ood_fraud_type": {
+    "lr": {
+      "roc_auc": 0.9055,
+      "pr_auc": 0.6582,
+      "precision": 0.7576,
+      "recall": 0.5,
+      "f1": 0.6024,
+      "recall_at_01pct_fpr": 0.0,
+      "recall_at_05pct_fpr": 0.0,
+      "recall_at_1pct_fpr": 0.0,
+      "brier": 0.1198,
+      "ece": 0.0896,
+      "threshold": 0.5,
+      "n_samples": 200,
+      "n_fraud": 50,
+      "n_legit": 150,
+      "prevalence": 0.25,
+      "ci_roc_auc": [
+        0.8539,
+        0.9485
+      ],
+      "ci_pr_auc": [
+        0.5203,
+        0.8164
+      ],
+      "ci_recall": [
+        0.3659,
+        0.643
+      ]
+    },
+    "rf": {
+      "roc_auc": 0.9016,
+      "pr_auc": 0.7556,
+      "precision": 0.75,
+      "recall": 0.3,
+      "f1": 0.4286,
+      "recall_at_01pct_fpr": 0.24,
+      "recall_at_05pct_fpr": 0.24,
+      "recall_at_1pct_fpr": 0.24,
+      "brier": 0.1295,
+      "ece": 0.1009,
+      "threshold": 0.5,
+      "n_samples": 200,
+      "n_fraud": 50,
+      "n_legit": 150,
+      "prevalence": 0.25,
+      "ci_roc_auc": [
+        0.8529,
+        0.9462
+      ],
+      "ci_pr_auc": [
+        0.6571,
+        0.857
+      ],
+      "ci_recall": [
+        0.1874,
+        0.4119
+      ]
+    },
+    "xgb": {
+      "roc_auc": 0.8764,
+      "pr_auc": 0.7455,
+      "precision": 0.8571,
+      "recall": 0.36,
+      "f1": 0.507,
+      "recall_at_01pct_fpr": 0.24,
+      "recall_at_05pct_fpr": 0.24,
+      "recall_at_1pct_fpr": 0.24,
+      "brier": 0.1452,
+      "ece": 0.1392,
+      "threshold": 0.5,
+      "n_samples": 200,
+      "n_fraud": 50,
+      "n_legit": 150,
+      "prevalence": 0.25,
+      "ci_roc_auc": [
+        0.8239,
+        0.926
+      ],
+      "ci_pr_auc": [
+        0.6319,
+        0.8432
+      ],
+      "ci_recall": [
+        0.2195,
+        0.5
+      ]
+    },
+    "stack": {
+      "roc_auc": 0.9116,
+      "pr_auc": 0.7695,
+      "precision": 0.76,
+      "recall": 0.38,
+      "f1": 0.5067,
+      "recall_at_01pct_fpr": 0.18,
+      "recall_at_05pct_fpr": 0.18,
+      "recall_at_1pct_fpr": 0.22,
+      "brier": 0.1224,
+      "ece": 0.1108,
+      "threshold": 0.5,
+      "n_samples": 200,
+      "n_fraud": 50,
+      "n_legit": 150,
+      "prevalence": 0.25,
+      "ci_roc_auc": [
+        0.8656,
+        0.9508
+      ],
+      "ci_pr_auc": [
+        0.654,
+        0.8739
+      ],
+      "ci_recall": [
+        0.245,
+        0.52
+      ]
+    }
+  }
+}

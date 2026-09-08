@@ -1,0 +1,10 @@
+[Unit]
+Description=PS-14 Audit Chain Integrity Timer (hourly)
+
+[Timer]
+OnCalendar=*-*-* *:00:00
+Persistent=true
+RandomizedDelaySec=60
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,34 @@
+{
+  "dataset": "ALTMAN_FULL_24M",
+  "n_rows": 508758,
+  "n_features": 52,
+  "n_fraud": 29344,
+  "fraud_rate": 0.057678,
+  "full_dataset_chunks": 24,
+  "full_dataset_rows_approx": 24000000,
+  "history_users": 1963,
+  "history_transactions": 24000000,
+  "optuna_best_r1": 0.94118,
+  "best_params": {
+    "ne": 526,
+    "md": 12,
+    "lr": 0.13608488339082606,
+    "ss": 0.9208591070492063,
+    "cs": 0.8465791723472244,
+    "mc": 14,
+    "a": 0.010704378978527058,
+    "l": 0.8662464056909233,
+    "nl": 127
+  },
+  "cv_auc": 0.997128,
+  "cv_auc_std": 8.9e-05,
+  "cv_r1": 0.94118,
+  "cv_r1_std": 0.001382,
+  "oof_auc": 0.997127,
+  "vs_16chunk": {
+    "delta_auc": 0.0023,
+    "delta_r1": 0.0166
+  },
+  "elapsed": 1108,
+  "ts": "2026-08-29T09:56:24Z"
+}

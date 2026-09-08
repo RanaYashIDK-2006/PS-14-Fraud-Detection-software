@@ -1,0 +1,116 @@
+{
+  "round": "FINAL independent verification (11-point protocol) — no public claims changed",
+  "built_at": "2026-09-04",
+  "method": "independent re-derivation from a single corpus stream (full-corpus per-year tallies + enriched score caches + shipped-artifact replay). All thresholds pre-locked on validation only; the untouched final test window (2018+) was never read during selection, tuning, or locking. Public website/audit/fix-log/certification NOT updated pending this verdict.",
+
+  "1_window_integrity": {
+    "train": {"years": "1991-2015", "full_rows": 17172563, "fraud": 21345, "true_prevalence": 0.001243},
+    "validation": {"years": "2016-01-01..2017-12-31", "full_rows": 3432284, "fraud": 3834, "true_prevalence": 0.001117},
+    "test": {"years": "2018-01-01..2020-02-29", "full_rows": 3782053, "fraud": 4578, "true_prevalence": 0.00121},
+    "full_corpus": {"rows": 24386900, "fraud": 29757},
+    "test_ts_monotonic": true,
+    "val_max_lt_test_min": true,
+    "leakage_check": "thresholds 0.78471 (v2) / 0.027328 (v3) / 0.065153 (improved) all locked on validation; selection scripts read val rows only; cached scores produced by shipped artifacts; no test label used in feature construction, early stopping, calibration, or model selection. Causal-feature audit: all 48 features are shifted/velocity/entity-historical aggregates computed strictly from prior transactions; label-confirmation timing documented as a caveat for entity fraud-rate features (UNVERIFIED exactness of label availability lag in raw dataset).",
+    "note": "row/fraud counts independently verified from full-corpus per-year tallies, not from the manifest"
+  },
+
+  "2_metrics_independent": {
+    "OLD_v2_thr_0.78471_test": {"tp": 2043, "fn": 2535, "fp": 480, "tn": 36938, "recall": 0.446265, "fpr": 0.012828, "precision": 0.80975, "alerts": 2523, "roc_auc": 0.972237, "pr_auc": 0.78749, "formula_ids": "ALL OK"},
+    "NEW_v3_thr_0.027328_test": {"tp": 4557, "fn": 21, "fp": 5940, "tn": 31478, "recall": 0.995413, "fpr": 0.158747, "precision": 0.434124, "alerts": 10497, "roc_auc": 0.972237, "pr_auc": 0.78749, "formula_ids": "ALL OK"},
+    "verification": "recomputed from scratch off the shared score cache; identical to the governance record -> the 99.5% recall claim is TRUE on the enriched untouched test (all 4,578 fraud present)"
+  },
+
+  "3_4_production_prevalence": {
+    "true_test_prevalence": 0.00121,
+    "enriched_v2v3_test_prevalence": 0.109,
+    "derivation": "FPR is measured on legit rows only and legit is 99.88% of production traffic, so production alert rate = p*recall + (1-p)*FPR ~= FPR mathematically. A 15.9% FPR DOES imply ~16% production alert rate; the enriched-sample 43% precision/25% alert rate does NOT transfer.",
+    "OLD_v2_at_production_prevalence_per_1000": {"alerts": 13.35, "fraud_caught": 0.54, "legit_alerts": 12.81, "precision": 0.0405},
+    "NEW_v3_at_production_prevalence_per_1000": {"alerts": 159.76, "fraud_caught": 1.2, "legit_alerts": 158.56, "precision": 0.0075},
+    "NEW_v3_at_production_prevalence_per_100000": {"alerts": 15976, "fraud_caught": 120.5, "legit_alerts": 15855.5},
+    "conclusion": "the earlier claim '~16% of real transactions alerted with 99.5% recall' is mathematically supported at production prevalence; precision at production prevalence is ~0.75%, not 43%. The '<=25% alerts' claim holds ONLY on the enriched evaluation, NOT as a production alert-rate claim"
+  },
+
+  "5_cascade": {
+    "design": "stage1 = highest val threshold with val recall>=0.995 (0.02687); stage2 = member-consensus bar b over stage-1 alerts, tuned on val to keep val recall>=0.99 while cutting alerts",
+    "stage2_outcome": "DEGENERATE — members 0.94-0.97 correlated; no b cuts alerts at val recall>=0.99; complete cascade == stage-1 screen",
+    "untouched_test": {"recall": 0.9956, "fpr": 0.1601, "precision": 0.4322, "alerts": 10547, "tp": 4558, "fn": 20, "fp": 5989},
+    "global_threshold_same_target_test": {"thr": 0.05345, "recall": 0.9812, "fpr": 0.1181, "alerts": 8911},
+    "conclusion": "a two-stage consensus cascade does NOT reduce alerts at >=99% recall for this ensemble; the ROC/PR curve is binding, not the architecture"
+  },
+
+  "6_segmented": {
+    "design": "segments designed a priori on feature semantics (cold-start/online/pattern-risk/mature-normal), err excluded (constant in deployed regime); per-segment thresholds locked on VALIDATION at segment recall>=0.99",
+    "locked_thresholds": {"A_cold_start": 0.78227, "B_online": 0.4437, "C_pattern_risk": 0.02687, "D_mature_normal": 0.0115},
+    "untouched_test": {"recall": 0.9991, "fpr": 0.1605, "precision": 0.4324, "alerts": 10579, "tp": 4574, "fn": 4, "fp": 6005},
+    "global_v3_reference_test": {"recall": 0.9954, "fpr": 0.1587, "alerts": 10497},
+    "conclusion": "segmented thresholds reallocate the same alert budget (slightly higher recall, same FPR) — no segmentation discovered that cuts alerts at >=99% recall"
+  },
+
+  "7_temporal_drift_quantified": {
+    "deployed_model_by_year_2018": {"rows": 19315, "fraud": 2491, "roc_auc": 0.9726, "pr_auc": 0.8285, "recall_at_1pct_fpr": 0.458, "v3_recall_at_lock": 0.9932, "v3_fpr": 0.1611},
+    "deployed_model_by_year_2019": {"rows": 19358, "fraud": 2087, "roc_auc": 0.9705, "pr_auc": 0.7514, "recall_at_1pct_fpr": 0.3455, "v3_recall_at_lock": 0.9981, "v3_fpr": 0.1602},
+    "improved_model_by_year_2018": {"rows": 87758, "fraud": 2491, "roc_auc": 0.98684, "pr_auc": 0.72546, "recall_at_lock": 0.97832, "fpr_at_lock": 0.07356},
+    "improved_model_by_year_2019": {"rows": 87927, "fraud": 2087, "roc_auc": 0.98464, "pr_auc": 0.60917, "recall_at_lock": 0.97652, "fpr_at_lock": 0.07104},
+    "channel_shift_finding": "validation-window fraud is ~94% from 2016 and 86% of 2016 fraud is ONLINE; untouched-test fraud (2018-19) is almost entirely chip/swipe IN-PERSON (2017: 255 fraud; 2020 Jan-Feb: 0 fraud). The v2/v3 thresholds were locked on an online-fraud wave that mostly disappears at test time -> drift is partly channel shift, not pure calendar drift. recall@1%FPR falls 0.458 (2018) -> 0.346 (2019) -> genuine degradation, no-drift claim would be FALSE"
+  },
+
+  "8_pr_operating_points": {
+    "production_reweighted": [
+      {"alert_budget": 0.05, "thr": 0.8557, "enriched_recall": 0.3897, "prod_alerts_per_1000": 8.9, "prod_precision": 0.053},
+      {"alert_budget": 0.10, "thr": 0.4916, "enriched_recall": 0.647, "prod_alerts_per_1000": 33.8, "prod_precision": 0.023},
+      {"alert_budget": 0.15, "thr": 0.21, "enriched_recall": 0.87, "prod_alerts_per_1000": 62.9, "prod_precision": 0.017},
+      {"alert_budget": 0.20, "thr": 0.0696, "enriched_recall": 0.9734, "prod_alerts_per_1000": 106.5, "prod_precision": 0.011},
+      {"alert_budget": 0.25, "thr": 0.0273, "enriched_recall": 0.9954, "prod_alerts_per_1000": 159.8, "prod_precision": 0.0075}
+    ],
+    "note": "PR perspective: at real production prevalence even the strict 1%-FPR point has only ~4% precision; extreme class imbalance (0.12%) dominates every operating point; enriched-sample precision cannot be quoted as production precision"
+  },
+
+  "9_production_readiness_evidence": {
+    "deployed": "altman_native_v3_20260904_133000, live risk service PID 24644 (started 2026-09-04T08:07:50Z = v3 deploy); drift detector baseline_loaded=True",
+    "artifact_hashes": "ALL MATCH manifest (xgb/lgb/cb/scaler/feature_list sha256 verified against disk this round)",
+    "exact_threshold": "0.027328 in manifest + governance record",
+    "feature_schema": "altman_native_v2, 48 features, shared src/privacy_layer/native_features.py (train==production by construction)",
+    "parity": "11/11 PASS re-run this round on the deployed path",
+    "governance": "record present with promotion gates + reason + parent model + artifact hashes",
+    "rollback": "altman_native_v2/ artifact dir + manifest_v2.json.bak present",
+    "not_reverified_this_round": ["live alert-workflow drill", "audit-chain append on live path", "monitoring alert path"] ,
+    "note": "the above three were green in the earlier 22/22 regression + 10/10 canonical suites (pre-verification), but were NOT re-executed in this pass -> marked UNVERIFIED-this-round rather than claimed"
+  },
+
+  "10_model_improvement": {
+    "finding_F1_err_feature": {
+      "severity": "HIGH (offline/production semantic mismatch)",
+      "detail": "err (transaction-error flag) was 1.0 for 100% of train/val/test rows: scripts/retrain_native_consistent.py used str(r['Errors?'] or '') and pandas NaN is truthy -> str(NaN)='nan' -> err=1 for ~98.4% of rows with NO error; production default errors='' -> err=0. Dead feature in training + live-path mismatch.",
+      "fix": "NaN-safe parsing in BOTH the retrain raw build and src/privacy_layer/native_features.py; verified NaN/''/None -> 0, real error -> 1",
+      "impact_bound": "deployed v2/v3 were trained with err constant -> feature never split -> predictions invariant to err -> no live parity break; fix only affects corrected retrains"
+    },
+    "improved_model": {
+      "config": "spw=10 (swept 5-40), legit_frac=0.05 train sampling, windows UNCHANGED (train<2016, val 2016-17, test>=2018 untouched), seed 42, err fix included",
+      "run1_eq_run2": "bit-identical RESULT (determinism verified)",
+      "independent_replay": "ens/xgb probs reproduced exactly (max_abs_diff 0.0) by re-running the shipped scaler+members over persisted rows",
+      "val": {"rows": 174530, "fraud": 3834, "auc": 0.995858, "locked_threshold": 0.065153, "recall_at_lock": 0.990089, "fpr_at_lock": 0.066498},
+      "test": {"rows": 192372, "fraud": 4578, "auc": 0.986114, "recall": 0.977501, "fpr": 0.071333, "precision": 0.250406, "tp": 4475, "fp": 13396, "fn": 103, "tn": 174398, "alerts": 17871},
+      "at_production_prevalence_per_1000": {"alerts": 72.43, "fraud_caught": 1.18, "legit_alerts": 71.25, "precision": 0.01633},
+      "honest_note": "improved model shifts the curve left (test recall 97.8% at FPR 7.1% vs v3's 99.5% at 15.9%) but does NOT reach 99% recall on the untouched test at its val-locked threshold; ~1.3-pt val->test recall gap from the same channel-shift drift remains. NOT deployed."
+    }
+  },
+
+  "11_final_comparison_untouched_test": {
+    "note": "v2/v3 rows evaluated on 41,996-row sample (all 4,578 fraud + 1% legit); improved row on 192,372-row sample (all 4,578 fraud + 5% legit). Recall denominators identical (4,578 fraud). Alert counts scale with sampling; compare FPR and per-1000 projections.",
+    "OLD_v2": {"threshold": 0.78471, "recall": 0.4463, "fpr": 0.0128, "precision": 0.8098, "alerts_sampled": 2523, "prod_alerts_per_1000": 13.35},
+    "NEW_v3_deployed": {"threshold": 0.027328, "recall": 0.9954, "fpr": 0.1587, "precision": 0.4341, "alerts_sampled": 10497, "prod_alerts_per_1000": 159.76},
+    "CASCADE": {"stage1_val_recall": 0.995, "final_recall": 0.9956, "fpr": 0.1601, "precision": 0.4322, "alerts_sampled": 10547, "result": "degenerate == stage-1; does not beat global threshold"},
+    "SEGMENTED": {"recall": 0.9991, "fpr": 0.1605, "precision": 0.4324, "alerts_sampled": 10579, "result": "reallocation only; no alert reduction vs global at >=99% recall"},
+    "MODEL_IMPROVED_candidate_not_deployed": {"threshold": 0.065153, "recall": 0.9775, "fpr": 0.0713, "precision": 0.2504, "alerts_sampled": 17871, "prod_alerts_per_1000": 72.43, "result": "curve shifted left; ~98% recall at half v3's FPR, but 99%-recall-at-lower-alerts target NOT met on untouched test"}
+  },
+
+  "verdicts_on_prior_claims": {
+    "99.5% recall at thr 0.0273 on untouched enriched test": "TRUE (independently reproduced, 4557/4578)",
+    "15.9% FPR => ~16% production alert rate": "TRUE by arithmetic at true prevalence 0.121% (legit 99.88% of traffic)",
+    "43% precision / <=25% alerts as PRODUCTION numbers": "FALSE — prevalence artifacts of the enriched sample; production precision is ~0.75% at v3's point",
+    "no drift": "FALSE — quantified: recall@1%FPR 0.458 (2018) -> 0.346 (2019); channel shift 2016-online -> 2018-19-in-person is the dominant component",
+    "two-stage cascade reduces alerts at >=99% recall": "FALSE for this ensemble (members 0.94-0.97 correlated)",
+    "improved model reaches >=99% recall on untouched test": "NOT MET (97.8% at its val-locked threshold); curve improved but target unmet",
+    "err feature is production-safe": "FALSE as built (constant-1 vs production 0) — HIGH finding, fixed in code this round"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "experiment_id": "REAL_PUBLIC_ealtman_v1",
+  "category": "REAL_PUBLIC",
+  "dataset": "ealtman2019_credit_card_transactions",
+  "data_type": "REAL_PUBLIC_DATASET",
+  "data_hash": "31c1b899faadcac0",
+  "split": "80/20 temporal",
+  "train_n": 19509520,
+  "test_n": 4877380,
+  "n": 4877380,
+  "n_fraud": 5761,
+  "n_legit": 4871619,
+  "prevalence": 0.001181,
+  "roc_auc": 0.959,
+  "pr_auc": 0.0871,
+  "brier": 0.026367,
+  "recall_at_0_1pct_fpr": 0.1632,
+  "recall_at_0_5pct_fpr": 0.3531,
+  "recall_at_1pct_fpr": 0.4714
+}

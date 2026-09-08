@@ -1,0 +1,123 @@
+{
+ "model_id": "altman_native_E_hardneg_cert_20260904",
+ "created_at": "2026-09-04T12:48:06.579515+00:00",
+ "training_dataset_path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\data\\credit_card_transactions-ibm_v2.csv",
+ "training_dataset_sha256": "b01fa323c98522f8c710c7f7242581860c97c50183f1c5fa9e772e5c674a7f15",
+ "code_version": "mission_train.py(mode=E_hardneg) + mission_cache.py + src/privacy_layer/native_features.py (state-parse NaN-safe fix) \u2014 source hashes in e_hardneg_certification_offline.json sec 1",
+ "feature_schema_version": "altman_native_v2 (48 features; shared derivation; state-parse fix applied)",
+ "features": [
+  "amt",
+  "log_amt",
+  "amt_sq",
+  "hr",
+  "mn",
+  "dow",
+  "Month",
+  "Day",
+  "hour_sin",
+  "hour_cos",
+  "is_night",
+  "is_business_hours",
+  "chip",
+  "is_online",
+  "is_swipe",
+  "err",
+  "has_zip",
+  "has_state",
+  "is_online_or_no_state",
+  "mcc",
+  "mcc_high",
+  "mcc_restaurant",
+  "mcc_gas",
+  "mcc_grocery",
+  "mcc_travel",
+  "mcc_online",
+  "merchant_id",
+  "city_id",
+  "card_id",
+  "user_tx_count",
+  "card_tx_count",
+  "user_avg_amt",
+  "amt_vs_user_avg",
+  "amt_zscore",
+  "merch_tx_count",
+  "user_merchant_diversity",
+  "user_city_diversity",
+  "user_fraud_rate",
+  "merch_fraud_rate",
+  "city_fraud_rate",
+  "high_amt",
+  "very_high_amt",
+  "amt_x_hr",
+  "amt_x_mcc",
+  "amt_x_chip",
+  "amt_x_online",
+  "amt_x_night",
+  "user_merch_count"
+ ],
+ "algorithm": "xgb_lgb_cb_ensemble (weights 0.34/0.33/0.33)",
+ "hyperparameters": {
+  "seed": 42,
+  "scale_pos_weight": 10.0,
+  "hard_negative_mining": {
+   "n_mined": 84639,
+   "weight": 3.0,
+   "source": "out-of-sample tail 10% of TRAIN window only"
+  },
+  "base": "xgb/lgb: n_estimators=400 lr=0.05 depth=7 colsample=0.7 subsample=0.8 min_child_weight=5 (see mission_train.py)",
+  "class_weight": "scale_pos_weight spw=10.0 (validation-selected sweep)"
+ },
+ "training_seed": 42,
+ "training_period": "<2016 (all 21,345 fraud + 5% sampled legit + 84,639 mined hard negatives)",
+ "validation_period": "2016-01-01..2017-12-31",
+ "final_test_period": "2018-01-01..2020-02-29 (LOCKED, untouched \u2014 data/test_lock.json)",
+ "selected_threshold": 0.01875815913081169,
+ "threshold_policy": "pre-registered: P2 = min val FPR at val recall >= 0.995 (chosen on validation ONLY; test touched once at final eval)",
+ "calibration_version": "none \u2014 raw weighted ensemble probability; no extra Platt/isotonic stage in the native engine predict path",
+ "performance_metrics": {
+  "val": {
+   "rows": 174530,
+   "fraud": 3834,
+   "roc_auc": 0.9955943834257361,
+   "pr_auc": 0.9143373456402429
+  },
+  "test_at_locked_threshold": {
+   "tp": 4563,
+   "fn": 15,
+   "fp": 20634,
+   "tn": 167160,
+   "recall": 0.9967234600262124,
+   "fpr": 0.10987571487906962,
+   "precision": 0.18109298726038814,
+   "alerts": 25197,
+   "roc_auc": 0.9869808107684876,
+   "pr_auc": 0.637788445982705
+  },
+  "note": "test metrics on the 192,372-row untouched-test cache containing all 4,578 test fraud (sampled legit); production-prevalence workload in sec 11 of the offline cert"
+ },
+ "artifact_files": {
+  "xgb_native.joblib": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+  "lgb_native.joblib": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+  "cb_native.joblib": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+  "scaler_native.joblib": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+  "feature_list.json": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f"
+ },
+ "artifact_hashes_verify_live": {
+  "live_matches_manifest": true,
+  "live_matches_cert_package": true
+ },
+ "promotion": {
+  "decision": "DEPLOY",
+  "date": "2026-09-04T12:48:06.579515+00:00",
+  "certification_reference": "reports/e_hardneg_certification_offline.json + reports/e_hardneg_certification_final.json",
+  "approved_by": "PS-14 independent certification (all 14 mandatory technical gates PASS; see final report)",
+  "residual_documented_limitations": [
+   "label-latency UNVERIFIED: raw dataset cannot establish when fraud labels become available; entity fraud-rate features assumed causal with minimum delay 0 \u2014 not fully certifiable from data",
+   "merchant-unseen rows: FPR 64.5% on merchants absent from training (documented diagnostic, not retuned)",
+   "dead features mcc_online (const 0) and has_state (const 1) retained for schema stability; schema bump recommended next release",
+   "channel shift (2016 online-fraud wave -> 2018-19 chip/swipe) quantified in offline cert sec 6; monitoring active"
+  ]
+ },
+ "parent_model_id": "altman_native_v3_20260904_133000",
+ "rollback_artifact": "models/production/altman_native_v3_snapshot_cert (drill-verified 2026-09-04)"
+}

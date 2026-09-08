@@ -1,0 +1,9 @@
+{
+  "run_timestamp": "2026-08-26T20:44:08.088991+00:00",
+  "seed": 42,
+  "python_version": "3.12.10",
+  "n_experiments": 1,
+  "categories": [
+    "TEMPORAL"
+  ]
+}

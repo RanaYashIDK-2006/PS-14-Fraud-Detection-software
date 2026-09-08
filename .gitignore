@@ -1,0 +1,86 @@
+.venv/
+__pycache__/
+*.pyc
+db/
+.env
+models/cache/
+
+# Plaintext master of the encrypted access doc - never commit
+/docs/ACCESS.md
+
+# TLS certificates (self-signed, never commit private keys)
+certs/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+
+# Database
+db/
+
+# TLS certificates
+certs/
+*.pem
+*.key
+
+# Sensitive access document
+/docs/ACCESS.md
+
+# Data
+data/
+
+# Backups
+BACKUPS/
+
+# Large archives
+*.zip
+*.tar
+*.gz
+
+# Generated/build files
+dist/
+catboost_info/
+
+# Model cache
+models/cache/
+# Data
+data/
+
+# Backups
+BACKUPS/
+
+# Large archives
+*.zip
+*.tar
+*.gz
+
+# Generated/build files
+dist/
+catboost_info/
+
+# TLS private keys
+*.pem
+*.key
+# Trained model artifacts
+models/artifacts/
+models/production/
+*.joblib
+*.pkl
+# Temporary agent/runtime artifacts
+.freebuff/
+
+# Backup files
+*.bak
+
+# Logs
+*.log
+*.log.err
+
+# Generated ML artifacts
+*.npy
+*.npz
+

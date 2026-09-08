@@ -1,0 +1,291 @@
+{
+  "concept_analysis": {
+    "amount_deviation": {
+      "ulb": 0,
+      "altman": 0,
+      "paysim": 0.1871650069952011,
+      "max_domain": "PaySim",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "amount_magnitude": {
+      "ulb": 0.0,
+      "altman": 0.10325700044631958,
+      "paysim": 0.11466699838638306,
+      "max_domain": "PaySim",
+      "transfer": "SHARED",
+      "n_domains": 2
+    },
+    "amount_x_category": {
+      "ulb": 0,
+      "altman": 0.015615000389516354,
+      "paysim": 0,
+      "max_domain": "Altman",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "amount_x_channel": {
+      "ulb": 0,
+      "altman": 0.019235000014305115,
+      "paysim": 0,
+      "max_domain": "Altman",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "amount_x_time": {
+      "ulb": 0,
+      "altman": 0.008363000117242336,
+      "paysim": 0,
+      "max_domain": "Altman",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 0
+    },
+    "balance_asymmetry": {
+      "ulb": 0,
+      "altman": 0,
+      "paysim": 0.032993000000715256,
+      "max_domain": "PaySim",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "balance_change": {
+      "ulb": 0,
+      "altman": 0,
+      "paysim": 0.4633530080318451,
+      "max_domain": "PaySim",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "balance_state": {
+      "ulb": 0,
+      "altman": 0,
+      "paysim": 0.10557399690151215,
+      "max_domain": "PaySim",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "balance_velocity": {
+      "ulb": 0,
+      "altman": 0,
+      "paysim": 0.002500999951735139,
+      "max_domain": "PaySim",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 0
+    },
+    "balance_wipe": {
+      "ulb": 0,
+      "altman": 0,
+      "paysim": 0.008465999737381935,
+      "max_domain": "PaySim",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 0
+    },
+    "card_identity": {
+      "ulb": 0,
+      "altman": 0.012237999588251114,
+      "paysim": 0,
+      "max_domain": "Altman",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "channel_type": {
+      "ulb": 0,
+      "altman": 0.12281700223684311,
+      "paysim": 0,
+      "max_domain": "Altman",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "location_identity": {
+      "ulb": 0,
+      "altman": 0.058795999735593796,
+      "paysim": 0,
+      "max_domain": "Altman",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "location_velocity": {
+      "ulb": 0,
+      "altman": 0.16672000288963318,
+      "paysim": 0,
+      "max_domain": "Altman",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "merchant_category": {
+      "ulb": 0,
+      "altman": 0.056836001574993134,
+      "paysim": 0,
+      "max_domain": "Altman",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "merchant_identity": {
+      "ulb": 0,
+      "altman": 0.03345600143074989,
+      "paysim": 0,
+      "max_domain": "Altman",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "merchant_velocity": {
+      "ulb": 0,
+      "altman": 0.050262998789548874,
+      "paysim": 0,
+      "max_domain": "Altman",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "pca_component": {
+      "ulb": 0.5761200189590454,
+      "altman": 0,
+      "paysim": 0,
+      "max_domain": "ULB",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "pca_velocity": {
+      "ulb": 0.3816620111465454,
+      "altman": 0,
+      "paysim": 0,
+      "max_domain": "ULB",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "pca_x_amount": {
+      "ulb": 0.024289000779390335,
+      "altman": 0,
+      "paysim": 0,
+      "max_domain": "ULB",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "time_deviation": {
+      "ulb": 0,
+      "altman": 0.23382900655269623,
+      "paysim": 0,
+      "max_domain": "Altman",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "time_pattern": {
+      "ulb": 0.017928000539541245,
+      "altman": 0.09827599674463272,
+      "paysim": 0,
+      "max_domain": "Altman",
+      "transfer": "SHARED",
+      "n_domains": 2
+    },
+    "transaction_error": {
+      "ulb": 0,
+      "altman": 0.02030099928379059,
+      "paysim": 0,
+      "max_domain": "Altman",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    },
+    "transaction_type": {
+      "ulb": 0,
+      "altman": 0,
+      "paysim": 0.08528099954128265,
+      "max_domain": "PaySim",
+      "transfer": "DOMAIN-SPEC",
+      "n_domains": 1
+    }
+  },
+  "feature_importances": {
+    "ULB": {
+      "Amount": 0.0,
+      "Time": 0.017928000539541245,
+      "V1": 0.0,
+      "V2": 0.012192999944090843,
+      "V3": 0.011405999772250652,
+      "V4": 0.02283499948680401,
+      "V5": 0.0,
+      "V6": 0.013441000133752823,
+      "V7": 0.051805999130010605,
+      "V8": 0.00974200014024973,
+      "V9": 0.02629600092768669,
+      "V10": 0.1131879985332489,
+      "V11": 0.03897000104188919,
+      "V12": 0.08294899761676788,
+      "V13": 0.010327000170946121,
+      "V14": 0.057854000478982925,
+      "V15": 0.023618999868631363,
+      "V16": 0.010386000387370586,
+      "V17": 0.0,
+      "V18": 0.0,
+      "V19": 0.0,
+      "V20": 0.017496999353170395,
+      "V21": 0.0,
+      "V22": 0.011861000210046768,
+      "V23": 0.010964999906718731,
+      "V24": 0.0,
+      "V25": 0.0,
+      "V26": 0.021648000925779343,
+      "V27": 0.016106000170111656,
+      "V28": 0.013031999580562115,
+      "V14_dev": 0.04491500183939934,
+      "V17_dev": 0.05926299840211868,
+      "V12_dev": 0.0726419985294342,
+      "V10_dev": 0.06566499918699265,
+      "V4_dev": 0.023997999727725983,
+      "V11_dev": 0.06323900073766708,
+      "pca_anomaly_sum": 0.05194000154733658,
+      "amt_x_V14": 0.011986000463366508,
+      "amt_x_V17": 0.012303000316023827
+    },
+    "Altman": {
+      "chip": 0.049942001700401306,
+      "mcc_n": 0.056836001574993134,
+      "err": 0.02030099928379059,
+      "hr": 0.02071399986743927,
+      "mn": 0.004356000106781721,
+      "merchant_id": 0.03345600143074989,
+      "city_id": 0.058795999735593796,
+      "is_online": 0.07287400215864182,
+      "day_decimal": 0.005187999922782183,
+      "Month": 0.009015999734401703,
+      "Year": 0.037418998777866364,
+      "Card": 0.012237999588251114,
+      "amt": 0.030482999980449677,
+      "amt_log": 0.029183000326156616,
+      "amt_x_hr": 0.008363000117242336,
+      "amt_x_mcc": 0.015615000389516354,
+      "amt_x_chip": 0.019235000014305115,
+      "amt_sq": 0.04359100013971329,
+      "night_tx": 0.02158300019800663,
+      "merchant_tx_count": 0.050262998789548874,
+      "city_tx_count": 0.16672000288963318,
+      "night_deviation": 0.23382900655269623
+    },
+    "PaySim": {
+      "amount": 0.11466699838638306,
+      "oldbalanceOrg": 0.04246300086379051,
+      "newbalanceOrig": 0.008593999780714512,
+      "oldbalanceDest": 0.03785799816250801,
+      "newbalanceDest": 0.016659999266266823,
+      "type_CASH_IN": 0.036263998597860336,
+      "type_CASH_OUT": 0.0027759999502450228,
+      "type_DEBIT": 0.015429000370204449,
+      "type_PAYMENT": 0.02297299914062023,
+      "type_TRANSFER": 0.002228999976068735,
+      "bal_diff_orig": 0.21437400579452515,
+      "bal_diff_dest": 0.24897900223731995,
+      "amt_ratio_orig": 0.11101000010967255,
+      "orig_wiped": 0.008465999737381935,
+      "dest_zero": 0.0,
+      "flow_asym": 0.032993000000715256,
+      "is_cashout": 0.003346000099554658,
+      "is_transfer": 0.0022640000097453594,
+      "balance_wipe_score": 0.002500999951735139,
+      "drain_ratio": 0.07615400105714798
+    }
+  },
+  "domain_aucs": {
+    "ULB": 0.969311,
+    "Altman": 0.996392,
+    "PaySim": 0.941811
+  },
+  "elapsed_s": 48.0
+}

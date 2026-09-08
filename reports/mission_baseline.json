@@ -1,0 +1,87 @@
+{
+ "purpose": "Campaign baseline freeze \u2014 recorded BEFORE any improvement experiment; recomputed independently in v_verification_final.json from raw counts/artifacts",
+ "test_window": {
+  "years": "2018-2020",
+  "rows": 3782053,
+  "fraud": 4578,
+  "prevalence": 0.0012104536874549352
+ },
+ "true_prevalence": 0.0012104536874549352,
+ "v2_deployed_until": {
+  "tp": 2043,
+  "fn": 2535,
+  "fp": 480,
+  "tn": 36938,
+  "recall": 0.446265,
+  "fpr": 0.012828,
+  "precision": 0.80975,
+  "alerts": 2523,
+  "roc_auc": 0.972237,
+  "pr_auc": 0.78749,
+  "formula_ids": "ALL OK"
+ },
+ "v3_deployed": {
+  "tp": 4557,
+  "fn": 21,
+  "fp": 5940,
+  "tn": 31478,
+  "recall": 0.995413,
+  "fpr": 0.158747,
+  "precision": 0.434124,
+  "alerts": 10497,
+  "roc_auc": 0.972237,
+  "pr_auc": 0.78749,
+  "formula_ids": "ALL OK"
+ },
+ "improved_candidate_reference": {
+  "config": "spw=10 (swept 5-40), legit_frac=0.05 train sampling, windows UNCHANGED (train<2016, val 2016-17, test>=2018 untouched), seed 42, err fix included",
+  "run1_eq_run2": "bit-identical RESULT (determinism verified)",
+  "independent_replay": "ens/xgb probs reproduced exactly (max_abs_diff 0.0) by re-running the shipped scaler+members over persisted rows",
+  "val": {
+   "rows": 174530,
+   "fraud": 3834,
+   "auc": 0.995858,
+   "locked_threshold": 0.065153,
+   "recall_at_lock": 0.990089,
+   "fpr_at_lock": 0.066498
+  },
+  "test": {
+   "rows": 192372,
+   "fraud": 4578,
+   "auc": 0.986114,
+   "recall": 0.977501,
+   "fpr": 0.071333,
+   "precision": 0.250406,
+   "tp": 4475,
+   "fp": 13396,
+   "fn": 103,
+   "tn": 174398,
+   "alerts": 17871
+  },
+  "at_production_prevalence_per_1000": {
+   "alerts": 72.43,
+   "fraud_caught": 1.18,
+   "legit_alerts": 71.25,
+   "precision": 0.01633
+  },
+  "honest_note": "improved model shifts the curve left (test recall 97.8% at FPR 7.1% vs v3's 99.5% at 15.9%) but does NOT reach 99% recall on the untouched test at its val-locked threshold; ~1.3-pt val->test recall gap from the same channel-shift drift remains. NOT deployed."
+ },
+ "curve_baseline": {
+  "v3_deployed": {
+   "recall": 0.99541,
+   "fpr": 0.15875,
+   "prod_alerts_per_1000": 159.76
+  },
+  "improved_candidate": {
+   "recall": 0.9775,
+   "fpr": 0.07133,
+   "prod_alerts_per_1000": 72.43
+  }
+ },
+ "mission_targets": {
+  "TARGET_A": ">=99% recall at materially lower FPR than v3's 15.9%",
+  "milestone": ">=99% recall at <7% FPR",
+  "stretch": ">=99% recall at <=5% FPR"
+ },
+ "pre_registered_selection": "data/test_lock.json"
+}

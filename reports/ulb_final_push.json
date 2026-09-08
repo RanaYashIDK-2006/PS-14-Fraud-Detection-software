@@ -1,0 +1,67 @@
+{
+  "dataset": "ULB",
+  "n_rows": 284807,
+  "n_fraud": 492,
+  "velocity_features": [
+    "pca_anomaly_sum",
+    "V14_dev",
+    "V17_dev",
+    "V12_dev",
+    "V10_dev",
+    "V4_dev",
+    "V11_dev",
+    "amt_zscore",
+    "amt_x_V14"
+  ],
+  "baseline_cv_auc": 0.9734,
+  "baseline_cv_r1": 0.874,
+  "velocity_cv_auc": 0.9691,
+  "velocity_cv_r1": 0.8658,
+  "time_split_auc": 0.976,
+  "time_split_r1": 0.8533,
+  "optuna_time_auc": 0.991,
+  "optuna_time_r1": 0.88,
+  "top_features": [
+    {
+      "name": "V12_dev",
+      "importance": 0.2597
+    },
+    {
+      "name": "pca_anomaly_sum",
+      "importance": 0.2532
+    },
+    {
+      "name": "V14_dev",
+      "importance": 0.1204
+    },
+    {
+      "name": "V10_dev",
+      "importance": 0.0288
+    },
+    {
+      "name": "V10",
+      "importance": 0.0275
+    },
+    {
+      "name": "V4",
+      "importance": 0.0198
+    },
+    {
+      "name": "V12",
+      "importance": 0.018
+    },
+    {
+      "name": "V4_dev",
+      "importance": 0.0153
+    },
+    {
+      "name": "V14",
+      "importance": 0.0149
+    },
+    {
+      "name": "V17",
+      "importance": 0.013
+    }
+  ],
+  "key_finding": "Velocity features (V12_dev, pca_anomaly_sum, V14_dev) account for 63% of model importance. Optuna-tuned XGB on time-split achieves 99.1% AUC."
+}

@@ -1,0 +1,57 @@
+{
+  "audit_title": "PS-14 COMPREHENSIVE AUDIT",
+  "timestamp": "2026-09-01",
+  "methodology": "Expanding-window feature engineering, temporal split, bootstrap CI, ablation",
+  "dataset": {"total_rows": 24386900, "fraud": 29757, "legit": 24357143, "rate_pct": 0.122, "check": "PASS"},
+  "temporal_split": {"train": 19509520, "test": 4877380, "check": "PASS"},
+  "leakage_audit": {
+    "verdict": "CRITICAL LEAKAGE FOUND AND FIXED",
+    "critical_target_leaks": 4,
+    "temporal_leaks": 7,
+    "total_affected": "11 of 25 features",
+    "fix": "Expanding-window (causal) feature computation"
+  },
+  "original_vs_leakfree": {
+    "original_auc": 0.9984,
+    "leakfree_auc": 0.9959,
+    "delta": -0.0025,
+    "original_pr": 0.8623,
+    "leakfree_pr": 0.8204
+  },
+  "ablation": {
+    "all_25": {"auc": 0.9959, "pr": 0.8204},
+    "no_target_21": {"auc": 0.9930, "auc_d": -0.28, "pr": 0.7230, "pr_d": -9.74},
+    "no_temporal_14": {"auc": 0.9888, "auc_d": -0.71, "pr": 0.6393, "pr_d": -18.12},
+    "simple_10": {"auc": 0.9868, "auc_d": -0.90, "pr": 0.5912, "pr_d": -22.92}
+  },
+  "threshold_sweep": {
+    "best_fpr_lt_1pct": {"thr": 0.10, "fpr": 0.961, "recall": 93.0, "prec": 10.3, "tp": 5357, "fp": 46801, "fn": 404, "alerts": 52158},
+    "key_points": [
+      {"thr": 0.10, "fpr": 0.96, "recall": 93.0, "prec": 10.3, "alerts": 52158},
+      {"thr": 0.25, "fpr": 0.29, "recall": 92.4, "prec": 27.3, "alerts": 14159},
+      {"thr": 0.50, "fpr": 0.09, "recall": 88.0, "prec": 52.4, "alerts": 4601},
+      {"thr": 0.75, "fpr": 0.03, "recall": 84.0, "prec": 74.3, "alerts": 1671}
+    ]
+  },
+  "confidence_intervals": {
+    "auc_95ci": [0.9953, 0.9964],
+    "recall_at_fpr_1pct_95ci": [0.9227, 0.9353]
+  },
+  "temporal_stability": {
+    "windows": [
+      {"w": 1, "auc": 0.9969, "recall": 94.0},
+      {"w": 2, "auc": 0.9956, "recall": 93.9},
+      {"w": 3, "auc": 0.9944, "recall": 89.9},
+      {"w": 4, "auc": 0.9967, "recall": 94.1}
+    ],
+    "drift": false
+  },
+  "claim_verification": [
+    {"claim": "AUC=0.9984", "status": "FALSE", "corrected": 0.9959},
+    {"claim": "PR-AUC=0.8623", "status": "FALSE", "corrected": 0.8204},
+    {"claim": "96% recall @ <1% FPR", "status": "FALSE", "corrected": "93.0%"},
+    {"claim": "Industry standards exceeded", "status": "UNVERIFIED"},
+    {"claim": "ULB CV AUC=0.9831", "status": "VERIFIED"},
+    {"claim": "ULB OOF AUC=0.9557", "status": "MISLEADING (scaler leak)"}
+  ]
+}

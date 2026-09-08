@@ -1,0 +1,318 @@
+{
+  "generated_at": "2026-09-03 06:51:51 UTC",
+  "dimensions": {
+    "model_performance": {
+      "status": "GREEN",
+      "detail": "recall 91.6% >= 85%, FPR 0.80% <= 1%, PR-AUC 0.801",
+      "severity": "High",
+      "evidence": {
+        "window": "Window 5",
+        "auc": 0.9948,
+        "pr_auc": 0.8008,
+        "recall": 0.9159,
+        "fpr": 0.008,
+        "precision": 0.1208,
+        "alerts_per_10k": 90.5,
+        "triggered_rules": [
+          "Data quality degradation"
+        ]
+      }
+    },
+    "feature_drift": {
+      "status": "YELLOW",
+      "detail": "2 feature(s) WARNING, 0 CRITICAL",
+      "severity": "Medium",
+      "evidence": {
+        "n_healthy": 21,
+        "n_warning": 2,
+        "n_critical": 0,
+        "warning_features": [
+          "city_popularity",
+          "user_merch_diversity"
+        ],
+        "threshold": "PSI > 0.25 CRITICAL (PS-14 operational, Check 12)"
+      }
+    },
+    "data_quality": {
+      "status": "RED",
+      "detail": "monitor says CRITICAL",
+      "severity": "Critical",
+      "evidence": {
+        "issues": [
+          {
+            "check": "Missing rate: Zip",
+            "value": "7.8%",
+            "level": "WARNING"
+          },
+          {
+            "check": "Invalid timestamps",
+            "value": "0.51%",
+            "level": "CRITICAL"
+          }
+        ],
+        "note": "0.51% invalid timestamps in the recent window is a synthetic-dataset artifact (seed aging); monitored, source must be fixed before retraining."
+      }
+    },
+    "model_integrity": {
+      "status": "GREEN",
+      "detail": "engine loaded + all artifact hashes and schema verified",
+      "severity": "Critical",
+      "evidence": {
+        "engine_load": true,
+        "checks": [
+          {
+            "name": "cb_production.joblib",
+            "pass": true
+          },
+          {
+            "name": "drift_reference.json",
+            "pass": true
+          },
+          {
+            "name": "drift_reference.npy",
+            "pass": true
+          },
+          {
+            "name": "feature_list.json",
+            "pass": true
+          },
+          {
+            "name": "latest",
+            "pass": true
+          },
+          {
+            "name": "lgb_production.joblib",
+            "pass": true
+          },
+          {
+            "name": "logistic_regression.joblib",
+            "pass": true
+          },
+          {
+            "name": "manifest.json",
+            "pass": true
+          },
+          {
+            "name": "model.joblib",
+            "pass": true
+          },
+          {
+            "name": "random_forest.joblib",
+            "pass": true
+          },
+          {
+            "name": "scaler.joblib",
+            "pass": true
+          },
+          {
+            "name": "scaler_production.joblib",
+            "pass": true
+          },
+          {
+            "name": "xgb_production.joblib",
+            "pass": true
+          },
+          {
+            "name": "feature_schema",
+            "pass": true
+          }
+        ],
+        "schema": {
+          "pass": true,
+          "recorded_n": 15,
+          "loaded_n": 15
+        },
+        "model_version": "altman_lean_15feat_20260830_200346",
+        "n_failures": 0
+      }
+    },
+    "production_parity": {
+      "status": "RED",
+      "detail": "Feature-generation parity is near-perfect (7/8 expanding features bit-exact vs the training cache); one REAL production bug: city_fraud_rate resets per parquet row group in the cache builder. The model mismatch remains: the forensic audit evaluated an inline 25-feature XGB, not the deployed 15-feature lean artifact. PRODUCTION PARITY = FAIL (model mismatch + city-rate cache bug).",
+      "severity": "Critical",
+      "evidence": {
+        "numeric_parity_state_features": "PASS",
+        "numeric_parity_city_fraud_rate": "FAIL - training cache city_state resets per parquet row group (train_altman_fullscale.py line 218: city_state = {} INSIDE the row-group loop); cached city_fraud_rate is chunk-local, not a full expanding window",
+        "builder_causality": "PASS",
+        "deployed_artifact_consistency": "PASS",
+        "audited_is_deployed": "FAIL - audit model (25 feat, inline, never saved) != deployed lean model (15 feat); shared schema 12/15"
+      }
+    },
+    "probability_calibration": {
+      "status": "GREEN",
+      "detail": "test ECE = 0.3918% (within 1% PS-14 bound)",
+      "severity": "Low",
+      "evidence": {
+        "brier_test": 0.001185,
+        "ece_test": 0.003918,
+        "note": "production uses ranking threshold; calibration optional for risk-banding"
+      }
+    },
+    "alert_volume": {
+      "status": "GREEN",
+      "detail": "latest window 90.5 alerts/10K",
+      "severity": "Medium",
+      "evidence": {
+        "alerts_per_10k": 90.5,
+        "capacity": "UNVERIFIED - no operational cap given"
+      }
+    },
+    "threshold_governance": {
+      "status": "RED",
+      "detail": "deployed model has no validated, registry-locked threshold",
+      "severity": "Critical",
+      "evidence": {
+        "registry_models": [
+          "audit_25feat_xgb_inline (forensic_revalidate.py - NOT the deployed artifact)",
+          "altman_lean_15feat_20260830_200346"
+        ]
+      }
+    },
+    "promotion_gate": {
+      "status": "RED",
+      "detail": "A critical gate failed: Data-quality validation; Feature-parity validation; Threshold validation",
+      "severity": "Critical",
+      "evidence": {
+        "gates": [
+          {
+            "gate": "Leakage validation",
+            "pass": true,
+            "evidence": "causality PASS on audit pipeline"
+          },
+          {
+            "gate": "Data-quality validation",
+            "pass": false,
+            "evidence": "DQ=CRITICAL"
+          },
+          {
+            "gate": "Feature-parity validation",
+            "pass": false,
+            "evidence": "parity bottom line (city_fraud_rate cache bug + model mismatch on record)"
+          },
+          {
+            "gate": "Threshold validation",
+            "pass": false,
+            "evidence": "threshold locked in registry"
+          },
+          {
+            "gate": "Performance validation",
+            "pass": true,
+            "evidence": "latest window within bounds"
+          },
+          {
+            "gate": "Robustness validation",
+            "pass": true,
+            "evidence": "stress matrix 24/24"
+          },
+          {
+            "gate": "Security validation",
+            "pass": true,
+            "evidence": "deployment-gate security PASS"
+          },
+          {
+            "gate": "Rollback validation",
+            "pass": true,
+            "evidence": "real rollback -> identical V1 predictions"
+          },
+          {
+            "gate": "Governance integrity",
+            "pass": true,
+            "evidence": "artifact hashes verified"
+          }
+        ],
+        "MODEL_PROMOTION": "BLOCKED",
+        "reason": "A critical gate failed: Data-quality validation; Feature-parity validation; Threshold validation"
+      }
+    },
+    "fail_safe_probes": {
+      "status": "GREEN",
+      "detail": "3/3 live fail-safe probes passed (tamper/schema/missing all refused to load)",
+      "severity": "Critical",
+      "evidence": {
+        "probes": [
+          {
+            "probe": "tampered_artifact",
+            "description": "byte-flip in xgb_production.joblib -> load must fail",
+            "severity": "Critical",
+            "result": "PASS",
+            "detail": "refused to load: XGBoostError"
+          },
+          {
+            "probe": "feature_schema_mismatch",
+            "description": "feature_list.json missing last feature -> load must fail",
+            "severity": "Critical",
+            "result": "PASS",
+            "detail": "refused to load: XGBoostError"
+          },
+          {
+            "probe": "missing_artifact",
+            "description": "scaler_production.joblib deleted -> load must fail",
+            "severity": "Critical",
+            "result": "PASS",
+            "detail": "refused to load: XGBoostError"
+          }
+        ]
+      }
+    }
+  },
+  "overall_status": "RED",
+  "overall_reason": [
+    "feature_drift: YELLOW - 2 feature(s) WARNING, 0 CRITICAL",
+    "data_quality: RED - monitor says CRITICAL",
+    "production_parity: RED - Feature-generation parity is near-perfect (7/8 expanding features bit-exact vs the training cache); one REAL production bug: city_fraud_rate resets per parquet row group in the cache builder. The model mismatch remains: the forensic audit evaluated an inline 25-feature XGB, not the deployed 15-feature lean artifact. PRODUCTION PARITY = FAIL (model mismatch + city-rate cache bug).",
+    "threshold_governance: RED - deployed model has no validated, registry-locked threshold",
+    "promotion_gate: RED - A critical gate failed: Data-quality validation; Feature-parity validation; Threshold validation"
+  ],
+  "deployment_allowed": false,
+  "promotion_gate": {
+    "gates": [
+      {
+        "gate": "Leakage validation",
+        "pass": true,
+        "evidence": "causality PASS on audit pipeline"
+      },
+      {
+        "gate": "Data-quality validation",
+        "pass": false,
+        "evidence": "DQ=CRITICAL"
+      },
+      {
+        "gate": "Feature-parity validation",
+        "pass": false,
+        "evidence": "parity bottom line (city_fraud_rate cache bug + model mismatch on record)"
+      },
+      {
+        "gate": "Threshold validation",
+        "pass": false,
+        "evidence": "threshold locked in registry"
+      },
+      {
+        "gate": "Performance validation",
+        "pass": true,
+        "evidence": "latest window within bounds"
+      },
+      {
+        "gate": "Robustness validation",
+        "pass": true,
+        "evidence": "stress matrix 24/24"
+      },
+      {
+        "gate": "Security validation",
+        "pass": true,
+        "evidence": "deployment-gate security PASS"
+      },
+      {
+        "gate": "Rollback validation",
+        "pass": true,
+        "evidence": "real rollback -> identical V1 predictions"
+      },
+      {
+        "gate": "Governance integrity",
+        "pass": true,
+        "evidence": "artifact hashes verified"
+      }
+    ],
+    "MODEL_PROMOTION": "BLOCKED",
+    "reason": "A critical gate failed: Data-quality validation; Feature-parity validation; Threshold validation"
+  }
+}

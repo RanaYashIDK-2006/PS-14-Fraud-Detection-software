@@ -1,0 +1,386 @@
+{
+ "file_hashes": {
+  "raw_dataset_csv": {
+   "path": "data/credit_card_transactions-ibm_v2.csv",
+   "size": 2350744057,
+   "sha256": "b01fa323c98522f8c710c7f7242581860c97c50183f1c5fa9e772e5c674a7f15"
+  },
+  "cached_altman_sorted_parquet": {
+   "path": "data/_sorted_cache/altman_sorted.parquet",
+   "size": 222175635,
+   "sha256": "41994a5be637fd69d124d8ceb5dafea69cd306d1361705778da5683e364f13df"
+  },
+  "cached_features_all_parquet": {
+   "path": "data/_sorted_cache/features_all.parquet",
+   "size": 1190016337,
+   "sha256": "4ea9050120be4883e8d5ffe080aab59fa10bf642c02a3b9068035283562396ac"
+  },
+  "audit_experiment_metadata": {
+   "path": "reports/forensic_revalidation.json",
+   "size": 18366,
+   "sha256": "5c4758a1d3468410398405c8b4251b48f071fcb328bcf6e2bb257af190a59843"
+  },
+  "audit_locked_threshold_record": {
+   "path": "models/model_records/audit_25feat_xgb_inline_threshold.json",
+   "size": 400,
+   "sha256": "f9d5a78de5aed18d13dc96ab4aa660c70712c6d84a0467fa40af4b956f7fbf12"
+  },
+  "deployed_model_record": {
+   "path": "models/model_records/altman_lean_15feat_20260830_200346.json",
+   "size": 4320,
+   "sha256": "651abb6550dce36e9a86cc61b649d15b8f1a0b0b40580d1e6ce8446dc2443806"
+  }
+ },
+ "deployed_artifact_hash_verification": {
+  "n_artifacts": 13,
+  "n_match": 13,
+  "checks": [
+   {
+    "file": "cb_production.joblib",
+    "path": "models/production/cb_production.joblib",
+    "recorded_sha256": "213821a2c8e78122721fa927965d9eaa70cbefec3d89ef83c65c8eaffefab57e",
+    "actual_sha256": "213821a2c8e78122721fa927965d9eaa70cbefec3d89ef83c65c8eaffefab57e",
+    "match": true
+   },
+   {
+    "file": "drift_reference.json",
+    "path": "models/production/drift_reference.json",
+    "recorded_sha256": "353e90415fe1dd62b0596b9f9e78765fc24b5350e3fc3cb4a989733ca7ca16b6",
+    "actual_sha256": "353e90415fe1dd62b0596b9f9e78765fc24b5350e3fc3cb4a989733ca7ca16b6",
+    "match": true
+   },
+   {
+    "file": "drift_reference.npy",
+    "path": "models/production/drift_reference.npy",
+    "recorded_sha256": "58de8fd028b4f94b1daec4aa189426ba6b54e5475805de83fa3c714801b4332a",
+    "actual_sha256": "58de8fd028b4f94b1daec4aa189426ba6b54e5475805de83fa3c714801b4332a",
+    "match": true
+   },
+   {
+    "file": "feature_list.json",
+    "path": "models/production/feature_list.json",
+    "recorded_sha256": "f1b8573a142acd9c28d863bfafdc6f001967d2e164f2662f63b61566f4e7dace",
+    "actual_sha256": "f1b8573a142acd9c28d863bfafdc6f001967d2e164f2662f63b61566f4e7dace",
+    "match": true
+   },
+   {
+    "file": "latest",
+    "path": "models/production/latest",
+    "recorded_sha256": "ff64ec7651200681dd489bff29f0eecc0f30a1c0135cd04e377cbbdd66ead874",
+    "actual_sha256": "ff64ec7651200681dd489bff29f0eecc0f30a1c0135cd04e377cbbdd66ead874",
+    "match": true
+   },
+   {
+    "file": "lgb_production.joblib",
+    "path": "models/production/lgb_production.joblib",
+    "recorded_sha256": "4b737db476c16e4ce925ff057d6c11c888c36ca2c8e35883b75a6d651ee14d8b",
+    "actual_sha256": "4b737db476c16e4ce925ff057d6c11c888c36ca2c8e35883b75a6d651ee14d8b",
+    "match": true
+   },
+   {
+    "file": "logistic_regression.joblib",
+    "path": "models/production/logistic_regression.joblib",
+    "recorded_sha256": "9532409e2215bd99bd73ed5720ca9a895c5c888d96d732a0b4483f0c93d43846",
+    "actual_sha256": "9532409e2215bd99bd73ed5720ca9a895c5c888d96d732a0b4483f0c93d43846",
+    "match": true
+   },
+   {
+    "file": "manifest.json",
+    "path": "models/production/manifest.json",
+    "recorded_sha256": "b713e3c90f8f2481786d634b53914f3539607ba270bec2a9d7b8bd71ce358eb4",
+    "actual_sha256": "b713e3c90f8f2481786d634b53914f3539607ba270bec2a9d7b8bd71ce358eb4",
+    "match": true
+   },
+   {
+    "file": "model.joblib",
+    "path": "models/production/model.joblib",
+    "recorded_sha256": "61169fee582799831a47c5b383a23be5b0d561f1c0f7634a1ab37a7a78165906",
+    "actual_sha256": "61169fee582799831a47c5b383a23be5b0d561f1c0f7634a1ab37a7a78165906",
+    "match": true
+   },
+   {
+    "file": "random_forest.joblib",
+    "path": "models/production/random_forest.joblib",
+    "recorded_sha256": "c1d39b6268828f6484022550d5f4946fea7b1568477baea6f56fcacd65a41072",
+    "actual_sha256": "c1d39b6268828f6484022550d5f4946fea7b1568477baea6f56fcacd65a41072",
+    "match": true
+   },
+   {
+    "file": "scaler.joblib",
+    "path": "models/production/scaler.joblib",
+    "recorded_sha256": "95bac31b70c671e1b72126efe774d27515ff4be293bec4b043f8fb947170a0ee",
+    "actual_sha256": "95bac31b70c671e1b72126efe774d27515ff4be293bec4b043f8fb947170a0ee",
+    "match": true
+   },
+   {
+    "file": "scaler_production.joblib",
+    "path": "models/production/scaler_production.joblib",
+    "recorded_sha256": "ca96142faacf080ec49c5d6fb2849f91b83097fa7324ef86acc6394bb4665e4a",
+    "actual_sha256": "ca96142faacf080ec49c5d6fb2849f91b83097fa7324ef86acc6394bb4665e4a",
+    "match": true
+   },
+   {
+    "file": "xgb_production.joblib",
+    "path": "models/production/xgb_production.joblib",
+    "recorded_sha256": "d277ad65ba9b64816c279c32e2a9b52711347880a5d103aac60e5e14eab88522",
+    "actual_sha256": "d277ad65ba9b64816c279c32e2a9b52711347880a5d103aac60e5e14eab88522",
+    "match": true
+   }
+  ]
+ },
+ "dataset_stats": {
+  "total_rows": 24386900,
+  "n_columns": 15,
+  "schema": [
+   {
+    "column": "User",
+    "dtype": "int64"
+   },
+   {
+    "column": "Card",
+    "dtype": "int64"
+   },
+   {
+    "column": "Year",
+    "dtype": "int64"
+   },
+   {
+    "column": "Month",
+    "dtype": "int64"
+   },
+   {
+    "column": "Day",
+    "dtype": "int64"
+   },
+   {
+    "column": "Time",
+    "dtype": "str"
+   },
+   {
+    "column": "Amount",
+    "dtype": "str"
+   },
+   {
+    "column": "Use Chip",
+    "dtype": "str"
+   },
+   {
+    "column": "Merchant Name",
+    "dtype": "int64"
+   },
+   {
+    "column": "Merchant City",
+    "dtype": "str"
+   },
+   {
+    "column": "Merchant State",
+    "dtype": "str"
+   },
+   {
+    "column": "Zip",
+    "dtype": "float64"
+   },
+   {
+    "column": "MCC",
+    "dtype": "int64"
+   },
+   {
+    "column": "Errors?",
+    "dtype": "str"
+   },
+   {
+    "column": "Is Fraud?",
+    "dtype": "str"
+   }
+  ],
+  "fraud_rows": 29757,
+  "legit_rows": 24357143,
+  "fraud_rate_pct": 0.122,
+  "date_min": 19910102,
+  "date_max": 20200228,
+  "missing_values": {
+   "User": 0,
+   "Card": 0,
+   "Year": 0,
+   "Month": 0,
+   "Day": 0,
+   "Time": 0,
+   "Amount": 0,
+   "Use Chip": 0,
+   "Merchant Name": 0,
+   "Merchant City": 0,
+   "Merchant State": 2720821,
+   "Zip": 2878135,
+   "MCC": 0,
+   "Errors?": 23998469,
+   "Is Fraud?": 0
+  },
+  "full_row_duplicates": 66,
+  "duplicate_examples": [
+   {
+    "User": 13,
+    "Card": 0,
+    "Year": 2015,
+    "Month": 4,
+    "Day": 28,
+    "Time": "06:36",
+    "Amount": "$100.00",
+    "Use Chip": "Chip Transaction",
+    "Merchant Name": -4282466774399734331,
+    "Merchant City": "Boyne City",
+    "Merchant State": "MI",
+    "Zip": 49712.0,
+    "MCC": 4829,
+    "Errors?": "Insufficient Balance",
+    "Is Fraud?": "No"
+   },
+   {
+    "User": 13,
+    "Card": 1,
+    "Year": 2006,
+    "Month": 7,
+    "Day": 19,
+    "Time": "07:34",
+    "Amount": "$100.00",
+    "Use Chip": "Swipe Transaction",
+    "Merchant Name": -4282466774399734331,
+    "Merchant City": "Boyne City",
+    "Merchant State": "MI",
+    "Zip": 49712.0,
+    "MCC": 4829,
+    "Errors?": "Insufficient Balance",
+    "Is Fraud?": "No"
+   },
+   {
+    "User": 13,
+    "Card": 1,
+    "Year": 2006,
+    "Month": 10,
+    "Day": 15,
+    "Time": "07:11",
+    "Amount": "$100.00",
+    "Use Chip": "Swipe Transaction",
+    "Merchant Name": -4282466774399734331,
+    "Merchant City": "Boyne City",
+    "Merchant State": "MI",
+    "Zip": 49712.0,
+    "MCC": 4829,
+    "Errors?": "Insufficient Balance",
+    "Is Fraud?": "No"
+   }
+  ],
+  "label_value_counts": {
+   "No": 24357143,
+   "Yes": 29757
+  },
+  "label_missing_count": 0
+ },
+ "split_analysis": {
+  "method_recorded": "Chronological 60/20/20 split",
+  "boundary_dates": {
+   "train_end_row": 14632139,
+   "train_end_date": "2020-02-15",
+   "val_start_date": "2020-02-15",
+   "val_end_row": 19509519,
+   "val_end_date": "2013-07-02",
+   "test_start_date": "2013-07-05"
+  },
+  "recorded": {
+   "train_rows": 14632140,
+   "val_rows": 4877380,
+   "test_rows": 4877380,
+   "train_fraud": 17736,
+   "val_fraud": 6260,
+   "test_fraud": 5761
+  },
+  "actual": {
+   "train_rows": 14632140,
+   "val_rows": 4877380,
+   "test_rows": 4877380,
+   "train_fraud": 17736,
+   "val_fraud": 6260,
+   "test_fraud": 5761
+  },
+  "split_match": {
+   "train_rows": true,
+   "val_rows": true,
+   "test_rows": true,
+   "train_fraud": true,
+   "val_fraud": true,
+   "test_fraud": true
+  },
+  "entity_structure": {
+   "n_user_blocks": 2000,
+   "n_distinct_users": 2000,
+   "file_is_user_major": true,
+   "split_slices_user_blocks": true,
+   "users_straddling_train_val": [
+    "1199"
+   ],
+   "users_straddling_val_test": [
+    "1585"
+   ],
+   "user_overlap_train_test": []
+  },
+  "chronology": {
+   "full_file_date_regressions": 5789,
+   "audit_sampled_check_regressions": 0,
+   "per_block_date_ranges": {
+    "train": {
+     "rows": 14632140,
+     "min_date": 19910102,
+     "max_date": 20200228,
+     "n_users": 1200
+    },
+    "val": {
+     "rows": 4877380,
+     "min_date": 19920911,
+     "max_date": 20200228,
+     "n_users": 387
+    },
+    "test": {
+     "rows": 4877380,
+     "min_date": 19910701,
+     "max_date": 20200228,
+     "n_users": 415
+    }
+   },
+   "claim_chronological_split": false,
+   "why": "File is ordered by USER (2000 contiguous user blocks), not by time. Each split block spans the FULL date range (1991-2020). Split boundaries slice through user blocks. The audit's sampled monotonicity check (every 100K rows) found 0 regressions only because date dips are localized at user transitions; the FULL check finds 5,789 regressions."
+  }
+ },
+ "label_audit": {
+  "label_column": "Is Fraud?",
+  "label_1_meaning": "Is Fraud? == 'Yes' -- transaction flagged as fraudulent in the source dataset",
+  "label_0_meaning": "Is Fraud? == 'No' -- legitimate transaction",
+  "label_created_when": "At dataset generation time (pre-labeled source file); no creation pipeline exists in this repo",
+  "labels_change": "No mechanism in the dataset to update labels after the fact (static file)",
+  "labels_delayed": "UNVERIFIED -- the dataset carries no label-confirmation timestamp; the audit's own feature audit marks fraud-rate features as LABEL_LATENCY risk",
+  "missing_labels": 0,
+  "missing_label_handling": "Pipeline maps 'Yes'->1, 'No'->0, fillna(0): any missing label silently becomes legitimate (0)",
+  "uncertain_labels": "UNVERIFIED -- no label-quality/confidence field exists",
+  "label_used_in_features": "4 fraud-rate features (merch/city/user_fraud_rate + mfr_x_ufr) update state AFTER feature computation for the current row (past-only, verified independently in check #24); the current row's own label never feeds its own features",
+  "label_leakage_into_features_verdict": "No current-row label leakage in the feature function (state read before update); CHRONOLOGICAL ordering issue documented in split_analysis"
+ },
+ "verbatim_copy_verified": {
+  "ok": true,
+  "detail": "byte-identical after CRLF normalization; source sha256=090d6ccd9ef9392e"
+ },
+ "reproducibility": {
+  "experiment": "rows [0,2,000,000) features + XGB(seed=42) train [0,1,600,000) eval [1,600,000,2,000,000)",
+  "run_1": {
+   "val_auc": 0.9937177614589153,
+   "best_iteration": 98,
+   "n_est": 200
+  },
+  "run_2": {
+   "val_auc": 0.9937177614589153,
+   "best_iteration": 98,
+   "n_est": 200
+  },
+  "identical": true,
+  "note": "Full-pipeline reproducibility (run #1 = recorded forensic_revalidation.json) is verified in independent_validation.py (check #24)."
+ },
+ "generated_at": "2026-09-03 13:37:59 UTC",
+ "runtime_sec": 191.2
+}

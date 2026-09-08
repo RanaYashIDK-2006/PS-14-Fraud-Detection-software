@@ -1,0 +1,62 @@
+{
+  "version": "altman_v24m_20260829_193416",
+  "dataset": "Altman credit_card_transactions-ibm_v2.csv",
+  "total_rows": 24386900,
+  "training_rows": 38,
+  "n_features": 38,
+  "cv_auc_mean": 0.9974320000000001,
+  "cv_auc_std": 0.00015059482062803668,
+  "cv_r1_mean": 0.9505661999999999,
+  "cv_r1_std": 0.0029912142952319533,
+  "n_fraud": 29757,
+  "feature_importance_top10": [
+    {
+      "name": "has_zip",
+      "importance": 0.222628
+    },
+    {
+      "name": "city_fraud_rate",
+      "importance": 0.206309
+    },
+    {
+      "name": "merch_fraud_rate",
+      "importance": 0.105245
+    },
+    {
+      "name": "has_state",
+      "importance": 0.080896
+    },
+    {
+      "name": "is_online",
+      "importance": 0.05765
+    },
+    {
+      "name": "amt_x_online",
+      "importance": 0.046105
+    },
+    {
+      "name": "amt_x_merch_rate",
+      "importance": 0.038319
+    },
+    {
+      "name": "merch_tx_count",
+      "importance": 0.027943
+    },
+    {
+      "name": "mcc_n",
+      "importance": 0.01847
+    },
+    {
+      "name": "chip",
+      "importance": 0.016268
+    }
+  ],
+  "artifacts": {
+    "xgb": "xgb_altman_24m.joblib",
+    "lgb": "lgb_altman_24m.joblib",
+    "cb": "cb_altman_24m.joblib",
+    "scaler": "scaler_altman_24m.joblib",
+    "feat_cols": "feat_cols_altman_24m.joblib"
+  },
+  "ts": "2026-08-29T14:04:16Z"
+}

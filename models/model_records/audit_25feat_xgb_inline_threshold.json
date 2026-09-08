@@ -1,0 +1,9 @@
+{
+  "model_id": "audit_25feat_xgb_inline (forensic_revalidate.py - NOT the deployed artifact)",
+  "locked_threshold_fpr_lt_1pct": 0.094,
+  "selected_on": "validation only",
+  "final_test_fpr_pct": 0.9489,
+  "final_test_recall_pct": 91.81,
+  "stability": "STABLE - FPR stayed under the 1% cap and recall above the 85% floor in every forward window.",
+  "lock_date": "2026-09-03 06:49:47 UTC"
+}

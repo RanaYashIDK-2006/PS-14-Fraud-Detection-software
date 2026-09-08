@@ -1,0 +1,496 @@
+{
+  "rolling_validation": [
+    {
+      "label": "Window 1",
+      "threshold": 0.111,
+      "threshold_source": "selected_on_calibration_period (window 1)",
+      "n_fit": 3048362,
+      "n_earlystop_holdout": 1016121,
+      "n_eval": 4064483,
+      "n_fraud_fit": 3503,
+      "n_fraud_eval": 5113,
+      "fraud_rate_eval": 0.1258,
+      "auc": 0.9917,
+      "pr_auc": 0.7018,
+      "recall": 0.8825,
+      "precision": 0.11,
+      "fpr": 0.008997,
+      "tp": 4512,
+      "tn": 4022849,
+      "fp": 36521,
+      "fn": 601,
+      "alerts": 41033,
+      "alerts_per_10k": 101.0,
+      "best_iteration": 157
+    },
+    {
+      "label": "Window 2",
+      "threshold": 0.111,
+      "threshold_source": "locked_from_window_1",
+      "n_fit": 6096724,
+      "n_earlystop_holdout": 2032242,
+      "n_eval": 4064483,
+      "n_fraud_fit": 7091,
+      "n_fraud_eval": 4927,
+      "fraud_rate_eval": 0.1212,
+      "auc": 0.9948,
+      "pr_auc": 0.8021,
+      "recall": 0.9068,
+      "precision": 0.1157,
+      "fpr": 0.008409,
+      "tp": 4468,
+      "tn": 4025420,
+      "fp": 34136,
+      "fn": 459,
+      "alerts": 38604,
+      "alerts_per_10k": 95.0,
+      "best_iteration": 250
+    },
+    {
+      "label": "Window 3",
+      "threshold": 0.111,
+      "threshold_source": "locked_from_window_1",
+      "n_fit": 9145086,
+      "n_earlystop_holdout": 3048363,
+      "n_eval": 4064483,
+      "n_fraud_fit": 10948,
+      "n_fraud_eval": 4994,
+      "fraud_rate_eval": 0.1229,
+      "auc": 0.995,
+      "pr_auc": 0.826,
+      "recall": 0.9135,
+      "precision": 0.1559,
+      "fpr": 0.006086,
+      "tp": 4562,
+      "tn": 4034781,
+      "fp": 24708,
+      "fn": 432,
+      "alerts": 29270,
+      "alerts_per_10k": 72.0,
+      "best_iteration": 299
+    },
+    {
+      "label": "Window 4",
+      "threshold": 0.111,
+      "threshold_source": "locked_from_window_1",
+      "n_fit": 12193449,
+      "n_earlystop_holdout": 4064483,
+      "n_eval": 4064483,
+      "n_fraud_fit": 14613,
+      "n_fraud_eval": 5297,
+      "fraud_rate_eval": 0.1303,
+      "auc": 0.9956,
+      "pr_auc": 0.8194,
+      "recall": 0.9268,
+      "precision": 0.1337,
+      "fpr": 0.007837,
+      "tp": 4909,
+      "tn": 4027375,
+      "fp": 31811,
+      "fn": 388,
+      "alerts": 36720,
+      "alerts_per_10k": 90.3,
+      "best_iteration": 299
+    },
+    {
+      "label": "Window 5",
+      "threshold": 0.111,
+      "threshold_source": "locked_from_window_1",
+      "n_fit": 15241811,
+      "n_earlystop_holdout": 5080604,
+      "n_eval": 4064483,
+      "n_fraud_fit": 18387,
+      "n_fraud_eval": 4853,
+      "fraud_rate_eval": 0.1194,
+      "auc": 0.9948,
+      "pr_auc": 0.8008,
+      "recall": 0.9159,
+      "precision": 0.1208,
+      "fpr": 0.007968,
+      "tp": 4445,
+      "tn": 4027283,
+      "fp": 32347,
+      "fn": 408,
+      "alerts": 36792,
+      "alerts_per_10k": 90.5,
+      "best_iteration": 297
+    }
+  ],
+  "locked_threshold": 0.111,
+  "feature_drift": {
+    "reference_window": "rows 0-4,877,380",
+    "production_window": "rows 19,509,520-24,386,900",
+    "n_features": 25,
+    "n_healthy": 21,
+    "n_warning": 2,
+    "n_critical": 0,
+    "features": [
+      {
+        "feature": "log_amt",
+        "ref_mean": 3.1673,
+        "prod_mean": 3.1189,
+        "ref_std": 1.4289,
+        "prod_std": 1.4104,
+        "psi": 0.003473,
+        "z_score": 53.2,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "amt_sq",
+        "ref_mean": 9132.5146,
+        "prod_mean": 8484.7461,
+        "ref_std": 84631.5703,
+        "prod_std": 71041.3984,
+        "psi": 0.044224,
+        "z_score": 12.95,
+        "drift_level": "INFO"
+      },
+      {
+        "feature": "year",
+        "ref_mean": 2011.9635,
+        "prod_mean": 2012.0081,
+        "ref_std": 5.0041,
+        "prod_std": 5.1281,
+        "psi": 0.0,
+        "z_score": 13.73,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "month",
+        "ref_mean": 6.5222,
+        "prod_mean": 6.5228,
+        "ref_std": 3.4725,
+        "prod_std": 3.4725,
+        "psi": 2e-06,
+        "z_score": 0.25,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "day",
+        "ref_mean": 15.7152,
+        "prod_mean": 15.7186,
+        "ref_std": 8.7918,
+        "prod_std": 8.7924,
+        "psi": 1.1e-05,
+        "z_score": 0.6,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "chip",
+        "ref_mean": 0.5685,
+        "prod_mean": 0.5824,
+        "ref_std": 0.2981,
+        "prod_std": 0.2879,
+        "psi": 0.000197,
+        "z_score": 74.08,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "is_online",
+        "ref_mean": 0.1186,
+        "prod_mean": 0.097,
+        "ref_std": 0.3234,
+        "prod_std": 0.2959,
+        "psi": 0.004895,
+        "z_score": 109.16,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "mcc_n",
+        "ref_mean": 0.9261,
+        "prod_mean": 0.9298,
+        "ref_std": 0.1434,
+        "prod_std": 0.1463,
+        "psi": 0.000344,
+        "z_score": 40.62,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "has_zip",
+        "ref_mean": 0.8741,
+        "prod_mean": 0.8966,
+        "ref_std": 0.3318,
+        "prod_std": 0.3044,
+        "psi": 0.005033,
+        "z_score": 110.7,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "has_state",
+        "ref_mean": 0.8811,
+        "prod_mean": 0.9027,
+        "ref_std": 0.3237,
+        "prod_std": 0.2963,
+        "psi": 0.004888,
+        "z_score": 109.08,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "user_tx_count",
+        "ref_mean": 11366.7959,
+        "prod_mean": 10629.7402,
+        "ref_std": 10811.6797,
+        "prod_std": 9513.7744,
+        "psi": 0.0,
+        "z_score": 113.03,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "merch_fraud_rate",
+        "ref_mean": 0.0011,
+        "prod_mean": 0.0013,
+        "ref_std": 0.0122,
+        "prod_std": 0.0117,
+        "psi": 1.7e-05,
+        "z_score": 27.27,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "city_fraud_rate",
+        "ref_mean": 0.0011,
+        "prod_mean": 0.0012,
+        "ref_std": 0.0134,
+        "prod_std": 0.0115,
+        "psi": 0.00018,
+        "z_score": 17.3,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "very_high_amt",
+        "ref_mean": 0.0,
+        "prod_mean": 0.0,
+        "ref_std": 0.0008,
+        "prod_std": 0.0008,
+        "psi": 0.0,
+        "z_score": 0.0,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "amt_x_mcc",
+        "ref_mean": 40.5055,
+        "prod_mean": 39.5196,
+        "ref_std": 71.632,
+        "prod_std": 70.9112,
+        "psi": 0.014305,
+        "z_score": 21.6,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "amt_x_online",
+        "ref_mean": 6.6398,
+        "prod_mean": 5.8994,
+        "ref_std": 36.7646,
+        "prod_std": 35.3776,
+        "psi": 0.003899,
+        "z_score": 32.05,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "merch_popularity",
+        "ref_mean": 4.7748,
+        "prod_mean": 4.8732,
+        "ref_std": 0.7753,
+        "prod_std": 0.552,
+        "psi": 0.025032,
+        "z_score": 228.16,
+        "drift_level": "INFO"
+      },
+      {
+        "feature": "user_fraud_rate",
+        "ref_mean": 0.0011,
+        "prod_mean": 0.0011,
+        "ref_std": 0.0022,
+        "prod_std": 0.0021,
+        "psi": 0.0,
+        "z_score": 3.07,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "amt_ratio",
+        "ref_mean": 1.5596,
+        "prod_mean": 1.039,
+        "ref_std": 177.3267,
+        "prod_std": 14.7261,
+        "psi": 0.006485,
+        "z_score": 6.46,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "amt_zscore",
+        "ref_mean": -0.2885,
+        "prod_mean": -0.6744,
+        "ref_std": 320.3471,
+        "prod_std": 257.5321,
+        "psi": 0.003296,
+        "z_score": 2.07,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "amt_acceleration",
+        "ref_mean": 5.4738,
+        "prod_mean": 5.8468,
+        "ref_std": 41.3808,
+        "prod_std": 63.8212,
+        "psi": 0.000388,
+        "z_score": 10.83,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "mfr_x_ufr",
+        "ref_mean": 0.0,
+        "prod_mean": 0.0,
+        "ref_std": 0.0002,
+        "prod_std": 0.0001,
+        "psi": 0.0,
+        "z_score": 2.14,
+        "drift_level": "HEALTHY"
+      },
+      {
+        "feature": "city_popularity",
+        "ref_mean": 4.8741,
+        "prod_mean": 4.9811,
+        "ref_std": 0.5471,
+        "prod_std": 0.1832,
+        "psi": 0.113976,
+        "z_score": 409.56,
+        "drift_level": "WARNING"
+      },
+      {
+        "feature": "user_merch_diversity",
+        "ref_mean": 3.7295,
+        "prod_mean": 2.5255,
+        "ref_std": 4.2774,
+        "prod_std": 4.0541,
+        "psi": 0.245955,
+        "z_score": 451.17,
+        "drift_level": "WARNING"
+      },
+      {
+        "feature": "amt_x_chip",
+        "ref_mean": 24.2335,
+        "prod_mean": 23.6816,
+        "ref_std": 54.2399,
+        "prod_std": 52.1619,
+        "psi": 0.01774,
+        "z_score": 16.2,
+        "drift_level": "HEALTHY"
+      }
+    ]
+  },
+  "data_quality": {
+    "overall_health": "CRITICAL",
+    "sample_window": "rows 24,286,900-24,386,900",
+    "issues": [
+      {
+        "check": "Missing rate: Zip",
+        "value": "7.8%",
+        "level": "WARNING"
+      },
+      {
+        "check": "Invalid timestamps",
+        "value": "0.51%",
+        "level": "CRITICAL"
+      }
+    ],
+    "ref_fraud_rate": 0.1126,
+    "prod_fraud_rate": 0.1181
+  },
+  "retraining_rules": {
+    "description": "PS-14 operational thresholds for triggering model retraining",
+    "rules": [
+      {
+        "name": "Recall degradation",
+        "condition": "Rolling recall falls below 85%",
+        "current_value": "91.6%",
+        "triggered": false,
+        "action": "Investigate feature drift, retrain if persistent"
+      },
+      {
+        "name": "FPR exceedance",
+        "condition": "Rolling FPR exceeds 1.5%",
+        "current_value": "0.797%",
+        "triggered": false,
+        "action": "Retrain with updated threshold selection"
+      },
+      {
+        "name": "PR-AUC drop",
+        "condition": "PR-AUC drops below 0.60 (from ~0.80 baseline)",
+        "current_value": "0.8008",
+        "triggered": false,
+        "action": "Full retrain with fresh data"
+      },
+      {
+        "name": "Feature drift (CRITICAL)",
+        "condition": "Any feature PSI > 0.25",
+        "current_value": "0 features",
+        "triggered": false,
+        "action": "Investigate feature pipeline, retrain if drift is genuine"
+      },
+      {
+        "name": "Feature drift (WARNING)",
+        "condition": "More than 5 features PSI > 0.10",
+        "current_value": "2 features",
+        "triggered": false,
+        "action": "Monitor closely, prepare for retrain"
+      },
+      {
+        "name": "Fraud distribution shift",
+        "condition": "Fraud rate ratio > 2x or < 0.5x vs reference",
+        "current_value": "1.05x",
+        "triggered": false,
+        "action": "Retrain with updated class weights"
+      },
+      {
+        "name": "Data quality degradation",
+        "condition": "Overall health = CRITICAL",
+        "current_value": "CRITICAL",
+        "triggered": true,
+        "action": "Fix data pipeline before retraining"
+      },
+      {
+        "name": "Scheduled retrain",
+        "condition": "Every 90 days or after 10M new transactions",
+        "current_value": "Scheduled",
+        "triggered": false,
+        "action": "Proactive retrain to prevent gradual degradation"
+      }
+    ]
+  },
+  "model_health": {
+    "current_model_status": "RETRAINING RECOMMENDED",
+    "last_validation_date": "2026-09-02",
+    "latest_performance": {
+      "window": "Window 5",
+      "auc": 0.9948,
+      "pr_auc": 0.8008,
+      "recall": 0.9159,
+      "precision": 0.1208,
+      "fpr": 0.007968,
+      "alerts_per_10k": 90.5
+    },
+    "drift_status": "0 CRITICAL, 2 WARNING, 21 HEALTHY",
+    "data_quality_status": "CRITICAL",
+    "production_parity_status": "PARTIAL (expanding window offline vs sliding window production)",
+    "retraining_recommendation": "RETRAIN",
+    "reason_for_recommendation": "1 retraining rules triggered: Data quality degradation",
+    "retraining_safety_protocol": {
+      "steps": [
+        "1. Current model -> Candidate model (retrained on fresh data)",
+        "2. Same untouched evaluation protocol (causal features, val-only threshold)",
+        "3. Compare performance + stability across rolling windows",
+        "4. Security/data-quality checks",
+        "5. Leakage verification (causality test, permutation test)",
+        "6. Human approval required before deployment",
+        "7. Canary deployment (10% traffic) -> full rollout"
+      ],
+      "never_auto_deploy": true,
+      "require_same_audit": true
+    }
+  },
+  "metadata": {
+    "total_rows": 24386900,
+    "n_windows": 5,
+    "run_time_sec": 270.3,
+    "timestamp": "2026-09-03 04:34:52 UTC"
+  }
+}

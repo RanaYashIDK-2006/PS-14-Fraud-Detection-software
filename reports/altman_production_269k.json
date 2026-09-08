@@ -1,0 +1,118 @@
+{
+  "pipeline": "altman_production_269k",
+  "version": "altman_v24m_20260829_194247",
+  "dataset_rows_scanned": 24386900,
+  "training_rows": 269000,
+  "n_fraud": 992,
+  "n_features": 37,
+  "cv_performance": {
+    "auc_mean": 0.9999926,
+    "auc_std": 1.8547236990926153e-06,
+    "r1_mean": 1.0,
+    "r1_std": 0.0
+  },
+  "per_fold": [
+    {
+      "fold": 1,
+      "auc": 0.999994,
+      "r1": 1.0,
+      "r05": 1.0,
+      "xgb_auc": 0.999993,
+      "lgb_auc": 0.999995,
+      "cb_auc": 0.99999,
+      "fraud_test": 199,
+      "time_s": 17.5
+    },
+    {
+      "fold": 2,
+      "auc": 0.999995,
+      "r1": 1.0,
+      "r05": 1.0,
+      "xgb_auc": 0.999997,
+      "lgb_auc": 0.999988,
+      "cb_auc": 0.999995,
+      "fraud_test": 199,
+      "time_s": 17.4
+    },
+    {
+      "fold": 3,
+      "auc": 0.99999,
+      "r1": 1.0,
+      "r05": 1.0,
+      "xgb_auc": 0.999989,
+      "lgb_auc": 0.999984,
+      "cb_auc": 0.999983,
+      "fraud_test": 198,
+      "time_s": 17.3
+    },
+    {
+      "fold": 4,
+      "auc": 0.999993,
+      "r1": 1.0,
+      "r05": 1.0,
+      "xgb_auc": 0.999992,
+      "lgb_auc": 0.999951,
+      "cb_auc": 0.999985,
+      "fraud_test": 198,
+      "time_s": 17.4
+    },
+    {
+      "fold": 5,
+      "auc": 0.999991,
+      "r1": 1.0,
+      "r05": 1.0,
+      "xgb_auc": 0.999991,
+      "lgb_auc": 0.994959,
+      "cb_auc": 0.999979,
+      "fraud_test": 198,
+      "time_s": 16.9
+    }
+  ],
+  "feature_importance_top10": [
+    {
+      "name": "card_tx_count",
+      "importance": 0.479417
+    },
+    {
+      "name": "user_tx_count",
+      "importance": 0.405044
+    },
+    {
+      "name": "merch_tx_count",
+      "importance": 0.04323
+    },
+    {
+      "name": "city_fraud_rate",
+      "importance": 0.022098
+    },
+    {
+      "name": "is_online",
+      "importance": 0.007334
+    },
+    {
+      "name": "merch_fraud_rate",
+      "importance": 0.00663
+    },
+    {
+      "name": "has_zip",
+      "importance": 0.005745
+    },
+    {
+      "name": "has_state",
+      "importance": 0.002956
+    },
+    {
+      "name": "amt_sq",
+      "importance": 0.00218
+    },
+    {
+      "name": "chip",
+      "importance": 0.002167
+    }
+  ],
+  "targets": {
+    "auc_99": "ACHIEVED",
+    "r1_90": "ACHIEVED"
+  },
+  "ts": "2026-08-29T14:12:47Z"
+}

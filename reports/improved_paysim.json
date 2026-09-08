@@ -1,0 +1,33 @@
+{
+  "dataset": "PAYSIM",
+  "n_rows": 1200000,
+  "n_features": 29,
+  "train_rows": 960000,
+  "test_rows": 240000,
+  "n_fraud_test": 11760,
+  "method": "weighted",
+  "best_weights": {
+    "xgb": 0.25,
+    "lgb": 0.65,
+    "rf": 0.05,
+    "lr": 0.05
+  },
+  "individual_test_aucs": {
+    "xgb": 0.940484,
+    "lgb": 0.941263,
+    "rf": 0.939482,
+    "lr": 0.916564
+  },
+  "weighted_auc": 0.94133,
+  "metrics": {
+    "roc_auc": 0.94133,
+    "pr_auc": 0.644661,
+    "brier": 0.091784,
+    "r1": 0.487075,
+    "r05": 0.397534,
+    "r01": 0.23733,
+    "f1": 0.594346
+  },
+  "elapsed_s": 365,
+  "ts": "2026-08-28T18:46:47Z"
+}

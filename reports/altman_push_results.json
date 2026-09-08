@@ -1,0 +1,45 @@
+{
+  "dataset": "ALTMAN_PUSH",
+  "n_rows": 99150,
+  "n_features": 39,
+  "n_fraud": 19248,
+  "best_approach": "lgb_best_oof",
+  "best_auc": 0.994062,
+  "cv_blend_mean": 0.993847,
+  "cv_blend_std": 0.0005,
+  "meta_oof_auc": 0.993079,
+  "approaches": {
+    "lgb_best_oof": 0.994062,
+    "xgb_best_oof": 0.992729,
+    "lgb_alt_oof": 0.993059,
+    "xgb_alt_oof": 0.99237,
+    "3model_blend": 0.994033,
+    "meta_learner": 0.993079
+  },
+  "meta_weights": {
+    "lgb_best": 0.5105,
+    "xgb_best": 0.2389,
+    "lgb_alt": 0.1423,
+    "xgb_alt": -0.0576,
+    "rf_50": -0.273,
+    "hgb": -0.0569,
+    "lr": -0.0556
+  },
+  "blend_weights": {
+    "lgb_best": 0.78,
+    "xgb_best": 0.2,
+    "lgb_alt": 0.02
+  },
+  "target_995_achieved": false,
+  "metrics": {
+    "roc_auc": 0.994033,
+    "pr_auc": 0.981205,
+    "brier": 0.020366,
+    "r1": 0.902224,
+    "r05": 0.867051,
+    "r01": 0.749013,
+    "f1": 0.929803
+  },
+  "elapsed": 61,
+  "ts": "2026-08-29T07:23:30Z"
+}

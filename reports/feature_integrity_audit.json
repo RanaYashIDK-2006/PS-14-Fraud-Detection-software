@@ -1,0 +1,1157 @@
+{
+  "check": 27,
+  "generated_at": "2026-09-03 20:05:50",
+  "sections": {
+    "1_schema_integrity": {
+      "mapper_list": [
+        "log_amt",
+        "amt_sq",
+        "hour_cos",
+        "is_business_hours",
+        "chip",
+        "is_online",
+        "mcc_n",
+        "has_zip",
+        "has_state",
+        "merch_tx_count",
+        "merch_fraud_rate",
+        "city_fraud_rate",
+        "very_high_amt",
+        "amt_x_mcc",
+        "amt_x_online"
+      ],
+      "manifest_features": [
+        "log_amt",
+        "amt_sq",
+        "hour_cos",
+        "is_business_hours",
+        "chip",
+        "is_online",
+        "mcc_n",
+        "has_zip",
+        "has_state",
+        "merch_tx_count",
+        "merch_fraud_rate",
+        "city_fraud_rate",
+        "very_high_amt",
+        "amt_x_mcc",
+        "amt_x_online"
+      ],
+      "manifest_n": 15,
+      "scaler_n_features_in": 15,
+      "xgb_n_features": 15,
+      "lgb_n_features": 15,
+      "model_version": "altman_lean_15feat_20260830_200346",
+      "mapper_matches_manifest": true,
+      "scaler_matches_mapper": true
+    },
+    "2_definitional_matrix": {
+      "n_features": 15,
+      "matches": 2,
+      "mismatches": 13,
+      "rows": [
+        {
+          "feature": "log_amt",
+          "train_definition": "log1p(raw IBM dollar amount)",
+          "production_definition": "log1p(amount_ratio * 100)",
+          "exact_definition_match": "NO",
+          "real_time_available": "YES",
+          "verdict": "MISMATCH",
+          "notes": "Same transform family, different quantity: train=absolute dollars, prod=ratio-to-account-median scaled by 100 (proxy amount). Scales cannot match."
+        },
+        {
+          "feature": "amt_sq",
+          "train_definition": "raw amount squared",
+          "production_definition": "(amount_ratio * 100)^2",
+          "exact_definition_match": "NO",
+          "real_time_available": "YES",
+          "verdict": "MISMATCH",
+          "notes": "Quadratic of the same proxy amount \u2014 scale mismatch by construction."
+        },
+        {
+          "feature": "hour_cos",
+          "train_definition": "cos(2*pi*hr/24), real clock hour",
+          "production_definition": "cos(2*pi*hr/24), real hour_of_day",
+          "exact_definition_match": "YES",
+          "real_time_available": "YES",
+          "verdict": "MATCH",
+          "notes": "Definition identical; only source of the hour differs (IBM txn vs PS-14 event)."
+        },
+        {
+          "feature": "is_business_hours",
+          "train_definition": "1 if 9<=hr<=17",
+          "production_definition": "1 if 9<=hr<=17",
+          "exact_definition_match": "YES",
+          "real_time_available": "YES",
+          "verdict": "MATCH",
+          "notes": "Identical."
+        },
+        {
+          "feature": "chip",
+          "train_definition": "IBM chip-card indicator (0/1)",
+          "production_definition": "new_device_flag (0/1)",
+          "exact_definition_match": "NO",
+          "real_time_available": "YES",
+          "verdict": "MISMATCH",
+          "notes": "Train: whether the card used EMV chip. Prod: whether the DEVICE is new (mapper comment: '1 = online (new device proxy)'). Same name, different real-world meaning."
+        },
+        {
+          "feature": "is_online",
+          "train_definition": "IBM online-transaction indicator",
+          "production_definition": "= chip value (new_device_flag)",
+          "exact_definition_match": "NO",
+          "real_time_available": "YES",
+          "verdict": "MISMATCH",
+          "notes": "Train: independent online flag. Prod: hard copy of the chip column \u2014 prod chip == prod is_online for every row (correlation 1.0), train chip vs is_online are distinct (0.0-0.5 range)."
+        },
+        {
+          "feature": "mcc_n",
+          "train_definition": "real MCC code per merchant (high cardinality)",
+          "production_definition": "0.0 hardcoded",
+          "exact_definition_match": "NO",
+          "real_time_available": "NO",
+          "verdict": "MISMATCH",
+          "notes": "Train: varies per merchant. Prod: constant 0 \u2014 the mapper has no MCC source. Feature is DEAD in production (check #21: top SHAP driver on every row)."
+        },
+        {
+          "feature": "has_zip",
+          "train_definition": "IBM zip-present indicator (0/1, varies)",
+          "production_definition": "0 hardcoded",
+          "exact_definition_match": "NO",
+          "real_time_available": "NO",
+          "verdict": "MISMATCH",
+          "notes": "Constant 0 in prod, variable in train."
+        },
+        {
+          "feature": "has_state",
+          "train_definition": "IBM state-present indicator (0/1, varies)",
+          "production_definition": "0 hardcoded",
+          "exact_definition_match": "NO",
+          "real_time_available": "NO",
+          "verdict": "MISMATCH",
+          "notes": "Constant 0 in prod, variable in train."
+        },
+        {
+          "feature": "merch_tx_count",
+          "train_definition": "cumulative count of merchant's EARLIER file-order rows",
+          "production_definition": "real-time 24h txn count to this recipient (privacy velocity); falls back to known_device_count",
+          "exact_definition_match": "PARTIAL",
+          "real_time_available": "YES",
+          "verdict": "MISMATCH",
+          "notes": "Train window: entire history in file order (check #24: file order != time \u2014 count can include rows dated after the current txn). Prod: privacy-layer 24h window keyed on recipient id; when absent, mapper aliases to known_device_count (a different entity's count)."
+        },
+        {
+          "feature": "merch_fraud_rate",
+          "train_definition": "merchant cumulative confirmed-fraud ratio over earlier file-order rows (baseline 0.001)",
+          "production_definition": "tracker rate over last 100 events keyed merchant_id \u2014 but call path passes NO merchant_id \u2192 constant baseline 0.001",
+          "exact_definition_match": "NO",
+          "real_time_available": "NO",
+          "verdict": "MISMATCH",
+          "notes": "Even ignoring definition: the runtime never supplies entity ids (verification_service/main.py L879-904 forwards only the privacy ingest response), so the deployed model scores merch_fraud_rate = 0.001 on every transaction. Where ids ARE supplied, tracker labels come from risk_score>=70 (the model's own decision \u2014 self-referential), not confirmed fraud (risk_engine/main.py _record_entity_rates)."
+        },
+        {
+          "feature": "city_fraud_rate",
+          "train_definition": "per-Merchant-City cumulative confirmed-fraud ratio over earlier file-order rows",
+          "production_definition": "tracker rate over last 100 events keyed city_id \u2014 call path passes NO city_id \u2192 constant baseline 0.001",
+          "exact_definition_match": "NO",
+          "real_time_available": "NO",
+          "verdict": "MISMATCH",
+          "notes": "Same as merch_fraud_rate: frozen at baseline in the deployed path; tracker seed labels are model decisions, not confirmed labels."
+        },
+        {
+          "feature": "very_high_amt",
+          "train_definition": "1 if amt > 5 * user running AVERAGE amount",
+          "production_definition": "1 if amount_ratio > 5 (vs account MEDIAN)",
+          "exact_definition_match": "PARTIAL",
+          "real_time_available": "YES",
+          "verdict": "MISMATCH",
+          "notes": "Both express '~5x typical amount' but train uses running mean of raw dollars, prod uses ratio to median; different denominators."
+        },
+        {
+          "feature": "amt_x_mcc",
+          "train_definition": "amt * mcc_n (varies)",
+          "production_definition": "amt * 0 = 0.0 hardcoded",
+          "exact_definition_match": "NO",
+          "real_time_available": "NO",
+          "verdict": "MISMATCH",
+          "notes": "Dead in production (product with the constant-zero mcc_n)."
+        },
+        {
+          "feature": "amt_x_online",
+          "train_definition": "amt * is_online",
+          "production_definition": "amt * is_online (prod is_online = new_device_flag)",
+          "exact_definition_match": "PARTIAL",
+          "real_time_available": "YES",
+          "verdict": "MISMATCH",
+          "notes": "Form identical; semantics inherited from the is_online mismatch above (online flag is really 'new device')."
+        }
+      ]
+    },
+    "3_edge_case_probes": {
+      "empty_dict_all_missing": {
+        "result": "ok",
+        "vec": [
+          4.615121,
+          10000.0,
+          -1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          5.0,
+          0.001,
+          0.001,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "identical_to_base": false
+      },
+      "nan_amount": {
+        "result": "ok",
+        "vec": [
+          0.0,
+          0.0,
+          -1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          0.001,
+          0.001,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "identical_to_base": false
+      },
+      "posinf_amount": {
+        "result": "ok",
+        "vec": [
+          1000000.0,
+          1000000.0,
+          -1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          0.001,
+          0.001,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "identical_to_base": false
+      },
+      "neginf_amount": {
+        "result": "ok",
+        "vec": [
+          0.0,
+          1000000.0,
+          -1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          0.001,
+          0.001,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "identical_to_base": false
+      },
+      "negative_amount": {
+        "result": "ok",
+        "vec": [
+          0.0,
+          90000.0,
+          -1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          0.001,
+          0.001,
+          0.0,
+          -0.0,
+          -0.0
+        ],
+        "identical_to_base": false
+      },
+      "zero_amount": {
+        "result": "ok",
+        "vec": [
+          0.0,
+          0.0,
+          -1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          0.001,
+          0.001,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "identical_to_base": false
+      },
+      "extreme_amount": {
+        "result": "ok",
+        "vec": [
+          25.328436,
+          1e+22,
+          -1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          0.001,
+          0.001,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "identical_to_base": false
+      },
+      "nan_hour": {
+        "result": "ok",
+        "vec": [
+          4.615121,
+          10000.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          0.001,
+          0.001,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "identical_to_base": false
+      },
+      "hour_23_weekend": {
+        "result": "ok",
+        "vec": [
+          4.615121,
+          10000.0,
+          0.965926,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          0.001,
+          0.001,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "identical_to_base": false
+      },
+      "empty_entity_ids": {
+        "result": "ok",
+        "vec": [
+          4.615121,
+          10000.0,
+          -1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          0.001,
+          0.001,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "identical_to_base": true
+      },
+      "random_entity_ids": {
+        "result": "ok",
+        "vec": [
+          4.615121,
+          10000.0,
+          -1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          0.001,
+          0.001,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "identical_to_base": true
+      },
+      "nan_failed_auth": {
+        "result": "ok",
+        "vec": [
+          4.615121,
+          10000.0,
+          -1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          0.001,
+          0.001,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "identical_to_base": true
+      },
+      "reordered_keys": {
+        "result": "ok",
+        "vec": [
+          4.615121,
+          10000.0,
+          -1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2.0,
+          0.001,
+          0.001,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "identical_to_base": true,
+        "same_as_base": true
+      },
+      "string_in_numeric_slot": {
+        "result": "raises",
+        "error": "ValueError: could not convert string to float: 'not-a-number'"
+      },
+      "determinism": {
+        "map_deterministic": true,
+        "predict_repeat_scores": [
+          0.09178163080688055,
+          0.09178163080688055,
+          0.09178163080688055
+        ],
+        "predict_deterministic": true,
+        "predict_fresh_engine_identical": true,
+        "scaler_transform_identical": true
+      }
+    },
+    "3b_signal_capacity_sweep": {
+      "n_sweep_rows": 600,
+      "sweep_input_space": "amount_ratio 0.02-300 log-uniform, hour 0-23, weekend/new-device 0-1, failed_auth 0-8, known_device 0-20, tenure 0-3000d, zscore -6..6, velocity 0-3, txn counts 0-60; entity ids and fraud-rate keys ABSENT (deployed call path)",
+      "structurally_const_features": [
+        "mcc_n",
+        "has_zip",
+        "has_state",
+        "merch_fraud_rate",
+        "city_fraud_rate",
+        "amt_x_mcc"
+      ],
+      "per_feature_sweep_std": [
+        2.645147,
+        145398169.791037,
+        0.710231,
+        0.48369,
+        0.499099,
+        0.499099,
+        0.0,
+        0.0,
+        0.0,
+        11.895674,
+        0.0,
+        0.0,
+        0.492135,
+        0.0,
+        4323.305275
+      ]
+    },
+    "4_distributions": {
+      "train_sample_rows": 1219350,
+      "train_sampling_seconds": 2.2,
+      "prod_rows": 199,
+      "prod_rows_with_velocity_keys": 0,
+      "db2_corpus_note": "DB-2 real corpus is degenerate (hour_of_day=12 const, tenure=0, freq=0, known_device=2) but amount_ratio has 10 distinct values (100-550); listed as the REAL production reference \u2014 the sweep in 3b is the signal-capacity test.",
+      "per_feature": [
+        {
+          "feature": "log_amt",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": 3.150283,
+            "std": 1.404179,
+            "min": -2.995732,
+            "q25": 2.318458,
+            "median": 3.434954,
+            "q75": 4.189655,
+            "max": 8.82779,
+            "nunique": 35729,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": 10.270739,
+            "std": 0.525288,
+            "min": 9.21044,
+            "q25": 9.903538,
+            "median": 10.463132,
+            "q75": 10.71444,
+            "max": 10.915107,
+            "nunique": 10,
+            "const": false
+          },
+          "structurally_const_in_prod": false,
+          "train_varies": true,
+          "comment": "definitional mismatch (see section 2)"
+        },
+        {
+          "feature": "amt_sq",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": 8636.624264,
+            "std": 88256.689337,
+            "min": 0.0,
+            "q25": 148.596085,
+            "median": 1301.044922,
+            "q75": 5184.0,
+            "max": 46515132.0,
+            "nunique": 35719,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": 1267713567.839196,
+            "std": 950533927.380999,
+            "min": 100000000.0,
+            "q25": 400000000.0,
+            "median": 1225000000.0,
+            "q75": 2025000000.0,
+            "max": 3025000000.0,
+            "nunique": 10,
+            "const": false
+          },
+          "structurally_const_in_prod": false,
+          "train_varies": true,
+          "comment": "definitional mismatch (see section 2)"
+        },
+        {
+          "feature": "hour_cos",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": -0.383158,
+            "std": 0.594553,
+            "min": -1.0,
+            "q25": -0.866025,
+            "median": -0.5,
+            "q75": 0.0,
+            "max": 1.0,
+            "nunique": 14,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": -1.0,
+            "std": 0.0,
+            "min": -1.0,
+            "q25": -1.0,
+            "median": -1.0,
+            "q75": -1.0,
+            "max": -1.0,
+            "nunique": 1,
+            "const": true
+          },
+          "structurally_const_in_prod": false,
+          "train_varies": true,
+          "comment": "definitional mismatch (see section 2)"
+        },
+        {
+          "feature": "is_business_hours",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": 0.57829,
+            "std": 0.493833,
+            "min": 0.0,
+            "q25": 0.0,
+            "median": 1.0,
+            "q75": 1.0,
+            "max": 1.0,
+            "nunique": 2,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": 1.0,
+            "std": 0.0,
+            "min": 1.0,
+            "q25": 1.0,
+            "median": 1.0,
+            "q75": 1.0,
+            "max": 1.0,
+            "nunique": 1,
+            "const": true
+          },
+          "structurally_const_in_prod": false,
+          "train_varies": true,
+          "comment": "definitional mismatch (see section 2)"
+        },
+        {
+          "feature": "chip",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": 0.257152,
+            "std": 0.437064,
+            "min": 0.0,
+            "q25": 0.0,
+            "median": 0.0,
+            "q75": 1.0,
+            "max": 1.0,
+            "nunique": 2,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": 1.0,
+            "std": 0.0,
+            "min": 1.0,
+            "q25": 1.0,
+            "median": 1.0,
+            "q75": 1.0,
+            "max": 1.0,
+            "nunique": 1,
+            "const": true
+          },
+          "structurally_const_in_prod": false,
+          "train_varies": true,
+          "comment": "definitional mismatch (see section 2)"
+        },
+        {
+          "feature": "is_online",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": 0.111739,
+            "std": 0.315045,
+            "min": 0.0,
+            "q25": 0.0,
+            "median": 0.0,
+            "q75": 0.0,
+            "max": 1.0,
+            "nunique": 2,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": 1.0,
+            "std": 0.0,
+            "min": 1.0,
+            "q25": 1.0,
+            "median": 1.0,
+            "q75": 1.0,
+            "max": 1.0,
+            "nunique": 1,
+            "const": true
+          },
+          "structurally_const_in_prod": false,
+          "train_varies": true,
+          "comment": "definitional mismatch (see section 2)"
+        },
+        {
+          "feature": "mcc_n",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": 5561.956755,
+            "std": 878.766061,
+            "min": 1711.0,
+            "q25": 5300.0,
+            "median": 5499.0,
+            "q75": 5812.0,
+            "max": 9402.0,
+            "nunique": 109,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": 0.0,
+            "std": 0.0,
+            "min": 0.0,
+            "q25": 0.0,
+            "median": 0.0,
+            "q75": 0.0,
+            "max": 0.0,
+            "nunique": 1,
+            "const": true
+          },
+          "structurally_const_in_prod": true,
+          "train_varies": true,
+          "comment": "structurally constant in production while varying in training \u2192 feature carries no runtime signal"
+        },
+        {
+          "feature": "has_zip",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": 0.881443,
+            "std": 0.323266,
+            "min": 0.0,
+            "q25": 1.0,
+            "median": 1.0,
+            "q75": 1.0,
+            "max": 1.0,
+            "nunique": 2,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": 0.0,
+            "std": 0.0,
+            "min": 0.0,
+            "q25": 0.0,
+            "median": 0.0,
+            "q75": 0.0,
+            "max": 0.0,
+            "nunique": 1,
+            "const": true
+          },
+          "structurally_const_in_prod": true,
+          "train_varies": true,
+          "comment": "structurally constant in production while varying in training \u2192 feature carries no runtime signal"
+        },
+        {
+          "feature": "has_state",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": 0.887934,
+            "std": 0.315448,
+            "min": 0.0,
+            "q25": 1.0,
+            "median": 1.0,
+            "q75": 1.0,
+            "max": 1.0,
+            "nunique": 2,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": 0.0,
+            "std": 0.0,
+            "min": 0.0,
+            "q25": 0.0,
+            "median": 0.0,
+            "q75": 0.0,
+            "max": 0.0,
+            "nunique": 1,
+            "const": true
+          },
+          "structurally_const_in_prod": true,
+          "train_varies": true,
+          "comment": "structurally constant in production while varying in training \u2192 feature carries no runtime signal"
+        },
+        {
+          "feature": "merch_tx_count",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": 6289.67767,
+            "std": 7954.488662,
+            "min": 0.0,
+            "q25": 1073.0,
+            "median": 3063.0,
+            "q75": 8490.0,
+            "max": 59316.0,
+            "nunique": 44422,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": 2.0,
+            "std": 0.0,
+            "min": 2.0,
+            "q25": 2.0,
+            "median": 2.0,
+            "q75": 2.0,
+            "max": 2.0,
+            "nunique": 1,
+            "const": true
+          },
+          "structurally_const_in_prod": false,
+          "train_varies": true,
+          "comment": "definitional mismatch (see section 2)"
+        },
+        {
+          "feature": "merch_fraud_rate",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": 0.001388,
+            "std": 0.005087,
+            "min": 0.0,
+            "q25": 0.0,
+            "median": 0.000371,
+            "q75": 0.001437,
+            "max": 1.0,
+            "nunique": 194702,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": 0.001,
+            "std": 0.0,
+            "min": 0.001,
+            "q25": 0.001,
+            "median": 0.001,
+            "q75": 0.001,
+            "max": 0.001,
+            "nunique": 1,
+            "const": true
+          },
+          "structurally_const_in_prod": true,
+          "train_varies": true,
+          "comment": "structurally constant in production while varying in training \u2192 feature carries no runtime signal"
+        },
+        {
+          "feature": "city_fraud_rate",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": 0.001355,
+            "std": 0.015265,
+            "min": 0.0,
+            "q25": 0.0,
+            "median": 0.0,
+            "q75": 0.0,
+            "max": 1.0,
+            "nunique": 93860,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": 0.001,
+            "std": 0.0,
+            "min": 0.001,
+            "q25": 0.001,
+            "median": 0.001,
+            "q75": 0.001,
+            "max": 0.001,
+            "nunique": 1,
+            "const": true
+          },
+          "structurally_const_in_prod": true,
+          "train_varies": true,
+          "comment": "structurally constant in production while varying in training \u2192 feature carries no runtime signal"
+        },
+        {
+          "feature": "very_high_amt",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": 0.020486,
+            "std": 0.141657,
+            "min": 0.0,
+            "q25": 0.0,
+            "median": 0.0,
+            "q75": 0.0,
+            "max": 1.0,
+            "nunique": 2,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": 1.0,
+            "std": 0.0,
+            "min": 1.0,
+            "q25": 1.0,
+            "median": 1.0,
+            "q75": 1.0,
+            "max": 1.0,
+            "nunique": 1,
+            "const": true
+          },
+          "structurally_const_in_prod": false,
+          "train_varies": true,
+          "comment": "definitional mismatch (see section 2)"
+        },
+        {
+          "feature": "amt_x_mcc",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": 239511.711427,
+            "std": 427015.203691,
+            "min": -3505500.0,
+            "q25": 50778.699219,
+            "median": 164641.0,
+            "q75": 368433.0,
+            "max": 38956984.0,
+            "nunique": 295599,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": 0.0,
+            "std": 0.0,
+            "min": 0.0,
+            "q25": 0.0,
+            "median": 0.0,
+            "q75": 0.0,
+            "max": 0.0,
+            "nunique": 1,
+            "const": true
+          },
+          "structurally_const_in_prod": true,
+          "train_varies": true,
+          "comment": "structurally constant in production while varying in training \u2192 feature carries no runtime signal"
+        },
+        {
+          "feature": "amt_x_online",
+          "train": {
+            "n": 1219350,
+            "missing": 0,
+            "mean": 6.325181,
+            "std": 35.652615,
+            "min": -500.0,
+            "q25": 0.0,
+            "median": 0.0,
+            "q75": 0.0,
+            "max": 4613.240234,
+            "nunique": 21850,
+            "const": false
+          },
+          "db2_production_rows": {
+            "n": 199,
+            "missing": 0,
+            "mean": 32587.939698,
+            "std": 14343.631132,
+            "min": 10000.0,
+            "q25": 20000.0,
+            "median": 35000.0,
+            "q75": 45000.0,
+            "max": 55000.0,
+            "nunique": 10,
+            "const": false
+          },
+          "structurally_const_in_prod": false,
+          "train_varies": true,
+          "comment": "definitional mismatch (see section 2)"
+        }
+      ],
+      "train_varies_prod_const": [
+        "mcc_n",
+        "has_zip",
+        "has_state",
+        "merch_fraud_rate",
+        "city_fraud_rate",
+        "amt_x_mcc"
+      ]
+    },
+    "5_scaling_and_ood": {
+      "scaler_class": "RobustScaler",
+      "scaler_fit_scope": "fitted on Xtr only (80% random split of features_all.parquet) in retrain_15feat.py; transform reused unchanged on test and at runtime",
+      "scaler_is_refit_at_inference": false,
+      "center_mean": 11677.7676,
+      "scale_mean": 22094.192,
+      "prod_rows_any_feature_outside_train_envelope": 199,
+      "prod_frac_any_feature_outside_train_envelope": 1.0,
+      "per_feature_outside": [
+        {
+          "feature": "log_amt",
+          "below_train_min": 0,
+          "above_train_max": 199,
+          "rows_outside": 199,
+          "frac_outside": 1.0
+        },
+        {
+          "feature": "amt_sq",
+          "below_train_min": 0,
+          "above_train_max": 199,
+          "rows_outside": 199,
+          "frac_outside": 1.0
+        },
+        {
+          "feature": "hour_cos",
+          "below_train_min": 0,
+          "above_train_max": 0,
+          "rows_outside": 0,
+          "frac_outside": 0.0
+        },
+        {
+          "feature": "is_business_hours",
+          "below_train_min": 0,
+          "above_train_max": 0,
+          "rows_outside": 0,
+          "frac_outside": 0.0
+        },
+        {
+          "feature": "chip",
+          "below_train_min": 0,
+          "above_train_max": 0,
+          "rows_outside": 0,
+          "frac_outside": 0.0
+        },
+        {
+          "feature": "is_online",
+          "below_train_min": 0,
+          "above_train_max": 0,
+          "rows_outside": 0,
+          "frac_outside": 0.0
+        },
+        {
+          "feature": "mcc_n",
+          "below_train_min": 199,
+          "above_train_max": 0,
+          "rows_outside": 199,
+          "frac_outside": 1.0
+        },
+        {
+          "feature": "has_zip",
+          "below_train_min": 0,
+          "above_train_max": 0,
+          "rows_outside": 0,
+          "frac_outside": 0.0
+        },
+        {
+          "feature": "has_state",
+          "below_train_min": 0,
+          "above_train_max": 0,
+          "rows_outside": 0,
+          "frac_outside": 0.0
+        },
+        {
+          "feature": "merch_tx_count",
+          "below_train_min": 0,
+          "above_train_max": 0,
+          "rows_outside": 0,
+          "frac_outside": 0.0
+        },
+        {
+          "feature": "merch_fraud_rate",
+          "below_train_min": 0,
+          "above_train_max": 0,
+          "rows_outside": 0,
+          "frac_outside": 0.0
+        },
+        {
+          "feature": "city_fraud_rate",
+          "below_train_min": 0,
+          "above_train_max": 0,
+          "rows_outside": 0,
+          "frac_outside": 0.0
+        },
+        {
+          "feature": "very_high_amt",
+          "below_train_min": 0,
+          "above_train_max": 0,
+          "rows_outside": 0,
+          "frac_outside": 0.0
+        },
+        {
+          "feature": "amt_x_mcc",
+          "below_train_min": 0,
+          "above_train_max": 0,
+          "rows_outside": 0,
+          "frac_outside": 0.0
+        },
+        {
+          "feature": "amt_x_online",
+          "below_train_min": 0,
+          "above_train_max": 199,
+          "rows_outside": 199,
+          "frac_outside": 1.0
+        }
+      ]
+    },
+    "6_historical_correctness": {
+      "offline_window_definition": "cumulative running state in FILE ORDER (train_altman_fullscale.py pass2, L252-298) \u2014 NOT anchored to row timestamps; check #24 measured 66.8% of merchant-rate rows change under strict chronological replay and the chronological rescore drops AUC 0.9952\u21920.9229",
+      "offline_label_availability_timing": "UNVERIFIED \u2014 no fraud-confirmation timestamp exists in the dataset, so it is unprovable when offline labels became available to the expanding window",
+      "prod_window": "EntityFraudRateTracker: in-memory deque(maxlen=100) per entity, min 5 events, baseline 0.001; populated only by _record_entity_rates AFTER each evaluation and by _seed_entity_tracker (labels = risk_score >= 70, the model's own decision, not confirmed fraud)",
+      "prod_persistence": "in-memory only \u2014 cleared on restart and re-seeded from the top-5000 DB-2 risk rows",
+      "prod_actual_values": "call path (privacy ingest \u2192 verify demo seed) supplies no user_id/merchant_id/city_id, so both fraud-rate features are constant baseline 0.001 in every deployed decision",
+      "future_data_in_prod": "NO (tracker only records events after they are scored; no future rows can enter)",
+      "future_data_in_train": "YES \u2014 quantified (check #24); file-order expanding state feeds early-dated rows with later-dated transactions of the same merchant/city",
+      "verdict": "FAIL \u2014 training fraud-rate features are not provably past-only and are not reproducible at real time; the production substitutes are frozen at baseline in the actual call path"
+    },
+    "7_verdict": {
+      "features_total": 15,
+      "exact_definition_match": 2,
+      "definition_mismatch": 13,
+      "structurally_const_in_prod_while_train_varies": [
+        "mcc_n",
+        "has_zip",
+        "has_state",
+        "merch_fraud_rate",
+        "city_fraud_rate",
+        "amt_x_mcc"
+      ],
+      "schema_names_order_match": true,
+      "edge_probes_raising": [
+        "string_in_numeric_slot"
+      ],
+      "frozen_fraud_rates_in_call_path": [
+        "merch_fraud_rate",
+        "city_fraud_rate"
+      ],
+      "overall": "FAIL",
+      "headline": "13/15 features are definitional mismatches (only 2 match exactly); 6 features are STRUCTURALLY constant in production while varying in training (mcc_n, has_zip, has_state, merch_fraud_rate, city_fraud_rate, amt_x_mcc); both fraud-rate features are frozen at baseline 0.001 in the deployed call path; the offline expanding-window definitions are contaminated by file order (check #24 quantified: 66.8% of merchant-rate rows change under strict chronology, AUC 0.9952\u21920.9229). Schema names/order/count DO match across mapper, manifest, scaler, and both boosters \u2014 the failure is semantic, not structural."
+    }
+  }
+}

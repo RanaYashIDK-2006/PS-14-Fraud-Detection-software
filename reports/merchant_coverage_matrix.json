@@ -1,0 +1,463 @@
+{
+  "full_corpus": {
+    "total_rows": 24386900,
+    "total_fraud": 29757,
+    "unique_merchants_any_activity": 63288,
+    "pre2016_active_merchants": 57882,
+    "pre2016_legit_txns": 17151218,
+    "pre2016_fraud_txns": 21345
+  },
+  "absence_expectation_by_coverage": [
+    {
+      "coverage": 0.05,
+      "pct": 5,
+      "E_absent_merchant_frac": 0.5453,
+      "E_absent_legit_txn_frac": 0.0101
+    },
+    {
+      "coverage": 0.1,
+      "pct": 10,
+      "E_absent_merchant_frac": 0.4284,
+      "E_absent_legit_txn_frac": 0.0054
+    },
+    {
+      "coverage": 0.2,
+      "pct": 20,
+      "E_absent_merchant_frac": 0.2995,
+      "E_absent_legit_txn_frac": 0.0026
+    },
+    {
+      "coverage": 0.4,
+      "pct": 40,
+      "E_absent_merchant_frac": 0.1659,
+      "E_absent_legit_txn_frac": 0.001
+    },
+    {
+      "coverage": 0.6,
+      "pct": 60,
+      "E_absent_merchant_frac": 0.0899,
+      "E_absent_legit_txn_frac": 0.0004
+    },
+    {
+      "coverage": 0.8,
+      "pct": 80,
+      "E_absent_merchant_frac": 0.0383,
+      "E_absent_legit_txn_frac": 0.0001
+    },
+    {
+      "coverage": 1.0,
+      "pct": 100,
+      "E_absent_merchant_frac": 0.0,
+      "E_absent_legit_txn_frac": 0.0
+    }
+  ],
+  "observed_5pct": {
+    "train_pool_merchants": 27190,
+    "val": {
+      "rows": 174530,
+      "fraud": 3834,
+      "absent_rows": 2475,
+      "absent_fraud": 193,
+      "absent_legit_at_established": 2003,
+      "absent_legit_at_truly_new": 279,
+      "absent_taxonomy": {
+        "A_truly_new": {
+          "rows": 329,
+          "fraud": 50
+        },
+        "B_established_absent_low": {
+          "rows": 748,
+          "fraud": 93
+        },
+        "B_established_absent": {
+          "rows": 879,
+          "fraud": 36
+        },
+        "C_low_history_absent": {
+          "rows": 512,
+          "fraud": 14
+        },
+        "D_well_observed_absent": {
+          "rows": 7,
+          "fraud": 0
+        }
+      }
+    },
+    "test": {
+      "rows": 192372,
+      "fraud": 4578,
+      "absent_rows": 3133,
+      "absent_fraud": 273,
+      "absent_legit_at_established": 2491,
+      "absent_legit_at_truly_new": 369,
+      "absent_taxonomy": {
+        "A_truly_new": {
+          "rows": 397,
+          "fraud": 28
+        },
+        "B_established_absent_low": {
+          "rows": 1129,
+          "fraud": 164
+        },
+        "B_established_absent": {
+          "rows": 1056,
+          "fraud": 81
+        },
+        "C_low_history_absent": {
+          "rows": 541,
+          "fraud": 0
+        },
+        "D_well_observed_absent": {
+          "rows": 10,
+          "fraud": 0
+        }
+      }
+    }
+  },
+  "coverage_model_metrics": {
+    "5": {
+      "pct": 5,
+      "frac": 0.05,
+      "train_rows": 879196,
+      "train_fraud": 21345,
+      "val_rows": 174530,
+      "val_fraud": 3834,
+      "n_merchants_in_train": 27190,
+      "absent_rows_at_f": 2475,
+      "absent_at_5_rows": 2475,
+      "absent_at_5_fraud": 193,
+      "val": {
+        "overall": {
+          "rows": 174530,
+          "fraud": 3834,
+          "P1": {
+            "threshold": 0.08300252,
+            "recall": 0.990089,
+            "fpr": 0.066926,
+            "tp": 3796,
+            "fp": 11424
+          },
+          "P2": {
+            "threshold": 0.03024712,
+            "recall": 0.995044,
+            "fpr": 0.105064,
+            "tp": 3815,
+            "fp": 17934
+          }
+        },
+        "seen_at_f": {
+          "rows": 172055,
+          "fraud": 3641,
+          "P1": {
+            "threshold": 0.08300252,
+            "recall": 0.990113,
+            "fpr": 0.059211,
+            "tp": 3605,
+            "fp": 9972
+          },
+          "P2": {
+            "threshold": 0.02712885,
+            "recall": 0.995056,
+            "fpr": 0.101482,
+            "tp": 3623,
+            "fp": 17091
+          }
+        },
+        "absent_at_f": {
+          "rows": 2475,
+          "fraud": 193,
+          "P1": {
+            "threshold": 0.06846802,
+            "recall": 0.994819,
+            "fpr": 0.666521,
+            "tp": 192,
+            "fp": 1521
+          },
+          "P2": {
+            "threshold": 0.04764804,
+            "recall": 1.0,
+            "fpr": 0.728309,
+            "tp": 193,
+            "fp": 1662
+          }
+        },
+        "absent_at_5": {
+          "rows": 2475,
+          "fraud": 193,
+          "P1": {
+            "threshold": 0.06846802,
+            "recall": 0.994819,
+            "fpr": 0.666521,
+            "tp": 192,
+            "fp": 1521
+          },
+          "P2": {
+            "threshold": 0.04764804,
+            "recall": 1.0,
+            "fpr": 0.728309,
+            "tp": 193,
+            "fp": 1662
+          }
+        }
+      }
+    },
+    "10": {
+      "pct": 10,
+      "frac": 0.1,
+      "train_rows": 1736255,
+      "train_fraud": 21345,
+      "val_rows": 346409,
+      "val_fraud": 3834,
+      "n_merchants_in_train": 33632,
+      "absent_rows_at_f": 2931,
+      "absent_at_5_rows": 4667,
+      "absent_at_5_fraud": 193,
+      "val": {
+        "overall": {
+          "rows": 346409,
+          "fraud": 3834,
+          "P1": {
+            "threshold": 0.05292981,
+            "recall": 0.990089,
+            "fpr": 0.072194,
+            "tp": 3796,
+            "fp": 24732
+          },
+          "P2": {
+            "threshold": 0.02299579,
+            "recall": 0.995044,
+            "fpr": 0.10673,
+            "tp": 3815,
+            "fp": 36563
+          }
+        },
+        "seen_at_f": {
+          "rows": 343478,
+          "fraud": 3684,
+          "P1": {
+            "threshold": 0.05218134,
+            "recall": 0.990228,
+            "fpr": 0.067665,
+            "tp": 3648,
+            "fp": 22992
+          },
+          "P2": {
+            "threshold": 0.02253394,
+            "recall": 0.995114,
+            "fpr": 0.102197,
+            "tp": 3666,
+            "fp": 34726
+          }
+        },
+        "absent_at_f": {
+          "rows": 2931,
+          "fraud": 150,
+          "P1": {
+            "threshold": 0.12308129,
+            "recall": 0.993333,
+            "fpr": 0.553038,
+            "tp": 149,
+            "fp": 1538
+          },
+          "P2": {
+            "threshold": 0.07784942,
+            "recall": 1.0,
+            "fpr": 0.623876,
+            "tp": 150,
+            "fp": 1735
+          }
+        },
+        "absent_at_5": {
+          "rows": 4667,
+          "fraud": 193,
+          "P1": {
+            "threshold": 0.07784942,
+            "recall": 0.994819,
+            "fpr": 0.5,
+            "tp": 192,
+            "fp": 2237
+          },
+          "P2": {
+            "threshold": 0.06145418,
+            "recall": 1.0,
+            "fpr": 0.536656,
+            "tp": 193,
+            "fp": 2401
+          }
+        }
+      }
+    },
+    "20": {
+      "pct": 20,
+      "frac": 0.2,
+      "train_rows": 3449530,
+      "train_fraud": 21345,
+      "val_rows": 689463,
+      "val_fraud": 3834,
+      "n_merchants_in_train": 40920,
+      "absent_rows_at_f": 3393,
+      "absent_at_5_rows": 9108,
+      "absent_at_5_fraud": 193,
+      "val": {
+        "overall": {
+          "rows": 689463,
+          "fraud": 3834,
+          "P1": {
+            "threshold": 0.05773005,
+            "recall": 0.990089,
+            "fpr": 0.063018,
+            "tp": 3796,
+            "fp": 43207
+          },
+          "P2": {
+            "threshold": 0.02253943,
+            "recall": 0.995044,
+            "fpr": 0.097976,
+            "tp": 3815,
+            "fp": 67175
+          }
+        },
+        "seen_at_f": {
+          "rows": 686070,
+          "fraud": 3705,
+          "P1": {
+            "threshold": 0.05663135,
+            "recall": 0.990013,
+            "fpr": 0.060707,
+            "tp": 3668,
+            "fp": 41424
+          },
+          "P2": {
+            "threshold": 0.02203238,
+            "recall": 0.995142,
+            "fpr": 0.095735,
+            "tp": 3687,
+            "fp": 65326
+          }
+        },
+        "absent_at_f": {
+          "rows": 3393,
+          "fraud": 129,
+          "P1": {
+            "threshold": 0.12089933,
+            "recall": 0.992248,
+            "fpr": 0.551777,
+            "tp": 128,
+            "fp": 1801
+          },
+          "P2": {
+            "threshold": 0.10578084,
+            "recall": 1.0,
+            "fpr": 0.569853,
+            "tp": 129,
+            "fp": 1860
+          }
+        },
+        "absent_at_5": {
+          "rows": 9108,
+          "fraud": 193,
+          "P1": {
+            "threshold": 0.06207089,
+            "recall": 0.994819,
+            "fpr": 0.448233,
+            "tp": 192,
+            "fp": 3996
+          },
+          "P2": {
+            "threshold": 0.01951481,
+            "recall": 1.0,
+            "fpr": 0.615928,
+            "tp": 193,
+            "fp": 5491
+          }
+        }
+      }
+    },
+    "40": {
+      "pct": 40,
+      "frac": 0.4,
+      "train_rows": 6879384,
+      "train_fraud": 21345,
+      "val_rows": 1375082,
+      "val_fraud": 3834,
+      "n_merchants_in_train": 48462,
+      "absent_rows_at_f": 4092,
+      "absent_at_5_rows": 18077,
+      "absent_at_5_fraud": 193,
+      "val": {
+        "overall": {
+          "rows": 1375082,
+          "fraud": 3834,
+          "P1": {
+            "threshold": 0.09851765,
+            "recall": 0.990089,
+            "fpr": 0.052445,
+            "tp": 3796,
+            "fp": 71915
+          },
+          "P2": {
+            "threshold": 0.03060207,
+            "recall": 0.995044,
+            "fpr": 0.100135,
+            "tp": 3815,
+            "fp": 137310
+          }
+        },
+        "seen_at_f": {
+          "rows": 1370990,
+          "fraud": 3741,
+          "P1": {
+            "threshold": 0.09180018,
+            "recall": 0.99011,
+            "fpr": 0.052996,
+            "tp": 3704,
+            "fp": 72459
+          },
+          "P2": {
+            "threshold": 0.02506619,
+            "recall": 0.995188,
+            "fpr": 0.110207,
+            "tp": 3723,
+            "fp": 150680
+          }
+        },
+        "absent_at_f": {
+          "rows": 4092,
+          "fraud": 93,
+          "P1": {
+            "threshold": 0.11987424,
+            "recall": 1.0,
+            "fpr": 0.536134,
+            "tp": 93,
+            "fp": 2144
+          },
+          "P2": {
+            "threshold": 0.11987424,
+            "recall": 1.0,
+            "fpr": 0.536134,
+            "tp": 93,
+            "fp": 2144
+          }
+        },
+        "absent_at_5": {
+          "rows": 18077,
+          "fraud": 193,
+          "P1": {
+            "threshold": 0.01401647,
+            "recall": 0.994819,
+            "fpr": 0.666294,
+            "tp": 192,
+            "fp": 11916
+          },
+          "P2": {
+            "threshold": 0.01094884,
+            "recall": 1.0,
+            "fpr": 0.70633,
+            "tp": 193,
+            "fp": 12632
+          }
+        }
+      }
+    }
+  }
+}

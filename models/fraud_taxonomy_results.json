@@ -1,0 +1,218 @@
+{
+  "overall": {
+    "roc_auc": 0.9378,
+    "pr_auc": 0.9642,
+    "recall_at_1pct_fpr": 0.4918,
+    "n_fraud": 3400,
+    "n_legit": 2000,
+    "n_categories": 17
+  },
+  "categories": {
+    "ATO": {
+      "description": "Account Takeover - credential compromise, rapid burst of txns",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "recall_at_1pct_fpr": 1.0,
+      "true_positives": 200,
+      "false_negatives": 0,
+      "detection_rate": 1.0
+    },
+    "CNP": {
+      "description": "Card-Not-Present - small rapid transactions to new merchants",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 0.9973,
+      "pr_auc": 0.9667,
+      "recall_at_1pct_fpr": 0.955,
+      "true_positives": 191,
+      "false_negatives": 9,
+      "detection_rate": 0.955
+    },
+    "MULE": {
+      "description": "Mule Activity - shared devices/recipients, money convergence",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "recall_at_1pct_fpr": 1.0,
+      "true_positives": 200,
+      "false_negatives": 0,
+      "detection_rate": 1.0
+    },
+    "PAYMENT_FRAUD": {
+      "description": "Payment Fraud - stolen card, unauthorized transactions",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 0.9919,
+      "pr_auc": 0.8529,
+      "recall_at_1pct_fpr": 0.585,
+      "true_positives": 121,
+      "false_negatives": 79,
+      "detection_rate": 0.605
+    },
+    "CREDENTIAL_ABUSE": {
+      "description": "Credential Abuse - password stuffing, brute force attempts",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "recall_at_1pct_fpr": 1.0,
+      "true_positives": 200,
+      "false_negatives": 0,
+      "detection_rate": 1.0
+    },
+    "VELOCITY_FRAUD": {
+      "description": "Velocity Fraud - rapid-fire transactions exceeding limits",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 0.9886,
+      "pr_auc": 0.7652,
+      "recall_at_1pct_fpr": 0.535,
+      "true_positives": 110,
+      "false_negatives": 90,
+      "detection_rate": 0.55
+    },
+    "DEVICE_COMPROMISE": {
+      "description": "Device Compromise - malware, session hijacking patterns",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 0.9323,
+      "pr_auc": 0.4621,
+      "recall_at_1pct_fpr": 0.015,
+      "true_positives": 4,
+      "false_negatives": 196,
+      "detection_rate": 0.02
+    },
+    "MERCHANT_FRAUD": {
+      "description": "Merchant Fraud - collusion, fake merchant patterns",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 0.9408,
+      "pr_auc": 0.4281,
+      "recall_at_1pct_fpr": 0.0,
+      "true_positives": 0,
+      "false_negatives": 200,
+      "detection_rate": 0.0
+    },
+    "SYNTHETIC_ID": {
+      "description": "Synthetic Identity - fabricated identity, thin file",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "recall_at_1pct_fpr": 1.0,
+      "true_positives": 200,
+      "false_negatives": 0,
+      "detection_rate": 1.0
+    },
+    "FIRST_PARTY": {
+      "description": "First-Party Fraud - friendly fraud, chargeback abuse",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 0.5695,
+      "pr_auc": 0.103,
+      "recall_at_1pct_fpr": 0.0,
+      "true_positives": 0,
+      "false_negatives": 200,
+      "detection_rate": 0.0
+    },
+    "GRADUAL_ESCALATION": {
+      "description": "Gradual Escalation - boiling frog, slow amount ramp",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 0.9595,
+      "pr_auc": 0.5181,
+      "recall_at_1pct_fpr": 0.0,
+      "true_positives": 0,
+      "false_negatives": 200,
+      "detection_rate": 0.0
+    },
+    "MICRO_FRAUD": {
+      "description": "Micro-Fraud - testing stolen cards with tiny amounts",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "recall_at_1pct_fpr": 1.0,
+      "true_positives": 200,
+      "false_negatives": 0,
+      "detection_rate": 1.0
+    },
+    "GEO_ANOMALY": {
+      "description": "Geographic Anomaly - impossible travel, location spoofing",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 0.976,
+      "pr_auc": 0.7401,
+      "recall_at_1pct_fpr": 0.27,
+      "true_positives": 57,
+      "false_negatives": 143,
+      "detection_rate": 0.285
+    },
+    "TIME_ANOMALY": {
+      "description": "Time Anomaly - unusual hours, pattern deviation",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 0.8141,
+      "pr_auc": 0.2027,
+      "recall_at_1pct_fpr": 0.0,
+      "true_positives": 0,
+      "false_negatives": 200,
+      "detection_rate": 0.0
+    },
+    "RECIPIENT_ANOMALY": {
+      "description": "Recipient Anomaly - new payees, unusual destinations",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 0.8527,
+      "pr_auc": 0.2939,
+      "recall_at_1pct_fpr": 0.0,
+      "true_positives": 0,
+      "false_negatives": 200,
+      "detection_rate": 0.0
+    },
+    "AMOUNT_ANOMALY": {
+      "description": "Amount Anomaly - unusual transaction sizes",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 0.9191,
+      "pr_auc": 0.3445,
+      "recall_at_1pct_fpr": 0.0,
+      "true_positives": 0,
+      "false_negatives": 200,
+      "detection_rate": 0.0
+    },
+    "BEHAVIORAL_DEVIATION": {
+      "description": "Behavioral Deviation - pattern break from normal activity",
+      "n_fraud": 200,
+      "n_legit": 2000,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "recall_at_1pct_fpr": 1.0,
+      "true_positives": 200,
+      "false_negatives": 0,
+      "detection_rate": 1.0
+    }
+  },
+  "categories_description": {
+    "ATO": "Account Takeover - credential compromise, rapid burst of txns",
+    "CNP": "Card-Not-Present - small rapid transactions to new merchants",
+    "MULE": "Mule Activity - shared devices/recipients, money convergence",
+    "PAYMENT_FRAUD": "Payment Fraud - stolen card, unauthorized transactions",
+    "CREDENTIAL_ABUSE": "Credential Abuse - password stuffing, brute force attempts",
+    "VELOCITY_FRAUD": "Velocity Fraud - rapid-fire transactions exceeding limits",
+    "DEVICE_COMPROMISE": "Device Compromise - malware, session hijacking patterns",
+    "MERCHANT_FRAUD": "Merchant Fraud - collusion, fake merchant patterns",
+    "SYNTHETIC_ID": "Synthetic Identity - fabricated identity, thin file",
+    "FIRST_PARTY": "First-Party Fraud - friendly fraud, chargeback abuse",
+    "GRADUAL_ESCALATION": "Gradual Escalation - boiling frog, slow amount ramp",
+    "MICRO_FRAUD": "Micro-Fraud - testing stolen cards with tiny amounts",
+    "GEO_ANOMALY": "Geographic Anomaly - impossible travel, location spoofing",
+    "TIME_ANOMALY": "Time Anomaly - unusual hours, pattern deviation",
+    "RECIPIENT_ANOMALY": "Recipient Anomaly - new payees, unusual destinations",
+    "AMOUNT_ANOMALY": "Amount Anomaly - unusual transaction sizes",
+    "BEHAVIORAL_DEVIATION": "Behavioral Deviation - pattern break from normal activity"
+  }
+}

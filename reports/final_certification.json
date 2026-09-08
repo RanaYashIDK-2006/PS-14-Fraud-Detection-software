@@ -1,0 +1,119 @@
+{
+  "certifier": "scripts/final_certification.py (independent, native branch)",
+  "built_at": "2026-09-04T07:06:12.119738+00:00",
+  "env": "python 3.12.10",
+  "findings": [],
+  "model_version": "altman_native_v2_20260904_115703",
+  "schema_version": "altman_native_v2",
+  "n_features": 48,
+  "locked": 0.7847116291110687,
+  "final_metrics": {
+    "roc_auc": 0.972237,
+    "pr_auc": 0.78749,
+    "tp": 2043,
+    "tn": 36938,
+    "fp": 480,
+    "fn": 2535,
+    "alerts": 2523,
+    "recall": 0.446265,
+    "precision": 0.80975,
+    "fpr": 0.012828051,
+    "specificity": 0.987172
+  },
+  "auc_ci95_independent": {
+    "ci": [
+      0.970803,
+      0.97368
+    ],
+    "n_iter": 1200,
+    "seed": 99
+  },
+  "segments": {
+    "night": {
+      "rows": 2070,
+      "fraud": 7,
+      "auc": 0.9941
+    },
+    "high_amount": {
+      "rows": 1389,
+      "fraud": 501,
+      "auc": 0.9036
+    },
+    "online": {
+      "rows": 4811,
+      "fraud": 128,
+      "auc": 0.9886
+    },
+    "chip": {
+      "rows": 30376,
+      "fraud": 4008,
+      "auc": 0.9844
+    }
+  },
+  "claim_register": [
+    [
+      "Deployed model is the Altman-NATIVE 48-feature ensemble trained on the real IBM dataset",
+      "VERIFIED",
+      "altman_native_v2_20260904_115703 - 24.4M rows, chronological split, shared derivation train==prod by construction"
+    ],
+    [
+      "Chronological split (legacy Month<=9 pooled-split model retired)",
+      "VERIFIED",
+      "train<2016 | val 2016-17 | test>=2018; governance record"
+    ],
+    [
+      "Production feature parity train==prod",
+      "VERIFIED",
+      "feature_parity_test 11/11 native gates green + contract binding"
+    ],
+    [
+      "Validation-only locked threshold governs live decisions",
+      "VERIFIED",
+      "locked 0.784712 (val FPR 0.009984); engine band raises on ML prob >= locked, never downgrades rules/hard limits"
+    ],
+    [
+      "No critical concurrency failures (Part 3)",
+      "VERIFIED",
+      "live sweep 0% errors at 1..32 concurrent"
+    ],
+    [
+      "Investigator workflow functional",
+      "VERIFIED",
+      "probe_case_workflow ALL PASS incl. dedup + state transitions"
+    ],
+    [
+      "Monitoring active + fail-safe",
+      "VERIFIED",
+      "baseline_loaded=True + drift_test ALL PASS + exit-3 fail-safe"
+    ],
+    [
+      "99% recall on the REAL native dataset",
+      "FALSE",
+      "honest test recall 0.4463 at locked threshold - the synthetic causal corpus was near-separable; real-world fraud is not. Reporting the decrease, not optimizing it away"
+    ],
+    [
+      "Production-ready at arbitrary scale",
+      "FALSE",
+      "single-process saturation ~95 req/s; multi-process/Postgres untested"
+    ],
+    [
+      "Disk-full / queue-redelivery / worker-kill injection exercised",
+      "UNSUPPORTED",
+      "requires Redis/compose environment"
+    ],
+    [
+      "Dependency vuln-DB scan with completeness attestation",
+      "UNSUPPORTED",
+      "not executed"
+    ],
+    [
+      "Calibrated probabilities are trustworthy probabilities",
+      "UNVERIFIED",
+      "ranking metrics certified; calibration decision-quality not re-certified"
+    ]
+  ],
+  "verdict": "CONDITIONAL PASS",
+  "failures": [],
+  "n_findings": 32,
+  "n_fail": 0
+}

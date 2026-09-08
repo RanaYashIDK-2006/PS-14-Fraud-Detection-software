@@ -1,0 +1,385 @@
+{
+  "kill_switch": {
+    "unauthorized_arm_blocked": true,
+    "unauthorized_arm_detail": "operator 'mallory' is not authorized to arm the kill switch",
+    "authorized_arm": true,
+    "engine_refuses_while_armed": true,
+    "refusal_detail": "KillSwitchActiveError raised; caller degrades to rules-only",
+    "unauthorized_disarm_blocked": true,
+    "armed_after_disarm": false,
+    "post_disarm_prediction_parity": true,
+    "post_disarm_max_diff": 0.0,
+    "audit_trail_events": 24,
+    "audit_trail_pass": true,
+    "final_state": {
+      "armed": false
+    }
+  },
+  "incidents": [
+    {
+      "incident_id": "inc-corrupt",
+      "name": "Corrupted model artifact",
+      "severity": "Critical",
+      "timeline": {
+        "detected": {
+          "pass": true,
+          "detail": "load raised XGBoostError (input stream corrupted)"
+        },
+        "alert_generated": {
+          "pass": true,
+          "detail": "integrity failure logged by governance; incident event appended to audit chain"
+        },
+        "safe_response": {
+          "pass": true,
+          "detail": "ML scoring quarantined (KillSwitchActiveError) - rules-only fallback"
+        },
+        "rollback_or_containment": {
+          "pass": true,
+          "detail": "artifacts restored from known-good dir; integrity verify PASS on reload"
+        },
+        "recovery": {
+          "pass": true,
+          "detail": "post-rollback predictions identical to baseline: True"
+        },
+        "audit_trail": {
+          "pass": true,
+          "detail": "incident + kill-switch events appended"
+        }
+      },
+      "verified": {
+        "detected": {
+          "pass": true,
+          "detail": "load raised XGBoostError (input stream corrupted)"
+        },
+        "alert_generated": {
+          "pass": true,
+          "detail": "integrity failure logged by governance; incident event appended to audit chain"
+        },
+        "safe_response": {
+          "pass": true,
+          "detail": "ML scoring quarantined (KillSwitchActiveError) - rules-only fallback"
+        },
+        "rollback_or_containment": {
+          "pass": true,
+          "detail": "artifacts restored from known-good dir; integrity verify PASS on reload"
+        },
+        "recovery": {
+          "pass": true,
+          "detail": "post-rollback predictions identical to baseline: True"
+        },
+        "audit_trail": {
+          "pass": true,
+          "detail": "incident + kill-switch events appended"
+        }
+      },
+      "stages_passed": "6/6"
+    },
+    {
+      "incident_id": "inc-featpipe",
+      "name": "Broken feature pipeline (missing features)",
+      "severity": "High",
+      "timeline": {
+        "detected": {
+          "pass": false,
+          "detail": "engine returned a score from ALL-DEFAULT features - silent substitution (detection FAIL, real gap)"
+        },
+        "alert_generated": {
+          "pass": false,
+          "detail": "no signal emitted (detection failed first)"
+        },
+        "safe_response": {
+          "pass": true,
+          "detail": "input-schema guard raises; scoring blocked, incident opened"
+        },
+        "rollback_or_containment": {
+          "pass": true,
+          "detail": "containment = no score served on malformed input; alert routed to queue (guard wired here; production wiring pending)"
+        },
+        "recovery": {
+          "pass": true,
+          "detail": "repaired payload scores normally (0.1716); pipeline restored"
+        },
+        "audit_trail": {
+          "pass": true,
+          "detail": "incident + malformed-input events recorded"
+        }
+      },
+      "verified": {
+        "detected": {
+          "pass": false,
+          "detail": "engine returned a score from ALL-DEFAULT features - silent substitution (detection FAIL, real gap)"
+        },
+        "alert_generated": {
+          "pass": false,
+          "detail": "no signal emitted (detection failed first)"
+        },
+        "safe_response": {
+          "pass": true,
+          "detail": "input-schema guard raises; scoring blocked, incident opened"
+        },
+        "rollback_or_containment": {
+          "pass": true,
+          "detail": "containment = no score served on malformed input; alert routed to queue (guard wired here; production wiring pending)"
+        },
+        "recovery": {
+          "pass": true,
+          "detail": "repaired payload scores normally (0.1716); pipeline restored"
+        },
+        "audit_trail": {
+          "pass": true,
+          "detail": "incident + malformed-input events recorded"
+        }
+      },
+      "stages_passed": "4/6"
+    },
+    {
+      "incident_id": "inc-fpr",
+      "name": "FPR suddenly exceeds operational limit",
+      "severity": "Critical",
+      "timeline": {
+        "detected": {
+          "pass": true,
+          "detail": "alert rate 53.3% at threshold 0.111 >> 1% limit (measured on the REAL deployed score distribution)"
+        },
+        "alert_generated": {
+          "pass": true,
+          "detail": "monitor threshold breach -> RED incident + audit event"
+        },
+        "safe_response": {
+          "pass": true,
+          "detail": "ML path quarantined until RCA completes"
+        },
+        "rollback_or_containment": {
+          "pass": true,
+          "detail": "RCA: calibrator mismatch (PS-14-fit Platt applied to Altman lean raw scores); containment = quarantine; no score can be trusted at any threshold while armed"
+        },
+        "recovery": {
+          "pass": true,
+          "detail": "quarantine lifted after RCA; predictions identical to baseline"
+        },
+        "audit_trail": {
+          "pass": true,
+          "detail": "FPR incident + kill-switch events appended"
+        }
+      },
+      "evidence": {
+        "locked_threshold": 0.111,
+        "alert_rate_at_threshold": 0.5327868852459017
+      },
+      "verified": {
+        "detected": {
+          "pass": true,
+          "detail": "alert rate 53.3% at threshold 0.111 >> 1% limit (measured on the REAL deployed score distribution)"
+        },
+        "alert_generated": {
+          "pass": true,
+          "detail": "monitor threshold breach -> RED incident + audit event"
+        },
+        "safe_response": {
+          "pass": true,
+          "detail": "ML path quarantined until RCA completes"
+        },
+        "rollback_or_containment": {
+          "pass": true,
+          "detail": "RCA: calibrator mismatch (PS-14-fit Platt applied to Altman lean raw scores); containment = quarantine; no score can be trusted at any threshold while armed"
+        },
+        "recovery": {
+          "pass": true,
+          "detail": "quarantine lifted after RCA; predictions identical to baseline"
+        },
+        "audit_trail": {
+          "pass": true,
+          "detail": "FPR incident + kill-switch events appended"
+        }
+      },
+      "stages_passed": "6/6"
+    },
+    {
+      "incident_id": "inc-parity",
+      "name": "Production features differ from offline features",
+      "severity": "Critical",
+      "timeline": {
+        "detected": {
+          "pass": true,
+          "detail": "parity gate: {'numeric_parity_7_state_features': 'PASS', 'numeric_parity_city_fraud_rate': 'FAIL - training cache city_state resets per parquet row group (train_altman_fullscale.py line 218: city_state = {} INSIDE the row-group loop); cached city_fraud_rate is chunk-local, not a full expanding window', 'production_builder_causality': 'PASS', 'deployed_artifact_internal_consistency': 'PASS', 'audited_model_is_deployed_artifact': 'FAIL - audit model (25 feat, inline, never saved) != deployed lean model (15 feat); shared schema 12/15', 'runtime_mapper_feature_fidelity': 'PARTIAL - mcc_n/has_zip/has_state hardcoded 0; amt proxied from amount_ratio; entity fraud rates from sliding-window tracker (min 5) vs full-history training features -> train/serve skew', 'bottom_line': 'Feature-generation parity is near-perfect (7/8 expanding features bit-exact vs the training cache); one REAL production bug: city_fraud_rate resets per parquet row group in the cache builder. The model mismatch remains: the forensic audit evaluated an inline 25-feature XGB, not the deployed 15-feature lean artifact. PRODUCTION PARITY = FAIL (model mismatch + city-rate cache bug).'} - Feature-generation parity is near-perfect (7/8 expanding features bit-exact vs the training cache); one REAL production bug: city_fraud_rate"
+        },
+        "alert_generated": {
+          "pass": true,
+          "detail": "parity gate failure already alerts: production_parity.json verdict FAIL + deployment gate BLOCKED"
+        },
+        "safe_response": {
+          "pass": true,
+          "detail": "promotion blocked (deployment gate BLOCKED); no unvalidated artifact can replace V1"
+        },
+        "rollback_or_containment": {
+          "pass": true,
+          "detail": "containment = V1 stays operational; candidate artifacts quarantined from promotion"
+        },
+        "recovery": {
+          "pass": false,
+          "detail": "recovery = fix city_state row-group placement in train_altman_fullscale.py (line ~218) + revalidate; NOT yet done (open action)"
+        },
+        "audit_trail": {
+          "pass": true,
+          "detail": "parity verdict recorded in reports + incident event appended"
+        }
+      },
+      "verified": {
+        "detected": {
+          "pass": true,
+          "detail": "parity gate: {'numeric_parity_7_state_features': 'PASS', 'numeric_parity_city_fraud_rate': 'FAIL - training cache city_state resets per parquet row group (train_altman_fullscale.py line 218: city_state = {} INSIDE the row-group loop); cached city_fraud_rate is chunk-local, not a full expanding window', 'production_builder_causality': 'PASS', 'deployed_artifact_internal_consistency': 'PASS', 'audited_model_is_deployed_artifact': 'FAIL - audit model (25 feat, inline, never saved) != deployed lean model (15 feat); shared schema 12/15', 'runtime_mapper_feature_fidelity': 'PARTIAL - mcc_n/has_zip/has_state hardcoded 0; amt proxied from amount_ratio; entity fraud rates from sliding-window tracker (min 5) vs full-history training features -> train/serve skew', 'bottom_line': 'Feature-generation parity is near-perfect (7/8 expanding features bit-exact vs the training cache); one REAL production bug: city_fraud_rate resets per parquet row group in the cache builder. The model mismatch remains: the forensic audit evaluated an inline 25-feature XGB, not the deployed 15-feature lean artifact. PRODUCTION PARITY = FAIL (model mismatch + city-rate cache bug).'} - Feature-generation parity is near-perfect (7/8 expanding features bit-exact vs the training cache); one REAL production bug: city_fraud_rate"
+        },
+        "alert_generated": {
+          "pass": true,
+          "detail": "parity gate failure already alerts: production_parity.json verdict FAIL + deployment gate BLOCKED"
+        },
+        "safe_response": {
+          "pass": true,
+          "detail": "promotion blocked (deployment gate BLOCKED); no unvalidated artifact can replace V1"
+        },
+        "rollback_or_containment": {
+          "pass": true,
+          "detail": "containment = V1 stays operational; candidate artifacts quarantined from promotion"
+        },
+        "recovery": {
+          "pass": false,
+          "detail": "recovery = fix city_state row-group placement in train_altman_fullscale.py (line ~218) + revalidate; NOT yet done (open action)"
+        },
+        "audit_trail": {
+          "pass": true,
+          "detail": "parity verdict recorded in reports + incident event appended"
+        }
+      },
+      "stages_passed": "5/6"
+    },
+    {
+      "incident_id": "inc-dq",
+      "name": "Critical data-quality failure",
+      "severity": "High",
+      "timeline": {
+        "detected": {
+          "pass": true,
+          "detail": "DQ monitor status: CRITICAL - Missing rate: Zip 7.8% (WARNING); Invalid timestamps 0.51% (CRITICAL)"
+        },
+        "alert_generated": {
+          "pass": true,
+          "detail": "DQ monitor flags CRITICAL -> RED incident"
+        },
+        "safe_response": {
+          "pass": true,
+          "detail": "retraining rule: NEVER retrain on a degraded stream; model frozen on last-good data"
+        },
+        "rollback_or_containment": {
+          "pass": true,
+          "detail": "containment = training pipeline refuses degraded data; no new model promoted"
+        },
+        "recovery": {
+          "pass": false,
+          "detail": "recovery = fix invalid-timestamp source, then re-run DQ + retrain cycle; NOT yet done (open action)"
+        },
+        "audit_trail": {
+          "pass": true,
+          "detail": "DQ incident appended to audit chain"
+        }
+      },
+      "verified": {
+        "detected": {
+          "pass": true,
+          "detail": "DQ monitor status: CRITICAL - Missing rate: Zip 7.8% (WARNING); Invalid timestamps 0.51% (CRITICAL)"
+        },
+        "alert_generated": {
+          "pass": true,
+          "detail": "DQ monitor flags CRITICAL -> RED incident"
+        },
+        "safe_response": {
+          "pass": true,
+          "detail": "retraining rule: NEVER retrain on a degraded stream; model frozen on last-good data"
+        },
+        "rollback_or_containment": {
+          "pass": true,
+          "detail": "containment = training pipeline refuses degraded data; no new model promoted"
+        },
+        "recovery": {
+          "pass": false,
+          "detail": "recovery = fix invalid-timestamp source, then re-run DQ + retrain cycle; NOT yet done (open action)"
+        },
+        "audit_trail": {
+          "pass": true,
+          "detail": "DQ incident appended to audit chain"
+        }
+      },
+      "stages_passed": "5/6"
+    }
+  ],
+  "audit_chain": {
+    "verify_ok": true,
+    "total_events": 1392
+  },
+  "incident_response_matrix": [
+    {
+      "incident": "Corrupted model artifact",
+      "detection": true,
+      "severity": "Critical",
+      "automatic_action": "ML scoring quarantined (KillSwitchActiveError) - rules-only fallback",
+      "manual_action": "artifacts restored from known-good dir; integrity verify PASS on reload",
+      "recovery": true,
+      "tested": "6/6"
+    },
+    {
+      "incident": "Broken feature pipeline (missing features)",
+      "detection": false,
+      "severity": "High",
+      "automatic_action": "input-schema guard raises; scoring blocked, incident opened",
+      "manual_action": "containment = no score served on malformed input; alert routed to queue (guard wired here;",
+      "recovery": true,
+      "tested": "4/6"
+    },
+    {
+      "incident": "FPR suddenly exceeds operational limit",
+      "detection": true,
+      "severity": "Critical",
+      "automatic_action": "ML path quarantined until RCA completes",
+      "manual_action": "RCA: calibrator mismatch (PS-14-fit Platt applied to Altman lean raw scores); containment ",
+      "recovery": true,
+      "tested": "6/6"
+    },
+    {
+      "incident": "Production features differ from offline features",
+      "detection": true,
+      "severity": "Critical",
+      "automatic_action": "promotion blocked (deployment gate BLOCKED); no unvalidated artifact can replace V1",
+      "manual_action": "containment = V1 stays operational; candidate artifacts quarantined from promotion",
+      "recovery": false,
+      "tested": "5/6"
+    },
+    {
+      "incident": "Critical data-quality failure",
+      "detection": true,
+      "severity": "High",
+      "automatic_action": "retraining rule: NEVER retrain on a degraded stream; model frozen on last-good data",
+      "manual_action": "containment = training pipeline refuses degraded data; no new model promoted",
+      "recovery": false,
+      "tested": "5/6"
+    }
+  ],
+  "summary": {
+    "kill_switch": {
+      "authorized_only": true,
+      "quarantine_enforced": true,
+      "restore_parity": true
+    },
+    "incidents": {
+      "Corrupted model artifact": "6/6",
+      "Broken feature pipeline (missing features)": "4/6",
+      "FPR suddenly exceeds operational limit": "6/6",
+      "Production features differ from offline features": "5/6",
+      "Critical data-quality failure": "5/6"
+    },
+    "open_actions": [
+      "fix city_state row-group reset in train_altman_fullscale.py (parity incident recovery)",
+      "fix invalid-timestamp source in recent window (DQ incident recovery)",
+      "wire input-schema guard into main.py feature ingestion (featpipe incident mitigation)",
+      "fit calibrator on deployed model's own OOF scores (FPR incident root cause)"
+    ]
+  }
+}

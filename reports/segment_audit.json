@@ -1,0 +1,946 @@
+{
+  "protocol": {
+    "same_as_forensic": true,
+    "threshold": 0.095,
+    "threshold_source": "validation only (FPR<0.9%), locked",
+    "test_rows": 4877380,
+    "test_fraud": 5761,
+    "segment_note": "history-depth segments use counts WITHIN the test window only; user-level prior history is not available for test rows (users are new post-train) - see reports.",
+    "metric_note": "AUC/PR-AUC reported only when >=20 fraud AND >=20 legit in segment; segments with n<200 skipped to avoid tiny-group conclusions."
+  },
+  "channel": {
+    "chip": {
+      "n": 1277111,
+      "n_fraud": 883,
+      "fraud_rate": 0.000691,
+      "fraud_rate_ci": [
+        0.000647,
+        0.000739
+      ],
+      "auc": 0.998,
+      "pr_auc": 0.8212,
+      "recall": 0.9343,
+      "precision": 0.2752,
+      "fpr": 0.001703,
+      "fpr_ci": [
+        0.001633,
+        0.001776
+      ],
+      "tp": 825,
+      "tn": 1274055,
+      "fp": 2173,
+      "fn": 58,
+      "alerts": 2998,
+      "alerts_per_10k": 23.5
+    },
+    "online": {
+      "n": 472941,
+      "n_fraud": 3598,
+      "fraud_rate": 0.007608,
+      "fraud_rate_ci": [
+        0.007364,
+        0.007859
+      ],
+      "auc": 0.9959,
+      "pr_auc": 0.9019,
+      "recall": 0.9825,
+      "precision": 0.1042,
+      "fpr": 0.064776,
+      "fpr_ci": [
+        0.064075,
+        0.065483
+      ],
+      "tp": 3535,
+      "tn": 438941,
+      "fp": 30402,
+      "fn": 63,
+      "alerts": 33937,
+      "alerts_per_10k": 717.6
+    },
+    "swipe": {
+      "n": 3127328,
+      "n_fraud": 1280,
+      "fraud_rate": 0.000409,
+      "fraud_rate_ci": [
+        0.000387,
+        0.000432
+      ],
+      "auc": 0.985,
+      "pr_auc": 0.4833,
+      "recall": 0.725,
+      "precision": 0.0729,
+      "fpr": 0.003775,
+      "fpr_ci": [
+        0.003708,
+        0.003844
+      ],
+      "tp": 928,
+      "tn": 3114247,
+      "fp": 11801,
+      "fn": 352,
+      "alerts": 12729,
+      "alerts_per_10k": 40.7
+    }
+  },
+  "amount_band": {
+    "a_under20": {
+      "n": 2015446,
+      "n_fraud": 1497,
+      "fraud_rate": 0.000743,
+      "fraud_rate_ci": [
+        0.000706,
+        0.000781
+      ],
+      "auc": 0.9944,
+      "pr_auc": 0.7797,
+      "recall": 0.8998,
+      "precision": 0.1009,
+      "fpr": 0.00596,
+      "fpr_ci": [
+        0.005855,
+        0.006067
+      ],
+      "tp": 1347,
+      "tn": 2001946,
+      "fp": 12003,
+      "fn": 150,
+      "alerts": 13350,
+      "alerts_per_10k": 66.2
+    },
+    "b_20_50": {
+      "n": 1224611,
+      "n_fraud": 821,
+      "fraud_rate": 0.00067,
+      "fraud_rate_ci": [
+        0.000626,
+        0.000718
+      ],
+      "auc": 0.9918,
+      "pr_auc": 0.7107,
+      "recall": 0.8831,
+      "precision": 0.0617,
+      "fpr": 0.00901,
+      "fpr_ci": [
+        0.008844,
+        0.009179
+      ],
+      "tp": 725,
+      "tn": 1212764,
+      "fp": 11026,
+      "fn": 96,
+      "alerts": 11751,
+      "alerts_per_10k": 96.0
+    },
+    "c_50_100": {
+      "n": 1068649,
+      "n_fraud": 1186,
+      "fraud_rate": 0.00111,
+      "fraud_rate_ci": [
+        0.001048,
+        0.001175
+      ],
+      "auc": 0.9944,
+      "pr_auc": 0.7966,
+      "recall": 0.914,
+      "precision": 0.11,
+      "fpr": 0.00822,
+      "fpr_ci": [
+        0.008051,
+        0.008393
+      ],
+      "tp": 1084,
+      "tn": 1058688,
+      "fp": 8775,
+      "fn": 102,
+      "alerts": 9859,
+      "alerts_per_10k": 92.3
+    },
+    "d_100_250": {
+      "n": 493477,
+      "n_fraud": 1542,
+      "fraud_rate": 0.003125,
+      "fraud_rate_ci": [
+        0.002973,
+        0.003284
+      ],
+      "auc": 0.9951,
+      "pr_auc": 0.8398,
+      "recall": 0.9436,
+      "precision": 0.1445,
+      "fpr": 0.017506,
+      "fpr_ci": [
+        0.017144,
+        0.017877
+      ],
+      "tp": 1455,
+      "tn": 483323,
+      "fp": 8612,
+      "fn": 87,
+      "alerts": 10067,
+      "alerts_per_10k": 204.0
+    },
+    "e_250_1000": {
+      "n": 71880,
+      "n_fraud": 687,
+      "fraud_rate": 0.009558,
+      "fraud_rate_ci": [
+        0.008872,
+        0.010296
+      ],
+      "auc": 0.9896,
+      "pr_auc": 0.8423,
+      "recall": 0.9447,
+      "precision": 0.1448,
+      "fpr": 0.05384,
+      "fpr_ci": [
+        0.052206,
+        0.055522
+      ],
+      "tp": 649,
+      "tn": 67360,
+      "fp": 3833,
+      "fn": 38,
+      "alerts": 4482,
+      "alerts_per_10k": 623.5
+    },
+    "f_over1000": {
+      "n": 3317,
+      "n_fraud": 28,
+      "fraud_rate": 0.008441,
+      "fraud_rate_ci": [
+        0.005847,
+        0.012173
+      ],
+      "auc": 0.9989,
+      "pr_auc": 0.8903,
+      "recall": 1.0,
+      "precision": 0.1806,
+      "fpr": 0.038614,
+      "fpr_ci": [
+        0.032549,
+        0.045755
+      ],
+      "tp": 28,
+      "tn": 3162,
+      "fp": 127,
+      "fn": 0,
+      "alerts": 155,
+      "alerts_per_10k": 467.3
+    }
+  },
+  "mcc_band": {
+    "mcc_1_2k": {
+      "n": 1274,
+      "n_fraud": 0,
+      "fraud_rate": 0.0,
+      "fraud_rate_ci": [
+        0.0,
+        0.003006
+      ],
+      "auc": "None",
+      "pr_auc": "None",
+      "recall": 0.0,
+      "precision": 0.0,
+      "fpr": 0.014914,
+      "fpr_ci": [
+        0.009568,
+        0.023176
+      ],
+      "tp": 0,
+      "tn": 1255,
+      "fp": 19,
+      "fn": 0,
+      "alerts": 19,
+      "alerts_per_10k": 149.1
+    },
+    "mcc_2k_4k": {
+      "n": 85638,
+      "n_fraud": 772,
+      "fraud_rate": 0.009015,
+      "fraud_rate_ci": [
+        0.008403,
+        0.00967
+      ],
+      "auc": 0.9966,
+      "pr_auc": 0.9389,
+      "recall": 0.9547,
+      "precision": 0.3376,
+      "fpr": 0.017039,
+      "fpr_ci": [
+        0.01619,
+        0.017931
+      ],
+      "tp": 737,
+      "tn": 83420,
+      "fp": 1446,
+      "fn": 35,
+      "alerts": 2183,
+      "alerts_per_10k": 254.9
+    },
+    "mcc_4k_6k": {
+      "n": 4311264,
+      "n_fraud": 4585,
+      "fraud_rate": 0.001063,
+      "fraud_rate_ci": [
+        0.001033,
+        0.001095
+      ],
+      "auc": 0.9949,
+      "pr_auc": 0.7981,
+      "recall": 0.92,
+      "precision": 0.104,
+      "fpr": 0.008442,
+      "fpr_ci": [
+        0.008356,
+        0.008529
+      ],
+      "tp": 4218,
+      "tn": 4270323,
+      "fp": 36356,
+      "fn": 367,
+      "alerts": 40574,
+      "alerts_per_10k": 94.1
+    },
+    "mcc_6k_plus": {
+      "n": 479204,
+      "n_fraud": 404,
+      "fraud_rate": 0.000843,
+      "fraud_rate_ci": [
+        0.000765,
+        0.000929
+      ],
+      "auc": 0.985,
+      "pr_auc": 0.421,
+      "recall": 0.8243,
+      "precision": 0.0483,
+      "fpr": 0.01369,
+      "fpr_ci": [
+        0.013365,
+        0.014024
+      ],
+      "tp": 333,
+      "tn": 472245,
+      "fp": 6555,
+      "fn": 71,
+      "alerts": 6888,
+      "alerts_per_10k": 143.7
+    }
+  },
+  "user_history_test_window": {
+    "u_first_in_test": {
+      "n": 415,
+      "n_fraud": 0,
+      "fraud_rate": 0.0,
+      "fraud_rate_ci": [
+        0.0,
+        0.009172
+      ],
+      "auc": "None",
+      "pr_auc": "None",
+      "recall": 0.0,
+      "precision": 0.0,
+      "fpr": 0.019277,
+      "fpr_ci": [
+        0.0098,
+        0.037573
+      ],
+      "tp": 0,
+      "tn": 407,
+      "fp": 8,
+      "fn": 0,
+      "alerts": 8,
+      "alerts_per_10k": 192.8
+    },
+    "u_high_history": {
+      "n": 4873230,
+      "n_fraud": 5761,
+      "fraud_rate": 0.001182,
+      "fraud_rate_ci": [
+        0.001152,
+        0.001213
+      ],
+      "auc": 0.9947,
+      "pr_auc": 0.799,
+      "recall": 0.9179,
+      "precision": 0.1065,
+      "fpr": 0.009114,
+      "fpr_ci": [
+        0.00903,
+        0.009199
+      ],
+      "tp": 5288,
+      "tn": 4823106,
+      "fp": 44363,
+      "fn": 473,
+      "alerts": 49651,
+      "alerts_per_10k": 101.9
+    },
+    "u_low_history": {
+      "n": 3735,
+      "n_fraud": 0,
+      "fraud_rate": 0.0,
+      "fraud_rate_ci": [
+        0.0,
+        0.001027
+      ],
+      "auc": "None",
+      "pr_auc": "None",
+      "recall": 0.0,
+      "precision": 0.0,
+      "fpr": 0.001339,
+      "fpr_ci": [
+        0.000572,
+        0.00313
+      ],
+      "tp": 0,
+      "tn": 3730,
+      "fp": 5,
+      "fn": 0,
+      "alerts": 5,
+      "alerts_per_10k": 13.4
+    }
+  },
+  "merchant_history_test_window": {
+    "m_first_in_test": {
+      "n": 35617,
+      "n_fraud": 470,
+      "fraud_rate": 0.013196,
+      "fraud_rate_ci": [
+        0.012062,
+        0.014435
+      ],
+      "auc": 0.9489,
+      "pr_auc": 0.4843,
+      "recall": 0.8191,
+      "precision": 0.1289,
+      "fpr": 0.074003,
+      "fpr_ci": [
+        0.071313,
+        0.076787
+      ],
+      "tp": 385,
+      "tn": 32546,
+      "fp": 2601,
+      "fn": 85,
+      "alerts": 2986,
+      "alerts_per_10k": 838.4
+    },
+    "m_high_history": {
+      "n": 4512490,
+      "n_fraud": 4362,
+      "fraud_rate": 0.000967,
+      "fraud_rate_ci": [
+        0.000938,
+        0.000996
+      ],
+      "auc": 0.9963,
+      "pr_auc": 0.8404,
+      "recall": 0.9358,
+      "precision": 0.098,
+      "fpr": 0.008333,
+      "fpr_ci": [
+        0.008249,
+        0.008417
+      ],
+      "tp": 4082,
+      "tn": 4470563,
+      "fp": 37565,
+      "fn": 280,
+      "alerts": 41647,
+      "alerts_per_10k": 92.3
+    },
+    "m_low_history": {
+      "n": 329273,
+      "n_fraud": 929,
+      "fraud_rate": 0.002821,
+      "fraud_rate_ci": [
+        0.002646,
+        0.003008
+      ],
+      "auc": 0.9861,
+      "pr_auc": 0.7378,
+      "recall": 0.8837,
+      "precision": 0.1632,
+      "fpr": 0.012822,
+      "fpr_ci": [
+        0.012443,
+        0.013212
+      ],
+      "tp": 821,
+      "tn": 324134,
+      "fp": 4210,
+      "fn": 108,
+      "alerts": 5031,
+      "alerts_per_10k": 152.8
+    }
+  },
+  "city_top8": {
+    "Dallas": {
+      "n": 32989,
+      "n_fraud": 1,
+      "fraud_rate": 3e-05,
+      "fraud_rate_ci": [
+        5e-06,
+        0.000172
+      ],
+      "auc": "None",
+      "pr_auc": "None",
+      "recall": 0.0,
+      "precision": 0.0,
+      "fpr": 0.001334,
+      "fpr_ci": [
+        0.000994,
+        0.00179
+      ],
+      "tp": 0,
+      "tn": 32944,
+      "fp": 44,
+      "fn": 1,
+      "alerts": 44,
+      "alerts_per_10k": 13.3
+    },
+    "Gastonia": {
+      "n": 34119,
+      "n_fraud": 0,
+      "fraud_rate": 0.0,
+      "fraud_rate_ci": [
+        0.0,
+        0.000113
+      ],
+      "auc": "None",
+      "pr_auc": "None",
+      "recall": 0.0,
+      "precision": 0.0,
+      "fpr": 0.000381,
+      "fpr_ci": [
+        0.000223,
+        0.000652
+      ],
+      "tp": 0,
+      "tn": 34106,
+      "fp": 13,
+      "fn": 0,
+      "alerts": 13,
+      "alerts_per_10k": 3.8
+    },
+    "Houston": {
+      "n": 39786,
+      "n_fraud": 0,
+      "fraud_rate": 0.0,
+      "fraud_rate_ci": [
+        0.0,
+        9.7e-05
+      ],
+      "auc": "None",
+      "pr_auc": "None",
+      "recall": 0.0,
+      "precision": 0.0,
+      "fpr": 0.001382,
+      "fpr_ci": [
+        0.001062,
+        0.001799
+      ],
+      "tp": 0,
+      "tn": 39731,
+      "fp": 55,
+      "fn": 0,
+      "alerts": 55,
+      "alerts_per_10k": 13.8
+    },
+    "Miami": {
+      "n": 35127,
+      "n_fraud": 4,
+      "fraud_rate": 0.000114,
+      "fraud_rate_ci": [
+        4.4e-05,
+        0.000293
+      ],
+      "auc": "None",
+      "pr_auc": "None",
+      "recall": 0.5,
+      "precision": 0.0189,
+      "fpr": 0.002961,
+      "fpr_ci": [
+        0.002445,
+        0.003586
+      ],
+      "tp": 2,
+      "tn": 35019,
+      "fp": 104,
+      "fn": 2,
+      "alerts": 106,
+      "alerts_per_10k": 30.2
+    },
+    "North Hollywood": {
+      "n": 46155,
+      "n_fraud": 1,
+      "fraud_rate": 2.2e-05,
+      "fraud_rate_ci": [
+        4e-06,
+        0.000123
+      ],
+      "auc": "None",
+      "pr_auc": "None",
+      "recall": 0.0,
+      "precision": 0.0,
+      "fpr": 0.000455,
+      "fpr_ci": [
+        0.000298,
+        0.000696
+      ],
+      "tp": 0,
+      "tn": 46133,
+      "fp": 21,
+      "fn": 1,
+      "alerts": 21,
+      "alerts_per_10k": 4.5
+    },
+    "ONLINE": {
+      "n": 474432,
+      "n_fraud": 3598,
+      "fraud_rate": 0.007584,
+      "fraud_rate_ci": [
+        0.007341,
+        0.007835
+      ],
+      "auc": 0.996,
+      "pr_auc": 0.9019,
+      "recall": 0.9825,
+      "precision": 0.1041,
+      "fpr": 0.064592,
+      "fpr_ci": [
+        0.063893,
+        0.065297
+      ],
+      "tp": 3535,
+      "tn": 440422,
+      "fp": 30412,
+      "fn": 63,
+      "alerts": 33947,
+      "alerts_per_10k": 715.5
+    },
+    "Orlando": {
+      "n": 46107,
+      "n_fraud": 3,
+      "fraud_rate": 6.5e-05,
+      "fraud_rate_ci": [
+        2.2e-05,
+        0.000191
+      ],
+      "auc": "None",
+      "pr_auc": "None",
+      "recall": 0.3333,
+      "precision": 0.0714,
+      "fpr": 0.000282,
+      "fpr_ci": [
+        0.000165,
+        0.000482
+      ],
+      "tp": 1,
+      "tn": 46091,
+      "fp": 13,
+      "fn": 2,
+      "alerts": 14,
+      "alerts_per_10k": 3.0
+    },
+    "Palm Bay": {
+      "n": 34822,
+      "n_fraud": 0,
+      "fraud_rate": 0.0,
+      "fraud_rate_ci": [
+        0.0,
+        0.00011
+      ],
+      "auc": "None",
+      "pr_auc": "None",
+      "recall": 0.0,
+      "precision": 0.0,
+      "fpr": 0.000574,
+      "fpr_ci": [
+        0.000372,
+        0.000887
+      ],
+      "tp": 0,
+      "tn": 34802,
+      "fp": 20,
+      "fn": 0,
+      "alerts": 20,
+      "alerts_per_10k": 5.7
+    },
+    "other_city": {
+      "n": 4133843,
+      "n_fraud": 2154,
+      "fraud_rate": 0.000521,
+      "fraud_rate_ci": [
+        0.0005,
+        0.000544
+      ],
+      "auc": 0.9908,
+      "pr_auc": 0.6223,
+      "recall": 0.8124,
+      "precision": 0.1133,
+      "fpr": 0.003314,
+      "fpr_ci": [
+        0.003259,
+        0.00337
+      ],
+      "tp": 1750,
+      "tn": 4117995,
+      "fp": 13694,
+      "fn": 404,
+      "alerts": 15444,
+      "alerts_per_10k": 37.4
+    }
+  },
+  "merchant_top8": {
+    "-1288082279022882052": {
+      "n": 157937,
+      "n_fraud": 20,
+      "fraud_rate": 0.000127,
+      "fraud_rate_ci": [
+        8.2e-05,
+        0.000196
+      ],
+      "auc": 0.9973,
+      "pr_auc": 0.4366,
+      "recall": 0.85,
+      "precision": 0.2152,
+      "fpr": 0.000393,
+      "fpr_ci": [
+        0.000306,
+        0.000503
+      ],
+      "tp": 17,
+      "tn": 157855,
+      "fp": 62,
+      "fn": 3,
+      "alerts": 79,
+      "alerts_per_10k": 5.0
+    },
+    "-4282466774399734331": {
+      "n": 223498,
+      "n_fraud": 351,
+      "fraud_rate": 0.00157,
+      "fraud_rate_ci": [
+        0.001415,
+        0.001743
+      ],
+      "auc": 0.9972,
+      "pr_auc": 0.9486,
+      "recall": 0.943,
+      "precision": 0.6118,
+      "fpr": 0.000941,
+      "fpr_ci": [
+        0.000822,
+        0.001077
+      ],
+      "tp": 331,
+      "tn": 222937,
+      "fp": 210,
+      "fn": 20,
+      "alerts": 541,
+      "alerts_per_10k": 24.2
+    },
+    "-5162038175624867091": {
+      "n": 173570,
+      "n_fraud": 26,
+      "fraud_rate": 0.00015,
+      "fraud_rate_ci": [
+        0.000102,
+        0.000219
+      ],
+      "auc": 0.9987,
+      "pr_auc": 0.4303,
+      "recall": 0.9231,
+      "precision": 0.1611,
+      "fpr": 0.00072,
+      "fpr_ci": [
+        0.000605,
+        0.000858
+      ],
+      "tp": 24,
+      "tn": 173419,
+      "fp": 125,
+      "fn": 2,
+      "alerts": 149,
+      "alerts_per_10k": 8.6
+    },
+    "-6571010470072147219": {
+      "n": 134985,
+      "n_fraud": 2,
+      "fraud_rate": 1.5e-05,
+      "fraud_rate_ci": [
+        4e-06,
+        5.4e-05
+      ],
+      "auc": "None",
+      "pr_auc": "None",
+      "recall": 1.0,
+      "precision": 0.087,
+      "fpr": 0.000156,
+      "fpr_ci": [
+        0.000102,
+        0.000238
+      ],
+      "tp": 2,
+      "tn": 134962,
+      "fp": 21,
+      "fn": 0,
+      "alerts": 23,
+      "alerts_per_10k": 1.7
+    },
+    "1799189980464955940": {
+      "n": 190304,
+      "n_fraud": 13,
+      "fraud_rate": 6.8e-05,
+      "fraud_rate_ci": [
+        4e-05,
+        0.000117
+      ],
+      "auc": "None",
+      "pr_auc": "None",
+      "recall": 0.7692,
+      "precision": 0.1282,
+      "fpr": 0.000357,
+      "fpr_ci": [
+        0.000282,
+        0.000453
+      ],
+      "tp": 10,
+      "tn": 190223,
+      "fp": 68,
+      "fn": 3,
+      "alerts": 78,
+      "alerts_per_10k": 4.1
+    },
+    "1913477460590765860": {
+      "n": 120230,
+      "n_fraud": 300,
+      "fraud_rate": 0.002495,
+      "fraud_rate_ci": [
+        0.002229,
+        0.002794
+      ],
+      "auc": 0.9979,
+      "pr_auc": 0.947,
+      "recall": 0.9467,
+      "precision": 0.3609,
+      "fpr": 0.004194,
+      "fpr_ci": [
+        0.003844,
+        0.004576
+      ],
+      "tp": 284,
+      "tn": 119427,
+      "fp": 503,
+      "fn": 16,
+      "alerts": 787,
+      "alerts_per_10k": 65.5
+    },
+    "2027553650310142703": {
+      "n": 203522,
+      "n_fraud": 26,
+      "fraud_rate": 0.000128,
+      "fraud_rate_ci": [
+        8.7e-05,
+        0.000187
+      ],
+      "auc": 0.9901,
+      "pr_auc": 0.4962,
+      "recall": 0.7692,
+      "precision": 0.1667,
+      "fpr": 0.000491,
+      "fpr_ci": [
+        0.000404,
+        0.000598
+      ],
+      "tp": 20,
+      "tn": 203396,
+      "fp": 100,
+      "fn": 6,
+      "alerts": 120,
+      "alerts_per_10k": 5.9
+    },
+    "97032797689821735": {
+      "n": 119622,
+      "n_fraud": 3,
+      "fraud_rate": 2.5e-05,
+      "fraud_rate_ci": [
+        9e-06,
+        7.4e-05
+      ],
+      "auc": "None",
+      "pr_auc": "None",
+      "recall": 0.0,
+      "precision": 0.0,
+      "fpr": 0.000669,
+      "fpr_ci": [
+        0.000537,
+        0.000832
+      ],
+      "tp": 0,
+      "tn": 119539,
+      "fp": 80,
+      "fn": 3,
+      "alerts": 80,
+      "alerts_per_10k": 6.7
+    },
+    "other_merchant": {
+      "n": 3553712,
+      "n_fraud": 5020,
+      "fraud_rate": 0.001413,
+      "fraud_rate_ci": [
+        0.001374,
+        0.001452
+      ],
+      "auc": 0.9935,
+      "pr_auc": 0.7765,
+      "recall": 0.9163,
+      "precision": 0.0962,
+      "fpr": 0.012175,
+      "fpr_ci": [
+        0.012062,
+        0.01229
+      ],
+      "tp": 4600,
+      "tn": 3505485,
+      "fp": 43207,
+      "fn": 420,
+      "alerts": 47807,
+      "alerts_per_10k": 134.5
+    }
+  },
+  "comparisons": {
+    "overall": {
+      "auc": 0.9947,
+      "fpr": 0.009109,
+      "recall": 0.9179,
+      "precision": 0.1065
+    },
+    "best_worst_auc": [
+      [
+        0.0042,
+        "amount_band::f_over1000"
+      ],
+      "merchant_history_test_window::m_first_in_test"
+    ],
+    "best_worst_recall": [
+      [
+        0.0821,
+        "amount_band::f_over1000"
+      ],
+      "channel::swipe"
+    ],
+    "best_worst_fpr": [
+      "merchant_top8::-1288082279022882052",
+      "merchant_history_test_window::m_first_in_test"
+    ],
+    "best_worst_precision": [
+      [
+        0.5053,
+        "merchant_top8::-4282466774399734331"
+      ],
+      "mcc_band::mcc_6k_plus"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "no_target_leakage": true,
+  "no_temporal_leakage": true,
+  "no_future_labels": true,
+  "no_current_row_labels": true,
+  "no_2016_info_in_training": true,
+  "no_2017_info_in_training": true,
+  "no_final_test_access": true,
+  "no_2016_in_threshold_selection": true,
+  "no_2017_in_threshold_selection": true,
+  "status": "PASS",
+  "cert_time_utc": "2026-09-08T09:47:39Z"
+}

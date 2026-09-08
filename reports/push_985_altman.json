@@ -1,0 +1,72 @@
+{
+  "dataset": "ibm_altman_sampled_500k",
+  "target_recall": 0.985,
+  "n_test": 45952,
+  "fraud_test": 4833,
+  "auc_ensemble": 0.9933,
+  "meta_985": {
+    "threshold": 0.007106,
+    "recall": 0.985,
+    "fpr": 0.07943,
+    "precision": 0.038,
+    "tp": 4761,
+    "fp": 4053,
+    "fn": 72,
+    "n_fraud": 4833,
+    "n_neg": 41119,
+    "missed": 72,
+    "flagged": 8814
+  },
+  "recall_curve": [
+    {
+      "recall": 90.0,
+      "thr": 1.049,
+      "FPR": 1.99,
+      "missed": 483
+    },
+    {
+      "recall": 95.0,
+      "thr": 1.048,
+      "FPR": 2.56,
+      "missed": 241
+    },
+    {
+      "recall": 97.0,
+      "thr": 1.047,
+      "FPR": 3.57,
+      "missed": 144
+    },
+    {
+      "recall": 98.0,
+      "thr": 1.046,
+      "FPR": 4.13,
+      "missed": 96
+    },
+    {
+      "recall": 98.5,
+      "thr": 0.007,
+      "FPR": 7.94,
+      "missed": 72
+    },
+    {
+      "recall": 99.0,
+      "thr": 0.001,
+      "FPR": 15.58,
+      "missed": 48
+    },
+    {
+      "recall": 100.0,
+      "thr": 7.7e-05,
+      "FPR": 70.37,
+      "missed": 0
+    }
+  ],
+  "best_weights": {
+    "xgb": 1.0,
+    "lgb": 0.0,
+    "cb": 0.0,
+    "if": 0.0,
+    "lof": 0.0
+  },
+  "key_finding": "XGBoost alone is optimal for Altman. 98.5% recall at 7.94% FPR. XGB dominates due to merchant/city/card features."
+}

@@ -1,0 +1,21 @@
+{
+  "C0": {
+    "train": "<=2013",
+    "validate": "2014",
+    "forward_val": "2015",
+    "eval": "2016+2017"
+  },
+  "C1": {
+    "train": "<=2014",
+    "validate": "2015",
+    "eval": "2016+2017"
+  },
+  "C2": {
+    "train": "ALL <=2015",
+    "validate": "UNSUPPORTED (no forward year)",
+    "eval": "2016+2017",
+    "threshold_source": "C0_control"
+  },
+  "note": "C2 trains on ALL <=2015 to include chip fraud; threshold comes from C0",
+  "cert_time_utc": "2026-09-08T09:47:39Z"
+}

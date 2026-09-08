@@ -1,0 +1,36 @@
+[
+  {
+    "experiment_id": "TEMPORAL_v1",
+    "category": "TEMPORAL",
+    "dataset": "kaggle_fraud",
+    "data_type": "REAL_PUBLIC_DATASET",
+    "split": "train: 2019+Q1, test: Apr-Sep 2020",
+    "train_n": 1097693,
+    "test_n": 473180,
+    "n": 473180,
+    "n_fraud": 2372,
+    "n_legit": 470808,
+    "prevalence": 0.005013,
+    "roc_auc": 0.9877,
+    "pr_auc": 0.7742,
+    "brier": 0.003,
+    "recall_at_0_1pct_fpr": 0.696,
+    "recall_at_0_5pct_fpr": 0.804,
+    "recall_at_1pct_fpr": 0.8487,
+    "precision": null,
+    "ci": {
+      "roc_auc": [
+        0.9794,
+        0.9939
+      ],
+      "pr_auc": [
+        0.7279,
+        0.8274
+      ],
+      "recall_1pct": [
+        0.8052,
+        0.9009
+      ]
+    }
+  }
+]

@@ -1,0 +1,96 @@
+{
+  "mission": "Phase-4 label-latency audit",
+  "dataset": "data/credit_card_transactions-ibm_v2.csv (IBM synthetic generator, 24,386,900 rows)",
+  "label_column": "Is Fraud? (Yes/No)",
+  "label_1_meaning": "Transaction flagged fraudulent at DATASET GENERATION time by the synthetic generator (pre-labeled static file)",
+  "label_created_when": "At dataset generation; there is no in-repo label-creation pipeline, investigation step, or confirmation timestamp (source: reports/data_provenance.json label_audit)",
+  "labels_change_later": "No mechanism in the dataset; static file (documented)",
+  "label_availability_timestamp": "ABSENT - no column or metadata records when a label would become available to a real-time scorer",
+  "verdict": "UNVERIFIED - the raw dataset cannot establish that a fraud label exists at the moment the model scores a later transaction",
+  "generator_semantics": "Fraud events are generated as bursts/archetypes; the generator assigns the label at transaction creation. In the synthetic world labels exist at t=0 for the CURRENT row and are usable for any LATER row by construction. Real-world confirmation delay cannot be inferred from the file.",
+  "empirical_exposure": {
+    "user_level": {
+      "n": 24386724,
+      "p50_days": 0.221,
+      "p90_days": 0.996,
+      "p99_days": 12.746,
+      "pct_lt_1d": 90.05,
+      "pct_lt_7d": 95.65,
+      "pct_lt_30d": 100.0
+    },
+    "merchant_level": {
+      "n": 24367566,
+      "p50_days": 6.362,
+      "p90_days": 17.042,
+      "p99_days": 18.198,
+      "pct_lt_1d": 31.37,
+      "pct_lt_7d": 50.06,
+      "pct_lt_30d": 100.0
+    },
+    "city_level": {
+      "n": 24379556,
+      "p50_days": 12.856,
+      "p90_days": 17.179,
+      "p99_days": 18.219,
+      "pct_lt_1d": 20.9,
+      "pct_lt_7d": 41.16,
+      "pct_lt_30d": 100.0
+    },
+    "interpretation": "For each entity, the gap = time from an entity's fraud event to the NEXT transaction of that same entity. If labels lag by more than the gap, that next transaction is scored with a fraud-rate feature that does NOT yet include the fraud. User-level rates are the most latency-critical (median 0.22d, 90% within 1d); merchant rates need ~6.4d for half; city ~12.9d."
+  },
+  "train_vs_prod_finding": "TRAINING fraud-rate features use an EXPANDING cumsum of ground-truth labels over the sampled stream; PRODUCTION uses a rolling 100-event window of decision-proxy labels (risk score>=70 recorded after each evaluation) with min_events=5 -> baseline 0.001. These differ in window, label source, and availability timing. The feature-parity certification compared the derive functions on the same context, NOT this tracker semantic.",
+  "count_density_finding": "Training count/velocity features were computed on 5%-sampled legit traffic; production tracks FULL traffic. Merchant coverage in training is the direct cause of the 'established-but-absent' FPR population (see merchant_coverage_matrix.json).",
+  "feature_inventory": [
+    {
+      "feature": "user_fraud_rate",
+      "uses_labels": true,
+      "uses_future_rows": false,
+      "training_definition": "expanding mean of is_fraud over ALL prior rows of the user in the sampled chronological stream (shifted: the row itself never counts); baseline 0.001 before first row",
+      "production_definition": "EntityFraudRateTracker rolling window (last 100 events) fraction of CONFIRMED fraud events; min_events=5 else baseline 0.001; updated AFTER each evaluation from risk decision (score>=70 proxy) or DB-2 history",
+      "label_availability_verified": false,
+      "production_computable": true,
+      "notes": "TRAIN/PROD SEMANTIC MISMATCH: training = expanding all-history cumsum of TRUE labels; production = rolling 100-window of DECISION-PROXY labels (score>=70) - a different quantity even with zero latency. Label availability at the exact scoring moment is UNVERIFIED."
+    },
+    {
+      "feature": "merch_fraud_rate",
+      "uses_labels": true,
+      "uses_future_rows": false,
+      "training_definition": "expanding mean of is_fraud over ALL prior rows of the merchant (sampled stream, shifted)",
+      "production_definition": "same rolling-window tracker (merchant key); baseline 0.001",
+      "label_availability_verified": false,
+      "production_computable": true,
+      "notes": "same mismatch as user_fraud_rate. Merchant-level gap evidence: a fraud label would need to be available within median 6.4 days of the fraud for 50% of subsequent merchant scores to reflect it."
+    },
+    {
+      "feature": "city_fraud_rate",
+      "uses_labels": true,
+      "uses_future_rows": false,
+      "training_definition": "expanding mean of is_fraud over ALL prior rows of the merchant-city (sampled stream, shifted)",
+      "production_definition": "same rolling-window tracker (city key); baseline 0.001",
+      "label_availability_verified": false,
+      "production_computable": true,
+      "notes": "same mismatch. City-level gap: median 12.9 days."
+    },
+    {
+      "feature": "user_tx_count / card_tx_count / merch_tx_count / user_avg_amt / amt_zscore / diversities / user_merch_count",
+      "uses_labels": false,
+      "uses_future_rows": false,
+      "training_definition": "expanding counts / means over prior SAMPLED rows (5% legit) of the entity (shifted)",
+      "production_definition": "velocity tracker / DB-2 real-time query counts over FULL live traffic (no sampling)",
+      "label_availability_verified": true,
+      "production_computable": true,
+      "notes": "COUNT-DENSITY MISMATCH (coverage-related): training counts were computed on a 5%-legit sample; production counts full traffic. For a merchant with N true prior transactions, training sees ~N/20 - so training-level 'established merchant' signals are far weaker than production will feed."
+    },
+    {
+      "feature": "all 6 merchant-establishment novelty features (merchant_age, is_merchant_new, merch_prior_rows, merch_prior_fraud, merch_prior_rate, merch_ever_seen_prior) [phase-2/3 candidates, NOT deployed]",
+      "uses_labels": true,
+      "uses_future_rows": false,
+      "training_definition": "full-corpus per-year aggregates strictly before the row's year (cumulative); merch_prior_fraud/rate use label counts",
+      "production_definition": "would require shipping the merchant table; label counts inherit the same availability question",
+      "label_availability_verified": false,
+      "production_computable": "conditional on shipping table",
+      "notes": "leakage-audited PASS (future rows / own-year labels change nothing); label latency itself remains UNVERIFIED; merchant_age / prior ROWS are label-free and safe, prior FRAUD counts are label-dependent"
+    }
+  ],
+  "conclusion": "LABEL LATENCY = UNVERIFIED (unchanged, per mission rules). Two actionable findings: (1) merchant_age + prior-row-count features are label-free establishment signals and are safe to add; (2) the production EntityFraudRateTracker feeds the model its OWN decisions as labels, so prod fraud-rate features are not the quantity the model was trained on - replacing that proxy with real confirmed labels (or dropping the three fraud-rate features) is the lowest-risk fix before any new model."
+}

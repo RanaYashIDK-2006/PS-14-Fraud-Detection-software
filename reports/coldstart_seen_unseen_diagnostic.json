@@ -1,0 +1,163 @@
+{
+ "threshold": 0.018758,
+ "definition": "seen = merchant code (feat 26) appears among the model's actual training rows (year<2016 frame rows); unseen otherwise",
+ "note": "test metrics are a DIAGNOSTIC reproduction of the certified claim, not a development signal",
+ "sections": [
+  {
+   "name": "validation_2016_17",
+   "overall": {
+    "rows": 174530,
+    "fraud": 3834,
+    "legit": 170696,
+    "tp": 3815,
+    "fn": 19,
+    "fp": 19682,
+    "tn": 151014,
+    "recall": 0.995044,
+    "fpr": 0.115304,
+    "precision": 0.162361,
+    "alerts": 23497,
+    "alert_rate": 0.13463,
+    "roc_auc": 0.995594,
+    "pr_auc": 0.914337
+   },
+   "seen_merchant": {
+    "rows": 172055,
+    "fraud": 3641,
+    "legit": 168414,
+    "tp": 3622,
+    "fn": 19,
+    "fp": 17915,
+    "tn": 150499,
+    "recall": 0.994782,
+    "fpr": 0.106375,
+    "precision": 0.168176,
+    "alerts": 21537,
+    "alert_rate": 0.125175,
+    "roc_auc": 0.996259,
+    "pr_auc": 0.926104
+   },
+   "unseen_merchant": {
+    "rows": 2475,
+    "fraud": 193,
+    "legit": 2282,
+    "tp": 193,
+    "fn": 0,
+    "fp": 1767,
+    "tn": 515,
+    "recall": 1.0,
+    "fpr": 0.774321,
+    "precision": 0.098469,
+    "alerts": 1960,
+    "alert_rate": 0.791919,
+    "roc_auc": 0.905085,
+    "pr_auc": 0.570719
+   }
+  },
+  {
+   "name": "test_2018_20",
+   "overall": {
+    "rows": 192372,
+    "fraud": 4578,
+    "legit": 187794,
+    "tp": 4563,
+    "fn": 15,
+    "fp": 20634,
+    "tn": 167160,
+    "recall": 0.996723,
+    "fpr": 0.109876,
+    "precision": 0.181093,
+    "alerts": 25197,
+    "alert_rate": 0.130981,
+    "roc_auc": 0.986981,
+    "pr_auc": 0.637788
+   },
+   "seen_merchant": {
+    "rows": 189239,
+    "fraud": 4305,
+    "legit": 184934,
+    "tp": 4290,
+    "fn": 15,
+    "fp": 18789,
+    "tn": 166145,
+    "recall": 0.996516,
+    "fpr": 0.101598,
+    "precision": 0.185883,
+    "alerts": 23079,
+    "alert_rate": 0.121957,
+    "roc_auc": 0.98775,
+    "pr_auc": 0.624912
+   },
+   "unseen_merchant": {
+    "rows": 3133,
+    "fraud": 273,
+    "legit": 2860,
+    "tp": 273,
+    "fn": 0,
+    "fp": 1845,
+    "tn": 1015,
+    "recall": 1.0,
+    "fpr": 0.645105,
+    "precision": 0.128895,
+    "alerts": 2118,
+    "alert_rate": 0.676029,
+    "roc_auc": 0.991197,
+    "pr_auc": 0.923391
+   }
+  }
+ ],
+ "mechanism_test_legit": [
+  {
+   "split": "seen_merchant_test_legit",
+   "n": 184934,
+   "mean_score": 0.018132377415895462,
+   "pct_flagged": 0.1016,
+   "feat_means": {
+    "hr": 12.3895,
+    "dow": 3.0437,
+    "chip": 0.7044,
+    "is_online": 0.1269,
+    "is_swipe": 0.1687,
+    "mcc": 5551.8833,
+    "user_tx_count": 918.4719,
+    "card_tx_count": 288415.7188,
+    "user_avg_amt": 45.0616,
+    "amt_vs_user_avg": 1.0822,
+    "amt_zscore": 0.0822,
+    "merch_tx_count": 14570.0859,
+    "user_merchant_diversity": 108.1041,
+    "user_city_diversity": 58.3115,
+    "user_fraud_rate": 0.0227,
+    "merch_fraud_rate": 0.0181,
+    "city_fraud_rate": 0.0212,
+    "user_merch_count": 90.8487
+   }
+  },
+  {
+   "split": "unseen_merchant_test_legit",
+   "n": 2860,
+   "mean_score": 0.148856058716774,
+   "pct_flagged": 0.6451,
+   "feat_means": {
+    "hr": 12.8997,
+    "dow": 2.8692,
+    "chip": 0.8196,
+    "is_online": 0.0,
+    "is_swipe": 0.1804,
+    "mcc": 6107.6392,
+    "user_tx_count": 631.1332,
+    "card_tx_count": 308881.4062,
+    "user_avg_amt": 46.3749,
+    "amt_vs_user_avg": 1.7288,
+    "amt_zscore": 0.7288,
+    "merch_tx_count": 0.6822,
+    "user_merchant_diversity": 91.2622,
+    "user_city_diversity": 48.1269,
+    "user_fraud_rate": 0.0212,
+    "merch_fraud_rate": 0.0037,
+    "city_fraud_rate": 0.0105,
+    "user_merch_count": 0.5773
+   }
+  }
+ ]
+}

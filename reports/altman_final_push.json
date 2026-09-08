@@ -1,0 +1,34 @@
+{
+  "dataset": "ALTMAN_FINAL",
+  "n_rows": 99150,
+  "n_features": 39,
+  "n_fraud": 19248,
+  "optuna_trials": 15,
+  "optuna_best_cv": 0.993996,
+  "best_params": {
+    "n_est": 350,
+    "max_depth": 10,
+    "lr": 0.12704614156038088,
+    "subsample": 0.8394633936788146,
+    "colsample": 0.5780093202212182,
+    "min_child": 9,
+    "alpha": 0.0017073967431528124,
+    "lambda": 2.9154431891537547,
+    "num_leaves": 68
+  },
+  "cv_5fold_mean": 0.994674,
+  "cv_5fold_std": 0.000456,
+  "overall_oof": 0.994672,
+  "metrics": {
+    "roc_auc": 0.994672,
+    "pr_auc": 0.982736,
+    "brier": 0.019507,
+    "r1": 0.90877,
+    "r05": 0.872662,
+    "r01": 0.765326,
+    "f1": 0.933214
+  },
+  "target_995_achieved": false,
+  "elapsed": 73,
+  "ts": "2026-08-29T07:27:28Z"
+}

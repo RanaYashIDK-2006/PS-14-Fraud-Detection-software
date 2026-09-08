@@ -1,0 +1,13 @@
+[Unit]
+Description=PS-14 Data Retention Enforcement
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /opt/ps14/scripts/retention-cron.sh
+WorkingDirectory=/opt/ps14
+User=ps14
+Group=ps14
+StandardOutput=journal
+StandardError=journal

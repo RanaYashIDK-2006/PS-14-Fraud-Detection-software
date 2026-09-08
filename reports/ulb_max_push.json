@@ -1,0 +1,99 @@
+{
+  "dataset": "ULB creditcard.csv",
+  "n_rows": 284807,
+  "n_fraud": 492,
+  "fraud_rate": 0.001727,
+  "n_features": 49,
+  "time_split": {
+    "xgb_auc": 0.966404,
+    "xgb_r1": 0.815385,
+    "lgb_auc": 0.892615,
+    "lgb_r1": 0.784615,
+    "lr_auc": 0.938439,
+    "lr_r1": 0.8,
+    "ensemble_auc": 0.938823,
+    "ensemble_r1": 0.807692,
+    "ensemble_r05": 0.8
+  },
+  "cv_5fold": {
+    "auc_mean": 0.981111,
+    "auc_std": 0.009471,
+    "r1_mean": 0.886127,
+    "r1_std": 0.013884
+  },
+  "optuna_best_params": {
+    "n_estimators": 428,
+    "max_depth": 8,
+    "lr": 0.06524997482460944,
+    "subsample": 0.8247247154651213,
+    "colsample": 0.7573990853953659,
+    "gamma": 0.008347279146709852,
+    "mcw": 11
+  },
+  "feature_importance_top15": [
+    {
+      "name": "V14",
+      "importance": 0.685084
+    },
+    {
+      "name": "V14_dev",
+      "importance": 0.112155
+    },
+    {
+      "name": "V4",
+      "importance": 0.027267
+    },
+    {
+      "name": "V10",
+      "importance": 0.024195
+    },
+    {
+      "name": "V4_abs",
+      "importance": 0.009858
+    },
+    {
+      "name": "V4_dev",
+      "importance": 0.008604
+    },
+    {
+      "name": "V17",
+      "importance": 0.006987
+    },
+    {
+      "name": "V12_abs",
+      "importance": 0.006654
+    },
+    {
+      "name": "V3",
+      "importance": 0.005848
+    },
+    {
+      "name": "V11_dev",
+      "importance": 0.005837
+    },
+    {
+      "name": "V11_abs",
+      "importance": 0.005489
+    },
+    {
+      "name": "V1",
+      "importance": 0.005382
+    },
+    {
+      "name": "Amount",
+      "importance": 0.005356
+    },
+    {
+      "name": "V12_dev",
+      "importance": 0.005231
+    },
+    {
+      "name": "V12",
+      "importance": 0.00497
+    }
+  ],
+  "target_assessment": {
+    "auc_99": "NOT MET",
+    "r1_90": "NOT MET"
+  }
+}

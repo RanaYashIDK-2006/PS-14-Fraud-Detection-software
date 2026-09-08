@@ -1,0 +1,78 @@
+[
+  {
+    "timestamp": 1787998389.1379442,
+    "n_samples": 5000,
+    "aggregate_psi": 0.078421,
+    "max_psi": 1.121553,
+    "max_psi_feature": "city_id",
+    "n_stable": 17,
+    "n_warning": 0,
+    "n_critical": 2,
+    "critical_features": [
+      "merchant_id",
+      "city_id"
+    ],
+    "warning_features": [],
+    "needs_retrain": false,
+    "needs_investigation": true,
+    "per_feature_psi": {
+      "amt": 0.013439,
+      "hr": 0.019701,
+      "mn": 0.005462,
+      "mcc_n": 0.021207,
+      "chip": 0.000607,
+      "err": 0.0,
+      "merchant_id": 0.214122,
+      "city_id": 1.121553,
+      "is_online": 0.000292,
+      "amt_log": 0.013439,
+      "log_amt": 0.013439,
+      "amt_x_hr": 0.01483,
+      "amt_x_mcc": 0.015522,
+      "amt_x_chip": 0.008678,
+      "amt_sq": 0.011486,
+      "night_tx": 0.000605,
+      "day_decimal": 0.004226,
+      "Month": 0.004578,
+      "Year": 0.006804
+    }
+  },
+  {
+    "timestamp": 1787998389.1957145,
+    "n_samples": 5000,
+    "aggregate_psi": 0.064172,
+    "max_psi": 0.796534,
+    "max_psi_feature": "city_id",
+    "n_stable": 17,
+    "n_warning": 0,
+    "n_critical": 2,
+    "critical_features": [
+      "merchant_id",
+      "city_id"
+    ],
+    "warning_features": [],
+    "needs_retrain": false,
+    "needs_investigation": true,
+    "per_feature_psi": {
+      "amt": 0.017769,
+      "hr": 0.014681,
+      "mn": 0.007502,
+      "mcc_n": 0.026036,
+      "chip": 0.008774,
+      "err": 0.0,
+      "merchant_id": 0.216838,
+      "city_id": 0.796534,
+      "is_online": 0.007738,
+      "amt_log": 0.017769,
+      "log_amt": 0.017769,
+      "amt_x_hr": 0.018565,
+      "amt_x_mcc": 0.020316,
+      "amt_x_chip": 0.00778,
+      "amt_sq": 0.017269,
+      "night_tx": 0.000811,
+      "day_decimal": 0.005331,
+      "Month": 0.008212,
+      "Year": 0.009567
+    }
+  }
+]

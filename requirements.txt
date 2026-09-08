@@ -1,0 +1,26 @@
+# ML pipeline
+numpy
+pandas
+scikit-learn==1.9.0
+xgboost==3.4.1
+joblib
+matplotlib
+
+# Services (Identity Service, Privacy Layer, Risk Engine)
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+pydantic
+pydantic-settings
+email-validator
+PyJWT
+argon2-cffi
+cryptography
+PyYAML
+
+# Testing
+httpx
+
+# Presentation deck builder (scripts/build_presentation.py)
+python-pptx

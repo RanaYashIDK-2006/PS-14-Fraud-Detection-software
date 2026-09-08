@@ -1,0 +1,86 @@
+# PS-14 — Caddy production config with Let's Encrypt auto-HTTPS
+#
+# Caddy automatically obtains and renews TLS certificates from Let's Encrypt.
+# No certbot, no manual renewal, no certificate files to manage.
+#
+# Usage:
+#   1. Set DOMAIN in .env (e.g. ps14.example.com)
+#   2. Ensure DNS A record points to your server
+#   3. Ensure ports 80 and 443 are open (Caddy handles HTTP→HTTPS redirect)
+#   4. docker compose -f docker-compose.prod.yml up -d
+#
+# Caddy will:
+#   - Automatically obtain a Let's Encrypt certificate for your domain
+#   - Redirect all HTTP traffic to HTTPS
+#   - Auto-renew certificates before expiry
+#   - Serve HSTS headers with preload
+
+# --- Front page (landing + status + admin) ----------------------------------
+{$DOMAIN} {
+    reverse_proxy front:8000
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    log {
+        output file /var/log/caddy/front.log
+        format json
+    }
+}
+
+# --- Verification UI (alerts) -----------------------------------------------
+alerts.{$DOMAIN} {
+    reverse_proxy verify:8004
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    log {
+        output file /var/log/caddy/alerts.log
+        format json
+    }
+}
+
+# --- Compliance trail --------------------------------------------------------
+compliance.{$DOMAIN} {
+    reverse_proxy audit:8005
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    log {
+        output file /var/log/caddy/compliance.log
+        format json
+    }
+}
+
+# --- Identity Service (register/login API only) ------------------------------
+auth.{$DOMAIN} {
+    reverse_proxy identity:8001
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        -Server
+    }
+
+    log {
+        output file /var/log/caddy/auth.log
+        format json
+    }
+}

@@ -1,0 +1,248 @@
+{
+  "title": "BRUTALLY HONEST EVALUATION",
+  "disclaimer": "ALL numbers are from real evaluations. NO synthetic inflation.",
+  "timestamp": "2026-08-28T13:16:36",
+  "datasets": {
+    "ulb_creditcard": {
+      "dataset": "ulb_creditcard",
+      "n_rows": 284807,
+      "fraud": 492,
+      "fraud_rate": 0.001727,
+      "hash": "76274b691b16a6c4",
+      "n_feat_base": 30,
+      "n_feat_pattern": 40,
+      "results": {
+        "base_lr": {
+          "roc_auc": 0.972102,
+          "pr_auc": 0.728989,
+          "brier": 0.023494,
+          "r1": 0.908163,
+          "r05": 0.887755,
+          "r01": 0.846939,
+          "n_pos": 98,
+          "n_neg": 56864,
+          "time": 0.4
+        },
+        "base_rf": {
+          "roc_auc": 0.981636,
+          "pr_auc": 0.831402,
+          "brier": 0.001074,
+          "r1": 0.908163,
+          "r05": 0.897959,
+          "r01": 0.857143,
+          "n_pos": 98,
+          "n_neg": 56864,
+          "time": 16.6
+        },
+        "base_xgb": {
+          "roc_auc": 0.977358,
+          "pr_auc": 0.874863,
+          "brier": 0.000378,
+          "r1": 0.897959,
+          "r05": 0.897959,
+          "r01": 0.867347,
+          "n_pos": 98,
+          "n_neg": 56864,
+          "time": 2.6
+        },
+        "pattern_lr": {
+          "roc_auc": 0.974676,
+          "pr_auc": 0.712332,
+          "brier": 0.024466,
+          "r1": 0.897959,
+          "r05": 0.887755,
+          "r01": 0.836735,
+          "n_pos": 98,
+          "n_neg": 56864,
+          "time": 0.6
+        },
+        "pattern_rf": {
+          "roc_auc": 0.983721,
+          "pr_auc": 0.829117,
+          "brier": 0.001182,
+          "r1": 0.897959,
+          "r05": 0.897959,
+          "r01": 0.846939,
+          "n_pos": 98,
+          "n_neg": 56864,
+          "time": 17.7
+        },
+        "pattern_xgb": {
+          "roc_auc": 0.975807,
+          "pr_auc": 0.883465,
+          "brier": 0.000361,
+          "r1": 0.918367,
+          "r05": 0.897959,
+          "r01": 0.887755,
+          "n_pos": 98,
+          "n_neg": 56864,
+          "time": 3.3
+        },
+        "pattern_stacker": {
+          "roc_auc": 0.976855,
+          "pr_auc": 0.875298,
+          "brier": 0.000389,
+          "r1": 0.908163,
+          "r05": 0.908163,
+          "r01": 0.867347,
+          "n_pos": 98,
+          "n_neg": 56864,
+          "time": 97.6
+        },
+        "cv_5fold_xgb": {
+          "roc_auc_mean": 0.984873,
+          "roc_auc_std": 0.007484,
+          "pr_auc_mean": 0.85371,
+          "r1_mean": 0.898572
+        },
+        "stacker_ci": {
+          "roc_auc_95ci": [
+            0.958228,
+            0.994999
+          ],
+          "pr_auc_95ci": [
+            0.813243,
+            0.928568
+          ]
+        }
+      },
+      "timestamp": "2026-08-28T12:58:20"
+    },
+    "ibm_altman": {
+      "dataset": "ibm_altman",
+      "sampled": 3000000,
+      "total": 24386900,
+      "fraud": 3421,
+      "fraud_rate": 0.00114,
+      "hash": "b01fa323c98522f8",
+      "n_features": 21,
+      "user_disjoint": {
+        "train_users": 203,
+        "test_users": 50
+      },
+      "time_overlap": {
+        "overlap_pct": 73.8
+      },
+      "results": {
+        "disjoint_lr": {
+          "d_roc_auc": 0.884096,
+          "d_pr_auc": 0.022068,
+          "d_brier": 0.12745,
+          "d_r1": 0.260274,
+          "d_r05": 0.183219,
+          "d_r01": 0.125,
+          "d_n_pos": 584,
+          "d_n_neg": 540551,
+          "time": 9.7
+        },
+        "disjoint_xgb": {
+          "d_roc_auc": 0.959995,
+          "d_pr_auc": 0.571631,
+          "d_brier": 0.000726,
+          "d_r1": 0.72089,
+          "d_r05": 0.691781,
+          "d_r01": 0.630137,
+          "d_n_pos": 584,
+          "d_n_neg": 540551,
+          "time": 66.3
+        },
+        "time_lr": {
+          "t_roc_auc": 0.819085,
+          "t_pr_auc": 0.01471,
+          "t_brier": 0.11572,
+          "t_r1": 0.214286,
+          "t_r05": 0.162338,
+          "t_r01": 0.092532,
+          "t_n_pos": 616,
+          "t_n_neg": 599384,
+          "time": 2.3
+        },
+        "time_xgb": {
+          "t_roc_auc": 0.815377,
+          "t_pr_auc": 0.006938,
+          "t_brier": 0.001117,
+          "t_r1": 0.131494,
+          "t_r05": 0.077922,
+          "t_r01": 0.024351,
+          "t_n_pos": 616,
+          "t_n_neg": 599384,
+          "time": 29.1
+        }
+      },
+      "timestamp": "2026-08-28T13:12:41"
+    },
+    "paysim": {
+      "dataset": "paysim_1m",
+      "n_rows": 1200000,
+      "fraud": 58800,
+      "fraud_rate": 0.049,
+      "hash": "fa1df0f1b65905cc",
+      "n_features": 17,
+      "results": {
+        "lr": {
+          "roc_auc": 0.908865,
+          "pr_auc": 0.544797,
+          "brier": 0.107913,
+          "r1": 0.394133,
+          "r05": 0.32602,
+          "r01": 0.178656,
+          "n_pos": 11760,
+          "n_neg": 228240,
+          "time": 3.4
+        },
+        "xgb": {
+          "roc_auc": 0.940953,
+          "pr_auc": 0.644924,
+          "brier": 0.040959,
+          "r1": 0.48835,
+          "r05": 0.400085,
+          "r01": 0.239371,
+          "n_pos": 11760,
+          "n_neg": 228240,
+          "time": 14.2
+        }
+      },
+      "timestamp": "2026-08-28T13:14:33"
+    }
+  },
+  "honest_summary": {
+    "ulb": {
+      "best_model": "xgb_pattern",
+      "roc_auc": 0.9758,
+      "pr_auc": 0.8835,
+      "r1_pct": 0.918,
+      "cv_5fold_auc": "0.985\u00b10.007",
+      "data_type": "SYNTHETIC"
+    },
+    "altman": {
+      "best_model": "xgb_user_disjoint",
+      "roc_auc": 0.96,
+      "pr_auc": 0.8293,
+      "r1_pct": 0.721,
+      "data_type": "SYNTHETIC"
+    },
+    "paysim": {
+      "best_model": "xgb",
+      "roc_auc": 0.941,
+      "pr_auc": 0.6449,
+      "r1_pct": 0.488,
+      "data_type": "SIMULATED"
+    }
+  },
+  "limitations": [
+    "ALL datasets are synthetic/simulated \u2014 no real bank data",
+    "Cross-domain evaluation impossible (incompatible feature spaces)",
+    "Altman time-based split shows temporal drift (AUC drops to 0.815)",
+    "PaySim 4.9% fraud rate is unrealistic vs real ~0.1%",
+    "No adversarial robustness testing",
+    "No production latency measurements",
+    "PCA features in ULB cannot be mapped back to original features"
+  ],
+  "claims_status": {
+    "99%+ ROC-AUC": "UNSUPPORTED \u2014 best verified is 97.6% on ULB synthetic data",
+    "cross_domain_generalization": "UNSUPPORTED \u2014 feature spaces incompatible",
+    "production_ready": "UNSUPPORTED \u2014 no real-world validation",
+    "user_disjoint_96_pct": "VERIFIED on IBM Altman synthetic data (3M rows)",
+    "ulb_5fold_cv_98_5": "VERIFIED on ULB synthetic data"
+  }
+}

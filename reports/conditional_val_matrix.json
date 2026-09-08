@@ -1,0 +1,393 @@
+{
+ "continuity_buckets": [
+  {
+   "bucket": "0-0",
+   "n": 971,
+   "fraud": 83,
+   "E_mean": 0.15088,
+   "E_p50": 0.00529,
+   "PB2_mean": 0.19146,
+   "PB2_p50": 0.00605,
+   "CS1_mean": 0.18561,
+   "E_fpr_at_P2thr": 0.3164,
+   "PB2_fpr_at_P2thr": 0.3255
+  },
+  {
+   "bucket": "1-5",
+   "n": 28646,
+   "fraud": 629,
+   "E_mean": 0.04218,
+   "E_p50": 0.00058,
+   "PB2_mean": 0.07296,
+   "PB2_p50": 0.00054,
+   "CS1_mean": 0.0639,
+   "E_fpr_at_P2thr": 0.138,
+   "PB2_fpr_at_P2thr": 0.1475
+  },
+  {
+   "bucket": "6-20",
+   "n": 36947,
+   "fraud": 723,
+   "E_mean": 0.03901,
+   "E_p50": 0.0011,
+   "PB2_mean": 0.0743,
+   "PB2_p50": 0.00179,
+   "CS1_mean": 0.06668,
+   "E_fpr_at_P2thr": 0.136,
+   "PB2_fpr_at_P2thr": 0.2026
+  },
+  {
+   "bucket": "21-100",
+   "n": 79943,
+   "fraud": 1722,
+   "E_mean": 0.03696,
+   "E_p50": 0.0005,
+   "PB2_mean": 0.05835,
+   "PB2_p50": 0.00049,
+   "CS1_mean": 0.05197,
+   "E_fpr_at_P2thr": 0.1059,
+   "PB2_fpr_at_P2thr": 0.1276
+  },
+  {
+   "bucket": "101-1000",
+   "n": 26808,
+   "fraud": 662,
+   "E_mean": 0.03427,
+   "E_p50": 0.00063,
+   "PB2_mean": 0.03827,
+   "PB2_p50": 0.00082,
+   "CS1_mean": 0.03597,
+   "E_fpr_at_P2thr": 0.0757,
+   "PB2_fpr_at_P2thr": 0.0732
+  },
+  {
+   "bucket": "1001-+",
+   "n": 1215,
+   "fraud": 15,
+   "E_mean": 0.04778,
+   "E_p50": 0.00303,
+   "PB2_mean": 0.09487,
+   "PB2_p50": 0.00387,
+   "CS1_mean": 0.08299,
+   "E_fpr_at_P2thr": 0.2833,
+   "PB2_fpr_at_P2thr": 0.28
+  }
+ ],
+ "matrix": {
+  "E_hardneg": {
+   "candidate": "E_hardneg",
+   "P1": {
+    "threshold": 0.05355844,
+    "overall": {
+     "recall": 0.990089,
+     "fpr": 0.070828,
+     "tp": 3796,
+     "fp": 12090
+    },
+    "seen": {
+     "recall": 0.989838,
+     "fpr": 0.063451,
+     "tp": 3604,
+     "fp": 10686
+    },
+    "absent": {
+     "recall": 0.994819,
+     "fpr": 0.61525,
+     "tp": 192,
+     "fp": 1404
+    }
+   },
+   "P2": {
+    "threshold": 0.01875816,
+    "overall": {
+     "recall": 0.995044,
+     "fpr": 0.115304,
+     "tp": 3815,
+     "fp": 19682
+    },
+    "seen": {
+     "recall": 0.994782,
+     "fpr": 0.106375,
+     "tp": 3622,
+     "fp": 17915
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.774321,
+     "tp": 193,
+     "fp": 1767
+    }
+   }
+  },
+  "PB1_nocodes": {
+   "candidate": "PB1_nocodes",
+   "P1": {
+    "threshold": 0.05016911,
+    "overall": {
+     "recall": 0.990089,
+     "fpr": 0.091865,
+     "tp": 3796,
+     "fp": 15681
+    },
+    "seen": {
+     "recall": 0.989563,
+     "fpr": 0.084393,
+     "tp": 3603,
+     "fp": 14213
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.643295,
+     "tp": 193,
+     "fp": 1468
+    }
+   },
+   "P2": {
+    "threshold": 0.0184078,
+    "overall": {
+     "recall": 0.995044,
+     "fpr": 0.137707,
+     "tp": 3815,
+     "fp": 23506
+    },
+    "seen": {
+     "recall": 0.994782,
+     "fpr": 0.128825,
+     "tp": 3622,
+     "fp": 21696
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.793164,
+     "tp": 193,
+     "fp": 1810
+    }
+   }
+  },
+  "PB2_nomerchant": {
+   "candidate": "PB2_nomerchant",
+   "P1": {
+    "threshold": 0.06372269,
+    "overall": {
+     "recall": 0.990089,
+     "fpr": 0.08627,
+     "tp": 3796,
+     "fp": 14726
+    },
+    "seen": {
+     "recall": 0.989563,
+     "fpr": 0.07918,
+     "tp": 3603,
+     "fp": 13335
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.609553,
+     "tp": 193,
+     "fp": 1391
+    }
+   },
+   "P2": {
+    "threshold": 0.01875712,
+    "overall": {
+     "recall": 0.995044,
+     "fpr": 0.140542,
+     "tp": 3815,
+     "fp": 23990
+    },
+    "seen": {
+     "recall": 0.994782,
+     "fpr": 0.131687,
+     "tp": 3622,
+     "fp": 22178
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.79404,
+     "tp": 193,
+     "fp": 1812
+    }
+   }
+  },
+  "CS1_entity+behav": {
+   "candidate": "CS1_entity+behav",
+   "P1": {
+    "threshold": 0.0467576,
+    "overall": {
+     "recall": 0.990089,
+     "fpr": 0.082527,
+     "tp": 3796,
+     "fp": 14087
+    },
+    "seen": {
+     "recall": 0.989838,
+     "fpr": 0.075576,
+     "tp": 3604,
+     "fp": 12728
+    },
+    "absent": {
+     "recall": 0.994819,
+     "fpr": 0.59553,
+     "tp": 192,
+     "fp": 1359
+    }
+   },
+   "P2": {
+    "threshold": 0.01446054,
+    "overall": {
+     "recall": 0.995044,
+     "fpr": 0.122914,
+     "tp": 3815,
+     "fp": 20981
+    },
+    "seen": {
+     "recall": 0.994782,
+     "fpr": 0.114367,
+     "tp": 3622,
+     "fp": 19261
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.753725,
+     "tp": 193,
+     "fp": 1720
+    }
+   }
+  },
+  "GATE_PB1_absent": {
+   "candidate": "GATE_PB1_absent",
+   "P1": {
+    "threshold": 0.05355844,
+    "overall": {
+     "recall": 0.990089,
+     "fpr": 0.071056,
+     "tp": 3796,
+     "fp": 12129
+    },
+    "seen": {
+     "recall": 0.989838,
+     "fpr": 0.063451,
+     "tp": 3604,
+     "fp": 10686
+    },
+    "absent": {
+     "recall": 0.994819,
+     "fpr": 0.63234,
+     "tp": 192,
+     "fp": 1443
+    }
+   },
+   "P2": {
+    "threshold": 0.01875816,
+    "overall": {
+     "recall": 0.995044,
+     "fpr": 0.115515,
+     "tp": 3815,
+     "fp": 19718
+    },
+    "seen": {
+     "recall": 0.994782,
+     "fpr": 0.106375,
+     "tp": 3622,
+     "fp": 17915
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.790096,
+     "tp": 193,
+     "fp": 1803
+    }
+   }
+  },
+  "GATE_PB2_absent": {
+   "candidate": "GATE_PB2_absent",
+   "P1": {
+    "threshold": 0.05781718,
+    "overall": {
+     "recall": 0.990089,
+     "fpr": 0.068566,
+     "tp": 3796,
+     "fp": 11704
+    },
+    "seen": {
+     "recall": 0.989563,
+     "fpr": 0.06104,
+     "tp": 3603,
+     "fp": 10280
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.624014,
+     "tp": 193,
+     "fp": 1424
+    }
+   },
+   "P2": {
+    "threshold": 0.01875816,
+    "overall": {
+     "recall": 0.995044,
+     "fpr": 0.115568,
+     "tp": 3815,
+     "fp": 19727
+    },
+    "seen": {
+     "recall": 0.994782,
+     "fpr": 0.106375,
+     "tp": 3622,
+     "fp": 17915
+    },
+    "absent": {
+     "recall": 1.0,
+     "fpr": 0.79404,
+     "tp": 193,
+     "fp": 1812
+    }
+   }
+  },
+  "GATE_CS1_absent": {
+   "candidate": "GATE_CS1_absent",
+   "P1": {
+    "threshold": 0.05355844,
+    "overall": {
+     "recall": 0.990089,
+     "fpr": 0.070365,
+     "tp": 3796,
+     "fp": 12011
+    },
+    "seen": {
+     "recall": 0.989838,
+     "fpr": 0.063451,
+     "tp": 3604,
+     "fp": 10686
+    },
+    "absent": {
+     "recall": 0.994819,
+     "fpr": 0.580631,
+     "tp": 192,
+     "fp": 1325
+    }
+   },
+   "P2": {
+    "threshold": 0.01852472,
+    "overall": {
+     "recall": 0.995044,
+     "fpr": 0.115275,
+     "tp": 3815,
+     "fp": 19677
+    },
+    "seen": {
+     "recall": 0.995056,
+     "fpr": 0.10701,
+     "tp": 3623,
+     "fp": 18022
+    },
+    "absent": {
+     "recall": 0.994819,
+     "fpr": 0.725241,
+     "tp": 192,
+     "fp": 1655
+    }
+   }
+  }
+ }
+}

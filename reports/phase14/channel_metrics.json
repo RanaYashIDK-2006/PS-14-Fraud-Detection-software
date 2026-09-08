@@ -1,0 +1,512 @@
+{
+  "channel_metrics": {
+    "C0_control": {
+      "2015": {
+        "Chip Transaction": {
+          "n": 12581,
+          "fraud": 301,
+          "legit": 12280,
+          "tp": 41,
+          "fp": 62,
+          "fn": 260,
+          "tn": 12218,
+          "recall": 0.136213,
+          "fpr": 0.005049,
+          "precision": 0.398058,
+          "alerts": 103,
+          "alerts_per_1k": 8.19
+        },
+        "Swipe Transaction": {
+          "n": 3035,
+          "fraud": 203,
+          "legit": 2832,
+          "tp": 26,
+          "fp": 6,
+          "fn": 177,
+          "tn": 2826,
+          "recall": 0.128079,
+          "fpr": 0.002119,
+          "precision": 0.8125,
+          "alerts": 32,
+          "alerts_per_1k": 10.54
+        },
+        "Online Transaction": {
+          "n": 4907,
+          "fraud": 2777,
+          "legit": 2130,
+          "tp": 2641,
+          "fp": 143,
+          "fn": 136,
+          "tn": 1987,
+          "recall": 0.951026,
+          "fpr": 0.067136,
+          "precision": 0.948635,
+          "alerts": 2784,
+          "alerts_per_1k": 567.35
+        },
+        "overall": {
+          "n": 20523,
+          "fraud": 3281,
+          "legit": 17242,
+          "tp": 2708,
+          "fp": 211,
+          "fn": 573,
+          "tn": 17031,
+          "recall": 0.825358,
+          "fpr": 0.012238,
+          "precision": 0.927715,
+          "alerts": 2919,
+          "alerts_per_1k": 142.23
+        }
+      },
+      "2016": {
+        "Chip Transaction": {
+          "n": 12133,
+          "fraud": 279,
+          "legit": 11854,
+          "tp": 33,
+          "fp": 34,
+          "fn": 246,
+          "tn": 11820,
+          "recall": 0.11828,
+          "fpr": 0.002868,
+          "precision": 0.492537,
+          "alerts": 67,
+          "alerts_per_1k": 5.52
+        },
+        "Swipe Transaction": {
+          "n": 3100,
+          "fraud": 227,
+          "legit": 2873,
+          "tp": 30,
+          "fp": 2,
+          "fn": 197,
+          "tn": 2871,
+          "recall": 0.132159,
+          "fpr": 0.000696,
+          "precision": 0.9375,
+          "alerts": 32,
+          "alerts_per_1k": 10.32
+        },
+        "Online Transaction": {
+          "n": 5176,
+          "fraud": 3073,
+          "legit": 2103,
+          "tp": 2794,
+          "fp": 110,
+          "fn": 279,
+          "tn": 1993,
+          "recall": 0.909209,
+          "fpr": 0.052306,
+          "precision": 0.962121,
+          "alerts": 2904,
+          "alerts_per_1k": 561.05
+        },
+        "overall": {
+          "n": 20409,
+          "fraud": 3579,
+          "legit": 16830,
+          "tp": 2857,
+          "fp": 146,
+          "fn": 722,
+          "tn": 16684,
+          "recall": 0.798268,
+          "fpr": 0.008675,
+          "precision": 0.951382,
+          "alerts": 3003,
+          "alerts_per_1k": 147.14
+        }
+      },
+      "2017": {
+        "Chip Transaction": {
+          "n": 12347,
+          "fraud": 248,
+          "legit": 12099,
+          "tp": 143,
+          "fp": 44,
+          "fn": 105,
+          "tn": 12055,
+          "recall": 0.576613,
+          "fpr": 0.003637,
+          "precision": 0.764706,
+          "alerts": 187,
+          "alerts_per_1k": 15.15
+        },
+        "Swipe Transaction": {
+          "n": 2916,
+          "fraud": 7,
+          "legit": 2909,
+          "tp": 3,
+          "fp": 3,
+          "fn": 4,
+          "tn": 2906,
+          "recall": 0.428571,
+          "fpr": 0.001031,
+          "precision": 0.5,
+          "alerts": 6,
+          "alerts_per_1k": 2.06
+        },
+        "Online Transaction": {
+          "recall": 0.0,
+          "fpr": 0.0,
+          "fraud": 0,
+          "n": 0,
+          "note": "no fraud or no data"
+        },
+        "overall": {
+          "n": 17378,
+          "fraud": 255,
+          "legit": 17123,
+          "tp": 146,
+          "fp": 182,
+          "fn": 109,
+          "tn": 16941,
+          "recall": 0.572549,
+          "fpr": 0.010629,
+          "precision": 0.445122,
+          "alerts": 328,
+          "alerts_per_1k": 18.87
+        }
+      }
+    },
+    "C1_2014chip": {
+      "2015": {
+        "Chip Transaction": {
+          "n": 12581,
+          "fraud": 301,
+          "legit": 12280,
+          "tp": 33,
+          "fp": 47,
+          "fn": 268,
+          "tn": 12233,
+          "recall": 0.109635,
+          "fpr": 0.003827,
+          "precision": 0.4125,
+          "alerts": 80,
+          "alerts_per_1k": 6.36
+        },
+        "Swipe Transaction": {
+          "n": 3035,
+          "fraud": 203,
+          "legit": 2832,
+          "tp": 16,
+          "fp": 6,
+          "fn": 187,
+          "tn": 2826,
+          "recall": 0.078818,
+          "fpr": 0.002119,
+          "precision": 0.727273,
+          "alerts": 22,
+          "alerts_per_1k": 7.25
+        },
+        "Online Transaction": {
+          "n": 4907,
+          "fraud": 2777,
+          "legit": 2130,
+          "tp": 2096,
+          "fp": 119,
+          "fn": 681,
+          "tn": 2011,
+          "recall": 0.754771,
+          "fpr": 0.055869,
+          "precision": 0.946275,
+          "alerts": 2215,
+          "alerts_per_1k": 451.4
+        },
+        "overall": {
+          "n": 20523,
+          "fraud": 3281,
+          "legit": 17242,
+          "tp": 2145,
+          "fp": 172,
+          "fn": 1136,
+          "tn": 17070,
+          "recall": 0.653764,
+          "fpr": 0.009976,
+          "precision": 0.925766,
+          "alerts": 2317,
+          "alerts_per_1k": 112.9
+        }
+      },
+      "2016": {
+        "Chip Transaction": {
+          "n": 12133,
+          "fraud": 279,
+          "legit": 11854,
+          "tp": 28,
+          "fp": 32,
+          "fn": 251,
+          "tn": 11822,
+          "recall": 0.100358,
+          "fpr": 0.0027,
+          "precision": 0.466667,
+          "alerts": 60,
+          "alerts_per_1k": 4.95
+        },
+        "Swipe Transaction": {
+          "n": 3100,
+          "fraud": 227,
+          "legit": 2873,
+          "tp": 23,
+          "fp": 3,
+          "fn": 204,
+          "tn": 2870,
+          "recall": 0.101322,
+          "fpr": 0.001044,
+          "precision": 0.884615,
+          "alerts": 26,
+          "alerts_per_1k": 8.39
+        },
+        "Online Transaction": {
+          "n": 5176,
+          "fraud": 3073,
+          "legit": 2103,
+          "tp": 2054,
+          "fp": 78,
+          "fn": 1019,
+          "tn": 2025,
+          "recall": 0.668402,
+          "fpr": 0.03709,
+          "precision": 0.963415,
+          "alerts": 2132,
+          "alerts_per_1k": 411.9
+        },
+        "overall": {
+          "n": 20409,
+          "fraud": 3579,
+          "legit": 16830,
+          "tp": 2105,
+          "fp": 113,
+          "fn": 1474,
+          "tn": 16717,
+          "recall": 0.588153,
+          "fpr": 0.006714,
+          "precision": 0.949053,
+          "alerts": 2218,
+          "alerts_per_1k": 108.68
+        }
+      },
+      "2017": {
+        "Chip Transaction": {
+          "n": 12347,
+          "fraud": 248,
+          "legit": 12099,
+          "tp": 96,
+          "fp": 30,
+          "fn": 152,
+          "tn": 12069,
+          "recall": 0.387097,
+          "fpr": 0.00248,
+          "precision": 0.761905,
+          "alerts": 126,
+          "alerts_per_1k": 10.2
+        },
+        "Swipe Transaction": {
+          "n": 2916,
+          "fraud": 7,
+          "legit": 2909,
+          "tp": 0,
+          "fp": 3,
+          "fn": 7,
+          "tn": 2906,
+          "recall": 0.0,
+          "fpr": 0.001031,
+          "precision": 0.0,
+          "alerts": 3,
+          "alerts_per_1k": 1.03
+        },
+        "Online Transaction": {
+          "recall": 0.0,
+          "fpr": 0.0,
+          "fraud": 0,
+          "n": 0,
+          "note": "no fraud or no data"
+        },
+        "overall": {
+          "n": 17378,
+          "fraud": 255,
+          "legit": 17123,
+          "tp": 96,
+          "fp": 94,
+          "fn": 159,
+          "tn": 17029,
+          "recall": 0.376471,
+          "fpr": 0.00549,
+          "precision": 0.505263,
+          "alerts": 190,
+          "alerts_per_1k": 10.93
+        }
+      }
+    },
+    "C2_2015chip": {
+      "2015": {
+        "Chip Transaction": {
+          "n": 12581,
+          "fraud": 301,
+          "legit": 12280,
+          "tp": 228,
+          "fp": 47,
+          "fn": 73,
+          "tn": 12233,
+          "recall": 0.757475,
+          "fpr": 0.003827,
+          "precision": 0.829091,
+          "alerts": 275,
+          "alerts_per_1k": 21.86
+        },
+        "Swipe Transaction": {
+          "n": 3035,
+          "fraud": 203,
+          "legit": 2832,
+          "tp": 148,
+          "fp": 11,
+          "fn": 55,
+          "tn": 2821,
+          "recall": 0.729064,
+          "fpr": 0.003884,
+          "precision": 0.930818,
+          "alerts": 159,
+          "alerts_per_1k": 52.39
+        },
+        "Online Transaction": {
+          "n": 4907,
+          "fraud": 2777,
+          "legit": 2130,
+          "tp": 2747,
+          "fp": 133,
+          "fn": 30,
+          "tn": 1997,
+          "recall": 0.989197,
+          "fpr": 0.062441,
+          "precision": 0.953819,
+          "alerts": 2880,
+          "alerts_per_1k": 586.92
+        },
+        "overall": {
+          "n": 20523,
+          "fraud": 3281,
+          "legit": 17242,
+          "tp": 3123,
+          "fp": 191,
+          "fn": 158,
+          "tn": 17051,
+          "recall": 0.951844,
+          "fpr": 0.011078,
+          "precision": 0.942366,
+          "alerts": 3314,
+          "alerts_per_1k": 161.48
+        }
+      },
+      "2016": {
+        "Chip Transaction": {
+          "n": 12133,
+          "fraud": 279,
+          "legit": 11854,
+          "tp": 113,
+          "fp": 58,
+          "fn": 166,
+          "tn": 11796,
+          "recall": 0.405018,
+          "fpr": 0.004893,
+          "precision": 0.660819,
+          "alerts": 171,
+          "alerts_per_1k": 14.09
+        },
+        "Swipe Transaction": {
+          "n": 3100,
+          "fraud": 227,
+          "legit": 2873,
+          "tp": 90,
+          "fp": 20,
+          "fn": 137,
+          "tn": 2853,
+          "recall": 0.396476,
+          "fpr": 0.006961,
+          "precision": 0.818182,
+          "alerts": 110,
+          "alerts_per_1k": 35.48
+        },
+        "Online Transaction": {
+          "n": 5176,
+          "fraud": 3073,
+          "legit": 2103,
+          "tp": 2893,
+          "fp": 121,
+          "fn": 180,
+          "tn": 1982,
+          "recall": 0.941425,
+          "fpr": 0.057537,
+          "precision": 0.959854,
+          "alerts": 3014,
+          "alerts_per_1k": 582.3
+        },
+        "overall": {
+          "n": 20409,
+          "fraud": 3579,
+          "legit": 16830,
+          "tp": 3096,
+          "fp": 199,
+          "fn": 483,
+          "tn": 16631,
+          "recall": 0.865046,
+          "fpr": 0.011824,
+          "precision": 0.939605,
+          "alerts": 3295,
+          "alerts_per_1k": 161.45
+        }
+      },
+      "2017": {
+        "Chip Transaction": {
+          "n": 12347,
+          "fraud": 248,
+          "legit": 12099,
+          "tp": 80,
+          "fp": 62,
+          "fn": 168,
+          "tn": 12037,
+          "recall": 0.322581,
+          "fpr": 0.005124,
+          "precision": 0.56338,
+          "alerts": 142,
+          "alerts_per_1k": 11.5
+        },
+        "Swipe Transaction": {
+          "n": 2916,
+          "fraud": 7,
+          "legit": 2909,
+          "tp": 5,
+          "fp": 10,
+          "fn": 2,
+          "tn": 2899,
+          "recall": 0.714286,
+          "fpr": 0.003438,
+          "precision": 0.333333,
+          "alerts": 15,
+          "alerts_per_1k": 5.14
+        },
+        "Online Transaction": {
+          "recall": 0.0,
+          "fpr": 0.0,
+          "fraud": 0,
+          "n": 0,
+          "note": "no fraud or no data"
+        },
+        "overall": {
+          "n": 17378,
+          "fraud": 255,
+          "legit": 17123,
+          "tp": 85,
+          "fp": 214,
+          "fn": 170,
+          "tn": 16909,
+          "recall": 0.333333,
+          "fpr": 0.012498,
+          "precision": 0.284281,
+          "alerts": 299,
+          "alerts_per_1k": 17.21
+        }
+      }
+    }
+  },
+  "cert_time_utc": "2026-09-08T09:47:39Z"
+}

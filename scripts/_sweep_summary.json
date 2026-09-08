@@ -1,0 +1,254 @@
+[
+  {
+    "suite": "adversarial_test",
+    "exit": 0,
+    "seconds": 4.1,
+    "timed_out": false
+  },
+  {
+    "suite": "audit_test",
+    "exit": 0,
+    "seconds": 5.8,
+    "timed_out": false
+  },
+  {
+    "suite": "backup_restore_test",
+    "exit": 0,
+    "seconds": 11.8,
+    "timed_out": false
+  },
+  {
+    "suite": "calibration_test",
+    "exit": 0,
+    "seconds": 1.7,
+    "timed_out": false
+  },
+  {
+    "suite": "chameleon_rules_test",
+    "exit": 0,
+    "seconds": 11.2,
+    "timed_out": false
+  },
+  {
+    "suite": "deployment_test",
+    "exit": 0,
+    "seconds": 17.0,
+    "timed_out": false
+  },
+  {
+    "suite": "drift_detector_test",
+    "exit": 0,
+    "seconds": 0.2,
+    "timed_out": false
+  },
+  {
+    "suite": "drift_test",
+    "exit": 0,
+    "seconds": 1.3,
+    "timed_out": false
+  },
+  {
+    "suite": "extended_dataset_test",
+    "exit": 0,
+    "seconds": 6.6,
+    "timed_out": false
+  },
+  {
+    "suite": "feature_compatibility_test",
+    "exit": 0,
+    "seconds": 2.9,
+    "timed_out": false
+  },
+  {
+    "suite": "federated_test",
+    "exit": 0,
+    "seconds": 30.2,
+    "timed_out": false
+  },
+  {
+    "suite": "feedback_test",
+    "exit": 0,
+    "seconds": 2.3,
+    "timed_out": false
+  },
+  {
+    "suite": "fp_reduction_test",
+    "exit": 0,
+    "seconds": 3.1,
+    "timed_out": false
+  },
+  {
+    "suite": "front_service_test",
+    "exit": 1,
+    "seconds": 56.4,
+    "timed_out": false
+  },
+  {
+    "suite": "inference_load_test",
+    "exit": 1,
+    "seconds": 2.6,
+    "timed_out": false
+  },
+  {
+    "suite": "k_anonymity_test",
+    "exit": 0,
+    "seconds": 0.9,
+    "timed_out": false
+  },
+  {
+    "suite": "leakage_structural_test",
+    "exit": 0,
+    "seconds": 0.2,
+    "timed_out": false
+  },
+  {
+    "suite": "leakage_test",
+    "exit": 0,
+    "seconds": 2.5,
+    "timed_out": false
+  },
+  {
+    "suite": "load_test",
+    "exit": 0,
+    "seconds": 3.3,
+    "timed_out": false
+  },
+  {
+    "suite": "max_capacity_test",
+    "exit": 1,
+    "seconds": 913.1,
+    "timed_out": false
+  },
+  {
+    "suite": "multi_dataset_test",
+    "exit": 0,
+    "seconds": 5.7,
+    "timed_out": false
+  },
+  {
+    "suite": "negative_test",
+    "exit": 0,
+    "seconds": 5.0,
+    "timed_out": false
+  },
+  {
+    "suite": "ood_gate_test",
+    "exit": 0,
+    "seconds": 1.7,
+    "timed_out": false
+  },
+  {
+    "suite": "penetration_test",
+    "exit": 1,
+    "seconds": 12.7,
+    "timed_out": false
+  },
+  {
+    "suite": "pipeline_test",
+    "exit": 0,
+    "seconds": 1.9,
+    "timed_out": false
+  },
+  {
+    "suite": "priority2_full_regression_test",
+    "exit": 0,
+    "seconds": 0.3,
+    "timed_out": false
+  },
+  {
+    "suite": "priority2_regression_test",
+    "exit": 1,
+    "seconds": 0.1,
+    "timed_out": false
+  },
+  {
+    "suite": "privacy_test",
+    "exit": 0,
+    "seconds": 0.3,
+    "timed_out": false
+  },
+  {
+    "suite": "production_gate_test",
+    "exit": 0,
+    "seconds": 1.3,
+    "timed_out": false
+  },
+  {
+    "suite": "pseudonym_separation_test",
+    "exit": 0,
+    "seconds": 0.1,
+    "timed_out": false
+  },
+  {
+    "suite": "real_dataset_test",
+    "exit": 1,
+    "seconds": 2.8,
+    "timed_out": false
+  },
+  {
+    "suite": "resilience_test",
+    "exit": 0,
+    "seconds": 2.8,
+    "timed_out": false
+  },
+  {
+    "suite": "risk_engine_test",
+    "exit": 0,
+    "seconds": 4.9,
+    "timed_out": false
+  },
+  {
+    "suite": "rules_gate_test",
+    "exit": 0,
+    "seconds": 9.6,
+    "timed_out": false
+  },
+  {
+    "suite": "security_attack_test",
+    "exit": 0,
+    "seconds": 0.1,
+    "timed_out": false
+  },
+  {
+    "suite": "security_test",
+    "exit": 0,
+    "seconds": 0.5,
+    "timed_out": false
+  },
+  {
+    "suite": "smoke_test",
+    "exit": 0,
+    "seconds": 1.7,
+    "timed_out": false
+  },
+  {
+    "suite": "sql_injection_test",
+    "exit": 0,
+    "seconds": 2.4,
+    "timed_out": false
+  },
+  {
+    "suite": "temporal_test",
+    "exit": 0,
+    "seconds": 0.2,
+    "timed_out": false
+  },
+  {
+    "suite": "tune_test",
+    "exit": 0,
+    "seconds": 1.7,
+    "timed_out": false
+  },
+  {
+    "suite": "unified_detection_test",
+    "exit": 0,
+    "seconds": 4.2,
+    "timed_out": false
+  },
+  {
+    "suite": "verification_test",
+    "exit": 0,
+    "seconds": 5.8,
+    "timed_out": false
+  }
+]

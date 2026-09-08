@@ -1,0 +1,473 @@
+{
+ "generated_at": "2026-09-03 14:21:34 UTC",
+ "model_microbench": {
+  "engine": "altman_lean_15feat_20260830_200346",
+  "single_row_ms": 1.9267,
+  "single_row_rps": 519.0,
+  "batch_10k_per_row_ms": 0.0141,
+  "batch_10k_rows_per_s": 70922.0
+ },
+ "latency_ingest": {
+  "p50": 15.0,
+  "p95": 16.0,
+  "p99": 32.0,
+  "max": 32.0,
+  "n": 140,
+  "errors": 10
+ },
+ "latency_evaluate": {
+  "p50": 16.0,
+  "p95": 16.0,
+  "p99": 31.0,
+  "max": 32.0,
+  "n": 141,
+  "errors": 9
+ },
+ "latency_e2e": {
+  "p50": 16.0,
+  "p95": 31.0,
+  "p99": 32.0,
+  "max": 32.0,
+  "n": 119,
+  "errors": 1
+ },
+ "estimated_feature_gen_p50_ms": 0.0,
+ "ramp_evaluate": {
+  "1": {
+   "p50": 0.0,
+   "p95": 16.0,
+   "p99": 16.0,
+   "max": 31.0,
+   "n": 600,
+   "throughput_rps": 139.7,
+   "errors": 0,
+   "error_samples": [],
+   "duration_s": 4.3
+  },
+  "4": {
+   "p50": 31.0,
+   "p95": 32.0,
+   "p99": 47.0,
+   "max": 94.0,
+   "n": 459,
+   "throughput_rps": 104.5,
+   "errors": 141,
+   "error_samples": [
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ]
+   ],
+   "duration_s": 4.39
+  },
+  "8": {
+   "p50": 62.0,
+   "p95": 78.0,
+   "p99": 125.0,
+   "max": 141.0,
+   "n": 414,
+   "throughput_rps": 93.0,
+   "errors": 186,
+   "error_samples": [
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ]
+   ],
+   "duration_s": 4.45
+  },
+  "16": {
+   "p50": 110.0,
+   "p95": 187.0,
+   "p99": 203.0,
+   "max": 218.0,
+   "n": 395,
+   "throughput_rps": 88.7,
+   "errors": 197,
+   "error_samples": [
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ]
+   ],
+   "duration_s": 4.45
+  },
+  "32": {
+   "p50": 313.0,
+   "p95": 422.0,
+   "p99": 438.0,
+   "max": 438.0,
+   "n": 876,
+   "throughput_rps": 100.8,
+   "errors": 20,
+   "error_samples": [
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ]
+   ],
+   "duration_s": 8.69
+  },
+  "64": {
+   "p50": 656.0,
+   "p95": 750.0,
+   "p99": 750.0,
+   "max": 766.0,
+   "n": 875,
+   "throughput_rps": 93.3,
+   "errors": 21,
+   "error_samples": [
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ]
+   ],
+   "duration_s": 9.38
+  },
+  "128": {
+   "p50": 1359.0,
+   "p95": 1469.0,
+   "p99": 1484.0,
+   "max": 1500.0,
+   "n": 868,
+   "throughput_rps": 90.2,
+   "errors": 28,
+   "error_samples": [
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ]
+   ],
+   "duration_s": 9.62
+  }
+ },
+ "ramp_e2e": {
+  "1": {
+   "p50": 16.0,
+   "p95": 31.0,
+   "p99": 32.0,
+   "max": 94.0,
+   "n": 300,
+   "throughput_rps": 67.1,
+   "errors": 0,
+   "error_samples": [],
+   "duration_s": 4.47
+  },
+  "4": {
+   "p50": 47.0,
+   "p95": 63.0,
+   "p99": 78.0,
+   "max": 94.0,
+   "n": 280,
+   "throughput_rps": 85.0,
+   "errors": 20,
+   "error_samples": [
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ]
+   ],
+   "duration_s": 3.3
+  },
+  "8": {
+   "p50": 93.0,
+   "p95": 125.0,
+   "p99": 141.0,
+   "max": 157.0,
+   "n": 226,
+   "throughput_rps": 70.5,
+   "errors": 70,
+   "error_samples": [
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ]
+   ],
+   "duration_s": 3.2
+  },
+  "16": {
+   "p50": 172.0,
+   "p95": 218.0,
+   "p99": 250.0,
+   "max": 266.0,
+   "n": 180,
+   "throughput_rps": 58.8,
+   "errors": 108,
+   "error_samples": [
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ]
+   ],
+   "duration_s": 3.06
+  },
+  "32": {
+   "p50": 390.0,
+   "p95": 469.0,
+   "p99": 546.0,
+   "max": 563.0,
+   "n": 294,
+   "throughput_rps": 61.9,
+   "errors": 90,
+   "error_samples": [
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ],
+    [
+     500,
+     "{\"detail\":\"Internal server error\"}"
+    ]
+   ],
+   "duration_s": 4.75
+  }
+ },
+ "sustained": {
+  "p50": 187.0,
+  "p95": 250.0,
+  "p99": 297.0,
+  "max": 344.0,
+  "n": 2632,
+  "throughput_rps": 58.5,
+  "errors": 1348,
+  "error_samples": [
+   [
+    500,
+    "{\"detail\":\"Internal server error\"}"
+   ],
+   [
+    500,
+    "{\"detail\":\"Internal server error\"}"
+   ],
+   [
+    500,
+    "{\"detail\":\"Internal server error\"}"
+   ],
+   [
+    500,
+    "{\"detail\":\"Internal server error\"}"
+   ],
+   [
+    500,
+    "{\"detail\":\"Internal server error\"}"
+   ]
+  ]
+ },
+ "rss_kb_during_sustained": null,
+ "spike": {
+  "p50": 1625.0,
+  "p95": 1718.0,
+  "p99": 1766.0,
+  "max": 1812.0,
+  "n": 544,
+  "throughput_rps": 68.0,
+  "errors": 216,
+  "error_samples": [
+   [
+    500,
+    "{\"detail\":\"Internal server error\"}"
+   ],
+   [
+    500,
+    "{\"detail\":\"Internal server error\"}"
+   ],
+   [
+    500,
+    "{\"detail\":\"Internal server error\"}"
+   ],
+   [
+    500,
+    "{\"detail\":\"Internal server error\"}"
+   ],
+   [
+    500,
+    "{\"detail\":\"Internal server error\"}"
+   ]
+  ]
+ },
+ "idempotency": {
+  "sequential_replay_same_score": true,
+  "concurrent_duplicate_unique_scores": [],
+  "risk_rows_for_event": 1,
+  "audit_events_for_event": 0,
+  "decision": "verify"
+ },
+ "db_sizes_bytes": {
+  "audit.db": 12320768,
+  "features.db": 2383872,
+  "identity.db": 4096,
+  "risk.db": 4034560,
+  "sessions.db": 16384
+ },
+ "table_growth_counts": {
+  "risk.db.risk_scores": 8705,
+  "features.db.transaction_features": 5219,
+  "audit.db.audit_events": 14463
+ },
+ "rss_kb_end": null,
+ "runtime_sec": 141.3,
+ "failure_injection": {
+  "db4_lock": {
+   "responses_ok": 15,
+   "errors": [],
+   "p95_ms": 156.00000019185245,
+   "audit_events_total_after_drain": 14478,
+   "note": "audit append queued/async; scoring unaffected by DB-4 lock (AGENTS.md note about sync critical path is outdated for current code)"
+  },
+  "nan_feature": {
+   "status": 200,
+   "body": "{\"event_id\":\"EVT8D7D1EE2DAAF998CC12F10D8\",\"fraud_id\":\"F7ZTJMAX7FXC2L65\",\"risk_score\":8,\"risk_band\":\"low\",\"decision\":\"allow\",\"reason_codes\":[],\"ml_score\":0.0813,\"rule_score\":0.0,\"fired_rules\":[],\"degra",
+   "verdict": "NaN feature value accepted (no 422 guard), routed by the model to a finite low score (risk_score 8 / allow, ml 0.0813). No silent 500 here, but NaN is not rejected at validation - a NaN in a critical feature silently lowers risk. Recommend explicit finite-value validation (422/degraded)."
+  },
+  "missing_feature": {
+   "status": 422,
+   "verdict": "fail-loud 422 validation"
+  },
+  "idempotency_dup_probe": {
+   "first_status": 200,
+   "concurrent_dup_statuses": {
+    "200": 10
+   },
+   "risk_rows_for_event": 1,
+   "audit_payload_rows_for_event": 1,
+   "note": "no duplicate risk rows even under 10-way race; concurrent duplicates mostly 500 via the same INSERT concurrency bug instead of clean replays"
+  },
+  "risk_listener_pid": "5448",
+  "risk_rss": [
+   "python.exe                    5448 Console                   33   3,28,912 K"
+  ],
+  "risk_rows_total": 8722,
+  "audit_score_events_total": 9208
+ },
+ "summary": {
+  "scope": "Live loopback measurements on the actually-deployed configuration: SQLite per-store, single uvicorn process per service, Altman lean-15 engine (altman_lean_15feat_20260830_200346). Postgres path NOT running -> not measured (UNVERIFIED for that target).",
+  "model_microbench": {
+   "engine": "altman_lean_15feat_20260830_200346",
+   "single_row_ms": 1.9267,
+   "single_row_rps": 519.0,
+   "batch_10k_per_row_ms": 0.0141,
+   "batch_10k_rows_per_s": 70922.0
+  },
+  "per_stage_p50_p95_p99_ms": {
+   "ingest": {
+    "p50": 15.0,
+    "p95": 16.0,
+    "p99": 32.0,
+    "max": 32.0,
+    "n": 140,
+    "errors": 10
+   },
+   "evaluate": {
+    "p50": 16.0,
+    "p95": 16.0,
+    "p99": 31.0,
+    "max": 32.0,
+    "n": 141,
+    "errors": 9
+   },
+   "e2e": {
+    "p50": 16.0,
+    "p95": 31.0,
+    "p99": 32.0,
+    "max": 32.0,
+    "n": 119,
+    "errors": 1
+   }
+  },
+  "capacity": {
+   "max_tested_goodput_rps": 139.7,
+   "sustained_goodput_rps_16w": 58.5,
+   "sustained_error_rate_pct": 33.9,
+   "failure_point": "concurrent request count >= 4 on the risk engine (7-34% HTTP 500s measured at 4-32 workers) - sqlite3.InterfaceError 'bad parameter or other API misuse' on the risk_scores INSERT..RETURNING under concurrent SQLAlchemy sessions",
+   "safe_operating_capacity": "<= 2 concurrent requests, <= ~70-140 tx/s single process (16ms p50 at low concurrency, 0 errors at 1 worker)",
+   "required_scaling_margin": "> 10x for any production load; architecture fix required first (see reliability failures)",
+   "latency_p95_p99_16w": {
+    "evaluate": {
+     "p95": 187.0,
+     "p99": 203.0
+    },
+    "e2e": {
+     "p95": 218.0,
+     "p99": 250.0
+    }
+   },
+   "risk_listener_rss_kb": 328912
+  }
+ }
+}

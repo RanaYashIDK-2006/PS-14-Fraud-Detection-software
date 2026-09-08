@@ -1,0 +1,97 @@
+{
+  "dataset": "ibm_altman",
+  "sampled": 5000000,
+  "total": 24386900,
+  "fraud": 5674,
+  "fraud_rate": 0.001135,
+  "hash": "b01fa323c98522f8",
+  "n_features": 21,
+  "user_disjoint": {
+    "train_users": 338,
+    "test_users": 84,
+    "overlap": 0
+  },
+  "time_overlap": {
+    "overlap_pct": 74.0
+  },
+  "results": {
+    "time_lr": {
+      "time_roc_auc": 0.814124,
+      "time_pr_auc": 0.013042,
+      "time_brier": 0.111076,
+      "time_r1": 0.210414,
+      "time_r05": 0.168969,
+      "time_r01": 0.091392,
+      "time_n_pos": 941,
+      "time_n_neg": 999059,
+      "time": 3.9
+    },
+    "time_rf": {
+      "time_roc_auc": 0.831795,
+      "time_pr_auc": 0.005101,
+      "time_brier": 0.052259,
+      "time_r1": 0.029756,
+      "time_r05": 0.010627,
+      "time_r01": 0.007439,
+      "time_n_pos": 941,
+      "time_n_neg": 999059,
+      "time": 241.7
+    },
+    "time_xgb": {
+      "time_roc_auc": 0.813493,
+      "time_pr_auc": 0.018589,
+      "time_brier": 0.001024,
+      "time_r1": 0.129649,
+      "time_r05": 0.089267,
+      "time_r01": 0.02763,
+      "time_n_pos": 941,
+      "time_n_neg": 999059,
+      "time": 40.5
+    },
+    "disjoint_lr": {
+      "disjoint_roc_auc": 0.879479,
+      "disjoint_pr_auc": 0.018304,
+      "disjoint_brier": 0.123532,
+      "disjoint_r1": 0.213819,
+      "disjoint_r05": 0.162465,
+      "disjoint_r01": 0.104575,
+      "disjoint_n_pos": 1071,
+      "disjoint_n_neg": 1024056,
+      "time": 3.0
+    },
+    "disjoint_rf": {
+      "disjoint_roc_auc": 0.95495,
+      "disjoint_pr_auc": 0.092627,
+      "disjoint_brier": 0.070215,
+      "disjoint_r1": 0.502334,
+      "disjoint_r05": 0.374416,
+      "disjoint_r01": 0.19888,
+      "disjoint_n_pos": 1071,
+      "disjoint_n_neg": 1024056,
+      "time": 205.0
+    },
+    "disjoint_xgb": {
+      "disjoint_roc_auc": 0.975902,
+      "disjoint_pr_auc": 0.660941,
+      "disjoint_brier": 0.000562,
+      "disjoint_r1": 0.809524,
+      "disjoint_r05": 0.777778,
+      "disjoint_r01": 0.693744,
+      "disjoint_n_pos": 1071,
+      "disjoint_n_neg": 1024056,
+      "time": 36.5
+    },
+    "disjoint_stacker": {
+      "disjoint_roc_auc": 0.969933,
+      "disjoint_pr_auc": 0.62229,
+      "disjoint_brier": 0.000523,
+      "disjoint_r1": 0.746965,
+      "disjoint_r05": 0.716153,
+      "disjoint_r01": 0.663866,
+      "disjoint_n_pos": 1071,
+      "disjoint_n_neg": 1024056,
+      "time": 945.0
+    }
+  },
+  "timestamp": "2026-08-28T13:23:36"
+}

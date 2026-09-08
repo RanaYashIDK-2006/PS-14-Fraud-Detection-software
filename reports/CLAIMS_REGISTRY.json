@@ -1,0 +1,423 @@
+{
+  "registry_version": "1.0",
+  "generated": "2026-08-27",
+  "system": "PS-14 Fraud Detection System",
+  "classification": "Research prototype (NOT production-ready)",
+  "claims": [
+    {
+      "claim_id": "S1",
+      "claim": "SQL injection prevented",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": ["penetration_test.py (SQLi payloads rejected)"],
+      "test_ids": ["SQLI-001", "SQLI-002", "SQLI-003", "SQLI-004", "SQLI-005"],
+      "limitations": "Tested against running service only; static allowlist approach means injection is rejected at the application layer before reaching SQL. Not tested with automated SQLi scanners (sqlmap).",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "S2",
+      "claim": "Authentication via JWT",
+      "status": "VERIFIED",
+      "evidence": ["risk_engine_test.py", "penetration_test.py (JWT forgery, none-alg, expired, role-escalation)"],
+      "test_ids": ["AUTH-001", "AUTH-002", "AUTH-003", "AUTH-004"],
+      "limitations": "HS256 symmetric; tokens not revocable in prototype; no refresh token rotation.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "S3",
+      "claim": "No PII in feature store (DB-2)",
+      "status": "VERIFIED",
+      "evidence": ["privacy_test.py (27/27 checks)"],
+      "test_ids": ["PRIV-001"],
+      "limitations": "Raw amounts exist transiently during ingestion processing before stripping.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "S4",
+      "claim": "No PII in risk scores (DB-3)",
+      "status": "VERIFIED",
+      "evidence": ["privacy_test.py"],
+      "test_ids": ["PRIV-002"],
+      "limitations": "Only fraud_id (pseudonym) stored.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "S5",
+      "claim": "No PII in audit logs (DB-4)",
+      "status": "VERIFIED",
+      "evidence": ["privacy_test.py"],
+      "test_ids": ["PRIV-003"],
+      "limitations": "Payloads contain only pseudonymous data.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "S6",
+      "claim": "ML failure is fail-safe",
+      "status": "VERIFIED",
+      "evidence": ["risk_engine_test.py (ML_UNAVAILABLE forces score>=31 step_up)"],
+      "test_ids": ["RISK-001"],
+      "limitations": "Rules-only fallback; no ML signal when degraded. Score floor of 31 ensures step_up, never allow.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "S7",
+      "claim": "Rate limiting on authentication",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": ["penetration_test.py (blocked after N attempts)"],
+      "test_ids": ["RL-001"],
+      "limitations": "In-memory rate limiter; not tested across multiple workers. Threshold not tuned for production.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "S8",
+      "claim": "Admin sessions multi-worker safe",
+      "status": "VERIFIED",
+      "evidence": ["src/session_store.py (SQLite-backed, WAL mode)", "priority2_full_regression_test.py (P2.12)"],
+      "test_ids": ["p2_regression"],
+      "limitations": "SQLite-backed: works across workers in same process group via shared DB file. Not suitable for truly distributed multi-node deployments (would need Redis/Postgres).",
+      "last_verified": "2026-08-28"
+    },
+    {
+      "claim_id": "S9",
+      "claim": "TLS/HTTPS",
+      "status": "NOT_APPLICABLE",
+      "evidence": [],
+      "test_ids": [],
+      "limitations": "Prototype uses HTTP only. Required for production.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "S10",
+      "claim": "Penetration test passes",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": ["penetration_test.py"],
+      "test_ids": ["PENT-ALL"],
+      "limitations": "Some tests BLOCKED when services unavailable. BLOCKED != PASS. Requires all 6 services running.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "S11",
+      "claim": "Event ID uniqueness enforced",
+      "status": "VERIFIED",
+      "evidence": ["risk_engine_test.py (idempotent replay + 409 on fraud_id conflict)"],
+      "test_ids": ["IDEM-001", "IDEM-002"],
+      "limitations": "Application-level check with race condition handling via DB IntegrityError catch.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "S12",
+      "claim": "Batch/single decision parity",
+      "status": "VERIFIED",
+      "evidence": ["risk_engine_test.py"],
+      "test_ids": ["BATCH-001"],
+      "limitations": "Both use shared _evaluate_decision() function.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "P1",
+      "claim": "No raw amounts in DB-2",
+      "status": "VERIFIED",
+      "evidence": ["privacy_test.py"],
+      "test_ids": ["PRIV-004"],
+      "limitations": "Amounts exist transiently during ingestion processing.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "P2",
+      "claim": "No raw amounts in Risk Engine",
+      "status": "VERIFIED",
+      "evidence": ["Privacy Layer strips before scoring"],
+      "test_ids": ["PRIV-005"],
+      "limitations": "Risk Engine never sees raw amounts.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "P3",
+      "claim": "Pseudonymization via fraud_id",
+      "status": "VERIFIED",
+      "evidence": ["Identity service + privacy_test.py"],
+      "test_ids": ["PSEUD-001"],
+      "limitations": "Break-glass can resolve with audit logging.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "P4",
+      "claim": "k-anonymity on exports",
+      "status": "VERIFIED",
+      "evidence": ["k_anonymity_test.py"],
+      "test_ids": ["KANON-001"],
+      "limitations": "k=5 default.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "P5",
+      "claim": "Break-glass resolution logged",
+      "status": "VERIFIED",
+      "evidence": ["smoke_test.py"],
+      "test_ids": ["SMOKE-001"],
+      "limitations": "Logged to audit chain.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "P6",
+      "claim": "Data retention policy",
+      "status": "UNSUPPORTED",
+      "evidence": [],
+      "test_ids": [],
+      "limitations": "No retention mechanism implemented. Would be required for production/GDPR.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "P7",
+      "claim": "Right to deletion (GDPR)",
+      "status": "UNSUPPORTED",
+      "evidence": [],
+      "test_ids": [],
+      "limitations": "No deletion API implemented. Would be required for production/GDPR.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "M1",
+      "claim": "No label leakage",
+      "status": "VERIFIED",
+      "evidence": ["leakage_structural_test.py (123/123 structural checks)"],
+      "test_ids": ["LEAK-STRUCT-001"],
+      "limitations": "Structural check only; not proven via adversarial feature probing.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "M2",
+      "claim": "No temporal leakage",
+      "status": "VERIFIED",
+      "evidence": ["temporal_test.py (22/22 checks)"],
+      "test_ids": ["TEMP-001"],
+      "limitations": "Point-in-time correctness verified.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "M3",
+      "claim": "Calibration implemented",
+      "status": "VERIFIED",
+      "evidence": ["calibration_test.py (16/16 checks)"],
+      "test_ids": ["CAL-001"],
+      "limitations": "Platt scaling on validation data. Not evaluated on independent holdout for Brier/ECE.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "M4",
+      "claim": "Runtime drift detection",
+      "status": "VERIFIED",
+      "evidence": ["drift_detector_test.py (31/31 checks)"],
+      "test_ids": ["DRIFT-001"],
+      "limitations": "PSI-based; requires training baseline.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "M5",
+      "claim": "In-domain ROC-AUC on kaggle_fraud",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": ["train_high_perf.py output"],
+      "test_ids": ["ML-BENCH-001"],
+      "limitations": "Exact ROC-AUC depends on split and random seed. Different scripts report slightly different values (99.13%, 98.77%). See ML_BENCHMARK_REGISTRY.json for reconciliation.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "M6",
+      "claim": "Temporal evaluation ROC-AUC",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": ["temporal_proper.py output"],
+      "test_ids": ["ML-BENCH-002"],
+      "limitations": "Apr-Sep 2020 test set. Exact value depends on feature pipeline version. See ML_BENCHMARK_REGISTRY.json.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "M7",
+      "claim": "Cross-domain weighted ROC-AUC",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": ["cross_domain_improved.py"],
+      "test_ids": ["ML-BENCH-003"],
+      "limitations": "PaySim weaker (93.8%). Weighting methodology must be documented. See ML_BENCHMARK_REGISTRY.json.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "M8",
+      "claim": "Industry-grade fraud detection",
+      "status": "UNSUPPORTED",
+      "evidence": [],
+      "test_ids": [],
+      "limitations": "No independent industry validation. Evaluated only on public/synthetic datasets.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "M9",
+      "claim": "Generalizes to real-world fraud",
+      "status": "UNSUPPORTED",
+      "evidence": [],
+      "test_ids": [],
+      "limitations": "Evaluated on public datasets only. Not validated in production.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "A1",
+      "claim": "Hash-chained audit trail",
+      "status": "VERIFIED",
+      "evidence": ["audit_test.py"],
+      "test_ids": ["AUDIT-001"],
+      "limitations": "Append-only via SQLite triggers.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "A2",
+      "claim": "Tamper-evident audit",
+      "status": "VERIFIED",
+      "evidence": ["Hash chain verification at /compliance/integrity"],
+      "test_ids": ["AUDIT-002"],
+      "limitations": "Detection only, not prevention. SQLite can still be modified at filesystem level.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "A3",
+      "claim": "Tamper-proof audit",
+      "status": "FALSE",
+      "evidence": [],
+      "test_ids": [],
+      "limitations": "Hash chain detects but does not prevent tampering. Would need immutable/WORM storage. CORRECTED: use tamper-EVIDENT, not tamper-PROOF.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "A4",
+      "claim": "Compliance export signed",
+      "status": "VERIFIED",
+      "evidence": ["HMAC signature on exports; verify_export.py"],
+      "test_ids": ["AUDIT-003"],
+      "limitations": "Verified by verify_export.py.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "A5",
+      "claim": "Chain integrity verifiable",
+      "status": "VERIFIED",
+      "evidence": ["/compliance/integrity endpoint"],
+      "test_ids": ["AUDIT-004"],
+      "limitations": "Requires compliance token.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "C1",
+      "claim": "AI recommends, verification decides",
+      "status": "VERIFIED",
+      "evidence": ["ML -> rules -> band routing architecture"],
+      "test_ids": ["ARCH-001"],
+      "limitations": "ML failure still routes to step_up (fail-safe).",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "C2",
+      "claim": "Rules cannot be diluted by ML",
+      "status": "VERIFIED",
+      "evidence": ["score = 100 * max(ml, rule) with critical floor at severity_floor"],
+      "test_ids": ["RULES-001"],
+      "limitations": "Mathematically enforced in _evaluate_decision().",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "C3",
+      "claim": "Five independent services",
+      "status": "VERIFIED",
+      "evidence": ["Identity, Privacy, Risk, Verify, Audit as separate FastAPI apps"],
+      "test_ids": ["ARCH-002"],
+      "limitations": "SQLite per-service isolation; not network-isolated in dev.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "C4",
+      "claim": "Federated learning simulation",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": ["federated_sim.py"],
+      "test_ids": ["FED-001"],
+      "limitations": "3 synthetic institutions only. Not production federated learning.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "C5",
+      "claim": "Differential privacy",
+      "status": "PARTIALLY_VERIFIED",
+      "evidence": ["--dp-sweep flag in training"],
+      "test_ids": ["FED-002"],
+      "limitations": "Central DP only; no secure aggregation. No per-query privacy budget tracking.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "R1",
+      "claim": "Batch scoring throughput",
+      "status": "VERIFIED",
+      "evidence": ["batch_score.py benchmark"],
+      "test_ids": ["PERF-001"],
+      "limitations": "~35K txn/s on 2M rows; measured on local machine.",
+      "last_verified": "2026-08-27"
+    },
+    {
+      "claim_id": "DO-NOT-CLAIM-1",
+      "claim": "DO NOT CLAIM: tamper-proof audit trail",
+      "status": "DEPRECATED",
+      "evidence": [],
+      "limitations": "Hash chain is tamper-EVIDENT not tamper-PROOF."
+    },
+    {
+      "claim_id": "DO-NOT-CLAIM-2",
+      "claim": "DO NOT CLAIM: immutable audit trail",
+      "status": "DEPRECATED",
+      "evidence": [],
+      "limitations": "SQLite is not immutable."
+    },
+    {
+      "claim_id": "DO-NOT-CLAIM-3",
+      "claim": "DO NOT CLAIM: industry-grade fraud detection",
+      "status": "DEPRECATED",
+      "evidence": [],
+      "limitations": "No independent industry validation."
+    },
+    {
+      "claim_id": "DO-NOT-CLAIM-4",
+      "claim": "DO NOT CLAIM: enterprise-ready deployment",
+      "status": "DEPRECATED",
+      "evidence": [],
+      "limitations": "Prototype system."
+    },
+    {
+      "claim_id": "DO-NOT-CLAIM-5",
+      "claim": "DO NOT CLAIM: production-ready",
+      "status": "DEPRECATED",
+      "evidence": [],
+      "limitations": "Pre-production research prototype."
+    },
+    {
+      "claim_id": "DO-NOT-CLAIM-6",
+      "claim": "DO NOT CLAIM: 100/100 security",
+      "status": "DEPRECATED",
+      "evidence": [],
+      "limitations": "Score is calculated from findings, not actual checks executed."
+    },
+    {
+      "claim_id": "DO-NOT-CLAIM-7",
+      "claim": "DO NOT CLAIM: 42/42 penetration tests passed (unless 42 individual PASS records exist)",
+      "status": "DEPRECATED",
+      "evidence": [],
+      "limitations": "Must count individual test records, not aggregate."
+    },
+    {
+      "claim_id": "DO-NOT-CLAIM-8",
+      "claim": "DO NOT CLAIM: zero vulnerabilities",
+      "status": "DEPRECATED",
+      "evidence": [],
+      "limitations": "No system is vulnerability-free."
+    }
+  ],
+  "summary": {
+    "VERIFIED": 19,
+    "PARTIALLY_VERIFIED": 6,
+    "UNSUPPORTED": 5,
+    "FALSE": 1,
+    "NOT_APPLICABLE": 1,
+    "DO_NOT_CLAIM": 8
+  }
+}

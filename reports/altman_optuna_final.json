@@ -1,0 +1,55 @@
+{
+  "dataset": "ALTMAN_OPTIMIZED",
+  "rows": 99150,
+  "fraud": 19248,
+  "features": 39,
+  "model": "LGB (Optuna-tuned)",
+  "best_params": {
+    "n_estimators": 350,
+    "max_depth": 10,
+    "learning_rate": 0.127,
+    "subsample": 0.839,
+    "colsample_bytree": 0.578,
+    "min_child_samples": 9,
+    "reg_alpha": 0.00171,
+    "reg_lambda": 2.915,
+    "num_leaves": 68
+  },
+  "results": {
+    "5fold_cv_mean_auc": 0.9948,
+    "5fold_cv_std": 0.0004,
+    "best_single_fold_auc": 0.9954,
+    "oof_r1_fpr": 0.9095,
+    "oof_pr_auc": 0.9833,
+    "oof_f1": 0.9339
+  },
+  "progression": [
+    {
+      "version": "baseline_14feat",
+      "auc": 0.9667,
+      "features": 14,
+      "rows": 1289483
+    },
+    {
+      "version": "improved_29feat",
+      "auc": 0.9937,
+      "features": 29,
+      "rows": 49434
+    },
+    {
+      "version": "optuna_29feat",
+      "auc": 0.9935,
+      "features": 29,
+      "rows": 49434
+    },
+    {
+      "version": "optuna_39feat_99k",
+      "auc": 0.9948,
+      "features": 39,
+      "rows": 99150
+    }
+  ],
+  "target_995": "NOT_MET",
+  "ceiling_analysis": "Individual folds reach 99.54% but 5-fold mean stabilizes at 99.48%. This is the genuine ceiling for this feature set and data size. Pushing past 99.5% requires either a fundamentally different feature space (e.g. temporal velocity, graph-based features) or the full 24M row training set (computationally prohibitive at current scale).",
+  "ts": "2026-08-29T07:47:45Z"
+}

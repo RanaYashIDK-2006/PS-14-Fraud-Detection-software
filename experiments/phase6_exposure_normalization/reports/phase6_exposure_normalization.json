@@ -1,0 +1,1797 @@
+{
+  "phase": 6,
+  "production_lock": {
+    "model": "altman_native_E_hardneg_cert_20260904",
+    "threshold": 0.018758,
+    "unchanged": true
+  },
+  "step10_val_comparison": {
+    "full": {
+      "V_Cnorm": {
+        "P1": {
+          "segs": {
+            "absent_at5": {
+              "alerts": 1651,
+              "alerts_per_1k": 9.46,
+              "fn": 1,
+              "fp": 1459,
+              "fpr": 0.639351,
+              "n_fraud": 193,
+              "n_legit": 2282,
+              "precision": 0.116293,
+              "recall": 0.994819,
+              "tn": 823,
+              "tp": 192
+            },
+            "genuinely_new": {
+              "alerts": 231,
+              "alerts_per_1k": 1.324,
+              "fn": 0,
+              "fp": 181,
+              "fpr": 0.648746,
+              "n_fraud": 50,
+              "n_legit": 279,
+              "precision": 0.21645,
+              "recall": 1.0,
+              "tn": 98,
+              "tp": 50
+            },
+            "overall": {
+              "alerts": 35832,
+              "alerts_per_1k": 205.306,
+              "fn": 38,
+              "fp": 32036,
+              "fpr": 0.187679,
+              "n_fraud": 3834,
+              "n_legit": 170696,
+              "precision": 0.105939,
+              "recall": 0.990089,
+              "tn": 138660,
+              "tp": 3796
+            },
+            "seen_merchant": {
+              "alerts": 34181,
+              "alerts_per_1k": 195.846,
+              "fn": 37,
+              "fp": 30577,
+              "fpr": 0.181559,
+              "n_fraud": 3641,
+              "n_legit": 168414,
+              "precision": 0.105439,
+              "recall": 0.989838,
+              "tn": 137837,
+              "tp": 3604
+            }
+          },
+          "threshold": 0.06014559,
+          "val_fpr": 0.187679,
+          "val_recall": 0.990089
+        },
+        "P2": {
+          "segs": {
+            "absent_at5": {
+              "alerts": 1862,
+              "alerts_per_1k": 10.669,
+              "fn": 0,
+              "fp": 1669,
+              "fpr": 0.731376,
+              "n_fraud": 193,
+              "n_legit": 2282,
+              "precision": 0.103652,
+              "recall": 1.0,
+              "tn": 613,
+              "tp": 193
+            },
+            "genuinely_new": {
+              "alerts": 259,
+              "alerts_per_1k": 1.484,
+              "fn": 0,
+              "fp": 209,
+              "fpr": 0.749104,
+              "n_fraud": 50,
+              "n_legit": 279,
+              "precision": 0.19305,
+              "recall": 1.0,
+              "tn": 70,
+              "tp": 50
+            },
+            "overall": {
+              "alerts": 51606,
+              "alerts_per_1k": 295.686,
+              "fn": 19,
+              "fp": 47791,
+              "fpr": 0.279977,
+              "n_fraud": 3834,
+              "n_legit": 170696,
+              "precision": 0.073926,
+              "recall": 0.995044,
+              "tn": 122905,
+              "tp": 3815
+            },
+            "seen_merchant": {
+              "alerts": 49744,
+              "alerts_per_1k": 285.017,
+              "fn": 19,
+              "fp": 46122,
+              "fpr": 0.273861,
+              "n_fraud": 3641,
+              "n_legit": 168414,
+              "precision": 0.072813,
+              "recall": 0.994782,
+              "tn": 122292,
+              "tp": 3622
+            }
+          },
+          "threshold": 0.02568487,
+          "val_fpr": 0.279977,
+          "val_recall": 0.995044
+        },
+        "candidate": "V_Cnorm",
+        "desc": "Strategy-C merchant-aware frame (100% merchant coverage), NORM layout, scored on 5%-density fixed val",
+        "train_fraud": 21345,
+        "train_rows": 2330695,
+        "trained_seconds": 166.8,
+        "val_fraud": 3834,
+        "val_rows": 174530
+      },
+      "V_norm": {
+        "P1": {
+          "segs": {
+            "absent_at5": {
+              "alerts": 1605,
+              "alerts_per_1k": 9.196,
+              "fn": 2,
+              "fp": 1414,
+              "fpr": 0.619632,
+              "n_fraud": 193,
+              "n_legit": 2282,
+              "precision": 0.119003,
+              "recall": 0.989637,
+              "tn": 868,
+              "tp": 191
+            },
+            "genuinely_new": {
+              "alerts": 225,
+              "alerts_per_1k": 1.289,
+              "fn": 1,
+              "fp": 176,
+              "fpr": 0.630824,
+              "n_fraud": 50,
+              "n_legit": 279,
+              "precision": 0.217778,
+              "recall": 0.98,
+              "tn": 103,
+              "tp": 49
+            },
+            "overall": {
+              "alerts": 17044,
+              "alerts_per_1k": 97.657,
+              "fn": 38,
+              "fp": 13248,
+              "fpr": 0.077612,
+              "n_fraud": 3834,
+              "n_legit": 170696,
+              "precision": 0.222718,
+              "recall": 0.990089,
+              "tn": 157448,
+              "tp": 3796
+            },
+            "seen_merchant": {
+              "alerts": 15439,
+              "alerts_per_1k": 88.46,
+              "fn": 36,
+              "fp": 11834,
+              "fpr": 0.070267,
+              "n_fraud": 3641,
+              "n_legit": 168414,
+              "precision": 0.2335,
+              "recall": 0.990113,
+              "tn": 156580,
+              "tp": 3605
+            }
+          },
+          "threshold": 0.07156545,
+          "val_fpr": 0.077612,
+          "val_recall": 0.990089
+        },
+        "P2": {
+          "segs": {
+            "absent_at5": {
+              "alerts": 1761,
+              "alerts_per_1k": 10.09,
+              "fn": 1,
+              "fp": 1569,
+              "fpr": 0.687555,
+              "n_fraud": 193,
+              "n_legit": 2282,
+              "precision": 0.109029,
+              "recall": 0.994819,
+              "tn": 713,
+              "tp": 192
+            },
+            "genuinely_new": {
+              "alerts": 244,
+              "alerts_per_1k": 1.398,
+              "fn": 0,
+              "fp": 194,
+              "fpr": 0.695341,
+              "n_fraud": 50,
+              "n_legit": 279,
+              "precision": 0.204918,
+              "recall": 1.0,
+              "tn": 85,
+              "tp": 50
+            },
+            "overall": {
+              "alerts": 21709,
+              "alerts_per_1k": 124.385,
+              "fn": 19,
+              "fp": 17894,
+              "fpr": 0.10483,
+              "n_fraud": 3834,
+              "n_legit": 170696,
+              "precision": 0.175734,
+              "recall": 0.995044,
+              "tn": 152802,
+              "tp": 3815
+            },
+            "seen_merchant": {
+              "alerts": 19948,
+              "alerts_per_1k": 114.296,
+              "fn": 18,
+              "fp": 16325,
+              "fpr": 0.096934,
+              "n_fraud": 3641,
+              "n_legit": 168414,
+              "precision": 0.181622,
+              "recall": 0.995056,
+              "tn": 152089,
+              "tp": 3623
+            }
+          },
+          "threshold": 0.03874249,
+          "val_fpr": 0.10483,
+          "val_recall": 0.995044
+        },
+        "R_at_FPR2": {
+          "segs": {
+            "absent_at5": {
+              "alerts": 773,
+              "alerts_per_1k": 4.429,
+              "fn": 18,
+              "fp": 598,
+              "fpr": 0.262051,
+              "n_fraud": 193,
+              "n_legit": 2282,
+              "precision": 0.226391,
+              "recall": 0.906736,
+              "tn": 1684,
+              "tp": 175
+            },
+            "genuinely_new": {
+              "alerts": 131,
+              "alerts_per_1k": 0.751,
+              "fn": 3,
+              "fp": 84,
+              "fpr": 0.301075,
+              "n_fraud": 50,
+              "n_legit": 279,
+              "precision": 0.358779,
+              "recall": 0.94,
+              "tn": 195,
+              "tp": 47
+            },
+            "overall": {
+              "alerts": 7058,
+              "alerts_per_1k": 40.44,
+              "fn": 186,
+              "fp": 3410,
+              "fpr": 0.019977,
+              "n_fraud": 3834,
+              "n_legit": 170696,
+              "precision": 0.51686,
+              "recall": 0.951487,
+              "tn": 167286,
+              "tp": 3648
+            },
+            "seen_merchant": {
+              "alerts": 6285,
+              "alerts_per_1k": 36.011,
+              "fn": 168,
+              "fp": 2812,
+              "fpr": 0.016697,
+              "n_fraud": 3641,
+              "n_legit": 168414,
+              "precision": 0.552586,
+              "recall": 0.953859,
+              "tn": 165602,
+              "tp": 3473
+            }
+          },
+          "threshold": 0.41658086,
+          "val_recall": 0.951487
+        },
+        "R_at_FPR5": {
+          "segs": {
+            "absent_at5": {
+              "alerts": 1288,
+              "alerts_per_1k": 7.38,
+              "fn": 4,
+              "fp": 1099,
+              "fpr": 0.481595,
+              "n_fraud": 193,
+              "n_legit": 2282,
+              "precision": 0.146739,
+              "recall": 0.979275,
+              "tn": 1183,
+              "tp": 189
+            },
+            "genuinely_new": {
+              "alerts": 178,
+              "alerts_per_1k": 1.02,
+              "fn": 2,
+              "fp": 130,
+              "fpr": 0.46595,
+              "n_fraud": 50,
+              "n_legit": 279,
+              "precision": 0.269663,
+              "recall": 0.96,
+              "tn": 149,
+              "tp": 48
+            },
+            "overall": {
+              "alerts": 12284,
+              "alerts_per_1k": 70.383,
+              "fn": 63,
+              "fp": 8513,
+              "fpr": 0.049872,
+              "n_fraud": 3834,
+              "n_legit": 170696,
+              "precision": 0.306985,
+              "recall": 0.983568,
+              "tn": 162183,
+              "tp": 3771
+            },
+            "seen_merchant": {
+              "alerts": 10996,
+              "alerts_per_1k": 63.003,
+              "fn": 59,
+              "fp": 7414,
+              "fpr": 0.044022,
+              "n_fraud": 3641,
+              "n_legit": 168414,
+              "precision": 0.325755,
+              "recall": 0.983796,
+              "tn": 161000,
+              "tp": 3582
+            }
+          },
+          "threshold": 0.15570884,
+          "val_recall": 0.983568
+        },
+        "candidate": "V_norm",
+        "desc": "42 native (no counts) + 6 rates (48)",
+        "features": [
+          "amt",
+          "log_amt",
+          "amt_sq",
+          "hr",
+          "mn",
+          "dow",
+          "Month",
+          "Day",
+          "hour_sin",
+          "hour_cos",
+          "is_night",
+          "is_business_hours",
+          "chip",
+          "is_online",
+          "is_swipe",
+          "err",
+          "has_zip",
+          "has_state",
+          "is_online_or_no_state",
+          "mcc",
+          "mcc_high",
+          "mcc_restaurant",
+          "mcc_gas",
+          "mcc_grocery",
+          "mcc_travel",
+          "mcc_online",
+          "merchant_id",
+          "city_id",
+          "card_id",
+          "user_avg_amt",
+          "amt_vs_user_avg",
+          "amt_zscore",
+          "user_fraud_rate",
+          "merch_fraud_rate",
+          "city_fraud_rate",
+          "high_amt",
+          "very_high_amt",
+          "amt_x_hr",
+          "amt_x_mcc",
+          "amt_x_chip",
+          "amt_x_online",
+          "amt_x_night",
+          "user_tx_rate",
+          "card_tx_rate",
+          "merch_tx_rate",
+          "user_merch_rate",
+          "user_merchant_diversity_rate",
+          "user_city_diversity_rate"
+        ],
+        "n_features": 48,
+        "train_fraud": 21345,
+        "train_rows": 879196,
+        "trained_seconds": 68.0,
+        "val_fraud": 3834,
+        "val_rows": 174530
+      },
+      "V_rawplus": {
+        "P1": {
+          "segs": {
+            "absent_at5": {
+              "alerts": 1607,
+              "alerts_per_1k": 9.208,
+              "fn": 1,
+              "fp": 1415,
+              "fpr": 0.62007,
+              "n_fraud": 193,
+              "n_legit": 2282,
+              "precision": 0.119477,
+              "recall": 0.994819,
+              "tn": 867,
+              "tp": 192
+            },
+            "genuinely_new": {
+              "alerts": 222,
+              "alerts_per_1k": 1.272,
+              "fn": 0,
+              "fp": 172,
+              "fpr": 0.616487,
+              "n_fraud": 50,
+              "n_legit": 279,
+              "precision": 0.225225,
+              "recall": 1.0,
+              "tn": 107,
+              "tp": 50
+            },
+            "overall": {
+              "alerts": 15449,
+              "alerts_per_1k": 88.518,
+              "fn": 38,
+              "fp": 11653,
+              "fpr": 0.068268,
+              "n_fraud": 3834,
+              "n_legit": 170696,
+              "precision": 0.245712,
+              "recall": 0.990089,
+              "tn": 159043,
+              "tp": 3796
+            },
+            "seen_merchant": {
+              "alerts": 13842,
+              "alerts_per_1k": 79.31,
+              "fn": 37,
+              "fp": 10238,
+              "fpr": 0.060791,
+              "n_fraud": 3641,
+              "n_legit": 168414,
+              "precision": 0.260367,
+              "recall": 0.989838,
+              "tn": 158176,
+              "tp": 3604
+            }
+          },
+          "threshold": 0.07077689,
+          "val_fpr": 0.068268,
+          "val_recall": 0.990089
+        },
+        "P2": {
+          "segs": {
+            "absent_at5": {
+              "alerts": 1842,
+              "alerts_per_1k": 10.554,
+              "fn": 1,
+              "fp": 1650,
+              "fpr": 0.72305,
+              "n_fraud": 193,
+              "n_legit": 2282,
+              "precision": 0.104235,
+              "recall": 0.994819,
+              "tn": 632,
+              "tp": 192
+            },
+            "genuinely_new": {
+              "alerts": 254,
+              "alerts_per_1k": 1.455,
+              "fn": 0,
+              "fp": 204,
+              "fpr": 0.731183,
+              "n_fraud": 50,
+              "n_legit": 279,
+              "precision": 0.19685,
+              "recall": 1.0,
+              "tn": 75,
+              "tp": 50
+            },
+            "overall": {
+              "alerts": 20754,
+              "alerts_per_1k": 118.914,
+              "fn": 19,
+              "fp": 16939,
+              "fpr": 0.099235,
+              "n_fraud": 3834,
+              "n_legit": 170696,
+              "precision": 0.18382,
+              "recall": 0.995044,
+              "tn": 153757,
+              "tp": 3815
+            },
+            "seen_merchant": {
+              "alerts": 18912,
+              "alerts_per_1k": 108.36,
+              "fn": 18,
+              "fp": 15289,
+              "fpr": 0.090782,
+              "n_fraud": 3641,
+              "n_legit": 168414,
+              "precision": 0.191571,
+              "recall": 0.995056,
+              "tn": 153125,
+              "tp": 3623
+            }
+          },
+          "threshold": 0.02989373,
+          "val_fpr": 0.099235,
+          "val_recall": 0.995044
+        },
+        "R_at_FPR2": {
+          "segs": {
+            "absent_at5": {
+              "alerts": 753,
+              "alerts_per_1k": 4.314,
+              "fn": 15,
+              "fp": 575,
+              "fpr": 0.251972,
+              "n_fraud": 193,
+              "n_legit": 2282,
+              "precision": 0.236388,
+              "recall": 0.92228,
+              "tn": 1707,
+              "tp": 178
+            },
+            "genuinely_new": {
+              "alerts": 119,
+              "alerts_per_1k": 0.682,
+              "fn": 3,
+              "fp": 72,
+              "fpr": 0.258065,
+              "n_fraud": 50,
+              "n_legit": 279,
+              "precision": 0.394958,
+              "recall": 0.94,
+              "tn": 207,
+              "tp": 47
+            },
+            "overall": {
+              "alerts": 7056,
+              "alerts_per_1k": 40.429,
+              "fn": 178,
+              "fp": 3400,
+              "fpr": 0.019918,
+              "n_fraud": 3834,
+              "n_legit": 170696,
+              "precision": 0.518141,
+              "recall": 0.953573,
+              "tn": 167296,
+              "tp": 3656
+            },
+            "seen_merchant": {
+              "alerts": 6303,
+              "alerts_per_1k": 36.114,
+              "fn": 163,
+              "fp": 2825,
+              "fpr": 0.016774,
+              "n_fraud": 3641,
+              "n_legit": 168414,
+              "precision": 0.551801,
+              "recall": 0.955232,
+              "tn": 165589,
+              "tp": 3478
+            }
+          },
+          "threshold": 0.40043725,
+          "val_recall": 0.953573
+        },
+        "R_at_FPR5": {
+          "segs": {
+            "absent_at5": {
+              "alerts": 1349,
+              "alerts_per_1k": 7.729,
+              "fn": 3,
+              "fp": 1159,
+              "fpr": 0.507888,
+              "n_fraud": 193,
+              "n_legit": 2282,
+              "precision": 0.140845,
+              "recall": 0.984456,
+              "tn": 1123,
+              "tp": 190
+            },
+            "genuinely_new": {
+              "alerts": 186,
+              "alerts_per_1k": 1.066,
+              "fn": 2,
+              "fp": 138,
+              "fpr": 0.494624,
+              "n_fraud": 50,
+              "n_legit": 279,
+              "precision": 0.258065,
+              "recall": 0.96,
+              "tn": 141,
+              "tp": 48
+            },
+            "overall": {
+              "alerts": 12207,
+              "alerts_per_1k": 69.942,
+              "fn": 64,
+              "fp": 8437,
+              "fpr": 0.049427,
+              "n_fraud": 3834,
+              "n_legit": 170696,
+              "precision": 0.308839,
+              "recall": 0.983307,
+              "tn": 162259,
+              "tp": 3770
+            },
+            "seen_merchant": {
+              "alerts": 10858,
+              "alerts_per_1k": 62.213,
+              "fn": 61,
+              "fp": 7278,
+              "fpr": 0.043215,
+              "n_fraud": 3641,
+              "n_legit": 168414,
+              "precision": 0.329711,
+              "recall": 0.983246,
+              "tn": 161136,
+              "tp": 3580
+            }
+          },
+          "threshold": 0.13935896,
+          "val_recall": 0.983307
+        },
+        "candidate": "V_rawplus",
+        "desc": "48 native + 6 rates (54)",
+        "features": [
+          "amt",
+          "log_amt",
+          "amt_sq",
+          "hr",
+          "mn",
+          "dow",
+          "Month",
+          "Day",
+          "hour_sin",
+          "hour_cos",
+          "is_night",
+          "is_business_hours",
+          "chip",
+          "is_online",
+          "is_swipe",
+          "err",
+          "has_zip",
+          "has_state",
+          "is_online_or_no_state",
+          "mcc",
+          "mcc_high",
+          "mcc_restaurant",
+          "mcc_gas",
+          "mcc_grocery",
+          "mcc_travel",
+          "mcc_online",
+          "merchant_id",
+          "city_id",
+          "card_id",
+          "user_tx_count",
+          "card_tx_count",
+          "user_avg_amt",
+          "amt_vs_user_avg",
+          "amt_zscore",
+          "merch_tx_count",
+          "user_merchant_diversity",
+          "user_city_diversity",
+          "user_fraud_rate",
+          "merch_fraud_rate",
+          "city_fraud_rate",
+          "high_amt",
+          "very_high_amt",
+          "amt_x_hr",
+          "amt_x_mcc",
+          "amt_x_chip",
+          "amt_x_online",
+          "amt_x_night",
+          "user_merch_count",
+          "user_tx_rate",
+          "card_tx_rate",
+          "merch_tx_rate",
+          "user_merch_rate",
+          "user_merchant_diversity_rate",
+          "user_city_diversity_rate"
+        ],
+        "n_features": 54,
+        "train_fraud": 21345,
+        "train_rows": 879196,
+        "trained_seconds": 77.7,
+        "val_fraud": 3834,
+        "val_rows": 174530
+      },
+      "control_E_hardneg": {
+        "P1": {
+          "segs": {
+            "absent_at5": {
+              "alerts": 1596,
+              "alerts_per_1k": 9.145,
+              "fn": 1,
+              "fp": 1404,
+              "fpr": 0.61525,
+              "n_fraud": 193,
+              "n_legit": 2282,
+              "precision": 0.120301,
+              "recall": 0.994819,
+              "tn": 878,
+              "tp": 192
+            },
+            "genuinely_new": {
+              "alerts": 222,
+              "alerts_per_1k": 1.272,
+              "fn": 1,
+              "fp": 173,
+              "fpr": 0.620072,
+              "n_fraud": 50,
+              "n_legit": 279,
+              "precision": 0.220721,
+              "recall": 0.98,
+              "tn": 106,
+              "tp": 49
+            },
+            "overall": {
+              "alerts": 15886,
+              "alerts_per_1k": 91.022,
+              "fn": 38,
+              "fp": 12090,
+              "fpr": 0.070828,
+              "n_fraud": 3834,
+              "n_legit": 170696,
+              "precision": 0.238953,
+              "recall": 0.990089,
+              "tn": 158606,
+              "tp": 3796
+            },
+            "seen_merchant": {
+              "alerts": 14290,
+              "alerts_per_1k": 81.877,
+              "fn": 37,
+              "fp": 10686,
+              "fpr": 0.063451,
+              "n_fraud": 3641,
+              "n_legit": 168414,
+              "precision": 0.252204,
+              "recall": 0.989838,
+              "tn": 157728,
+              "tp": 3604
+            }
+          },
+          "threshold": 0.05355844,
+          "val_fpr": 0.070828,
+          "val_recall": 0.990089
+        },
+        "P2": {
+          "segs": {
+            "absent_at5": {
+              "alerts": 1960,
+              "alerts_per_1k": 11.23,
+              "fn": 0,
+              "fp": 1767,
+              "fpr": 0.774321,
+              "n_fraud": 193,
+              "n_legit": 2282,
+              "precision": 0.098469,
+              "recall": 1.0,
+              "tn": 515,
+              "tp": 193
+            },
+            "genuinely_new": {
+              "alerts": 261,
+              "alerts_per_1k": 1.495,
+              "fn": 0,
+              "fp": 211,
+              "fpr": 0.756272,
+              "n_fraud": 50,
+              "n_legit": 279,
+              "precision": 0.191571,
+              "recall": 1.0,
+              "tn": 68,
+              "tp": 50
+            },
+            "overall": {
+              "alerts": 23497,
+              "alerts_per_1k": 134.63,
+              "fn": 19,
+              "fp": 19682,
+              "fpr": 0.115304,
+              "n_fraud": 3834,
+              "n_legit": 170696,
+              "precision": 0.162361,
+              "recall": 0.995044,
+              "tn": 151014,
+              "tp": 3815
+            },
+            "seen_merchant": {
+              "alerts": 21537,
+              "alerts_per_1k": 123.4,
+              "fn": 19,
+              "fp": 17915,
+              "fpr": 0.106375,
+              "n_fraud": 3641,
+              "n_legit": 168414,
+              "precision": 0.168176,
+              "recall": 0.994782,
+              "tn": 150499,
+              "tp": 3622
+            }
+          },
+          "threshold": 0.01875816,
+          "val_fpr": 0.115304,
+          "val_recall": 0.995044
+        },
+        "R_at_FPR2": {
+          "note": "recall achievable at val FPR <= 2%",
+          "val_recall_at_2pct_fpr": 0.948357
+        },
+        "candidate": "control_E_hardneg",
+        "features": "48 native (certified)",
+        "val_fraud": 3834,
+        "val_rows": 174530
+      }
+    },
+    "summary": {
+      "V_Cnorm": {
+        "P1": {
+          "absent5": {
+            "alerts": 1651,
+            "alerts_per_1k": 9.46,
+            "fn": 1,
+            "fp": 1459,
+            "fpr": 0.639351,
+            "n_fraud": 193,
+            "n_legit": 2282,
+            "precision": 0.116293,
+            "recall": 0.994819,
+            "tn": 823,
+            "tp": 192
+          },
+          "fpr": 0.187679,
+          "new": {
+            "alerts": 231,
+            "alerts_per_1k": 1.324,
+            "fn": 0,
+            "fp": 181,
+            "fpr": 0.648746,
+            "n_fraud": 50,
+            "n_legit": 279,
+            "precision": 0.21645,
+            "recall": 1.0,
+            "tn": 98,
+            "tp": 50
+          },
+          "overall": {
+            "alerts": 35832,
+            "alerts_per_1k": 205.306,
+            "fn": 38,
+            "fp": 32036,
+            "fpr": 0.187679,
+            "n_fraud": 3834,
+            "n_legit": 170696,
+            "precision": 0.105939,
+            "recall": 0.990089,
+            "tn": 138660,
+            "tp": 3796
+          },
+          "recall": 0.990089,
+          "seen": {
+            "alerts": 34181,
+            "alerts_per_1k": 195.846,
+            "fn": 37,
+            "fp": 30577,
+            "fpr": 0.181559,
+            "n_fraud": 3641,
+            "n_legit": 168414,
+            "precision": 0.105439,
+            "recall": 0.989838,
+            "tn": 137837,
+            "tp": 3604
+          },
+          "thr": 0.06014559
+        },
+        "P2": {
+          "absent5": {
+            "alerts": 1862,
+            "alerts_per_1k": 10.669,
+            "fn": 0,
+            "fp": 1669,
+            "fpr": 0.731376,
+            "n_fraud": 193,
+            "n_legit": 2282,
+            "precision": 0.103652,
+            "recall": 1.0,
+            "tn": 613,
+            "tp": 193
+          },
+          "fpr": 0.279977,
+          "new": {
+            "alerts": 259,
+            "alerts_per_1k": 1.484,
+            "fn": 0,
+            "fp": 209,
+            "fpr": 0.749104,
+            "n_fraud": 50,
+            "n_legit": 279,
+            "precision": 0.19305,
+            "recall": 1.0,
+            "tn": 70,
+            "tp": 50
+          },
+          "overall": {
+            "alerts": 51606,
+            "alerts_per_1k": 295.686,
+            "fn": 19,
+            "fp": 47791,
+            "fpr": 0.279977,
+            "n_fraud": 3834,
+            "n_legit": 170696,
+            "precision": 0.073926,
+            "recall": 0.995044,
+            "tn": 122905,
+            "tp": 3815
+          },
+          "recall": 0.995044,
+          "seen": {
+            "alerts": 49744,
+            "alerts_per_1k": 285.017,
+            "fn": 19,
+            "fp": 46122,
+            "fpr": 0.273861,
+            "n_fraud": 3641,
+            "n_legit": 168414,
+            "precision": 0.072813,
+            "recall": 0.994782,
+            "tn": 122292,
+            "tp": 3622
+          },
+          "thr": 0.02568487
+        }
+      },
+      "V_norm": {
+        "P1": {
+          "absent5": {
+            "alerts": 1605,
+            "alerts_per_1k": 9.196,
+            "fn": 2,
+            "fp": 1414,
+            "fpr": 0.619632,
+            "n_fraud": 193,
+            "n_legit": 2282,
+            "precision": 0.119003,
+            "recall": 0.989637,
+            "tn": 868,
+            "tp": 191
+          },
+          "fpr": 0.077612,
+          "new": {
+            "alerts": 225,
+            "alerts_per_1k": 1.289,
+            "fn": 1,
+            "fp": 176,
+            "fpr": 0.630824,
+            "n_fraud": 50,
+            "n_legit": 279,
+            "precision": 0.217778,
+            "recall": 0.98,
+            "tn": 103,
+            "tp": 49
+          },
+          "overall": {
+            "alerts": 17044,
+            "alerts_per_1k": 97.657,
+            "fn": 38,
+            "fp": 13248,
+            "fpr": 0.077612,
+            "n_fraud": 3834,
+            "n_legit": 170696,
+            "precision": 0.222718,
+            "recall": 0.990089,
+            "tn": 157448,
+            "tp": 3796
+          },
+          "recall": 0.990089,
+          "seen": {
+            "alerts": 15439,
+            "alerts_per_1k": 88.46,
+            "fn": 36,
+            "fp": 11834,
+            "fpr": 0.070267,
+            "n_fraud": 3641,
+            "n_legit": 168414,
+            "precision": 0.2335,
+            "recall": 0.990113,
+            "tn": 156580,
+            "tp": 3605
+          },
+          "thr": 0.07156545
+        },
+        "P2": {
+          "absent5": {
+            "alerts": 1761,
+            "alerts_per_1k": 10.09,
+            "fn": 1,
+            "fp": 1569,
+            "fpr": 0.687555,
+            "n_fraud": 193,
+            "n_legit": 2282,
+            "precision": 0.109029,
+            "recall": 0.994819,
+            "tn": 713,
+            "tp": 192
+          },
+          "fpr": 0.10483,
+          "new": {
+            "alerts": 244,
+            "alerts_per_1k": 1.398,
+            "fn": 0,
+            "fp": 194,
+            "fpr": 0.695341,
+            "n_fraud": 50,
+            "n_legit": 279,
+            "precision": 0.204918,
+            "recall": 1.0,
+            "tn": 85,
+            "tp": 50
+          },
+          "overall": {
+            "alerts": 21709,
+            "alerts_per_1k": 124.385,
+            "fn": 19,
+            "fp": 17894,
+            "fpr": 0.10483,
+            "n_fraud": 3834,
+            "n_legit": 170696,
+            "precision": 0.175734,
+            "recall": 0.995044,
+            "tn": 152802,
+            "tp": 3815
+          },
+          "recall": 0.995044,
+          "seen": {
+            "alerts": 19948,
+            "alerts_per_1k": 114.296,
+            "fn": 18,
+            "fp": 16325,
+            "fpr": 0.096934,
+            "n_fraud": 3641,
+            "n_legit": 168414,
+            "precision": 0.181622,
+            "recall": 0.995056,
+            "tn": 152089,
+            "tp": 3623
+          },
+          "thr": 0.03874249
+        }
+      },
+      "V_rawplus": {
+        "P1": {
+          "absent5": {
+            "alerts": 1607,
+            "alerts_per_1k": 9.208,
+            "fn": 1,
+            "fp": 1415,
+            "fpr": 0.62007,
+            "n_fraud": 193,
+            "n_legit": 2282,
+            "precision": 0.119477,
+            "recall": 0.994819,
+            "tn": 867,
+            "tp": 192
+          },
+          "fpr": 0.068268,
+          "new": {
+            "alerts": 222,
+            "alerts_per_1k": 1.272,
+            "fn": 0,
+            "fp": 172,
+            "fpr": 0.616487,
+            "n_fraud": 50,
+            "n_legit": 279,
+            "precision": 0.225225,
+            "recall": 1.0,
+            "tn": 107,
+            "tp": 50
+          },
+          "overall": {
+            "alerts": 15449,
+            "alerts_per_1k": 88.518,
+            "fn": 38,
+            "fp": 11653,
+            "fpr": 0.068268,
+            "n_fraud": 3834,
+            "n_legit": 170696,
+            "precision": 0.245712,
+            "recall": 0.990089,
+            "tn": 159043,
+            "tp": 3796
+          },
+          "recall": 0.990089,
+          "seen": {
+            "alerts": 13842,
+            "alerts_per_1k": 79.31,
+            "fn": 37,
+            "fp": 10238,
+            "fpr": 0.060791,
+            "n_fraud": 3641,
+            "n_legit": 168414,
+            "precision": 0.260367,
+            "recall": 0.989838,
+            "tn": 158176,
+            "tp": 3604
+          },
+          "thr": 0.07077689
+        },
+        "P2": {
+          "absent5": {
+            "alerts": 1842,
+            "alerts_per_1k": 10.554,
+            "fn": 1,
+            "fp": 1650,
+            "fpr": 0.72305,
+            "n_fraud": 193,
+            "n_legit": 2282,
+            "precision": 0.104235,
+            "recall": 0.994819,
+            "tn": 632,
+            "tp": 192
+          },
+          "fpr": 0.099235,
+          "new": {
+            "alerts": 254,
+            "alerts_per_1k": 1.455,
+            "fn": 0,
+            "fp": 204,
+            "fpr": 0.731183,
+            "n_fraud": 50,
+            "n_legit": 279,
+            "precision": 0.19685,
+            "recall": 1.0,
+            "tn": 75,
+            "tp": 50
+          },
+          "overall": {
+            "alerts": 20754,
+            "alerts_per_1k": 118.914,
+            "fn": 19,
+            "fp": 16939,
+            "fpr": 0.099235,
+            "n_fraud": 3834,
+            "n_legit": 170696,
+            "precision": 0.18382,
+            "recall": 0.995044,
+            "tn": 153757,
+            "tp": 3815
+          },
+          "recall": 0.995044,
+          "seen": {
+            "alerts": 18912,
+            "alerts_per_1k": 108.36,
+            "fn": 18,
+            "fp": 15289,
+            "fpr": 0.090782,
+            "n_fraud": 3641,
+            "n_legit": 168414,
+            "precision": 0.191571,
+            "recall": 0.995056,
+            "tn": 153125,
+            "tp": 3623
+          },
+          "thr": 0.02989373
+        }
+      },
+      "control_E_hardneg": {
+        "P1": {
+          "absent5": {
+            "alerts": 1596,
+            "alerts_per_1k": 9.145,
+            "fn": 1,
+            "fp": 1404,
+            "fpr": 0.61525,
+            "n_fraud": 193,
+            "n_legit": 2282,
+            "precision": 0.120301,
+            "recall": 0.994819,
+            "tn": 878,
+            "tp": 192
+          },
+          "fpr": 0.070828,
+          "new": {
+            "alerts": 222,
+            "alerts_per_1k": 1.272,
+            "fn": 1,
+            "fp": 173,
+            "fpr": 0.620072,
+            "n_fraud": 50,
+            "n_legit": 279,
+            "precision": 0.220721,
+            "recall": 0.98,
+            "tn": 106,
+            "tp": 49
+          },
+          "overall": {
+            "alerts": 15886,
+            "alerts_per_1k": 91.022,
+            "fn": 38,
+            "fp": 12090,
+            "fpr": 0.070828,
+            "n_fraud": 3834,
+            "n_legit": 170696,
+            "precision": 0.238953,
+            "recall": 0.990089,
+            "tn": 158606,
+            "tp": 3796
+          },
+          "recall": 0.990089,
+          "seen": {
+            "alerts": 14290,
+            "alerts_per_1k": 81.877,
+            "fn": 37,
+            "fp": 10686,
+            "fpr": 0.063451,
+            "n_fraud": 3641,
+            "n_legit": 168414,
+            "precision": 0.252204,
+            "recall": 0.989838,
+            "tn": 157728,
+            "tp": 3604
+          },
+          "thr": 0.05355844
+        },
+        "P2": {
+          "absent5": {
+            "alerts": 1960,
+            "alerts_per_1k": 11.23,
+            "fn": 0,
+            "fp": 1767,
+            "fpr": 0.774321,
+            "n_fraud": 193,
+            "n_legit": 2282,
+            "precision": 0.098469,
+            "recall": 1.0,
+            "tn": 515,
+            "tp": 193
+          },
+          "fpr": 0.115304,
+          "new": {
+            "alerts": 261,
+            "alerts_per_1k": 1.495,
+            "fn": 0,
+            "fp": 211,
+            "fpr": 0.756272,
+            "n_fraud": 50,
+            "n_legit": 279,
+            "precision": 0.191571,
+            "recall": 1.0,
+            "tn": 68,
+            "tp": 50
+          },
+          "overall": {
+            "alerts": 23497,
+            "alerts_per_1k": 134.63,
+            "fn": 19,
+            "fp": 19682,
+            "fpr": 0.115304,
+            "n_fraud": 3834,
+            "n_legit": 170696,
+            "precision": 0.162361,
+            "recall": 0.995044,
+            "tn": 151014,
+            "tp": 3815
+          },
+          "recall": 0.995044,
+          "seen": {
+            "alerts": 21537,
+            "alerts_per_1k": 123.4,
+            "fn": 19,
+            "fp": 17915,
+            "fpr": 0.106375,
+            "n_fraud": 3641,
+            "n_legit": 168414,
+            "precision": 0.168176,
+            "recall": 0.994782,
+            "tn": 150499,
+            "tp": 3622
+          },
+          "thr": 0.01875816
+        }
+      }
+    }
+  },
+  "step13_freeze": {
+    "candidate": "E_hardneg_exposure_norm_v1",
+    "feature_schema": [
+      "amt",
+      "log_amt",
+      "amt_sq",
+      "hr",
+      "mn",
+      "dow",
+      "Month",
+      "Day",
+      "hour_sin",
+      "hour_cos",
+      "is_night",
+      "is_business_hours",
+      "chip",
+      "is_online",
+      "is_swipe",
+      "err",
+      "has_zip",
+      "has_state",
+      "is_online_or_no_state",
+      "mcc",
+      "mcc_high",
+      "mcc_restaurant",
+      "mcc_gas",
+      "mcc_grocery",
+      "mcc_travel",
+      "mcc_online",
+      "merchant_id",
+      "city_id",
+      "card_id",
+      "user_tx_count",
+      "card_tx_count",
+      "user_avg_amt",
+      "amt_vs_user_avg",
+      "amt_zscore",
+      "merch_tx_count",
+      "user_merchant_diversity",
+      "user_city_diversity",
+      "user_fraud_rate",
+      "merch_fraud_rate",
+      "city_fraud_rate",
+      "high_amt",
+      "very_high_amt",
+      "amt_x_hr",
+      "amt_x_mcc",
+      "amt_x_chip",
+      "amt_x_online",
+      "amt_x_night",
+      "user_merch_count",
+      "user_tx_rate",
+      "card_tx_rate",
+      "merch_tx_rate",
+      "user_merch_rate",
+      "user_merchant_diversity_rate",
+      "user_city_diversity_rate"
+    ],
+    "freeze_time_utc": "2026-09-05T08:05:33Z",
+    "locked_threshold": 0.029894,
+    "parent": "E_hardneg certified (48 native) + exposure-rate features",
+    "seed": 42,
+    "status": "CERTIFICATION_PENDING",
+    "threshold_policy": "val-only P2: min val FPR at val recall >= 0.995 (identical policy that locked E_hardneg 0.018758)",
+    "val_at_lock": {
+      "fpr": 0.0992,
+      "recall": 0.995,
+      "threshold": 0.029894
+    }
+  },
+  "step14_reproducibility": {
+    "metric_tolerance": 0.0001,
+    "result": "PASS",
+    "runs": [
+      {
+        "match": true,
+        "max_abs_diff_vs_frozen": 2.979902657962441e-08,
+        "mean_abs_diff_vs_frozen": 8.293352986707315e-10,
+        "metric_diff_at_locked_thr": {
+          "fpr": 0.0,
+          "precision": 0.0,
+          "recall": 0.0
+        },
+        "run": 1,
+        "seconds": 77.7
+      },
+      {
+        "match": true,
+        "max_abs_diff_vs_frozen": 2.979902657962441e-08,
+        "mean_abs_diff_vs_frozen": 8.293352986707315e-10,
+        "metric_diff_at_locked_thr": {
+          "fpr": 0.0,
+          "precision": 0.0,
+          "recall": 0.0
+        },
+        "run": 2,
+        "seconds": 77.3
+      }
+    ],
+    "score_tolerance": 1e-06
+  },
+  "step15_final_test_one_shot": {
+    "comparison": {
+      "overall": {
+        "E_hardneg": {
+          "alerts": 25197,
+          "alerts_per_1k": 130.981,
+          "fn": 15,
+          "fp": 20634,
+          "fpr": 0.109876,
+          "precision": 0.181093,
+          "recall": 0.996723,
+          "tn": 167160,
+          "tp": 4563
+        },
+        "V_rawplus": {
+          "alerts": 21711,
+          "alerts_per_1k": 112.859,
+          "fn": 42,
+          "fp": 17175,
+          "fpr": 0.091457,
+          "precision": 0.208926,
+          "recall": 0.990826,
+          "tn": 170619,
+          "tp": 4536
+        }
+      }
+    },
+    "final_test": {
+      "E_hardneg_reference": {
+        "auc": 0.986981,
+        "fraud": 4578,
+        "locked_threshold": 0.018758,
+        "pr_auc": 0.637788,
+        "rows": 192372,
+        "segments": {
+          "absent5": {
+            "alerts": 2118,
+            "alerts_per_1k": 11.01,
+            "fn": 0,
+            "fp": 1845,
+            "fpr": 0.645105,
+            "n_fraud": 273,
+            "n_legit": 2860,
+            "precision": 0.128895,
+            "recall": 1.0,
+            "tn": 1015,
+            "tp": 273
+          },
+          "genuinely_new": {
+            "alerts": 262,
+            "alerts_per_1k": 1.362,
+            "fn": 0,
+            "fp": 234,
+            "fpr": 0.634146,
+            "n_fraud": 28,
+            "n_legit": 369,
+            "precision": 0.10687,
+            "recall": 1.0,
+            "tn": 135,
+            "tp": 28
+          },
+          "overall": {
+            "alerts": 25197,
+            "alerts_per_1k": 130.981,
+            "fn": 15,
+            "fp": 20634,
+            "fpr": 0.109876,
+            "n_fraud": 4578,
+            "n_legit": 187794,
+            "precision": 0.181093,
+            "recall": 0.996723,
+            "tn": 167160,
+            "tp": 4563
+          },
+          "seen": {
+            "alerts": 23079,
+            "alerts_per_1k": 119.971,
+            "fn": 15,
+            "fp": 18789,
+            "fpr": 0.101598,
+            "n_fraud": 4305,
+            "n_legit": 184934,
+            "precision": 0.185883,
+            "recall": 0.996516,
+            "tn": 166145,
+            "tp": 4290
+          }
+        }
+      },
+      "candidate": {
+        "auc": 0.986832,
+        "fraud": 4578,
+        "locked_threshold": 0.029894,
+        "pr_auc": 0.710341,
+        "rows": 192372,
+        "segments": {
+          "absent5": {
+            "alerts": 1955,
+            "alerts_per_1k": 10.163,
+            "fn": 0,
+            "fp": 1682,
+            "fpr": 0.588112,
+            "n_fraud": 273,
+            "n_legit": 2860,
+            "precision": 0.139642,
+            "recall": 1.0,
+            "tn": 1178,
+            "tp": 273
+          },
+          "genuinely_new": {
+            "alerts": 243,
+            "alerts_per_1k": 1.263,
+            "fn": 0,
+            "fp": 215,
+            "fpr": 0.582656,
+            "n_fraud": 28,
+            "n_legit": 369,
+            "precision": 0.115226,
+            "recall": 1.0,
+            "tn": 154,
+            "tp": 28
+          },
+          "overall": {
+            "alerts": 21711,
+            "alerts_per_1k": 112.859,
+            "fn": 42,
+            "fp": 17175,
+            "fpr": 0.091457,
+            "n_fraud": 4578,
+            "n_legit": 187794,
+            "precision": 0.208926,
+            "recall": 0.990826,
+            "tn": 170619,
+            "tp": 4536
+          },
+          "seen": {
+            "alerts": 19756,
+            "alerts_per_1k": 102.697,
+            "fn": 42,
+            "fp": 15493,
+            "fpr": 0.083776,
+            "n_fraud": 4305,
+            "n_legit": 184934,
+            "precision": 0.215783,
+            "recall": 0.990244,
+            "tn": 169441,
+            "tp": 4263
+          }
+        }
+      }
+    },
+    "freeze_manifest": {
+      "candidate": "E_hardneg_exposure_norm_v1",
+      "feature_schema": [
+        "amt",
+        "log_amt",
+        "amt_sq",
+        "hr",
+        "mn",
+        "dow",
+        "Month",
+        "Day",
+        "hour_sin",
+        "hour_cos",
+        "is_night",
+        "is_business_hours",
+        "chip",
+        "is_online",
+        "is_swipe",
+        "err",
+        "has_zip",
+        "has_state",
+        "is_online_or_no_state",
+        "mcc",
+        "mcc_high",
+        "mcc_restaurant",
+        "mcc_gas",
+        "mcc_grocery",
+        "mcc_travel",
+        "mcc_online",
+        "merchant_id",
+        "city_id",
+        "card_id",
+        "user_tx_count",
+        "card_tx_count",
+        "user_avg_amt",
+        "amt_vs_user_avg",
+        "amt_zscore",
+        "merch_tx_count",
+        "user_merchant_diversity",
+        "user_city_diversity",
+        "user_fraud_rate",
+        "merch_fraud_rate",
+        "city_fraud_rate",
+        "high_amt",
+        "very_high_amt",
+        "amt_x_hr",
+        "amt_x_mcc",
+        "amt_x_chip",
+        "amt_x_online",
+        "amt_x_night",
+        "user_merch_count",
+        "user_tx_rate",
+        "card_tx_rate",
+        "merch_tx_rate",
+        "user_merch_rate",
+        "user_merchant_diversity_rate",
+        "user_city_diversity_rate"
+      ],
+      "freeze_time_utc": "2026-09-05T08:05:33Z",
+      "locked_threshold": 0.029894,
+      "parent": "E_hardneg certified (48 native) + exposure-rate features",
+      "seed": 42,
+      "status": "CERTIFICATION_PENDING",
+      "threshold_policy": "val-only P2: min val FPR at val recall >= 0.995 (identical policy that locked E_hardneg 0.018758)",
+      "val_at_lock": {
+        "fpr": 0.0992,
+        "recall": 0.995,
+        "threshold": 0.029894
+      }
+    },
+    "locked_threshold": 0.029894,
+    "reproducibility": {
+      "metric_tolerance": 0.0001,
+      "result": "PASS",
+      "runs": [
+        {
+          "match": true,
+          "max_abs_diff_vs_frozen": 2.979902657962441e-08,
+          "mean_abs_diff_vs_frozen": 8.293352986707315e-10,
+          "metric_diff_at_locked_thr": {
+            "fpr": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "run": 1,
+          "seconds": 77.7
+        },
+        {
+          "match": true,
+          "max_abs_diff_vs_frozen": 2.979902657962441e-08,
+          "mean_abs_diff_vs_frozen": 8.293352986707315e-10,
+          "metric_diff_at_locked_thr": {
+            "fpr": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "run": 2,
+          "seconds": 77.3
+        }
+      ],
+      "score_tolerance": 1e-06
+    },
+    "status": "CERTIFICATION_PENDING \u2014 E_hardneg remains deployed",
+    "winner": "V_rawplus"
+  },
+  "step16_frontier_descriptive": {
+    "model": [
+      "E_hardneg",
+      "V_rawplus_frozen"
+    ],
+    "note": "descriptive summary of the one-shot locked evaluation; no threshold selected from the test window",
+    "recall_at_fpr_10pct": [
+      0.9951944080384447,
+      0.9941022280471822
+    ],
+    "recall_at_fpr_5pct": [
+      0.9497597204019222,
+      0.9294451725644386
+    ]
+  },
+  "step17_status": "CERTIFICATION_PENDING \u2014 E_hardneg remains deployed",
+  "step2_backup": {
+    "backup_dir": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\BACKUPS\\E_hardneg_cert_20260904",
+    "backup_hashes": {
+      "cb_native.joblib": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+      "feature_list.json": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+      "lgb_native.joblib": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+      "manifest.json": "9882ff1dd058d5e29b469272d1386455ad63242874c549302c71db55d138a98f",
+      "manifest_v2.json.bak": "34b92abe67d1eebf2a2b2e1c67980c3a0d1be457f39c3d595f6da60c647c24ce",
+      "manifest_v3.json.bak": "9882ff1dd058d5e29b469272d1386455ad63242874c549302c71db55d138a98f",
+      "scaler_native.joblib": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+      "xgb_native.joblib": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc"
+    },
+    "files_verified": [
+      "cb_native.joblib",
+      "feature_list.json",
+      "lgb_native.joblib",
+      "manifest.json",
+      "manifest_v2.json.bak",
+      "manifest_v3.json.bak",
+      "scaler_native.joblib",
+      "xgb_native.joblib"
+    ],
+    "note": "plain copy; immutability by convention (no code commits in this project)",
+    "source_dir": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\models\\production\\altman_native",
+    "verified_sha256_equal": true
+  },
+  "step6_control": {
+    "certified": {
+      "P1": {
+        "fpr": 0.07082767,
+        "recall": 0.990089,
+        "threshold": 0.053558
+      },
+      "P2": {
+        "fpr": 0.115304401,
+        "recall": 0.995044,
+        "threshold": 0.018758
+      },
+      "auc": 0.995594,
+      "fraud": 3834,
+      "pr_auc": 0.914337,
+      "rows": 174530
+    },
+    "control": "E_hardneg_phase6_control",
+    "gate": {
+      "auc_match": true,
+      "p2_fpr_match": true,
+      "p2_recall_match": true,
+      "p2_threshold_match": true,
+      "pr_auc_match": true
+    },
+    "method": "certified artifacts rescored on locked mission-frame val",
+    "replayed": {
+      "P1": {
+        "fpr": 0.070828,
+        "recall": 0.990089,
+        "threshold": 0.053558
+      },
+      "P2": {
+        "fpr": 0.115304,
+        "recall": 0.995044,
+        "threshold": 0.018758
+      },
+      "auc": 0.995594,
+      "pr_auc": 0.914337
+    },
+    "result": "PASS"
+  },
+  "step8_causal": {
+    "checked": {
+      "native_features": 48,
+      "rate_features": 6
+    },
+    "claim": "feature(t) is a function of the stream strictly before t; appending future rows or flipping future labels changes nothing",
+    "phase": 6,
+    "result": "PASS",
+    "step": 8,
+    "test": [
+      {
+        "exact_equal": true,
+        "max_abs_diff": 0.0,
+        "name": "B_future_rows_removed",
+        "perturbation": "stream truncated at 2011-01-01 (t+1..t+1y removed)",
+        "pre_rows": 461131
+      },
+      {
+        "exact_equal": true,
+        "max_abs_diff": 0.0,
+        "name": "D_future_labels_flipped",
+        "perturbation": "post-2010 fraud labels flipped to their opposite",
+        "pre_rows": 461131
+      }
+    ],
+    "tolerance": "exact float equality (deterministic derivation over identical prefix)"
+  },
+  "title": "Exposure-normalized (rate) features campaign",
+  "verdict": "Exposure normalization genuinely improved the operating frontier on the identical validation rows (P2 val FPR 0.1153 -> 0.0992, recall floor 0.995) and on the one-shot final test the frozen candidate delivers FPR 0.0915 vs 0.1099 (-16.7%) at recall 0.9908 vs 0.9967, holding recall 1.0 on absent/genuinely-new merchants with FPR ~-9%. Because recall at the locked point is 0.6pp below the certified model (FN 15 -> 42), the candidate is NOT promoted on this evidence; it is reported CERTIFICATION_PENDING pending the certified high-recall frontier review and independent certification (steps 18-19)."
+}

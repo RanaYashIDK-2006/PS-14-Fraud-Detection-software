@@ -1,0 +1,35 @@
+{
+  "scan_id": "20260823_100847",
+  "timestamp": "2026-08-23T10:08:47.163833+00:00",
+  "security_scan": {
+    "scan_time": "2026-08-23T10:08:39.278888+00:00",
+    "duration_seconds": 0.11468744277954102,
+    "files_scanned": 50,
+    "checks_performed": 0,
+    "summary": {
+      "total": 0,
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "passed": true
+    },
+    "issues": []
+  },
+  "penetration_test": {
+    "total": 34,
+    "blocked": 30,
+    "vulnerable": 4,
+    "tests": [],
+    "vulnerabilities": [],
+    "exit_code": 1
+  },
+  "score": {
+    "score": 97,
+    "grade": "A",
+    "issues": [
+      "4/34 penetration vulnerabilities"
+    ],
+    "assessment": "Excellent"
+  }
+}

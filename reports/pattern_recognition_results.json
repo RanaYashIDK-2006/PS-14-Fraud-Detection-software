@@ -1,0 +1,121 @@
+{
+  "dataset": "creditcard_v2",
+  "dataset_hash": "b173321939774196",
+  "feature_version": "v2_pattern_recognition",
+  "features_used": [
+    "amount_ratio",
+    "txn_freq_last_24h",
+    "txn_time_unusual",
+    "unusual_recipient_flag",
+    "gradual_escalation_score",
+    "account_tenure_days",
+    "hour_of_day",
+    "hour_deviation",
+    "amount_zscore",
+    "velocity_deviation",
+    "recipient_novelty",
+    "txn_regularity",
+    "amount_log",
+    "amount_bucket",
+    "v_magnitude",
+    "v_asymmetry",
+    "pca_anomaly_score",
+    "v_extreme_count",
+    "amount_time_interaction",
+    "time_normalized"
+  ],
+  "n_features": 20,
+  "n_rows": 284807,
+  "fraud_count": 492,
+  "fraud_rate": 0.001727485630620034,
+  "train_size": 227845,
+  "test_size": 56962,
+  "timestamp": "2026-08-27T22:55:59",
+  "results": {
+    "lr": {
+      "roc_auc": 0.9625386170224985,
+      "pr_auc": 0.250813377599761,
+      "brier": 0.047045592218637466,
+      "recall_at_1pct_fpr": 0.6530612244897959,
+      "time": 0.4011499881744385,
+      "cm": [
+        [
+          54528,
+          2336
+        ],
+        [
+          12,
+          86
+        ]
+      ]
+    },
+    "rf": {
+      "roc_auc": 0.9603633589057458,
+      "pr_auc": 0.6334723774837726,
+      "brier": 0.0049805578756421665,
+      "recall_at_1pct_fpr": 0.826530612244898,
+      "time": 11.08799934387207,
+      "cm": [
+        [
+          56481,
+          383
+        ],
+        [
+          20,
+          78
+        ]
+      ]
+    },
+    "xgb": {
+      "roc_auc": 0.9617734544577539,
+      "pr_auc": 0.664803191404939,
+      "brier": 0.0009744903654791415,
+      "recall_at_1pct_fpr": 0.826530612244898,
+      "time": 4.140511512756348,
+      "cm": [
+        [
+          56836,
+          28
+        ],
+        [
+          36,
+          62
+        ]
+      ]
+    },
+    "stacker": {
+      "roc_auc": 0.9698690323062257,
+      "pr_auc": 0.6813479692397235,
+      "brier": 0.0008391652615690651,
+      "recall_at_1pct_fpr": 0.8367346938775511,
+      "time": 0.11455631256103516,
+      "cm": [
+        [
+          56849,
+          15
+        ],
+        [
+          41,
+          57
+        ]
+      ]
+    }
+  },
+  "best_model": "stacker",
+  "confidence_intervals": {
+    "roc_auc_95ci": [
+      0.9442715874822113,
+      0.9886989789284747
+    ],
+    "pr_auc_95ci": [
+      0.5934721294776022,
+      0.7644453378610461
+    ]
+  },
+  "data_hash": "b173321939774196",
+  "model_hashes": {
+    "lr": "4522c62b9ae05fad",
+    "rf": "461724368913d54e",
+    "xgb": "b1d10bd28627f43e"
+  }
+}

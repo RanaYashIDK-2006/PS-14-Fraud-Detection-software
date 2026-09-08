@@ -1,0 +1,267 @@
+{
+  "check": 28,
+  "generated_at": "2026-09-03 20:13:58",
+  "sandbox": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\models\\ps14_release_drill_5k6h27az",
+  "phases": {
+    "1_active_inventory": {
+      "model_version": "altman_lean_15feat_20260830_200346",
+      "manifest_model_type": "xgb_lgb_ensemble_lean",
+      "manifest_ensemble_weights": {
+        "xgb": 0.5,
+        "lgb": 0.5
+      },
+      "lean": true,
+      "engine_files_present": {
+        "manifest.json": true,
+        "feature_list.json": true,
+        "xgb_production.joblib": true,
+        "lgb_production.joblib": true,
+        "cb_production.joblib": true,
+        "scaler_production.joblib": true
+      },
+      "engine_weight_constant": {
+        "xgb": 0.34,
+        "lgb": 0.33,
+        "cb": 0.33
+      },
+      "cb_loaded_by_engine": true,
+      "cb_declared_in_manifest": false,
+      "cb_feature_names": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+      ],
+      "cb_feature_names_are_altman": false,
+      "record_covers_stale_artifacts": [
+        "drift_reference.json",
+        "drift_reference.npy",
+        "logistic_regression.joblib",
+        "model.joblib",
+        "random_forest.joblib",
+        "scaler.joblib"
+      ],
+      "governance_record_exists": true,
+      "record_gaps": [
+        "record.selected_threshold empty/missing (deployed model has no locked threshold / period provenance)",
+        "record.training_period empty/missing (deployed model has no locked threshold / period provenance)",
+        "record.validation_period empty/missing (deployed model has no locked threshold / period provenance)",
+        "record.final_test_period empty/missing (deployed model has no locked threshold / period provenance)",
+        "record.code_version is a description, not a hash: 'models/production + src/risk_engine/altman_ensemble.py'",
+        "record.hyperparameters not captured (introspection failed)",
+        "promotion gate 'production_parity' = PARTIAL -> FAIL documented: city_fraud_rate cache reset + audit-vs-deployed model mismatch (see production_parity.json)",
+        "promotion gate 'approval' = UNVERIFIED (no human approval record)"
+      ]
+    },
+    "2_good_load_seconds": 2.485,
+    "2_baseline": {
+      "calibrated": {
+        "n": 24,
+        "mean": 0.160723,
+        "std": 0.107732,
+        "min": 0.004425,
+        "max": 0.253438,
+        "p50_lat": 1.75,
+        "p95_lat": 2.467,
+        "p99_lat": 58.851
+      },
+      "raw": {
+        "n": 24,
+        "mean": 0.83259,
+        "std": 0.221139,
+        "min": 0.39709,
+        "max": 0.999414,
+        "p50_lat": 1.75,
+        "p95_lat": 2.467,
+        "p99_lat": 58.851
+      }
+    },
+    "3_atomicity_partial_activation": {
+      "detected": true,
+      "detect_seconds": 0.011,
+      "error": "UnpicklingError: unsupported persistent id encountered",
+      "restored_outputs_equal_baseline": true
+    },
+    "4_rollback_drills": [
+      {
+        "scenario": "corrupt_artifact",
+        "activated": "corrupt_artifact",
+        "activation_load_seconds": 0.032,
+        "detected": true,
+        "detector": "engine load/predict raised (IndexError: list index out of range)",
+        "rollback": {
+          "ok": true,
+          "seconds": 0.252,
+          "files_copied": 6,
+          "post_rollback_verify_pass": true
+        },
+        "post_rollback_reload_seconds": 1.494,
+        "rollback_correct": true
+      },
+      {
+        "scenario": "incompatible_schema",
+        "activated": "incompatible_schema",
+        "activation_load_seconds": 1.561,
+        "detected": true,
+        "detector": "engine load/predict raised (ValueError: X has 15 features, but LGBMClassifier is expecting 3 features as input.)",
+        "rollback": {
+          "ok": true,
+          "seconds": 0.24,
+          "files_copied": 6,
+          "post_rollback_verify_pass": true
+        },
+        "post_rollback_reload_seconds": 1.467,
+        "rollback_correct": true
+      },
+      {
+        "scenario": "bad_model",
+        "activated": "bad_model",
+        "activation_load_seconds": 1.575,
+        "detected": true,
+        "detector": "|raw mean shift| 0.1637 vs baseline 0.8326",
+        "bad_calibrated": {
+          "n": 24,
+          "mean": 0.06368,
+          "std": 0.050142,
+          "min": 0.000462,
+          "max": 0.155268,
+          "p50_lat": 1.168,
+          "p95_lat": 4.653,
+          "p99_lat": 10.037
+        },
+        "bad_raw": {
+          "n": 24,
+          "mean": 0.668859,
+          "std": 0.235194,
+          "min": 0.082567,
+          "max": 0.914182,
+          "p50_lat": 1.168,
+          "p95_lat": 4.653,
+          "p99_lat": 10.037
+        },
+        "rollback": {
+          "ok": true,
+          "seconds": 0.244,
+          "files_copied": 6,
+          "post_rollback_verify_pass": true
+        },
+        "post_rollback_reload_seconds": 1.485,
+        "rollback_correct": true
+      },
+      {
+        "scenario": "abnormal_score_dist",
+        "activated": "abnormal_score_dist",
+        "activation_load_seconds": 1.558,
+        "detected": true,
+        "detector": "|raw mean shift| 0.3297 vs baseline 0.8326",
+        "bad_calibrated": {
+          "n": 24,
+          "mean": 0.019039,
+          "std": 0.013163,
+          "min": 0.000414,
+          "max": 0.030668,
+          "p50_lat": 1.164,
+          "p95_lat": 1.506,
+          "p99_lat": 3.907
+        },
+        "bad_raw": {
+          "n": 24,
+          "mean": 0.50292,
+          "std": 0.221139,
+          "min": 0.06742,
+          "max": 0.669744,
+          "p50_lat": 1.164,
+          "p95_lat": 1.506,
+          "p99_lat": 3.907
+        },
+        "rollback": {
+          "ok": true,
+          "seconds": 0.242,
+          "files_copied": 6,
+          "post_rollback_verify_pass": true
+        },
+        "post_rollback_reload_seconds": 1.47,
+        "rollback_correct": true
+      },
+      {
+        "scenario": "severe_latency",
+        "activated": "severe_latency",
+        "activation_load_seconds": 7.642,
+        "detected": true,
+        "detector": "canary p95 254.63ms vs 100ms SLO",
+        "bad_calibrated": {
+          "n": 24,
+          "mean": 0.160723,
+          "std": 0.107732,
+          "min": 0.004425,
+          "max": 0.253438,
+          "p50_lat": 253.56,
+          "p95_lat": 254.63,
+          "p99_lat": 254.697
+        },
+        "bad_raw": {
+          "n": 24,
+          "mean": 0.83259,
+          "std": 0.221139,
+          "min": 0.39709,
+          "max": 0.999414,
+          "p50_lat": 253.56,
+          "p95_lat": 254.63,
+          "p99_lat": 254.697
+        },
+        "rollback": {
+          "ok": true,
+          "seconds": 0.233,
+          "files_copied": 6,
+          "post_rollback_verify_pass": true
+        },
+        "post_rollback_reload_seconds": 1.456,
+        "rollback_correct": true
+      }
+    ],
+    "5_disaster_recovery": {
+      "storage_unavailable": {
+        "detected": true,
+        "detail": "load raises FileNotFoundError \u2014 no silent fallback to stale/other artifacts; the app lifespan catches this and degrades to rules-only with ML_UNAVAILABLE tagging (src/risk_engine/main.py L157-170)",
+        "seconds_to_fail": 0.0
+      },
+      "recovery_from_archive": {
+        "seconds": 1.627,
+        "verify_pass_on_reload": true,
+        "outputs_equal_baseline": true
+      },
+      "cold_restart_engine_rto_seconds": 1.527,
+      "cold_restart_verify_pass": true,
+      "cold_restart_outputs_equal": true,
+      "temp_state_loss_tracker": {
+        "fresh_tracker_user_rate": 0.001,
+        "fresh_tracker_merch_rate": 0.001,
+        "detail": "in-memory state lost on restart; rates return to baseline 0.001 until re-seeded from DB-2 at startup (risk_engine/main.py _seed_entity_tracker) \u2014 model scores unchanged, fraud-rate features cold for ~first events"
+      }
+    },
+    "6_verdict": {
+      "rollback_drills_all_pass": true,
+      "atomicity_partial_activation_detected": true,
+      "n_drills": 5,
+      "scenario_detected": {
+        "corrupt_artifact": true,
+        "incompatible_schema": true,
+        "bad_model": true,
+        "abnormal_score_dist": true,
+        "severe_latency": true
+      },
+      "overall": "FAIL"
+    }
+  }
+}

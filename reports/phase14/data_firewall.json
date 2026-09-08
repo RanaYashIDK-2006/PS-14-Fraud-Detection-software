@@ -1,0 +1,11 @@
+{
+  "training_cutoff_C0": 2013,
+  "training_cutoff_C1": 2014,
+  "training_cutoff_C2": 2015,
+  "2016_used_for_training": false,
+  "2017_used_for_training": false,
+  "2016_used_for_threshold": false,
+  "2017_used_for_threshold": false,
+  "status": "PASS",
+  "cert_time_utc": "2026-09-08T09:47:39Z"
+}

@@ -1,0 +1,143 @@
+{
+  "mission": "Phase-5 merchant-coverage manifest (mission #6/#8)",
+  "merchant_universe": {
+    "total_codes": 63288,
+    "pre2016_active": 57882,
+    "merchants_with_train_fraud": 2350,
+    "full_corpus_train_legit_rows": 17151218,
+    "full_corpus_train_fraud_rows": 21345
+  },
+  "sampling_note": "Training merchant set = merchant codes present among year<2016 rows of the sampled frame (the model's actual training experience).",
+  "strategies": {
+    "A_5pct": {
+      "train_merchants": 27190,
+      "merchant_coverage_pct_active": 47.0,
+      "train_rows_sampled": 879196,
+      "train_fraud_sampled": 21345,
+      "full_corpus_rows_of_present_merchants": 17003564,
+      "full_corpus_fraud_of_present_merchants": 21345,
+      "txn_coverage_pct": 99.0,
+      "fraud_coverage_pct": 100.0,
+      "legit_coverage_pct": 99.0
+    },
+    "B_10pct": {
+      "train_merchants": 33632,
+      "merchant_coverage_pct_active": 58.1,
+      "train_rows_sampled": 1736255,
+      "train_fraud_sampled": 21345,
+      "full_corpus_rows_of_present_merchants": 17081149,
+      "full_corpus_fraud_of_present_merchants": 21345,
+      "txn_coverage_pct": 99.5,
+      "fraud_coverage_pct": 100.0,
+      "legit_coverage_pct": 99.5
+    },
+    "B_20pct": {
+      "train_merchants": 40920,
+      "merchant_coverage_pct_active": 70.7,
+      "train_rows_sampled": 3449530,
+      "train_fraud_sampled": 21345,
+      "full_corpus_rows_of_present_merchants": 17129075,
+      "full_corpus_fraud_of_present_merchants": 21345,
+      "txn_coverage_pct": 99.7,
+      "fraud_coverage_pct": 100.0,
+      "legit_coverage_pct": 99.7
+    },
+    "B_40pct": {
+      "train_merchants": 48462,
+      "merchant_coverage_pct_active": 83.7,
+      "train_rows_sampled": 6879384,
+      "train_fraud_sampled": 21345,
+      "full_corpus_rows_of_present_merchants": 17156301,
+      "full_corpus_fraud_of_present_merchants": 21345,
+      "txn_coverage_pct": 99.9,
+      "fraud_coverage_pct": 100.0,
+      "legit_coverage_pct": 99.9
+    },
+    "C_merchant_aware": {
+      "train_merchants": 57882,
+      "merchant_coverage_pct_active": 100.0,
+      "train_rows_sampled": 2330695,
+      "train_fraud_sampled": 21345,
+      "full_corpus_rows_of_present_merchants": 17172563,
+      "full_corpus_fraud_of_present_merchants": 21345,
+      "txn_coverage_pct": 100.0,
+      "fraud_coverage_pct": 100.0,
+      "legit_coverage_pct": 100.0
+    }
+  },
+  "volume_buckets_full_corpus": [
+    {
+      "bucket": "1-1",
+      "n_merchants_full_corpus": 9728,
+      "legit_rows_full_corpus": 9728,
+      "fraud_rows_full_corpus": 159
+    },
+    {
+      "bucket": "2-5",
+      "n_merchants_full_corpus": 15332,
+      "legit_rows_full_corpus": 48016,
+      "fraud_rows_full_corpus": 549
+    },
+    {
+      "bucket": "6-20",
+      "n_merchants_full_corpus": 13128,
+      "legit_rows_full_corpus": 143180,
+      "fraud_rows_full_corpus": 617
+    },
+    {
+      "bucket": "21-100",
+      "n_merchants_full_corpus": 10385,
+      "legit_rows_full_corpus": 501522,
+      "fraud_rows_full_corpus": 1100
+    },
+    {
+      "bucket": "101-1000",
+      "n_merchants_full_corpus": 7817,
+      "legit_rows_full_corpus": 2435011,
+      "fraud_rows_full_corpus": 1775
+    },
+    {
+      "bucket": "1001-1000000000",
+      "n_merchants_full_corpus": 1190,
+      "legit_rows_full_corpus": 14013761,
+      "fraud_rows_full_corpus": 16366
+    }
+  ],
+  "overlap_train_merchants": {
+    "A_5pct": {
+      "A_5pct": 27190,
+      "B_10pct": 27190,
+      "B_20pct": 27190,
+      "B_40pct": 27190,
+      "C_merchant_aware": 27190
+    },
+    "B_10pct": {
+      "A_5pct": 27190,
+      "B_10pct": 33632,
+      "B_20pct": 33632,
+      "B_40pct": 33632,
+      "C_merchant_aware": 33632
+    },
+    "B_20pct": {
+      "A_5pct": 27190,
+      "B_10pct": 33632,
+      "B_20pct": 40920,
+      "B_40pct": 40920,
+      "C_merchant_aware": 40920
+    },
+    "B_40pct": {
+      "A_5pct": 27190,
+      "B_10pct": 33632,
+      "B_20pct": 40920,
+      "B_40pct": 48462,
+      "C_merchant_aware": 48462
+    },
+    "C_merchant_aware": {
+      "A_5pct": 27190,
+      "B_10pct": 33632,
+      "B_20pct": 40920,
+      "B_40pct": 48462,
+      "C_merchant_aware": 57882
+    }
+  }
+}

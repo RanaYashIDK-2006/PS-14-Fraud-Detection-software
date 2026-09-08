@@ -1,0 +1,97 @@
+{
+  "dataset": "PAYSIM_GRAPH",
+  "n_rows": 1200000,
+  "n_features": 39,
+  "n_fraud": 58800,
+  "best_r1": 0.489082,
+  "best_params": {
+    "n_est": 499,
+    "max_depth": 10,
+    "lr": 0.036885405763783845,
+    "subsample": 0.9746143876826797,
+    "colsample": 0.6678121320177449,
+    "min_child": 37,
+    "alpha": 0.044861678784229454,
+    "lambda": 0.994127232120383,
+    "num_leaves": 20
+  },
+  "cv_auc": 0.941551,
+  "cv_auc_std": 0.000876,
+  "cv_r1": 0.487823,
+  "cv_r1_std": 0.002556,
+  "oof_auc": 0.941541,
+  "metrics": {
+    "roc_auc": 0.941541,
+    "pr_auc": 0.647924,
+    "brier": 0.026891,
+    "r1": 0.487976,
+    "r05": 0.404456,
+    "r01": 0.255493,
+    "f1": 0.593176
+  },
+  "target_r1_60": false,
+  "top15": [
+    {
+      "n": "bal_ratio",
+      "i": 693
+    },
+    {
+      "n": "oldbalanceOrg",
+      "i": 604
+    },
+    {
+      "n": "amt_x_o",
+      "i": 585
+    },
+    {
+      "n": "row_idx",
+      "i": 565
+    },
+    {
+      "n": "amt_ratio_d",
+      "i": 542
+    },
+    {
+      "n": "oldbalanceDest",
+      "i": 507
+    },
+    {
+      "n": "newbalanceDest",
+      "i": 484
+    },
+    {
+      "n": "amt_x_d",
+      "i": 440
+    },
+    {
+      "n": "bal_diff_o",
+      "i": 430
+    },
+    {
+      "n": "amount",
+      "i": 399
+    },
+    {
+      "n": "dest_consistency",
+      "i": 386
+    },
+    {
+      "n": "bal_ratio_new",
+      "i": 384
+    },
+    {
+      "n": "orig_consistency",
+      "i": 366
+    },
+    {
+      "n": "amt_ratio_o",
+      "i": 319
+    },
+    {
+      "n": "orig_drain",
+      "i": 316
+    }
+  ],
+  "elapsed": 1040,
+  "ts": "2026-08-29T08:31:46Z"
+}

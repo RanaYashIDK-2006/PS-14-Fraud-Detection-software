@@ -1,0 +1,21 @@
+{
+  "ulb": {
+    "auc": 0.9879,
+    "threshold": 0.05,
+    "fpr": 3.5e-05,
+    "recall": 0.7333
+  },
+  "altman": {
+    "auc": 0.9509,
+    "threshold": 0.05,
+    "fpr": 0.0,
+    "recall": 0.0
+  },
+  "production": {
+    "band_of_low_max": 4,
+    "band_of_med_max": 4,
+    "ulb_threshold": 0.05,
+    "altman_threshold": 0.05
+  },
+  "elapsed": 981.5
+}

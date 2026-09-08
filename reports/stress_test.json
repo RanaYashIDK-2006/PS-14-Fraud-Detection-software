@@ -1,0 +1,363 @@
+{
+  "timestamp": "2026-08-30 13:22:35",
+  "config": {
+    "url": "http://127.0.0.1:8006",
+    "requests_per_level": 500,
+    "concurrency_levels": [
+      10,
+      50,
+      100,
+      250,
+      500,
+      750,
+      1000
+    ],
+    "timeout_s": 15
+  },
+  "breaking_point": 500,
+  "peak_single_throughput": 240.0,
+  "peak_batch_throughput": 136.4,
+  "results": [
+    {
+      "level": 10,
+      "type": "single",
+      "result": {
+        "success": 500,
+        "errors": 0,
+        "timeouts": 0,
+        "error_rate": 0.0,
+        "throughput": 240.0,
+        "percentiles": {
+          "p50_ms": 18.7,
+          "p90_ms": 24.64,
+          "p95_ms": 30.23,
+          "p99_ms": 251.01,
+          "min_ms": 10.78,
+          "max_ms": 320.73,
+          "mean_ms": 22.02,
+          "stdev_ms": 28.94
+        },
+        "status_codes": {
+          "200": 500
+        }
+      }
+    },
+    {
+      "level": 10,
+      "type": "batch",
+      "result": {
+        "success": 500,
+        "errors": 0,
+        "timeouts": 0,
+        "error_rate": 0.0,
+        "throughput": 13.7,
+        "throughput_txn": 135.6,
+        "percentiles": {
+          "p50_ms": 663.82,
+          "p90_ms": 769.44,
+          "p95_ms": 876.54,
+          "p99_ms": 1883.25,
+          "min_ms": 76.95,
+          "max_ms": 1888.32,
+          "mean_ms": 611.38,
+          "stdev_ms": 277.07
+        },
+        "status_codes": {
+          "200": 500
+        }
+      }
+    },
+    {
+      "level": 50,
+      "type": "single",
+      "result": {
+        "success": 497,
+        "errors": 3,
+        "timeouts": 0,
+        "error_rate": 0.6,
+        "throughput": 24.1,
+        "percentiles": {
+          "p50_ms": 511.86,
+          "p90_ms": 3827.75,
+          "p95_ms": 10630.83,
+          "p99_ms": 10672.9,
+          "min_ms": 53.43,
+          "max_ms": 10693.93,
+          "mean_ms": 1652.6,
+          "stdev_ms": 2996.54
+        },
+        "status_codes": {
+          "200": 497
+        }
+      }
+    },
+    {
+      "level": 50,
+      "type": "batch",
+      "result": {
+        "success": 476,
+        "errors": 24,
+        "timeouts": 0,
+        "error_rate": 4.8,
+        "throughput": 7.9,
+        "throughput_txn": 68.0,
+        "percentiles": {
+          "p50_ms": 2872.55,
+          "p90_ms": 5728.64,
+          "p95_ms": 11891.43,
+          "p99_ms": 13077.5,
+          "min_ms": 121.87,
+          "max_ms": 13244.58,
+          "mean_ms": 3221.75,
+          "stdev_ms": 2641.23
+        },
+        "status_codes": {
+          "200": 476
+        }
+      }
+    },
+    {
+      "level": 100,
+      "type": "single",
+      "result": {
+        "success": 500,
+        "errors": 0,
+        "timeouts": 0,
+        "error_rate": 0.0,
+        "throughput": 174.8,
+        "percentiles": {
+          "p50_ms": 311.38,
+          "p90_ms": 540.08,
+          "p95_ms": 569.29,
+          "p99_ms": 604.78,
+          "min_ms": 63.75,
+          "max_ms": 620.13,
+          "mean_ms": 310.76,
+          "stdev_ms": 160.13
+        },
+        "status_codes": {
+          "200": 500
+        }
+      }
+    },
+    {
+      "level": 100,
+      "type": "batch",
+      "result": {
+        "success": 485,
+        "errors": 15,
+        "timeouts": 0,
+        "error_rate": 3.0,
+        "throughput": 13.7,
+        "throughput_txn": 136.4,
+        "percentiles": {
+          "p50_ms": 4837.47,
+          "p90_ms": 6481.11,
+          "p95_ms": 6691.48,
+          "p99_ms": 7086.55,
+          "min_ms": 111.61,
+          "max_ms": 7217.46,
+          "mean_ms": 4296.6,
+          "stdev_ms": 1853.67
+        },
+        "status_codes": {
+          "200": 485
+        }
+      }
+    },
+    {
+      "level": 250,
+      "type": "single",
+      "result": {
+        "success": 500,
+        "errors": 0,
+        "timeouts": 0,
+        "error_rate": 0.0,
+        "throughput": 29.7,
+        "percentiles": {
+          "p50_ms": 2598.64,
+          "p90_ms": 5346.85,
+          "p95_ms": 12427.11,
+          "p99_ms": 12951.41,
+          "min_ms": 160.3,
+          "max_ms": 13087.17,
+          "mean_ms": 3005.68,
+          "stdev_ms": 3116.96
+        },
+        "status_codes": {
+          "200": 500
+        }
+      }
+    },
+    {
+      "level": 250,
+      "type": "batch",
+      "result": {
+        "success": 239,
+        "errors": 261,
+        "timeouts": 176,
+        "error_rate": 52.2,
+        "throughput": 6.8,
+        "throughput_txn": 67.9,
+        "percentiles": {
+          "p50_ms": 11045.97,
+          "p90_ms": 18733.85,
+          "p95_ms": 18858.52,
+          "p99_ms": 18989.65,
+          "min_ms": 207.98,
+          "max_ms": 19101.19,
+          "mean_ms": 10390.21,
+          "stdev_ms": 6041.4
+        },
+        "status_codes": {
+          "200": 239
+        }
+      }
+    },
+    {
+      "level": 500,
+      "type": "single",
+      "result": {
+        "success": 127,
+        "errors": 373,
+        "timeouts": 0,
+        "error_rate": 74.6,
+        "throughput": 25.1,
+        "percentiles": {
+          "p50_ms": 2368.79,
+          "p90_ms": 4893.4,
+          "p95_ms": 4931.69,
+          "p99_ms": 4964.11,
+          "min_ms": 2189.1,
+          "max_ms": 4974.35,
+          "mean_ms": 2980.21,
+          "stdev_ms": 1115.56
+        },
+        "status_codes": {
+          "200": 127
+        }
+      }
+    },
+    {
+      "level": 500,
+      "type": "batch",
+      "result": {
+        "success": 85,
+        "errors": 415,
+        "timeouts": 34,
+        "error_rate": 83.0,
+        "throughput": 5.5,
+        "throughput_txn": 53.9,
+        "percentiles": {
+          "p50_ms": 2607.05,
+          "p90_ms": 12765.94,
+          "p95_ms": 15451.83,
+          "p99_ms": 15478.04,
+          "min_ms": 2481.9,
+          "max_ms": 15484.4,
+          "mean_ms": 4458.39,
+          "stdev_ms": 4005.51
+        },
+        "status_codes": {
+          "200": 85
+        }
+      }
+    },
+    {
+      "level": 750,
+      "type": "single",
+      "result": {
+        "success": 500,
+        "errors": 0,
+        "timeouts": 0,
+        "error_rate": 0.0,
+        "throughput": 86.1,
+        "percentiles": {
+          "p50_ms": 1908.19,
+          "p90_ms": 5096.53,
+          "p95_ms": 5414.37,
+          "p99_ms": 5570.72,
+          "min_ms": 307.19,
+          "max_ms": 5782.45,
+          "mean_ms": 2343.55,
+          "stdev_ms": 1743.69
+        },
+        "status_codes": {
+          "200": 500
+        }
+      }
+    },
+    {
+      "level": 750,
+      "type": "batch",
+      "result": {
+        "success": 85,
+        "errors": 415,
+        "timeouts": 138,
+        "error_rate": 83.0,
+        "throughput": 5.4,
+        "throughput_txn": 52.4,
+        "percentiles": {
+          "p50_ms": 2876.08,
+          "p90_ms": 15601.27,
+          "p95_ms": 15634.76,
+          "p99_ms": 15666.38,
+          "min_ms": 461.92,
+          "max_ms": 15668.74,
+          "mean_ms": 7261.0,
+          "stdev_ms": 5733.6
+        },
+        "status_codes": {
+          "200": 85
+        }
+      }
+    },
+    {
+      "level": 1000,
+      "type": "single",
+      "result": {
+        "success": 0,
+        "errors": 500,
+        "timeouts": 102,
+        "error_rate": 100.0,
+        "throughput": 0.0,
+        "percentiles": {
+          "p50_ms": 2376.61,
+          "p90_ms": 16042.5,
+          "p95_ms": 16056.44,
+          "p99_ms": 16071.34,
+          "min_ms": 2209.19,
+          "max_ms": 16075.09,
+          "mean_ms": 5144.1,
+          "stdev_ms": 5522.28
+        },
+        "status_codes": {}
+      }
+    },
+    {
+      "level": 1000,
+      "type": "batch",
+      "result": {
+        "success": 87,
+        "errors": 413,
+        "timeouts": 136,
+        "error_rate": 82.6,
+        "throughput": 5.5,
+        "throughput_txn": 30.5,
+        "percentiles": {
+          "p50_ms": 2817.33,
+          "p90_ms": 15554.03,
+          "p95_ms": 15570.12,
+          "p99_ms": 15599.79,
+          "min_ms": 443.62,
+          "max_ms": 15614.95,
+          "mean_ms": 7173.54,
+          "stdev_ms": 5738.51
+        },
+        "status_codes": {
+          "200": 87
+        }
+      }
+    }
+  ]
+}

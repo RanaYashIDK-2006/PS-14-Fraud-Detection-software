@@ -1,0 +1,37 @@
+{
+  "dataset": "ALTMAN",
+  "n_rows": 49435,
+  "n_features": 29,
+  "train_rows": 39548,
+  "test_rows": 9887,
+  "n_fraud_train": 7586,
+  "n_fraud_test": 1897,
+  "fraud_rate": 0.191828,
+  "method": "weighted",
+  "best_weights": {
+    "xgb": 0.45,
+    "lgb": 0.5,
+    "rf": 0.0,
+    "lr": 0.05
+  },
+  "individual_test_aucs": {
+    "xgb": 0.993862,
+    "lgb": 0.993983,
+    "rf": 0.976978,
+    "lr": 0.888854
+  },
+  "stacker_auc": 0.978371,
+  "weighted_auc": 0.993732,
+  "metrics": {
+    "roc_auc": 0.993732,
+    "pr_auc": 0.979399,
+    "brier": 0.023218,
+    "r1": 0.907222,
+    "r05": 0.866104,
+    "r01": 0.684765,
+    "f1": 0.932834,
+    "opt_thr": 0.662249
+  },
+  "elapsed_s": 4,
+  "ts": "2026-08-29T07:07:22Z"
+}

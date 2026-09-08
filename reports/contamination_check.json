@@ -1,0 +1,86 @@
+{
+  "exact_duplicates": {
+    "full_dataset": 53516,
+    "train": 34884,
+    "val": 8681,
+    "test": 9951,
+    "cross_split_test_in_train_sample": 0,
+    "cross_split_sample_size": 500000
+  },
+  "tx_id_duplicates": {
+    "unique_composite_ids": 24321615,
+    "repeated_ids": 62099,
+    "repeated_rows": 127384,
+    "max_repeat": 6,
+    "train_test_id_overlap": 0,
+    "train_val_id_overlap": 0,
+    "val_test_id_overlap": 0,
+    "test_rows_with_train_ids": 0,
+    "test_rows_total": 4877380,
+    "test_rows_with_train_ids_pct": 0.0
+  },
+  "entity_overlap_users": {
+    "train": 1200,
+    "val": 387,
+    "test": 415,
+    "train_test_overlap": 0,
+    "train_val_overlap": 1,
+    "val_test_overlap": 1,
+    "test_only_unseen": 414,
+    "train_test_overlap_pct": 0.0
+  },
+  "entity_overlap_merchants": {
+    "train": 75289,
+    "val": 36002,
+    "test": 35617,
+    "train_test_overlap": 22277,
+    "train_val_overlap": 22318,
+    "val_test_overlap": 14144,
+    "test_only_unseen": 11370,
+    "train_test_overlap_pct": 62.55
+  },
+  "entity_overlap_cities": {
+    "train": 12625,
+    "val": 9838,
+    "test": 9913,
+    "train_test_overlap": 9422,
+    "train_val_overlap": 9334,
+    "val_test_overlap": 8056,
+    "test_only_unseen": 300,
+    "train_test_overlap_pct": 95.05
+  },
+  "entity_overlap_cards": {
+    "train": 9,
+    "val": 9,
+    "test": 8,
+    "train_test_overlap": 8,
+    "train_val_overlap": 9,
+    "val_test_overlap": 8,
+    "test_only_unseen": 0,
+    "train_test_overlap_pct": 100.0
+  },
+  "near_duplicates": {
+    "sample_size": 100000,
+    "user_amount_mcc_matches_in_train": 0,
+    "match_pct": 0.0
+  },
+  "temporal_overlap": {
+    "unique_dates_train": 10561,
+    "unique_dates_test": 10410,
+    "overlapping_dates": 10372,
+    "test_rows_on_overlap_dates": 4877194,
+    "test_rows_on_overlap_dates_pct": 100.0
+  },
+  "generalization_assessment": {
+    "memorization_risk": "LOW \u2014 minimal exact transaction overlap",
+    "entity_scenario": "UNSEEN ENTITIES \u2014 most test users are new",
+    "key_finding": "The test set has 0.0% exact transaction ID overlap with training data, 0.0% user overlap, and 62.5% merchant overlap. This is expected for a temporal split of recurring entities. The deployment scenario is unseen entities \u2014 most test users are new. Features are computed causally (past-only expanding window), so the model learns behavioral patterns rather than memorizing individual transactions."
+  },
+  "metadata": {
+    "total_rows": 24386900,
+    "train_rows": 14632140,
+    "val_rows": 4877380,
+    "test_rows": 4877380,
+    "run_time_sec": 251.7
+  }
+}

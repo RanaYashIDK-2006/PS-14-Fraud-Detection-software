@@ -1,0 +1,23 @@
+{
+  "best_model": "Ens",
+  "best_auc": 0.9786,
+  "best_pr": 0.7283,
+  "xgb": {
+    "auc": 0.9782,
+    "pr": 0.7475
+  },
+  "lgb": {
+    "auc": 0.9283,
+    "pr": 0.0984
+  },
+  "ens": {
+    "auc": 0.9786,
+    "pr": 0.7283,
+    "w_xgb": 0.89
+  },
+  "best_fpr": 0.009974,
+  "best_recall": 0.8341,
+  "best_thr": 0.352,
+  "exceeds": true,
+  "elapsed": 251.2
+}

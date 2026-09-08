@@ -1,0 +1,44 @@
+{
+  "results": [
+    {
+      "batch": 1,
+      "median_ms": 2.71,
+      "p95_ms": 3.39,
+      "p99_ms": 3.58,
+      "per_tx_us": 2712.7,
+      "throughput_tps": 369.0
+    },
+    {
+      "batch": 10,
+      "median_ms": 3.3,
+      "p95_ms": 3.96,
+      "p99_ms": 4.03,
+      "per_tx_us": 330.1,
+      "throughput_tps": 3029.0
+    },
+    {
+      "batch": 50,
+      "median_ms": 5.03,
+      "p95_ms": 6.4,
+      "p99_ms": 6.73,
+      "per_tx_us": 100.6,
+      "throughput_tps": 9938.0
+    },
+    {
+      "batch": 100,
+      "median_ms": 8.72,
+      "p95_ms": 9.98,
+      "p99_ms": 10.07,
+      "per_tx_us": 87.2,
+      "throughput_tps": 11472.0
+    },
+    {
+      "batch": 500,
+      "median_ms": 53.44,
+      "p95_ms": 68.19,
+      "p99_ms": 101.56,
+      "per_tx_us": 106.9,
+      "throughput_tps": 9356.0
+    }
+  ]
+}

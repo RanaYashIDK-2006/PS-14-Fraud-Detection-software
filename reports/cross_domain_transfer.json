@@ -1,0 +1,34 @@
+{
+  "transfer_matrix": {
+    "ulb_to_ulb": {
+      "test_auc": 0.9999,
+      "test_r1": 1.0,
+      "train_size": 4307,
+      "test_size": 1846
+    },
+    "ulb_to_altman": {
+      "test_auc": 0.5336,
+      "test_r1": 0.0076,
+      "train_size": 4307,
+      "test_size": 60409
+    },
+    "altman_to_ulb": {
+      "test_auc": 0.711,
+      "test_r1": 0.0227,
+      "train_size": 140954,
+      "test_size": 1846
+    },
+    "altman_to_altman": {
+      "test_auc": 0.8535,
+      "test_r1": 0.1726,
+      "train_size": 140954,
+      "test_size": 60409
+    }
+  },
+  "generalization_gap": {
+    "ulb_to_altman_auc_gap": 0.4663,
+    "altman_to_ulb_auc_gap": 0.1425,
+    "ulb_to_altman_r1_gap": 0.9924,
+    "altman_to_ulb_r1_gap": 0.1499
+  }
+}

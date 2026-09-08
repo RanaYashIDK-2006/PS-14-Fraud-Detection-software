@@ -1,0 +1,36 @@
+{
+  "dataset": "PAYSIM_GRAPH",
+  "note": "Preprocessed CSV has only 8 columns (no step/nameOrig/nameDest). Cannot build real transaction graph.",
+  "rows": 1200000,
+  "fraud": 58800,
+  "features": 29,
+  "flow_features_added": [
+    "bal_diff_o",
+    "bal_diff_d",
+    "amt_ratio_o",
+    "amt_ratio_d",
+    "orig_consistency",
+    "dest_consistency",
+    "orig_wiped",
+    "dest_empty",
+    "orig_drain",
+    "flow_asym",
+    "bal_ratio",
+    "transfer_fraud_score",
+    "cashout_fraud_score",
+    "row_idx",
+    "amt_vs_type_mean"
+  ],
+  "results": {
+    "cv_auc": 0.9411,
+    "cv_auc_std": 0.0008,
+    "cv_r1_48pct": 0.4862,
+    "cv_r1_std": 0.0032,
+    "r_at_2pct_fpr": 0.5819,
+    "r_at_5pct_fpr": 0.7188,
+    "r_at_10pct_fpr": 0.8233
+  },
+  "target_r1_60": "NOT_MET",
+  "ceiling_analysis": "PaySim R@1%FPR ceiling is ~49%. The dataset has only 8 columns (amount, balances, type, flags) with no entity IDs, timestamps, or behavioral sequences. Flow features are redundant with existing balance columns. The 49% ceiling is genuine: the ROC-AUC of 94.1% is good, but at 1% FPR the model can only recall 49% of fraud. At 5% FPR recall reaches 72%, at 10% FPR it reaches 82%.",
+  "ts": "2026-08-29T08:42:35Z"
+}

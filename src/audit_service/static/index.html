@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>PS-14 · Compliance Viewer</title>
+<style>
+  :root {
+    --bg: #0f172a; --panel: #1e293b; --panel2: #273449; --text: #e2e8f0;
+    --muted: #94a3b8; --accent: #38bdf8; --danger: #f87171; --ok: #34d399;
+    --warn: #fbbf24; --border: #334155;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg); color: var(--text); min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; padding: 32px 16px;
+  }
+  .wrap { width: 100%; max-width: 640px; }
+  h1 { font-size: 20px; letter-spacing: .5px; margin-bottom: 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px; margin-bottom: 14px;
+  }
+  /* compact trail cards */
+  .tcard { padding: 12px 14px; }
+  .tcard.slim { padding: 9px 14px; }
+  .btn {
+    border: 0; border-radius: 8px; padding: 10px 16px; font-size: 14px;
+    font-weight: 600; cursor: pointer; transition: filter .15s;
+  }
+  .btn:hover { filter: brightness(1.15); }
+  .btn:disabled { opacity: .5; cursor: default; filter: none; }
+  .btn.primary { background: var(--accent); color: #082f49; width: 100%; }
+  .btn.ghost { background: var(--panel2); color: var(--text); border: 1px solid var(--border); width: 100%; margin-top: 10px; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 6px; }
+  input {
+    width: 100%; background: var(--panel2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 10px 12px; font-size: 14px;
+  }
+  .banner { border-radius: 10px; padding: 12px 14px; font-size: 13px; font-weight: 600; margin: 12px 0; }
+  .banner.ok { background: #052e16; border: 1px solid var(--ok); color: var(--ok); }
+  .banner.bad { background: #450a0a; border: 1px solid var(--danger); color: var(--danger); }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 4px; }
+  .chip {
+    font-size: 11px; font-weight: 700; letter-spacing: .5px; padding: 3px 10px;
+    border-radius: 999px; background: var(--panel2); border: 1px solid var(--border); color: var(--muted);
+  }
+  .chips.filterrow .chip { cursor: pointer; }
+  .chips.filterrow .chip:hover { filter: brightness(1.2); }
+  .chip.active { background: var(--accent); border-color: var(--accent); color: #082f49; }
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .8px;
+    padding: 3px 8px; border-radius: 999px; text-transform: uppercase;
+  }
+  .tag.high { background: #7f1d1d; color: #fecaca; }
+  .tag.medium { background: #78350f; color: #fde68a; }
+  .tag.low { background: #14532d; color: #bbf7d0; }
+  .tag.event { background: #1e3a5f; color: #93c5fd; }
+  .meta { color: var(--muted); font-size: 13px; margin: 8px 0 10px; }
+  .case { font-family: ui-monospace, monospace; color: var(--warn); font-size: 13px; }
+  /* reason chips (collapsed past 3, expandable) */
+  .rchip-wrap { margin: 4px 0 2px; }
+  .rchip {
+    display: inline-block; background: var(--panel2); border: 1px solid var(--border);
+    border-radius: 999px; padding: 2px 9px; font-size: 11.5px; color: var(--muted);
+    margin: 3px 4px 0 0;
+  }
+  .rchip.none { color: #64748b; border-style: dashed; font-style: italic; }
+  .tmore {
+    background: none; border: 0; color: var(--accent); font-size: 12px;
+    font-weight: 600; padding: 2px 4px; cursor: pointer; font-family: inherit;
+  }
+  .tmore:hover { text-decoration: underline; }
+  .hashrow {
+    font-family: ui-monospace, monospace; font-size: 11px; color: var(--muted);
+    background: var(--panel2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 10px; margin-top: 10px; word-break: break-all;
+  }
+  .hashrow .link.ok { color: var(--ok); }
+  .hashrow .link.bad { color: var(--danger); font-weight: 700; }
+  .hashrow .link.pending { color: var(--muted); }
+  .hashrow .link { white-space: nowrap; }
+  .genesis { font-family: ui-monospace, monospace; color: var(--muted); font-size: 11px; text-align: center; margin-top: 6px; }
+  /* live chain-status footer badge (mirrors the :8004 footer) */
+  .chainline {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    font-size: 12px; font-family: ui-monospace, monospace; color: var(--muted);
+    margin: 14px 0 2px; text-align: center;
+  }
+  .chainline .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); display: inline-block; flex: 0 0 auto; }
+  .chainline.ok { color: var(--ok); }
+  .chainline.ok .dot { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
+  .chainline.bad { color: var(--danger); font-weight: 600; }
+  .chainline.bad .dot { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+  .status { color: var(--ok); font-size: 14px; margin-top: 10px; }
+  .status.error { color: var(--danger); }
+  .status.stalehint { color: var(--warn); text-align: center; }
+  .empty { color: var(--muted); text-align: center; padding: 30px 0; font-size: 14px; }
+  .hide { display: none; }
+  .spinner { color: var(--muted); font-size: 13px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🛡️ PS-14 · Compliance Viewer</h1>
+  <div class="sub">
+    Pseudonymous decision trail from the hash-chained audit store (DB-4) —
+    scores, category-level reason codes, verification outcomes, and case IDs.
+    No identity data. Every read here is itself logged.
+  </div>
+
+  <div class="card">
+    <label for="pass">Compliance passphrase</label>
+    <input id="pass" type="password" placeholder="••••••••" autocomplete="off">
+    <div class="meta" style="margin:4px 0 0">Dev default pre-filled — no need to type it.</div>
+    <div style="margin-top:10px"><button class="btn primary" id="loadBtn">Refresh trail</button></div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="banner hide" id="integrityBanner"></div>
+  <div class="chips filterrow hide" id="filterRow" aria-label="Filter trail by event type"></div>
+  <div class="chips hide" id="chips"></div>
+  <div id="trail"></div>
+  <div class="status stalehint hide" id="trailStaleHint">New events landed — press “Refresh trail” to see them.</div>
+  <button class="btn ghost hide" id="trailMoreBtn">Show older events</button>
+  <div class="genesis hide" id="genesis"></div>
+
+  <footer class="chainline" id="chainBadge" title="Audit trail integrity (live)">
+    <span class="dot"></span><span class="text">Audit chain: checking…</span>
+  </footer>
+</div>
+
+<script src="/static/app.js?v=1"></script>
+</body>
+</html>
