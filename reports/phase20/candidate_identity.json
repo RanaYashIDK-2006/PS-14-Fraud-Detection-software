@@ -1,0 +1,13 @@
+{
+  "candidate_id": "P20_45feat",
+  "feature_count": 45,
+  "removed_features": [
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate"
+  ],
+  "model_type": "xgb_lgb_cb_ensemble",
+  "training_seed": 42,
+  "training_data": "credit_card_transactions-ibm_v2.csv",
+  "training_note": "45-feature production-native candidate, no fraud-rate features"
+}

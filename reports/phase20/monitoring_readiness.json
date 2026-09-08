@@ -1,0 +1,9 @@
+{
+  "psi_monitoring": "AVAILABLE (existing infrastructure)",
+  "feature_drift": "AVAILABLE (existing infrastructure)",
+  "score_drift": "AVAILABLE (existing infrastructure)",
+  "alert_rate_drift": "AVAILABLE (existing infrastructure)",
+  "synthetic_drill": "TESTED (PSI ~15.4, CRITICAL detection)",
+  "real_world_drill": "UNVERIFIED (synthetic only)",
+  "status": "CONDITIONAL"
+}

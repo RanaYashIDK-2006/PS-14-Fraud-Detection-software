@@ -1,0 +1,14 @@
+{
+  "candidate_id": "P20_45feat",
+  "total": 45,
+  "decision_time_valid": 45,
+  "conditional": 0,
+  "unverified": 0,
+  "invalid": 0,
+  "removed": [
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate"
+  ],
+  "status": "ALL_PASS"
+}

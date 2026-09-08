@@ -1,0 +1,28 @@
+{
+  "candidate_id": "P20_45feat",
+  "period": "2017",
+  "channels": {
+    "chip": {
+      "rows": 12347,
+      "fraud": 248,
+      "recall": 0.9315,
+      "tp": 231,
+      "fn": 17
+    },
+    "online": {
+      "rows": 2115,
+      "fraud": 0,
+      "recall": 0.0,
+      "tp": 0,
+      "fn": 0
+    },
+    "swipe": {
+      "rows": 2916,
+      "fraud": 7,
+      "recall": 1.0,
+      "tp": 7,
+      "fn": 0
+    }
+  },
+  "note": "2017 is a synthetic regime artifact. Channel results reflect IBM generator behavior."
+}

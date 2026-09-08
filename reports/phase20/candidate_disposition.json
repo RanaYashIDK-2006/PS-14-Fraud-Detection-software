@@ -1,0 +1,6 @@
+{
+  "candidate_id": "P20_45feat",
+  "disposition": "ELIGIBLE_FOR_REAL_WORLD_VALIDATION",
+  "reasoning": "The candidate has no decision-time feature blockers. All 45 features are genuinely available at scoring time. It passes leakage, causality, and reproducibility checks. However, it has NOT been validated on real-world data and should NOT be deployed to production without that validation.",
+  "not_deployed_reason": "No real-world validation data available"
+}

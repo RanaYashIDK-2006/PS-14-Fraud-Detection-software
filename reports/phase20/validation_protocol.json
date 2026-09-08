@@ -1,0 +1,7 @@
+{
+  "train": "< 2016",
+  "validation": "2016",
+  "forward_validation": "2017",
+  "final_test": ">= 2018 (LOCKED, NOT ACCESSED)",
+  "status": "PASS"
+}

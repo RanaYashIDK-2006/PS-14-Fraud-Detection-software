@@ -1,0 +1,15 @@
+{
+  "candidate_id": "P20_45feat",
+  "locked_threshold": 0.06759655094643705,
+  "validation_recall": 0.9953,
+  "validation_fpr": 0.2369,
+  "validation_precision": 0.4719,
+  "validation_tp": 3562,
+  "validation_fp": 3987,
+  "validation_fn": 17,
+  "validation_tn": 12843,
+  "validation_alerts_per_1k": 369.89,
+  "roc_auc": 0.9912,
+  "pr_auc": 0.9693,
+  "policy": "recall >= 0.995, minimize FPR"
+}

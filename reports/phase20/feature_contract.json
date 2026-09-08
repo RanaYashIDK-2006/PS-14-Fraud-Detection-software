@@ -1,0 +1,326 @@
+{
+  "candidate_id": "P20_45feat",
+  "n_features": 45,
+  "features": [
+    {
+      "feature": "amt",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction amount",
+      "computation": "direct from Amount column"
+    },
+    {
+      "feature": "log_amt",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction amount",
+      "computation": "direct from Amount column"
+    },
+    {
+      "feature": "amt_sq",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction amount",
+      "computation": "direct from Amount column"
+    },
+    {
+      "feature": "hr",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction timestamp",
+      "computation": "derived from Time/Year/Month/Day"
+    },
+    {
+      "feature": "mn",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction timestamp",
+      "computation": "derived from Time/Year/Month/Day"
+    },
+    {
+      "feature": "dow",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction timestamp",
+      "computation": "derived from Time/Year/Month/Day"
+    },
+    {
+      "feature": "Month",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction timestamp",
+      "computation": "derived from Time/Year/Month/Day"
+    },
+    {
+      "feature": "Day",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction timestamp",
+      "computation": "derived from Time/Year/Month/Day"
+    },
+    {
+      "feature": "hour_sin",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction timestamp",
+      "computation": "derived from Time/Year/Month/Day"
+    },
+    {
+      "feature": "hour_cos",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction timestamp",
+      "computation": "derived from Time/Year/Month/Day"
+    },
+    {
+      "feature": "is_night",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction timestamp",
+      "computation": "derived from Time/Year/Month/Day"
+    },
+    {
+      "feature": "is_business_hours",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction timestamp",
+      "computation": "derived from Time/Year/Month/Day"
+    },
+    {
+      "feature": "chip",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "Use Chip column",
+      "computation": "one-hot from Use Chip"
+    },
+    {
+      "feature": "is_online",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "Use Chip column",
+      "computation": "one-hot from Use Chip"
+    },
+    {
+      "feature": "is_swipe",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "Use Chip column",
+      "computation": "one-hot from Use Chip"
+    },
+    {
+      "feature": "err",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction metadata",
+      "computation": "binary indicators"
+    },
+    {
+      "feature": "has_zip",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction metadata",
+      "computation": "binary indicators"
+    },
+    {
+      "feature": "has_state",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction metadata",
+      "computation": "binary indicators"
+    },
+    {
+      "feature": "is_online_or_no_state",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "transaction metadata",
+      "computation": "binary indicators"
+    },
+    {
+      "feature": "mcc",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "MCC code",
+      "computation": "direct + category indicators"
+    },
+    {
+      "feature": "mcc_high",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "MCC code",
+      "computation": "direct + category indicators"
+    },
+    {
+      "feature": "mcc_restaurant",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "MCC code",
+      "computation": "direct + category indicators"
+    },
+    {
+      "feature": "mcc_gas",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "MCC code",
+      "computation": "direct + category indicators"
+    },
+    {
+      "feature": "mcc_grocery",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "MCC code",
+      "computation": "direct + category indicators"
+    },
+    {
+      "feature": "mcc_travel",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "MCC code",
+      "computation": "direct + category indicators"
+    },
+    {
+      "feature": "mcc_online",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "MCC code",
+      "computation": "direct + category indicators"
+    },
+    {
+      "feature": "merchant_id",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "entity identifiers",
+      "computation": "label-encoded"
+    },
+    {
+      "feature": "city_id",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "entity identifiers",
+      "computation": "label-encoded"
+    },
+    {
+      "feature": "card_id",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "entity identifiers",
+      "computation": "label-encoded"
+    },
+    {
+      "feature": "user_tx_count",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "historical aggregates",
+      "computation": "expanding mean/count from prior transactions"
+    },
+    {
+      "feature": "card_tx_count",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "historical aggregates",
+      "computation": "expanding mean/count from prior transactions"
+    },
+    {
+      "feature": "user_avg_amt",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "historical aggregates",
+      "computation": "expanding mean/count from prior transactions"
+    },
+    {
+      "feature": "amt_vs_user_avg",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "historical aggregates",
+      "computation": "expanding mean/count from prior transactions"
+    },
+    {
+      "feature": "amt_zscore",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "historical aggregates",
+      "computation": "expanding mean/count from prior transactions"
+    },
+    {
+      "feature": "merch_tx_count",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "historical aggregates",
+      "computation": "expanding mean/count from prior transactions"
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "historical aggregates",
+      "computation": "expanding mean/count from prior transactions"
+    },
+    {
+      "feature": "user_city_diversity",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "historical aggregates",
+      "computation": "expanding mean/count from prior transactions"
+    },
+    {
+      "feature": "high_amt",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "amount thresholds",
+      "computation": "binary from amount"
+    },
+    {
+      "feature": "very_high_amt",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "amount thresholds",
+      "computation": "binary from amount"
+    },
+    {
+      "feature": "amt_x_hr",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "interaction features",
+      "computation": "product of amount and other features"
+    },
+    {
+      "feature": "amt_x_mcc",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "interaction features",
+      "computation": "product of amount and other features"
+    },
+    {
+      "feature": "amt_x_chip",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "interaction features",
+      "computation": "product of amount and other features"
+    },
+    {
+      "feature": "amt_x_online",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "interaction features",
+      "computation": "product of amount and other features"
+    },
+    {
+      "feature": "amt_x_night",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "interaction features",
+      "computation": "product of amount and other features"
+    },
+    {
+      "feature": "user_merch_count",
+      "status": "DECISION_TIME_VALID",
+      "label_dependency": false,
+      "source": "historical aggregates",
+      "computation": "expanding mean/count from prior transactions"
+    }
+  ],
+  "removed_features": [
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate"
+  ]
+}

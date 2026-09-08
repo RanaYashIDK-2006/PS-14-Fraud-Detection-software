@@ -1,0 +1,17 @@
+{
+  "phase": 20,
+  "objective": "Decision-time feature remediation",
+  "firewall": {
+    "FINAL_TEST_ACCESSED": false,
+    "FINAL_TEST_AUTHORIZED": false,
+    "PRODUCTION_MODEL_STATUS": "UNTOUCHED",
+    "E_HARDNEG_STATUS": "UNCHANGED"
+  },
+  "removed_features": [
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate"
+  ],
+  "candidate_feature_count": 45,
+  "status": "RUNNING"
+}

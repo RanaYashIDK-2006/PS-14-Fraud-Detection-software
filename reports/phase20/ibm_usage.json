@@ -1,0 +1,16 @@
+{
+  "status": "ENGINEERING_AND_METHODOLOGY_ONLY",
+  "valid_for": [
+    "training",
+    "leakage testing",
+    "causality testing",
+    "reproducibility",
+    "CI",
+    "regression"
+  ],
+  "not_sufficient_for": [
+    "real-world performance claims",
+    "production prevalence",
+    "industry superiority"
+  ]
+}

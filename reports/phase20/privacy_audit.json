@@ -1,0 +1,6 @@
+{
+  "data_minimization": "PASS (45 features, no fraud-rate features)",
+  "pii_handling": "CONDITIONAL (IBM contains geographic identifiers)",
+  "label_dependency": "NONE (removed fraud-rate features)",
+  "status": "PASS"
+}

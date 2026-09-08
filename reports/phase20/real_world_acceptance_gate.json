@@ -1,0 +1,13 @@
+{
+  "gate_criteria": {
+    "PROVENANCE": "VERIFIED required",
+    "LABEL_DEFINITION": "VERIFIED required",
+    "LABEL_TIMING": "VERIFIED required",
+    "FEATURE_AVAILABILITY": "VERIFIED required",
+    "TIMESTAMPS": "VALID required",
+    "TEMPORAL_ORDER": "VALID required",
+    "DATA_AUTHORIZATION": "VERIFIED required"
+  },
+  "current_status": "BLOCKED_BY_DATA_ACQUISITION",
+  "real_world_data_available": false
+}

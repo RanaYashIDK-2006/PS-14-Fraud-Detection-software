@@ -1,0 +1,9 @@
+{
+  "candidate_id": "P20_45feat",
+  "zero_amount": "PASS (log_amt = 0, other features computed normally)",
+  "missing_merchant": "PASS (merchant_id defaults to 0)",
+  "unseen_merchant": "PASS (label encoder maps to unseen category)",
+  "missing_channel": "PASS (chip/is_online/is_swipe all default to 0)",
+  "cold_start": "PASS (historical aggregates default to 0, no fraud-rate features needed)",
+  "status": "PASS"
+}

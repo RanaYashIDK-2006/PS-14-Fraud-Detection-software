@@ -1,0 +1,18 @@
+{
+  "e_hardneg": {
+    "features": 48,
+    "includes_fraud_rate": true,
+    "validation_recall": "~0.995",
+    "validation_fpr": "~0.115"
+  },
+  "p20_candidate": {
+    "features": 45,
+    "includes_fraud_rate": false,
+    "validation_recall": 0.9953,
+    "validation_fpr": 0.2369,
+    "validation_precision": 0.4719
+  },
+  "comparison": "INCOMPARABLE on IBM (different feature sets, different evaluation protocol)",
+  "key_difference": "The candidate does NOT depend on 3 features unavailable at decision time. E_hardneg does. This makes the candidate more production-compatible but potentially less powerful on IBM (where fraud-rate features are available).",
+  "honest_assessment": "The candidate trades some IBM validation performance for genuine production compatibility. This is a SCIENTIFIC improvement, not necessarily a performance improvement. Real-world validation is needed to determine whether the tradeoff is worthwhile."
+}

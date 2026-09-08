@@ -1,0 +1,10 @@
+{
+  "candidate_id": "P20_45feat",
+  "target_leakage": "PASS (no labels in features)",
+  "temporal_leakage": "PASS (historical aggregates only)",
+  "label_leakage": "PASS (3 fraud-rate features removed, no label-dependent features remain)",
+  "test_leakage": "PASS (final test >=2018 never loaded)",
+  "threshold_leakage": "PASS (threshold selected on validation only)",
+  "early_stopping_leakage": "PASS (early stopping on validation set)",
+  "status": "PASS"
+}

@@ -1,0 +1,7 @@
+{
+  "candidate_id": "P20_45feat",
+  "feature_parity": "PASS (45 features all from raw columns, same derivation as production)",
+  "score_parity": "CONDITIONAL (same model family, different feature count)",
+  "decision_disagreements": "CANNOT_TEST (production uses 48 features, candidate uses 45)",
+  "note": "The candidate uses 45 features that are identical to E_hardneg's 45 non-fraud-rate features. Production parity for these 45 features is PASS. The 3 removed features are not needed by this candidate."
+}

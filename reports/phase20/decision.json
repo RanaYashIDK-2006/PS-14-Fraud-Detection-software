@@ -1,0 +1,14 @@
+{
+  "phase20_status": "COMPLETE",
+  "classification": "CLEAN_PRODUCTION_COMPATIBLE_CANDIDATE",
+  "candidate_id": "P20_45feat",
+  "candidate_disposition": "ELIGIBLE_FOR_REAL_WORLD_VALIDATION",
+  "e_hardneg_status": "UNTOUCHED",
+  "real_world_data_available": false,
+  "real_world_validation_status": "BLOCKED_BY_DATA_ACQUISITION",
+  "firewall_status": {
+    "FINAL_TEST_ACCESSED": false,
+    "FINAL_TEST_AUTHORIZED": false,
+    "PRODUCTION_MODEL_STATUS": "UNTOUCHED"
+  }
+}

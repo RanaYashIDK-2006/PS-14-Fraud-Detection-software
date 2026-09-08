@@ -1,0 +1,16 @@
+{
+  "stages": [
+    "Stage 1: Data audit (provenance, quality, schema)",
+    "Stage 2: Feature availability audit (45 features reconstructible?)",
+    "Stage 3: Label latency audit (timing verified?)",
+    "Stage 4: Freeze candidate and threshold",
+    "Stage 5: Evaluate on unseen real-world temporal holdout",
+    "Stage 6: Calculate metrics (ROC-AUC, PR-AUC, recall, FPR, precision)",
+    "Stage 7: Evaluate temporal and channel robustness",
+    "Stage 8: Compare against E_hardneg",
+    "Stage 9: Independent certification",
+    "Stage 10: Promotion decision"
+  ],
+  "status": "SPECIFIED_NOT_EXECUTED",
+  "blocker": "No real-world dataset available"
+}

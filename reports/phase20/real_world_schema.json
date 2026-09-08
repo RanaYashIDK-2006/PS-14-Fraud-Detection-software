@@ -1,0 +1,25 @@
+{
+  "required_fields": [
+    "transaction_id",
+    "transaction_timestamp",
+    "label",
+    "label_available_timestamp",
+    "label_finalization_timestamp",
+    "merchant_id",
+    "user_id",
+    "card_id",
+    "channel",
+    "amount",
+    "MCC",
+    "merchant_city",
+    "merchant_state",
+    "zip",
+    "errors"
+  ],
+  "temporal_requirements": {
+    "TRANSACTION_TIME": "When the transaction occurred",
+    "LABEL_AVAILABLE_TIME": "When the fraud label first became known",
+    "LABEL_FINAL_TIME": "When the label was confirmed/finalized"
+  },
+  "acceptance_criteria": "label_available_timestamp < decision_timestamp for all included labels"
+}

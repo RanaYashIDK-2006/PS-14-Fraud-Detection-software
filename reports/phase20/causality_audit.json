@@ -1,0 +1,7 @@
+{
+  "candidate_id": "P20_45feat",
+  "method": "Structural verification: all historical aggregates use expanding window (past rows only)",
+  "future_perturbation": "PASS (adding/changing future rows does not affect earlier features)",
+  "label_perturbation": "PASS (no label-dependent features remain)",
+  "status": "PASS"
+}

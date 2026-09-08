@@ -1,0 +1,5 @@
+{
+  "validator_specification": "Reject any label-derived feature if label_available_timestamp >= decision_timestamp. Reject model-generated labels, score-derived pseudo-labels, and retrospective labels presented as decision-time labels.",
+  "status": "SPECIFIED_NOT_IMPLEMENTED",
+  "note": "Implementation requires real-world data pipeline. Currently a specification only."
+}

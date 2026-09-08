@@ -1,0 +1,19 @@
+{
+  "risks": [
+    {
+      "risk": "No real-world validation data",
+      "severity": "CRITICAL",
+      "residual": "UNMITIGATED"
+    },
+    {
+      "risk": "IBM-only validation (synthetic)",
+      "severity": "HIGH",
+      "residual": "UNMITIGATED"
+    },
+    {
+      "risk": "Unknown production prevalence",
+      "severity": "HIGH",
+      "residual": "UNMITIGATED"
+    }
+  ]
+}

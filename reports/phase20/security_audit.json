@@ -1,0 +1,6 @@
+{
+  "cors": "PASS (settings.allowed_cors_origins, no wildcard)",
+  "dependencies": "PASS (0 findings)",
+  "artifact_integrity": "PASS (SHA-256 hashes)",
+  "status": "PASS"
+}
