@@ -1,0 +1,10 @@
+{
+  "n_2017_chip_fraud": 248,
+  "median_distance_to_nearest_pre2016_fraud": 23721.6611,
+  "mean_distance": 33691.1594,
+  "p25_distance": 21214.269,
+  "p75_distance": 27780.3604,
+  "historical_analogue_pct": 0.5,
+  "weak_analogue_pct": 0.4476,
+  "no_analogue_pct": 0.0524
+}

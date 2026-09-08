@@ -1,0 +1,60 @@
+{
+  "2016": {
+    "Chip Transaction": {
+      "total_rows": 12133,
+      "fraud_rows": 279,
+      "pct_of_fraud": 0.078,
+      "pct_of_all": 0.5945,
+      "fraud_rate": 0.022995
+    },
+    "Swipe Transaction": {
+      "total_rows": 3100,
+      "fraud_rows": 227,
+      "pct_of_fraud": 0.0634,
+      "pct_of_all": 0.1519,
+      "fraud_rate": 0.073226
+    },
+    "Online Transaction": {
+      "total_rows": 5176,
+      "fraud_rows": 3073,
+      "pct_of_fraud": 0.8586,
+      "pct_of_all": 0.2536,
+      "fraud_rate": 0.593702
+    }
+  },
+  "2017": {
+    "Chip Transaction": {
+      "total_rows": 12347,
+      "fraud_rows": 248,
+      "pct_of_fraud": 0.9725,
+      "pct_of_all": 0.7105,
+      "fraud_rate": 0.020086
+    },
+    "Swipe Transaction": {
+      "total_rows": 2916,
+      "fraud_rows": 7,
+      "pct_of_fraud": 0.0275,
+      "pct_of_all": 0.1678,
+      "fraud_rate": 0.002401
+    },
+    "Online Transaction": {
+      "total_rows": 2115,
+      "fraud_rows": 0,
+      "pct_of_fraud": 0.0,
+      "pct_of_all": 0.1217,
+      "fraud_rate": 0.0
+    }
+  },
+  "delta_Chip": {
+    "fraud_pct_change": 0.8945,
+    "fraud_rate_change": -0.002909
+  },
+  "delta_Swipe": {
+    "fraud_pct_change": -0.0359,
+    "fraud_rate_change": -0.070825
+  },
+  "delta_Online": {
+    "fraud_pct_change": -0.8586,
+    "fraud_rate_change": -0.593702
+  }
+}

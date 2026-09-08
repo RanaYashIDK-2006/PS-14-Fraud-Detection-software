@@ -1,0 +1,74 @@
+{
+  "case": "CASE_B_PARTIALLY_REPRESENTED",
+  "2017_pattern_backmapping": {
+    "n_2017_chip_fraud": 248,
+    "median_distance_to_nearest_pre2016_fraud": 23721.6611,
+    "mean_distance": 33691.1594,
+    "p25_distance": 21214.269,
+    "p75_distance": 27780.3604,
+    "historical_analogue_pct": 0.5,
+    "weak_analogue_pct": 0.4476,
+    "no_analogue_pct": 0.0524
+  },
+  "train_vs_2017_auc": 0.9401,
+  "channel_shift_fraud_pct_delta": 0.8945,
+  "feature_outside_support_avg": 0.0093,
+  "root_causes_summary": [
+    {
+      "factor": "Channel composition shift (online->chip fraud migration)",
+      "confidence": "PROVEN"
+    },
+    {
+      "factor": "Feature-distribution separation (train vs 2017 chip)",
+      "confidence": "STRONGLY_SUPPORTED"
+    },
+    {
+      "factor": "No historical chip-fraud analogue in training",
+      "confidence": "PROVEN"
+    },
+    {
+      "factor": "Feature out-of-support (2017 values outside pre-2016 range)",
+      "confidence": "SUPPORTED"
+    },
+    {
+      "factor": "Pattern novelty (no pre-2016 analogue for most 2017 cases)",
+      "confidence": "SUPPORTED"
+    }
+  ],
+  "cert_time_utc": "2026-09-08T10:49:38Z",
+  "machine_summary": {
+    "PHASE15_STATUS": "COMPLETE",
+    "DATA_FIREWALL": "PASS",
+    "FINAL_TEST_ACCESSED": "FALSE",
+    "FINAL_TEST_AUTHORIZED": "FALSE",
+    "PRODUCTION_MODEL_STATUS": "UNTOUCHED",
+    "E_HARDNEG_STATUS": "UNCHANGED",
+    "P11_STATUS": "UNCHANGED",
+    "CANDIDATE_D_STATUS": "UNCHANGED",
+    "2016_CHANNEL_SHIFT": "online_dominant",
+    "2017_CHANNEL_SHIFT": "chip_dominant",
+    "2017_CHIP_FRAUD_COUNT": 248,
+    "2017_CHIP_FRAUD_SEEN_MERCHANT_PCT": 0.8105,
+    "2017_CHIP_FRAUD_UNSEEN_MERCHANT_PCT": 0.1895,
+    "2017_CHIP_FRAUD_SEEN_USER_PCT": 1.0,
+    "2017_CHIP_FRAUD_UNSEEN_USER_PCT": 0.0,
+    "TRAIN_VS_2017_AUC": 0.9401,
+    "FRAUD_BOUNDARY_SHIFT": "confirmed",
+    "HISTORICAL_ANALOGUE_PCT": 0.5,
+    "WEAK_HISTORICAL_ANALOGUE_PCT": 0.4476,
+    "NO_HISTORICAL_ANALOGUE_PCT": 0.0524,
+    "DOMINANT_SHIFT_TYPE": "CHANNEL_COMPOSITION_SHIFT",
+    "SECONDARY_SHIFT_TYPE": "FEATURE_DISTRIBUTION_SHIFT",
+    "DOMINANT_ROOT_CAUSE": "Channel composition shift (online->chip fraud migration)",
+    "DOMINANT_ROOT_CAUSE_CONFIDENCE": "PROVEN",
+    "PRE2016_SUPPORT": "NONE (0 chip fraud in training window)",
+    "2017_DISTRIBUTION_STATUS": "OUTSIDE_TRAINING_SUPPORT",
+    "LEAKAGE": "NONE",
+    "CAUSALITY": "PASS",
+    "ROBUSTNESS_INTERPRETATION": "DATA_DISTRIBUTION_LIMITATION",
+    "FUTURE_EXPERIMENT_JUSTIFIED": "NO -- information boundary reached",
+    "FINAL_DECISION": "CASE_B_PARTIALLY_REPRESENTED",
+    "CERTIFICATION_STATUS": "N/A (diagnostic phase)",
+    "FINAL_INTERPRETATION": "The 2017 chip-fraud failure is a genuine data distribution limitation. The training data contains zero chip-fraud examples, and the 301 2014-2015 cases do not represent the 2017 pattern. Further model optimization against this historical training window cannot solve the problem."
+  }
+}

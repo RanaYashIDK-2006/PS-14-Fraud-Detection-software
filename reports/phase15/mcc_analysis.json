@@ -1,0 +1,67 @@
+{
+  "top_mccs_2017_chip_fraud": [
+    {
+      "mcc": 5311,
+      "count": 49
+    },
+    {
+      "mcc": 5310,
+      "count": 32
+    },
+    {
+      "mcc": 5411,
+      "count": 15
+    },
+    {
+      "mcc": 5651,
+      "count": 12
+    },
+    {
+      "mcc": 5211,
+      "count": 12
+    },
+    {
+      "mcc": 5912,
+      "count": 12
+    },
+    {
+      "mcc": 5499,
+      "count": 12
+    },
+    {
+      "mcc": 5712,
+      "count": 9
+    },
+    {
+      "mcc": 5094,
+      "count": 9
+    },
+    {
+      "mcc": 5541,
+      "count": 6
+    },
+    {
+      "mcc": 4121,
+      "count": 6
+    },
+    {
+      "mcc": 3722,
+      "count": 6
+    },
+    {
+      "mcc": 5045,
+      "count": 6
+    },
+    {
+      "mcc": 5813,
+      "count": 5
+    },
+    {
+      "mcc": 3389,
+      "count": 5
+    }
+  ],
+  "total_unique_mccs": 33,
+  "mccs_with_pre2016_support": 33,
+  "mccs_without_pre2016_support": 0
+}

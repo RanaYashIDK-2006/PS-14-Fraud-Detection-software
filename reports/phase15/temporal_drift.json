@@ -1,0 +1,436 @@
+{
+  "2015_to_2016": {
+    "ks_results": {
+      "amt": {
+        "ks_stat": 0.061099,
+        "p_value": 0.6212731004,
+        "significant": false
+      },
+      "log_amt": {
+        "ks_stat": 0.061099,
+        "p_value": 0.6212731004,
+        "significant": false
+      },
+      "amt_sq": {
+        "ks_stat": 0.061099,
+        "p_value": 0.6212731004,
+        "significant": false
+      },
+      "hr": {
+        "ks_stat": 0.09581,
+        "p_value": 0.1283898056,
+        "significant": false
+      },
+      "mn": {
+        "ks_stat": 0.07765,
+        "p_value": 0.3243003786,
+        "significant": false
+      },
+      "dow": {
+        "ks_stat": 0.235642,
+        "p_value": 1.486e-07,
+        "significant": true
+      },
+      "Month": {
+        "ks_stat": 0.317139,
+        "p_value": 0.0,
+        "significant": true
+      },
+      "Day": {
+        "ks_stat": 0.032187,
+        "p_value": 0.9966319203,
+        "significant": false
+      },
+      "hour_sin": {
+        "ks_stat": 0.094512,
+        "p_value": 0.1381789595,
+        "significant": false
+      },
+      "hour_cos": {
+        "ks_stat": 0.092487,
+        "p_value": 0.15436171,
+        "significant": false
+      },
+      "is_night": {
+        "ks_stat": 0.0,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "is_business_hours": {
+        "ks_stat": 0.079639,
+        "p_value": 0.2956828773,
+        "significant": false
+      },
+      "chip": {
+        "ks_stat": 0.0,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "is_swipe": {
+        "ks_stat": 0.0,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "err": {
+        "ks_stat": 0.009002,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "has_zip": {
+        "ks_stat": 0.0,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "has_state": {
+        "ks_stat": 0.0,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "mcc": {
+        "ks_stat": 0.068505,
+        "p_value": 0.476614058,
+        "significant": false
+      },
+      "mcc_high": {
+        "ks_stat": 0.043797,
+        "p_value": 0.9276795387,
+        "significant": false
+      },
+      "mcc_restaurant": {
+        "ks_stat": 0.064266,
+        "p_value": 0.5580071211,
+        "significant": false
+      },
+      "mcc_gas": {
+        "ks_stat": 0.0,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "mcc_grocery": {
+        "ks_stat": 0.029472,
+        "p_value": 0.9990800023,
+        "significant": false
+      },
+      "mcc_travel": {
+        "ks_stat": 0.0,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "mcc_online": {
+        "ks_stat": 0.0,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "merchant_id": {
+        "ks_stat": 0.051656,
+        "p_value": 0.8076809645,
+        "significant": false
+      },
+      "city_id": {
+        "ks_stat": 0.069708,
+        "p_value": 0.454755336,
+        "significant": false
+      },
+      "card_id": {
+        "ks_stat": 0.127937,
+        "p_value": 0.0155066829,
+        "significant": false
+      },
+      "user_tx_count": {
+        "ks_stat": 0.060813,
+        "p_value": 0.6271961927,
+        "significant": false
+      },
+      "card_tx_count": {
+        "ks_stat": 0.336918,
+        "p_value": 0.0,
+        "significant": true
+      },
+      "user_avg_amt": {
+        "ks_stat": 0.060444,
+        "p_value": 0.6347797513,
+        "significant": false
+      },
+      "amt_vs_user_avg": {
+        "ks_stat": 0.072197,
+        "p_value": 0.4106767178,
+        "significant": false
+      },
+      "amt_zscore": {
+        "ks_stat": 0.072197,
+        "p_value": 0.4106767178,
+        "significant": false
+      },
+      "merch_tx_count": {
+        "ks_stat": 0.033711,
+        "p_value": 0.9939012527,
+        "significant": false
+      },
+      "user_merchant_diversity": {
+        "ks_stat": 0.075602,
+        "p_value": 0.3550153077,
+        "significant": false
+      },
+      "user_city_diversity": {
+        "ks_stat": 0.098989,
+        "p_value": 0.1071578637,
+        "significant": false
+      },
+      "high_amt": {
+        "ks_stat": 0.024447,
+        "p_value": 0.9999752641,
+        "significant": false
+      },
+      "very_high_amt": {
+        "ks_stat": 0.028579,
+        "p_value": 0.9994453788,
+        "significant": false
+      },
+      "amt_x_hr": {
+        "ks_stat": 0.074257,
+        "p_value": 0.3766623735,
+        "significant": false
+      },
+      "amt_x_mcc": {
+        "ks_stat": 0.055502,
+        "p_value": 0.7342576981,
+        "significant": false
+      },
+      "amt_x_chip": {
+        "ks_stat": 0.061099,
+        "p_value": 0.6212731004,
+        "significant": false
+      },
+      "amt_x_night": {
+        "ks_stat": 0.0,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "user_merch_count": {
+        "ks_stat": 0.01504,
+        "p_value": 1.0,
+        "significant": false
+      }
+    },
+    "n_significant_features": 3,
+    "n_total_features": 42,
+    "classification": "little_shift"
+  },
+  "2016_to_2017": {
+    "ks_results": {
+      "amt": {
+        "ks_stat": 0.27509,
+        "p_value": 3e-09,
+        "significant": true
+      },
+      "log_amt": {
+        "ks_stat": 0.27509,
+        "p_value": 3e-09,
+        "significant": true
+      },
+      "amt_sq": {
+        "ks_stat": 0.27509,
+        "p_value": 3e-09,
+        "significant": true
+      },
+      "hr": {
+        "ks_stat": 0.267921,
+        "p_value": 8.7e-09,
+        "significant": true
+      },
+      "mn": {
+        "ks_stat": 0.159498,
+        "p_value": 0.0021823104,
+        "significant": false
+      },
+      "dow": {
+        "ks_stat": 0.240143,
+        "p_value": 3.895e-07,
+        "significant": true
+      },
+      "Month": {
+        "ks_stat": 0.878136,
+        "p_value": 0.0,
+        "significant": true
+      },
+      "Day": {
+        "ks_stat": 0.183244,
+        "p_value": 0.0002484023,
+        "significant": true
+      },
+      "hour_sin": {
+        "ks_stat": 0.267921,
+        "p_value": 8.7e-09,
+        "significant": true
+      },
+      "hour_cos": {
+        "ks_stat": 0.232975,
+        "p_value": 9.694e-07,
+        "significant": true
+      },
+      "is_night": {
+        "ks_stat": 0.004032,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "is_business_hours": {
+        "ks_stat": 0.124104,
+        "p_value": 0.0317231081,
+        "significant": false
+      },
+      "chip": {
+        "ks_stat": 0.0,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "is_swipe": {
+        "ks_stat": 0.0,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "err": {
+        "ks_stat": 0.008065,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "has_zip": {
+        "ks_stat": 1.0,
+        "p_value": 0.0,
+        "significant": true
+      },
+      "has_state": {
+        "ks_stat": 0.0,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "mcc": {
+        "ks_stat": 0.229391,
+        "p_value": 1.5131e-06,
+        "significant": true
+      },
+      "mcc_high": {
+        "ks_stat": 0.083333,
+        "p_value": 0.3019561172,
+        "significant": false
+      },
+      "mcc_restaurant": {
+        "ks_stat": 0.022849,
+        "p_value": 0.9999990463,
+        "significant": false
+      },
+      "mcc_gas": {
+        "ks_stat": 0.024194,
+        "p_value": 0.9999952316,
+        "significant": false
+      },
+      "mcc_grocery": {
+        "ks_stat": 0.03629,
+        "p_value": 0.9922381043,
+        "significant": false
+      },
+      "mcc_travel": {
+        "ks_stat": 0.008065,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "mcc_online": {
+        "ks_stat": 0.0,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "merchant_id": {
+        "ks_stat": 0.157706,
+        "p_value": 0.0025397069,
+        "significant": false
+      },
+      "city_id": {
+        "ks_stat": 0.709677,
+        "p_value": 0.0,
+        "significant": true
+      },
+      "card_id": {
+        "ks_stat": 0.041667,
+        "p_value": 0.967967391,
+        "significant": false
+      },
+      "user_tx_count": {
+        "ks_stat": 0.241039,
+        "p_value": 3.469e-07,
+        "significant": true
+      },
+      "card_tx_count": {
+        "ks_stat": 0.375,
+        "p_value": 0.0,
+        "significant": true
+      },
+      "user_avg_amt": {
+        "ks_stat": 0.179659,
+        "p_value": 0.0003516376,
+        "significant": true
+      },
+      "amt_vs_user_avg": {
+        "ks_stat": 0.301075,
+        "p_value": 1e-10,
+        "significant": true
+      },
+      "amt_zscore": {
+        "ks_stat": 0.301075,
+        "p_value": 1e-10,
+        "significant": true
+      },
+      "merch_tx_count": {
+        "ks_stat": 0.617383,
+        "p_value": 0.0,
+        "significant": true
+      },
+      "user_merchant_diversity": {
+        "ks_stat": 0.333781,
+        "p_value": 0.0,
+        "significant": true
+      },
+      "user_city_diversity": {
+        "ks_stat": 0.253584,
+        "p_value": 6.52e-08,
+        "significant": true
+      },
+      "high_amt": {
+        "ks_stat": 0.194444,
+        "p_value": 8.01566e-05,
+        "significant": true
+      },
+      "very_high_amt": {
+        "ks_stat": 0.045699,
+        "p_value": 0.9327419996,
+        "significant": false
+      },
+      "amt_x_hr": {
+        "ks_stat": 0.25448,
+        "p_value": 5.77e-08,
+        "significant": true
+      },
+      "amt_x_mcc": {
+        "ks_stat": 0.280914,
+        "p_value": 1.3e-09,
+        "significant": true
+      },
+      "amt_x_chip": {
+        "ks_stat": 0.27509,
+        "p_value": 3e-09,
+        "significant": true
+      },
+      "amt_x_night": {
+        "ks_stat": 0.0,
+        "p_value": 1.0,
+        "significant": false
+      },
+      "user_merch_count": {
+        "ks_stat": 0.265233,
+        "p_value": 1.28e-08,
+        "significant": true
+      }
+    },
+    "n_significant_features": 25,
+    "n_total_features": 42,
+    "classification": "strong_shift"
+  }
+}

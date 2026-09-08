@@ -1,0 +1,13 @@
+{
+  "2017_chip_fraud_count": 248,
+  "seen_merchant_count": 201,
+  "unseen_merchant_count": 47,
+  "seen_merchant_pct": 0.8105,
+  "unseen_merchant_pct": 0.1895,
+  "seen_user_count": 248,
+  "unseen_user_count": 0,
+  "seen_user_pct": 1.0,
+  "unseen_user_pct": 0.0,
+  "pre2016_total_merchants": 16279,
+  "pre2016_total_users": 1554
+}

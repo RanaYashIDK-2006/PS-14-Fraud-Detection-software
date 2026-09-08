@@ -1,0 +1,14 @@
+{
+  "pre2016": {
+    "fraud_vs_legit_auc": 0.9937,
+    "fraud_vs_legit_auc_std": 0.0076,
+    "fraud_count": 21345,
+    "legit_count": 171682
+  },
+  "2017_chip": {
+    "fraud_vs_legit_auc": 1.0,
+    "fraud_vs_legit_auc_std": 0.0,
+    "fraud_count": 248,
+    "legit_count": 12099
+  }
+}

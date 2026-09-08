@@ -1,0 +1,51 @@
+{
+  "root_causes": [
+    {
+      "rank": 1,
+      "factor": "Channel composition shift (online->chip fraud migration)",
+      "evidence": "2016 online fraud: 85.9%, 2017 online fraud: 0.0%. 2016 chip fraud: 7.8%, 2017 chip fraud: 97.2%",
+      "effect_size": 0.8945,
+      "confidence": "PROVEN",
+      "observable_pre2016": false,
+      "actionable_without_future_labels": false
+    },
+    {
+      "rank": 2,
+      "factor": "Feature-distribution separation (train vs 2017 chip)",
+      "evidence": "Train-vs-2017 diagnostic AUC = 0.9401",
+      "effect_size": 0.4401,
+      "confidence": "STRONGLY_SUPPORTED",
+      "observable_pre2016": false,
+      "actionable_without_future_labels": false
+    },
+    {
+      "rank": 3,
+      "factor": "No historical chip-fraud analogue in training",
+      "evidence": "Pre-2013 training has 0 chip fraud. 301 cases in 2014-2015 but adding them HURT 2017 transfer (Phase 14)",
+      "effect_size": 0,
+      "confidence": "PROVEN",
+      "observable_pre2016": true,
+      "actionable_without_future_labels": false
+    },
+    {
+      "rank": 4,
+      "factor": "Feature out-of-support (2017 values outside pre-2016 range)",
+      "evidence": "Average 0.9% of 2017 chip fraud feature values outside pre-2016 support range",
+      "effect_size": 0.0093,
+      "confidence": "SUPPORTED",
+      "observable_pre2016": false,
+      "actionable_without_future_labels": false
+    },
+    {
+      "rank": 5,
+      "factor": "Pattern novelty (no pre-2016 analogue for most 2017 cases)",
+      "evidence": "5.2% of 2017 chip fraud has no close pre-2016 neighbour",
+      "effect_size": 0.0524,
+      "confidence": "SUPPORTED",
+      "observable_pre2016": false,
+      "actionable_without_future_labels": false
+    }
+  ],
+  "summary": "The 2017 chip-fraud failure is primarily caused by a channel composition shift (online fraud disappeared, chip fraud appeared) combined with fundamental feature-distribution separation between training and 2017.",
+  "cert_time_utc": "2026-09-08T10:49:38Z"
+}

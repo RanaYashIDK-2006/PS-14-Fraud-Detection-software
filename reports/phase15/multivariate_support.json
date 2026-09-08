@@ -1,0 +1,47 @@
+{
+  "train_vs_2017_auc": 0.9401,
+  "train_vs_2017_auc_std": 0.0061,
+  "interpretation": "strong_separation",
+  "top_discriminating_features": [
+    {
+      "feature": "card_tx_count",
+      "importance": 0.5864
+    },
+    {
+      "feature": "merch_tx_count",
+      "importance": 0.1236
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "importance": 0.0548
+    },
+    {
+      "feature": "user_tx_count",
+      "importance": 0.0378
+    },
+    {
+      "feature": "card_id",
+      "importance": 0.0371
+    },
+    {
+      "feature": "user_city_diversity",
+      "importance": 0.019
+    },
+    {
+      "feature": "user_avg_amt",
+      "importance": 0.0157
+    },
+    {
+      "feature": "merchant_id",
+      "importance": 0.011
+    },
+    {
+      "feature": "user_merch_count",
+      "importance": 0.0095
+    },
+    {
+      "feature": "mcc",
+      "importance": 0.0089
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "final_test_accessed": false,
+  "final_test_authorized": false,
+  "production_untouched": true,
+  "e_hardneg_unchanged": true,
+  "p11_unchanged": true,
+  "purpose": "diagnostic only",
+  "cert_time_utc": "2026-09-08T10:49:38Z"
+}
