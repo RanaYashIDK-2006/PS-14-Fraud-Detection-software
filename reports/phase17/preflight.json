@@ -1,0 +1,11 @@
+{
+  "phase": 17,
+  "objective": "IBM generator / DGP audit",
+  "firewall": {
+    "FINAL_TEST_ACCESSED": false,
+    "FINAL_TEST_AUTHORIZED": false,
+    "PRODUCTION_MODEL_STATUS": "UNTOUCHED",
+    "E_HARDNEG_STATUS": "UNCHANGED"
+  },
+  "status": "RUNNING"
+}

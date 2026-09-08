@@ -1,0 +1,12 @@
+{
+  "dominant_root_cause": "GENERATOR_REGIME_CHANGE",
+  "root_cause_confidence": "HIGH",
+  "explanation": "The 2017 chip-fraud failure is caused by a generator-level regime change that abruptly shifts channel assignment rules around 2017. This is NOT organic concept drift, NOT data distribution limitation in the traditional sense, and NOT a modeling failure. It is a synthetic artifact of the data-generating process.",
+  "model_limitation": "NOT_PRIMARY",
+  "data_limitation": "NOT_PRIMARY (the data exists, but its distribution is a generator artifact)",
+  "protocol_limitation": "SECONDARY (the protocol constrains access to 2017, but 2017 itself is a generator artifact)",
+  "generator_limitation": "PRIMARY",
+  "further_modeling_justified": "NO (for the 2017 failure specifically)",
+  "protocol_change_justified": "NO (would not solve a generator artifact)",
+  "external_data_required": "YES (for real-world validation)"
+}

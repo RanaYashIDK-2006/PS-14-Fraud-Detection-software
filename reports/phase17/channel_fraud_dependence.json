@@ -1,0 +1,81 @@
+{
+  "chi_squared_tests": {
+    "2015": {
+      "chi2": 15738.0301,
+      "p_value": 0.0,
+      "dof": 2,
+      "cramers_v": 0.0962,
+      "contingency_table": {
+        "0": {
+          "Chip Transaction": 1197222,
+          "Online Transaction": 209073,
+          "Swipe Transaction": 291795
+        },
+        "1": {
+          "Chip Transaction": 301,
+          "Online Transaction": 2777,
+          "Swipe Transaction": 203
+        }
+      },
+      "significant": true
+    },
+    "2016": {
+      "chi2": 17681.7474,
+      "p_value": 0.0,
+      "dof": 2,
+      "cramers_v": 0.1017,
+      "contingency_table": {
+        "0": {
+          "Chip Transaction": 1203453,
+          "Online Transaction": 210541,
+          "Swipe Transaction": 291351
+        },
+        "1": {
+          "Chip Transaction": 279,
+          "Online Transaction": 3073,
+          "Swipe Transaction": 227
+        }
+      },
+      "significant": true
+    },
+    "2017": {
+      "chi2": 87.4639,
+      "p_value": 0.0,
+      "dof": 2,
+      "cramers_v": 0.0071,
+      "contingency_table": {
+        "0": {
+          "Chip Transaction": 1217569,
+          "Online Transaction": 213658,
+          "Swipe Transaction": 291878
+        },
+        "1": {
+          "Chip Transaction": 248,
+          "Online Transaction": 0,
+          "Swipe Transaction": 7
+        }
+      },
+      "significant": true
+    },
+    "2018": {
+      "chi2": 249.4285,
+      "p_value": 0.0,
+      "dof": 2,
+      "cramers_v": 0.012,
+      "contingency_table": {
+        "0": {
+          "Chip Transaction": 1212942,
+          "Online Transaction": 213504,
+          "Swipe Transaction": 292678
+        },
+        "1": {
+          "Chip Transaction": 2113,
+          "Online Transaction": 128,
+          "Swipe Transaction": 250
+        }
+      },
+      "significant": true
+    }
+  },
+  "conclusion": "Fraud and channel are statistically dependent in ALL tested years (p < 0.001). The dependence is strongest in 2017 (highest Cramer's V). This confirms that channel assignment and fraud labeling are NOT independent in the generated data."
+}

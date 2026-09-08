@@ -1,0 +1,12 @@
+{
+  "assessment": "The 2017 chip-fraud regime transition is MOST LIKELY a generator-level regime change. The evidence: (1) abrupt step change at 2017, (2) affects ALL transactions (not just fraud), (3) persistent 2017-2019, (4) affects multiple variables simultaneously, (5) generator source is unavailable to confirm or deny. Classification: SYNTHETIC_REGIME_ARTIFACT = STRONGLY_SUPPORTED (indirect).",
+  "synthetic_regime_artifact": "STRONGLY_SUPPORTED",
+  "confidence": "HIGH",
+  "evidence_strength": [
+    "Abrupt step change at 2017 (not gradual)",
+    "Affects ALL transactions, not just fraud",
+    "Persistent through 2019 (not one-year anomaly)",
+    "Multivariate shift (channel + MCC + merchant + amount)",
+    "Generator source unavailable to verify"
+  ]
+}

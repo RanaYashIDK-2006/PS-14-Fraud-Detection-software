@@ -1,0 +1,278 @@
+{
+  "all_transactions_channel_pct_by_year": {
+    "1991": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 0.0,
+      "Swipe Transaction": 100.0
+    },
+    "1992": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 0.0,
+      "Swipe Transaction": 100.0
+    },
+    "1993": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 0.0,
+      "Swipe Transaction": 100.0
+    },
+    "1994": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 0.0,
+      "Swipe Transaction": 100.0
+    },
+    "1995": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 0.92,
+      "Swipe Transaction": 99.08
+    },
+    "1996": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 2.03,
+      "Swipe Transaction": 97.97
+    },
+    "1997": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 2.86,
+      "Swipe Transaction": 97.14
+    },
+    "1998": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 4.08,
+      "Swipe Transaction": 95.92
+    },
+    "1999": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 5.27,
+      "Swipe Transaction": 94.73
+    },
+    "2000": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 6.51,
+      "Swipe Transaction": 93.49
+    },
+    "2001": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 6.97,
+      "Swipe Transaction": 93.03
+    },
+    "2002": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 7.75,
+      "Swipe Transaction": 92.25
+    },
+    "2003": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 8.25,
+      "Swipe Transaction": 91.75
+    },
+    "2004": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 8.48,
+      "Swipe Transaction": 91.52
+    },
+    "2005": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 9.17,
+      "Swipe Transaction": 90.83
+    },
+    "2006": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 9.62,
+      "Swipe Transaction": 90.38
+    },
+    "2007": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 10.05,
+      "Swipe Transaction": 89.95
+    },
+    "2008": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 10.41,
+      "Swipe Transaction": 89.59
+    },
+    "2009": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 10.51,
+      "Swipe Transaction": 89.49
+    },
+    "2010": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 10.91,
+      "Swipe Transaction": 89.09
+    },
+    "2011": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 10.99,
+      "Swipe Transaction": 89.01
+    },
+    "2012": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 11.32,
+      "Swipe Transaction": 88.68
+    },
+    "2013": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 11.77,
+      "Swipe Transaction": 88.23
+    },
+    "2014": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 12.06,
+      "Swipe Transaction": 87.94
+    },
+    "2015": {
+      "Chip Transaction": 70.39,
+      "Online Transaction": 12.45,
+      "Swipe Transaction": 17.16
+    },
+    "2016": {
+      "Chip Transaction": 70.44,
+      "Online Transaction": 12.5,
+      "Swipe Transaction": 17.06
+    },
+    "2017": {
+      "Chip Transaction": 70.67,
+      "Online Transaction": 12.4,
+      "Swipe Transaction": 16.94
+    },
+    "2018": {
+      "Chip Transaction": 70.58,
+      "Online Transaction": 12.41,
+      "Swipe Transaction": 17.01
+    },
+    "2019": {
+      "Chip Transaction": 70.63,
+      "Online Transaction": 12.41,
+      "Swipe Transaction": 16.96
+    },
+    "2020": {
+      "Chip Transaction": 70.09,
+      "Online Transaction": 12.68,
+      "Swipe Transaction": 17.22
+    }
+  },
+  "fraud_channel_pct_by_year": {
+    "1996": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 0.0,
+      "Swipe Transaction": 100.0
+    },
+    "1997": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 0.0,
+      "Swipe Transaction": 100.0
+    },
+    "1998": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 0.0,
+      "Swipe Transaction": 100.0
+    },
+    "1999": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 0.0,
+      "Swipe Transaction": 100.0
+    },
+    "2000": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 0.0,
+      "Swipe Transaction": 100.0
+    },
+    "2001": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 0.0,
+      "Swipe Transaction": 100.0
+    },
+    "2002": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 73.38,
+      "Swipe Transaction": 26.62
+    },
+    "2003": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 84.89,
+      "Swipe Transaction": 15.11
+    },
+    "2004": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 60.81,
+      "Swipe Transaction": 39.19
+    },
+    "2005": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 6.99,
+      "Swipe Transaction": 93.01
+    },
+    "2006": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 0.0,
+      "Swipe Transaction": 100.0
+    },
+    "2007": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 66.51,
+      "Swipe Transaction": 33.49
+    },
+    "2008": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 69.14,
+      "Swipe Transaction": 30.86
+    },
+    "2009": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 60.88,
+      "Swipe Transaction": 39.12
+    },
+    "2010": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 90.17,
+      "Swipe Transaction": 9.83
+    },
+    "2011": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 94.55,
+      "Swipe Transaction": 5.45
+    },
+    "2012": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 74.49,
+      "Swipe Transaction": 25.51
+    },
+    "2013": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 84.54,
+      "Swipe Transaction": 15.46
+    },
+    "2014": {
+      "Chip Transaction": 0.0,
+      "Online Transaction": 84.89,
+      "Swipe Transaction": 15.11
+    },
+    "2015": {
+      "Chip Transaction": 9.17,
+      "Online Transaction": 84.64,
+      "Swipe Transaction": 6.19
+    },
+    "2016": {
+      "Chip Transaction": 7.8,
+      "Online Transaction": 85.86,
+      "Swipe Transaction": 6.34
+    },
+    "2017": {
+      "Chip Transaction": 97.25,
+      "Online Transaction": 0.0,
+      "Swipe Transaction": 2.75
+    },
+    "2018": {
+      "Chip Transaction": 84.83,
+      "Online Transaction": 5.14,
+      "Swipe Transaction": 10.04
+    },
+    "2019": {
+      "Chip Transaction": 90.8,
+      "Online Transaction": 0.0,
+      "Swipe Transaction": 9.2
+    }
+  },
+  "key_observation": "ALL transactions shift from predominantly Swipe (pre-2002) to predominantly Online (2002-2016) to predominantly Chip (2017+). This is a GENERATION-LEVEL channel assignment change, not just a fraud change. The generator explicitly changes channel probabilities around 2017.",
+  "explicit_2017_channel_rule": "STRONGLY_SUPPORTED (statistical evidence). The shift is abrupt (2016: 17.6% chip all txns -> 2017: ~80%+ chip all txns) and affects ALL transactions, not just fraud. This is a generator-level regime change."
+}

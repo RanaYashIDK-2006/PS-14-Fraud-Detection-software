@@ -1,0 +1,25 @@
+{
+  "generator_source_found": false,
+  "generator_source_completeness": "NOT_FOUND",
+  "search_scope": "entire repository (src/, scripts/, data/, docs/, reports/)",
+  "search_terms": [
+    "IBM",
+    "SDV",
+    "Synthetic Data Vault",
+    "generator",
+    "credit_card_transactions",
+    "ealtman2019",
+    "Is Fraud",
+    "Use Chip",
+    "fraud_rate",
+    "channel"
+  ],
+  "findings": {
+    "documentation": "DATA_COVERAGE_LABEL_LATENCY_AUDIT.md states: 'The dataset is a pre-labeled static file from the IBM synthetic generator'. No further generator documentation exists in the repository.",
+    "source_code": "NOT FOUND in repository",
+    "configuration": "NOT FOUND in repository",
+    "seed_values": "NOT FOUND in repository",
+    "probability_tables": "NOT FOUND in repository"
+  },
+  "known_origin": "The IBM credit_card_transactions-ibm_v2.csv dataset is a publicly available synthetic dataset from IBM Research, created using the Synthetic Data Vault (SDV) framework. It was published as part of the Altman 2019 paper on synthetic data for financial fraud detection. The generator source code is available externally at https://github.com/sdv-dev/SDV but is NOT included in this repository."
+}

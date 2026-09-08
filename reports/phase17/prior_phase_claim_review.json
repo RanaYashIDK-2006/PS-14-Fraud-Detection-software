@@ -1,0 +1,22 @@
+{
+  "phase_11b_concept_drift": {
+    "claim": "2016-2017 concept drift exists",
+    "phase17_review": "SUPPORTED but REFINED",
+    "explanation": "Phase 11B identified temporal performance degradation from 2016 to 2017. Phase 17 confirms this is REAL at the dataset level. However, the underlying cause is MOST LIKELY a generator-level regime change, not organic concept drift. The 'concept' didn't drift -- the data-generating process changed its rules."
+  },
+  "phase_15_pattern_novelty": {
+    "claim": "2017 chip fraud has limited historical analogues",
+    "phase17_review": "STRENGTHENED",
+    "explanation": "Phase 15 found that 2017 chip fraud is distributionally distinct. Phase 17 explains WHY: the generator changed its channel assignment rules. The 'novelty' is a generator artifact, not organic fraud evolution."
+  },
+  "phase_16_information_boundary": {
+    "claim": "Information boundary is protocol-constrained",
+    "phase17_review": "UNCHANGED",
+    "explanation": "Phase 17 does not change Phase 16's conclusion. The information boundary remains PROTOCOL-CONSTRAINED. However, Phase 17 adds that the information being constrained is itself a generator artifact."
+  },
+  "phase_14_chip_supervision": {
+    "claim": "Adding chip-fraud supervision hurt 2017 transfer",
+    "phase17_review": "STRENGTHENED",
+    "explanation": "Phase 14 found that adding 301 chip-fraud examples from 2014-2015 HURT 2017 recall. Phase 17 explains why: the 2014-2015 chip fraud patterns are from a DIFFERENT generator regime (pre-2017 channel rules). Training on them biases the model toward patterns that don't exist in the 2017 generator regime."
+  }
+}

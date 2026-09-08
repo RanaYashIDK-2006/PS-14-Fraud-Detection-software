@@ -1,0 +1,6 @@
+{
+  "assessment": "The real-world validity of the 2017 transition is UNVERIFIED. The IBM SDV dataset is synthetic. The generator may model real-world EMV chip adoption (which did accelerate around 2015-2017 in the US), but this cannot be confirmed from the repository alone. The transition COULD represent a plausible synthetic analogue of real-world EMV migration, or it could be an arbitrary generator configuration. Without generator source code, we cannot distinguish these possibilities.",
+  "real_world_analogue": "UNVERIFIED",
+  "real_world_validity": "UNVERIFIED",
+  "plausible_real_world_mechanism": "EMV chip card adoption accelerated in the US around 2015-2017 (the Liability Shift occurred in October 2015). This could explain a generator rule that increases chip transaction rates after 2016. However, this is SPECULATION, not verified generator documentation."
+}

@@ -1,0 +1,34 @@
+{
+  "hypotheses": [
+    {
+      "hypothesis": "Explicit 2017 channel switch in generator",
+      "generator_evidence": "Generator source not available. Cannot verify directly.",
+      "dataset_evidence": "STRONGLY_SUPPORTED. The channel shift is abrupt (step change at 2017), affects ALL transactions (not just fraud), and is persistent (2017-2019). This pattern is consistent with an explicit generator rule.",
+      "verdict": "STRONGLY_SUPPORTED (indirect evidence)"
+    },
+    {
+      "hypothesis": "Year-dependent fraud probability",
+      "generator_evidence": "Cannot verify - no source code.",
+      "dataset_evidence": "SUPPORTED. Fraud rate varies by year (0.0% in 1990s to 0.41% in 2008, then declining). But 2017 has LOW fraud rate (0.015%), so the channel shift is NOT driven by more fraud.",
+      "verdict": "SUPPORTED"
+    },
+    {
+      "hypothesis": "Channel/fraud coupling in generator",
+      "generator_evidence": "Cannot verify - no source code.",
+      "dataset_evidence": "STRONGLY_SUPPORTED. Chi-squared tests show fraud and channel are dependent in all years (p < 0.001). In 2017, P(fraud|chip) is much higher than P(fraud|online) or P(fraud|swipe).",
+      "verdict": "STRONGLY_SUPPORTED"
+    },
+    {
+      "hypothesis": "Random sampling explanation",
+      "generator_evidence": "N/A",
+      "dataset_evidence": "CONTRADICTED. The transition is too abrupt, too persistent, and too multivariate to be explained by sampling variation. 24M rows provide ample statistical power.",
+      "verdict": "CONTRADICTED"
+    },
+    {
+      "hypothesis": "Merchant/user regime change",
+      "generator_evidence": "Cannot verify - no source code.",
+      "dataset_evidence": "SUPPORTED. 2017 fraud involves different merchants and MCCs than pre-2016 fraud. But this is CORRELATED with the channel shift, not independent of it.",
+      "verdict": "SUPPORTED (correlated with channel shift)"
+    }
+  ]
+}

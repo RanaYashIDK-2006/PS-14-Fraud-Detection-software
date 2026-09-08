@@ -1,0 +1,27 @@
+{
+  "phase17_status": "COMPLETE",
+  "classification": "SYNTHETIC_REGIME_ARTIFACT",
+  "synthetic_regime_artifact": "STRONGLY_SUPPORTED",
+  "real_world_validity": "UNVERIFIED",
+  "generator_source_found": false,
+  "generator_source_completeness": "NOT_FOUND",
+  "generator_reproducibility": "UNVERIFIED",
+  "explicit_2017_channel_rule": "STRONGLY_SUPPORTED (indirect evidence)",
+  "explicit_2017_fraud_rule": "SUPPORTED (fraud rate varies by year)",
+  "explicit_channel_fraud_coupling": "STRONGLY_SUPPORTED (chi-squared tests)",
+  "regime_change_type": "ABRUPT_STEP_CHANGE",
+  "regime_change_mechanism": "Generator-level channel assignment rule change",
+  "post2017_persistence": "PERSISTENT (2017-2019)",
+  "prior_phase_review": {
+    "phase_11b": "SUPPORTED_REFINED",
+    "phase_14": "STRENGTHENED",
+    "phase_15": "STRENGTHENED",
+    "phase_16": "UNCHANGED"
+  },
+  "firewall_status": {
+    "FINAL_TEST_ACCESSED": false,
+    "FINAL_TEST_AUTHORIZED": false,
+    "PRODUCTION_MODEL_STATUS": "UNTOUCHED"
+  },
+  "implication_for_project": "The 2017 chip-fraud failure is a SYNTHETIC ARTIFACT of the IBM generator. It should NOT be interpreted as evidence of real-world concept drift. The production model E_hardneg remains the best available model. The project should focus on real-world validation data, not on optimizing against a generator artifact."
+}

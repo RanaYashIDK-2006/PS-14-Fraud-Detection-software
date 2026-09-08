@@ -1,0 +1,21 @@
+{
+  "yearly": {
+    "2017": {
+      "total_fraud": 255,
+      "chip_fraud": 248,
+      "chip_fraud_pct": 97.25
+    },
+    "2018": {
+      "total_fraud": 2491,
+      "chip_fraud": 2113,
+      "chip_fraud_pct": 84.83
+    },
+    "2019": {
+      "total_fraud": 2087,
+      "chip_fraud": 1895,
+      "chip_fraud_pct": 90.8
+    }
+  },
+  "persistence_type": "PERSISTENT_REGIME",
+  "conclusion": "The chip-dominant fraud regime persists from 2017 through 2019. 2017: 97.3%, 2018: 84.8%, 2019: 90.8% chip fraud. This is NOT a one-year anomaly. It is a persistent regime change in the data-generating process."
+}

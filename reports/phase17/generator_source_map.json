@@ -1,0 +1,14 @@
+{
+  "status": "GENERATOR_NOT_IN_REPO",
+  "external_reference": "https://github.com/sdv-dev/SDV",
+  "dataset_publication": "IBM Research / Altman 2019",
+  "repo_contains": "Generated CSV only (24.4M rows, 2.3 GB)",
+  "repo_does_not_contain": [
+    "Generator source code",
+    "Generator configuration/parameters",
+    "Random seed documentation",
+    "Fraud-label generation logic",
+    "Channel-assignment logic",
+    "Year-dependent generation rules"
+  ]
+}

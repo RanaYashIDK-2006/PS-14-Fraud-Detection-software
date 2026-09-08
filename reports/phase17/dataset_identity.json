@@ -1,0 +1,35 @@
+{
+  "path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\data\\credit_card_transactions-ibm_v2.csv",
+  "sha256": "b01fa323c98522f8c710c7f7242581860c97c50183f1c5fa9e772e5c674a7f15",
+  "file_size_bytes": 2350744057,
+  "total_rows": 24386900,
+  "columns": [
+    "User",
+    "Card",
+    "Year",
+    "Month",
+    "Day",
+    "Time",
+    "Amount",
+    "Use Chip",
+    "Merchant Name",
+    "Merchant City",
+    "Merchant State",
+    "Zip",
+    "MCC",
+    "Errors?",
+    "Is Fraud?",
+    "is_fraud",
+    "Amount_num"
+  ],
+  "year_range": [
+    1991,
+    2020
+  ],
+  "total_fraud": 29757,
+  "fraud_rate": 0.00122,
+  "unique_users": 2000,
+  "unique_merchants": 100343,
+  "unique_mccs": 109,
+  "unique_cards": 9
+}

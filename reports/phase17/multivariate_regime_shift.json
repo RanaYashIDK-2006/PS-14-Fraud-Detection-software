@@ -1,0 +1,87 @@
+{
+  "amount_distributions_by_era": {
+    "pre_2014": {
+      "count": 17012,
+      "mean_amount": 108.67,
+      "median_amount": 73.69,
+      "std_amount": 209.56,
+      "unique_merchants": 1938,
+      "unique_users": 986,
+      "unique_mccs": 98
+    },
+    "2014_2015": {
+      "count": 4333,
+      "mean_amount": 124.4,
+      "median_amount": 86.91,
+      "std_amount": 219.81,
+      "unique_merchants": 680,
+      "unique_users": 461,
+      "unique_mccs": 94
+    },
+    "2016": {
+      "count": 3579,
+      "mean_amount": 127.94,
+      "median_amount": 87.32,
+      "std_amount": 195.18,
+      "unique_merchants": 647,
+      "unique_users": 787,
+      "unique_mccs": 90
+    },
+    "2017": {
+      "count": 255,
+      "mean_amount": 86.71,
+      "median_amount": 29.38,
+      "std_amount": 173.34,
+      "unique_merchants": 49,
+      "unique_users": 34,
+      "unique_mccs": 33
+    },
+    "2018_2019": {
+      "count": 4578,
+      "mean_amount": 79.41,
+      "median_amount": 34.82,
+      "std_amount": 145.91,
+      "unique_merchants": 140,
+      "unique_users": 427,
+      "unique_mccs": 67
+    }
+  },
+  "top_mccs_by_era": {
+    "pre_2014": {
+      "5311": 2641,
+      "5300": 1378,
+      "5310": 1312,
+      "4829": 822,
+      "5912": 593
+    },
+    "2014_2015": {
+      "5311": 580,
+      "4829": 464,
+      "5300": 430,
+      "5310": 230,
+      "5732": 162
+    },
+    "2016": {
+      "5311": 511,
+      "5300": 384,
+      "4829": 313,
+      "5310": 221,
+      "5815": 189
+    },
+    "2017": {
+      "5311": 52,
+      "5310": 33,
+      "5411": 15,
+      "5651": 13,
+      "5211": 12
+    },
+    "2018_2019": {
+      "5311": 1040,
+      "5411": 406,
+      "5310": 356,
+      "5541": 243,
+      "5912": 225
+    }
+  },
+  "conclusion": "The 2017 regime shift affects MULTIPLE variables simultaneously: channel composition, MCC distribution, merchant diversity, and amount distribution. This is a BROAD regime change, not a single-variable artifact."
+}

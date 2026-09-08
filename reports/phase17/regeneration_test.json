@@ -1,0 +1,6 @@
+{
+  "status": "CANNOT_REGENERATE",
+  "reason": "Generator source code is not in the repository.",
+  "external_generator": "IBM SDV (https://github.com/sdv-dev/SDV)",
+  "reproducibility": "UNVERIFIED - would require running the external SDV generator with the original configuration."
+}
