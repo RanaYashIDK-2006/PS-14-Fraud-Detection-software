@@ -1,0 +1,8 @@
+{
+  "rollback_tested": "PASS (backup_restore_test.py in regression suite)",
+  "artifact_integrity": "PASS (SHA-256 hashes in manifest)",
+  "version_identity": "PASS (model_version = altman_native_E_hardneg_cert_20260904)",
+  "score_reproducibility": "PASS (same inputs -> same scores)",
+  "service_restoration": "PASS (Docker compose restart)",
+  "rollback_status": "PASS"
+}

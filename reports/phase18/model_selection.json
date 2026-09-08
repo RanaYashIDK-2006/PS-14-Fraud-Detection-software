@@ -1,0 +1,22 @@
+{
+  "selected_model": "E_hardneg (altman_native_E_hardneg_cert_20260904)",
+  "selection_basis": [
+    "Validated leakage-free training",
+    "Causal feature availability (45 of 48 verified)",
+    "Production parity (CONDITIONAL \u2014 3 features degraded)",
+    "Security (0 findings)",
+    "Reproducibility (bit-identical replay)",
+    "Final test (99.67% recall, 10.99% FPR)",
+    "Monitoring infrastructure exists",
+    "Rollback tested"
+  ],
+  "known_limitations": [
+    "3 fraud-rate features with UNVERIFIED label availability",
+    "Alert burden of ~107 per 1,000 transactions",
+    "Dataset is synthetic (real-world performance unknown)",
+    "Temporal robustness on 2017 is a synthetic artifact",
+    "No external security audit conducted",
+    "Production prevalence unknown"
+  ],
+  "no_newer_model_selected_reason": "No experimental candidate outperforms E_hardneg on the locked final test while also passing production parity and certification gates."
+}

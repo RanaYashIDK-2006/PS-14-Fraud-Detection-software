@@ -1,0 +1,7 @@
+{
+  "dataset_prevalence": 0.023798,
+  "final_test_prevalence": 0.023798,
+  "expected_production_prevalence": "UNKNOWN",
+  "production_precision_estimate": "UNVERIFIED",
+  "precision_dependency": "Precision depends directly on fraud prevalence. The final-test precision of 18.1% applies ONLY to the IBM dataset's prevalence of 0.124%. At a real-world prevalence of 0.01%, precision would be dramatically lower (~1.5%). At 1%, it would be higher. Without knowing the true production prevalence, precision cannot be extrapolated."
+}

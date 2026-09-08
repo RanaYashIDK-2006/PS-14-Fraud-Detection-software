@@ -1,0 +1,10 @@
+{
+  "FINAL_TEST_AUTHORIZED": false,
+  "reason": "The final test (2018-2020) was already scored during Phase 9 certification. No new model candidate has been developed that warrants a new final-test evaluation. E_hardneg remains the production model. The final test should remain LOCKED until a genuinely new candidate passes all certification gates.",
+  "existing_final_test_result": {
+    "recall": 0.9967,
+    "fpr": 0.1099,
+    "precision": 0.1811,
+    "source": "Phase 9 certification"
+  }
+}

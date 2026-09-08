@@ -1,0 +1,13 @@
+{
+  "classification": "CONDITIONALLY_DEPLOYABLE",
+  "reasoning": "The system is TECHNICALLY DEPLOYABLE (security passes, rollback works, monitoring exists, model is reproducible). However, it has MATERIAL LIMITATIONS that must be documented:\n1. 3 features with unverified label availability (degraded in production)\n2. Alert burden of ~107 per 1,000 transactions (operational capacity unverified)\n3. Dataset is synthetic (real-world performance unknown)\n4. Production prevalence unknown (precision cannot be extrapolated)\n5. Temporal robustness on 2017 is a synthetic artifact",
+  "not_production_ready_reason": "Material limitations exist but do not prevent deployment",
+  "not_research_only_reason": "Technical gates mostly pass; the system works",
+  "conditions_for_unrestricted_deployment": [
+    "Resolve the 3 fraud-rate features (remove and retrain, or document degradation)",
+    "Establish production prevalence and alert-handling capacity",
+    "Obtain real-world validation data",
+    "Conduct external security audit"
+  ],
+  "phase18_status": "COMPLETE"
+}

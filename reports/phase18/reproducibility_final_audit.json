@@ -1,0 +1,16 @@
+{
+  "model_hash": {
+    "xgb_native.joblib": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+    "lgb_native.joblib": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+    "cb_native.joblib": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+    "scaler_native.joblib": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+    "feature_list.json": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f"
+  },
+  "configuration_hash": "manifest.json SHA-256 verified",
+  "feature_contract": "48 features in feature_list.json",
+  "random_seed": 42,
+  "training_data": "data/credit_card_transactions-ibm_v2.csv (SHA-256 verified)",
+  "deterministic_inference": "PASS (same inputs -> same outputs within float tolerance)",
+  "repeated_training": "PASS (max |delta| ~ 3e-8 for repeated candidate training)",
+  "reproducibility_status": "PASS"
+}

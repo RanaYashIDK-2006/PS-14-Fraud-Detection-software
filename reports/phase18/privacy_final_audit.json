@@ -1,0 +1,10 @@
+{
+  "merchant_identity": "Pseudonymized (merchant_id = hash(token))",
+  "user_identity": "Pseudonymized (user pseudonyms in DB-1)",
+  "data_minimization": "SUPPORTED (section 16, derived features only)",
+  "pii_handling": "CONDITIONAL (IBM dataset contains Merchant City, Merchant State, Zip)",
+  "model_inputs": "CONDITIONAL (48 features, 3 require unverified labels)",
+  "privacy_engineering_status": "CONDITIONAL",
+  "label_latency": "UNVERIFIED (fraud labels not confirmed at scoring time)",
+  "note": "The privacy architecture is well-designed (section 16, DB separation). However, the IBM dataset contains geographic identifiers (Merchant City, Merchant State, Zip) that would be PII in a real system. The privacy layer properly pseudonymizes these in production, but the training data retains them."
+}

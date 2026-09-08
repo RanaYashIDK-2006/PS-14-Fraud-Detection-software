@@ -1,0 +1,54 @@
+{
+  "claims": [
+    {
+      "claim": "industry standard fraud detection",
+      "status": "UNSUPPORTED",
+      "evidence": "No external benchmark comparison exists. IBM synthetic dataset only."
+    },
+    {
+      "claim": "production ready",
+      "status": "UNSUPPORTED",
+      "evidence": "3 features with unverified label availability. Alert capacity unverified."
+    },
+    {
+      "claim": "99.67% recall",
+      "status": "SUPPORTED",
+      "evidence": "Phase 9 certification on locked final test. Independently verified."
+    },
+    {
+      "claim": "exceeds industry standards",
+      "status": "UNSUPPORTED",
+      "evidence": "No industry benchmark comparison exists."
+    },
+    {
+      "claim": "robust temporal performance",
+      "status": "CONTRADICTED",
+      "evidence": "2017 recall = 57.3% (C0). Phase 17 found this is a synthetic regime artifact."
+    },
+    {
+      "claim": "concept drift detected",
+      "status": "UNSUPPORTED",
+      "evidence": "Phase 17 established the 2017 transition is a generator artifact, not proven real-world drift."
+    },
+    {
+      "claim": "data distribution limitation",
+      "status": "SUPPORTED",
+      "evidence": "Phase 16 established information boundary. Phase 17 refined it as generator artifact."
+    },
+    {
+      "claim": "zero security findings",
+      "status": "SUPPORTED",
+      "evidence": "Security scan: 0 critical, 0 high, 0 medium, 0 low (post-CORS fix)."
+    },
+    {
+      "claim": "reproducible results",
+      "status": "SUPPORTED",
+      "evidence": "Bit-identical replay verified. Max delta ~3e-8."
+    },
+    {
+      "claim": "100% of fraud caught",
+      "status": "CONTRADICTED",
+      "evidence": "15 of 4,578 fraud cases missed (FN=15)."
+    }
+  ]
+}

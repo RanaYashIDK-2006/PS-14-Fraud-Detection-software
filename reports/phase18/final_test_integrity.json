@@ -1,0 +1,135 @@
+{
+  "dataset_path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\data\\credit_card_transactions-ibm_v2.csv",
+  "sha256": "b01fa323c98522f8c710c7f7242581860c97c50183f1c5fa9e772e5c674a7f15",
+  "file_size_bytes": 2350744057,
+  "total_rows": 24386900,
+  "total_fraud": 29757,
+  "fraud_rate": 0.00122,
+  "final_test_rows_2018_plus": 3782053,
+  "final_test_fraud_2018_plus": 4578,
+  "year_distribution": {
+    "1991": {
+      "total": 1585,
+      "fraud": 0
+    },
+    "1992": {
+      "total": 5134,
+      "fraud": 0
+    },
+    "1993": {
+      "total": 8378,
+      "fraud": 0
+    },
+    "1994": {
+      "total": 14316,
+      "fraud": 0
+    },
+    "1995": {
+      "total": 20928,
+      "fraud": 0
+    },
+    "1996": {
+      "total": 29945,
+      "fraud": 10
+    },
+    "1997": {
+      "total": 49753,
+      "fraud": 32
+    },
+    "1998": {
+      "total": 78345,
+      "fraud": 32
+    },
+    "1999": {
+      "total": 118250,
+      "fraud": 24
+    },
+    "2000": {
+      "total": 177729,
+      "fraud": 171
+    },
+    "2001": {
+      "total": 257998,
+      "fraud": 354
+    },
+    "2002": {
+      "total": 350732,
+      "fraud": 139
+    },
+    "2003": {
+      "total": 466408,
+      "fraud": 311
+    },
+    "2004": {
+      "total": 597003,
+      "fraud": 620
+    },
+    "2005": {
+      "total": 746653,
+      "fraud": 229
+    },
+    "2006": {
+      "total": 908793,
+      "fraud": 1118
+    },
+    "2007": {
+      "total": 1064483,
+      "fraud": 1881
+    },
+    "2008": {
+      "total": 1223460,
+      "fraud": 3710
+    },
+    "2009": {
+      "total": 1355434,
+      "fraud": 1140
+    },
+    "2010": {
+      "total": 1491225,
+      "fraud": 3835
+    },
+    "2011": {
+      "total": 1570551,
+      "fraud": 55
+    },
+    "2012": {
+      "total": 1610829,
+      "fraud": 1333
+    },
+    "2013": {
+      "total": 1650917,
+      "fraud": 2018
+    },
+    "2014": {
+      "total": 1672343,
+      "fraud": 1052
+    },
+    "2015": {
+      "total": 1701371,
+      "fraud": 3281
+    },
+    "2016": {
+      "total": 1708924,
+      "fraud": 3579
+    },
+    "2017": {
+      "total": 1723360,
+      "fraud": 255
+    },
+    "2018": {
+      "total": 1721615,
+      "fraud": 2491
+    },
+    "2019": {
+      "total": 1723938,
+      "fraud": 2087
+    },
+    "2020": {
+      "total": 336500,
+      "fraud": 0
+    }
+  },
+  "phase15_18_leak_check": "NONE_DETECTED",
+  "final_test_status": "UNTOUCHED",
+  "verification_method": "SHA-256 hash + row count + year distribution + cross-artifact leak scan"
+}

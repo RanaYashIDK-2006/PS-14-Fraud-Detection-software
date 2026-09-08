@@ -1,0 +1,19 @@
+{
+  "phases_reviewed": [
+    "11A",
+    "11B",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17"
+  ],
+  "2016_performance": "79.8% recall (C0, <=2013 training)",
+  "2017_performance": "57.3% recall (C0), 33.3% recall (C2 with chip supervision)",
+  "channel_shift": "ABRUPT step change at 2017 (7.8% -> 97.3% chip fraud)",
+  "phase17_finding": "SYNTHETIC_REGIME_ARTIFACT (STRONGLY_SUPPORTED)",
+  "real_world_production_relevance": "UNVERIFIED",
+  "correct_statement": "The IBM dataset exhibits a strong synthetic regime transition whose real-world production relevance is unverified.",
+  "incorrect_statement": "Do NOT state: 'production has proven concept drift.' The transition is a generator artifact, not proven real-world drift."
+}

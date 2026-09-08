@@ -1,0 +1,6 @@
+{
+  "status": "UNVERIFIED",
+  "evidence": "The IBM dataset contains Is Fraud? labels assigned at generation time. In a real production system, fraud labels (chargeback confirmations, investigation outcomes) become available hours to days AFTER the transaction. This timing is NOT documented in the IBM dataset. The three fraud-rate features (user_fraud_rate, merch_fraud_rate, city_fraud_rate) depend on confirmed labels. Their availability at decision time is UNVERIFIED.",
+  "impact": "The production model uses these features with cold-start defaults (0.001). This creates a systematic difference between training (real expanding means) and production (constant defaults).",
+  "recommendation": "Either remove these features and retrain, or accept the production degradation as a known limitation."
+}

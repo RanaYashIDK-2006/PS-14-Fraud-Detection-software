@@ -1,0 +1,16 @@
+{
+  "feature_parity": "CONDITIONAL",
+  "total_features": 48,
+  "features_passing_parity": 44,
+  "features_failing_numerical": 3,
+  "features_with_fp_noise": 1,
+  "unavailable_features": [
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate"
+  ],
+  "max_score_delta": 1.937e-05,
+  "decision_disagreements": 0,
+  "critical_finding": "The production model artifact includes user_fraud_rate, merch_fraud_rate, and city_fraud_rate. Phase 10C established these have UNVERIFIED label availability and FAIL numerical parity (offline expanding means vs production 0.001 defaults). The production system silently degrades these features to cold-start constants.",
+  "recommendation": "Either remove these 3 features from the production model and retrain, OR document the production degradation as a known limitation."
+}

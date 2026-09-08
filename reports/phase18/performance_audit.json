@@ -1,0 +1,21 @@
+{
+  "model_id": "altman_native_E_hardneg_cert_20260904",
+  "dataset": "IBM credit_card_transactions-ibm_v2.csv",
+  "evaluation_window": "2018-2020 (final test)",
+  "confusion_matrix": {
+    "TP": 4563,
+    "FN": 15,
+    "FP": 20634,
+    "TN": 167160
+  },
+  "metrics": {
+    "recall": 0.9967,
+    "fpr": 0.1099,
+    "precision": 0.1811,
+    "prevalence": 0.023798,
+    "alerts_per_1000": 130.98,
+    "alerts_per_1m": 130980.6
+  },
+  "interpretation": "E_hardneg achieves 99.67% recall (15 of 4,578 fraud missed) but generates 20,634 false positives, yielding an alert rate of 107.3 per 1,000 transactions. Precision is 18.1% \u2014 roughly 1 in 5.5 alerts is true fraud. The FPR of 10.99% means approximately 1 in 9 legitimate transactions is falsely flagged.",
+  "critical_note": "Do NOT report ROC-AUC alone. The 99.67% recall comes at the cost of flagging 20,634 legitimate transactions. Whether this is operationally acceptable depends on the alert-handling capacity of the downstream system, which is UNVERIFIED."
+}

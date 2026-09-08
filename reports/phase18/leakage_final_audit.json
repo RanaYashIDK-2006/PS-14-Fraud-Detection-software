@@ -1,0 +1,16 @@
+{
+  "target_leakage": "PASS (no current-row labels in features)",
+  "temporal_leakage": "PASS (historical aggregation only, causal features)",
+  "test_label_leakage": "PASS (final test never accessed during training/threshold selection)",
+  "early_stopping_leakage": "PASS (early stopping on validation only)",
+  "threshold_leakage": "PASS (threshold selected on validation, not test)",
+  "feature_construction_leakage": "PASS (45 of 48 features verified causal)",
+  "fraud_rate_features": {
+    "status": "CONDITIONAL",
+    "user_fraud_rate": "LABEL_AVAILABILITY=UNVERIFIED",
+    "merch_fraud_rate": "LABEL_AVAILABILITY=UNVERIFIED",
+    "city_fraud_rate": "LABEL_AVAILABILITY=UNVERIFIED",
+    "note": "These three features are IN the production model artifact but their label availability at decision time is UNVERIFIED. In production, they default to 0.001 (COLD_START constant), not the real expanding means. This means the production model receives degraded values for these features."
+  },
+  "overall": "CONDITIONAL (3 fraud-rate features remain unresolved)"
+}

@@ -1,0 +1,35 @@
+{
+  "phase": 18,
+  "objective": "Final system audit & industry-readiness gate",
+  "firewall": {
+    "FINAL_TEST_ACCESSED": false,
+    "FINAL_TEST_AUTHORIZED": false,
+    "PRODUCTION_MODEL_STATUS": "UNTOUCHED",
+    "E_HARDNEG_STATUS": "UNCHANGED"
+  },
+  "production_artifacts": {
+    "directory": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\models\\production\\altman_native",
+    "files": [
+      "cb_native.joblib",
+      "feature_list.json",
+      "lgb_native.joblib",
+      "manifest.json",
+      "manifest_v2.json.bak",
+      "manifest_v3.json.bak",
+      "scaler_native.joblib",
+      "xgb_native.joblib"
+    ],
+    "hashes": {
+      "cb_native.joblib": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+      "feature_list.json": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+      "lgb_native.joblib": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+      "manifest.json": "9882ff1dd058d5e29b469272d1386455ad63242874c549302c71db55d138a98f",
+      "scaler_native.joblib": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+      "xgb_native.joblib": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc"
+    },
+    "manifest_present": true,
+    "manifest_version": "altman_native_E_hardneg_cert_20260904",
+    "manifest_threshold": 0.018758
+  },
+  "status": "RUNNING"
+}

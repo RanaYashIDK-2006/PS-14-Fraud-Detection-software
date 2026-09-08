@@ -1,0 +1,138 @@
+{
+  "domains": [
+    {
+      "domain": "Model integrity",
+      "status": "PASS",
+      "evidence": "48-feature ensemble, manifest verified, artifacts SHA-256'd",
+      "limitation": "3 features with unverified label availability"
+    },
+    {
+      "domain": "Leakage control",
+      "status": "CONDITIONAL",
+      "evidence": "45/48 features verified causal",
+      "limitation": "3 fraud-rate features: label timing UNVERIFIED"
+    },
+    {
+      "domain": "Causality",
+      "status": "CONDITIONAL",
+      "evidence": "45 features available at decision time",
+      "limitation": "3 features require confirmed labels"
+    },
+    {
+      "domain": "Production parity",
+      "status": "CONDITIONAL",
+      "evidence": "44/48 features pass, 0 decision disagreements",
+      "limitation": "3 features fail numerical parity"
+    },
+    {
+      "domain": "Validation methodology",
+      "status": "PASS",
+      "evidence": "Temporal split, no test contamination",
+      "limitation": "Synthetic dataset"
+    },
+    {
+      "domain": "Temporal robustness",
+      "status": "FAIL",
+      "evidence": "57.3% recall on 2017 (C0)",
+      "limitation": "2017 is a synthetic regime artifact"
+    },
+    {
+      "domain": "Final-test integrity",
+      "status": "PASS",
+      "evidence": "SHA-256 verified, year distribution checked",
+      "limitation": "Synthetic dataset only"
+    },
+    {
+      "domain": "Security",
+      "status": "PASS",
+      "evidence": "0 findings, CORS fixed",
+      "limitation": "No external audit"
+    },
+    {
+      "domain": "Privacy engineering",
+      "status": "CONDITIONAL",
+      "evidence": "DB separation, data minimization",
+      "limitation": "Label latency unresolved"
+    },
+    {
+      "domain": "Reproducibility",
+      "status": "PASS",
+      "evidence": "Bit-identical replay",
+      "limitation": "None"
+    },
+    {
+      "domain": "Monitoring",
+      "status": "CONDITIONAL",
+      "evidence": "PSI, drift detection implemented",
+      "limitation": "Only tested with synthetic data"
+    },
+    {
+      "domain": "Rollback",
+      "status": "PASS",
+      "evidence": "backup_restore_test.py passes",
+      "limitation": "None"
+    },
+    {
+      "domain": "Alert capacity",
+      "status": "UNVERIFIED",
+      "evidence": "107 alerts per 1,000 transactions",
+      "limitation": "No documented capacity requirement"
+    },
+    {
+      "domain": "Label latency",
+      "status": "UNVERIFIED",
+      "evidence": "No label-timing data in IBM dataset",
+      "limitation": "Critical for 3 fraud-rate features"
+    },
+    {
+      "domain": "Dataset representativeness",
+      "status": "UNVERIFIED",
+      "evidence": "IBM synthetic dataset",
+      "limitation": "Real-world relevance unestablished"
+    },
+    {
+      "domain": "Certification",
+      "status": "CONDITIONAL",
+      "evidence": "Phase 9 certification completed",
+      "limitation": "Gate A (label availability) remains FAIL"
+    }
+  ],
+  "gates": {
+    "GATE_A_STATISTICAL_VALIDITY": {
+      "status": "CONDITIONAL",
+      "requirements": "leakage-free, causal, valid temporal evaluation, threshold without test contamination",
+      "evidence": "45/48 features verified. 3 fraud-rate features: label availability UNVERIFIED.",
+      "verdict": "CONDITIONAL \u2014 passes for 45 features, blocked by 3 unverified features"
+    },
+    "GATE_B_PRODUCTION_COMPATIBILITY": {
+      "status": "CONDITIONAL",
+      "requirements": "feature parity, model parity, deterministic inference, decision agreement",
+      "evidence": "44/48 parity, 0 decision disagreements, deterministic inference",
+      "verdict": "CONDITIONAL \u2014 3 features fail numerical parity"
+    },
+    "GATE_C_SECURITY": {
+      "status": "PASS",
+      "requirements": "security scan, secure config, artifact integrity",
+      "evidence": "0 findings, CORS fixed, SHA-256 manifests",
+      "verdict": "PASS"
+    },
+    "GATE_D_OPERATIONAL_RELIABILITY": {
+      "status": "PASS",
+      "requirements": "monitoring, rollback, resource behavior, failure handling",
+      "evidence": "Monitoring implemented, rollback tested, health endpoints",
+      "verdict": "PASS (synthetic drill only)"
+    },
+    "GATE_E_DATA_REPRESENTATIVENESS": {
+      "status": "UNVERIFIED",
+      "requirements": "representative evaluation, known limitations, real-world relevance",
+      "evidence": "IBM synthetic dataset. Real-world relevance UNVERIFIED.",
+      "verdict": "UNVERIFIED \u2014 cannot establish real-world performance from synthetic data"
+    },
+    "GATE_F_LABEL_GOVERNANCE": {
+      "status": "UNVERIFIED",
+      "requirements": "label provenance, label latency, no future-label dependence",
+      "evidence": "IBM labels assigned at generation time. Production label timing unknown.",
+      "verdict": "UNVERIFIED \u2014 label availability at decision time not established"
+    }
+  }
+}

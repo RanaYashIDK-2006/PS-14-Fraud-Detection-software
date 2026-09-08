@@ -1,0 +1,8 @@
+{
+  "45_features": "VERIFIED (available at decision time, causal computation)",
+  "user_fraud_rate": "UNVERIFIED (requires confirmed labels not available at scoring time)",
+  "merch_fraud_rate": "UNVERIFIED (same issue)",
+  "city_fraud_rate": "UNVERIFIED (same issue)",
+  "overall": "CONDITIONAL (45 of 48 verified, 3 unverified)",
+  "impact": "The production model was trained WITH these features (receiving real expanding means). In production, it receives 0.001 (cold start). This creates a systematic distribution shift for these 3 features between training and production."
+}

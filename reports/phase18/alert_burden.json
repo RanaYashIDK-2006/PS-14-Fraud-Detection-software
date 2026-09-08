@@ -1,0 +1,10 @@
+{
+  "total_alerts": 25197,
+  "alerts_per_1000": 130.98,
+  "alerts_per_1m": 130980.6,
+  "true_alerts": 4563,
+  "false_alerts": 20634,
+  "precision": 0.1811,
+  "operational_capacity_requirement": "UNVERIFIED",
+  "operational_note": "No documented maximum alert-handling capacity exists in the repository. The system generates ~107 alerts per 1,000 transactions. Whether this is operationally acceptable is a BUSINESS DECISION that has not been made."
+}

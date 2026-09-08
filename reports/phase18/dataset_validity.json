@@ -1,0 +1,12 @@
+{
+  "source": "IBM Research / Synthetic Data Vault (SDV)",
+  "provenance": "Publicly available synthetic dataset, credit_card_transactions-ibm_v2.csv",
+  "synthetic_status": true,
+  "generator_available_in_repo": false,
+  "generator_reproducibility": "UNVERIFIED",
+  "known_regime_behavior": "Abrupt channel shift at 2017, persistent 2017-2019",
+  "real_world_representativeness": "UNVERIFIED",
+  "validity_for_software_testing": "SUPPORTED (functional testing, API testing, integration testing)",
+  "validity_for_real_world_performance_estimation": "UNVERIFIED (synthetic labels, synthetic temporal behavior)",
+  "critical_distinction": "The IBM dataset is VALID for software/model testing (exercises the pipeline, validates architecture, tests feature engineering). It is NOT validated for estimating real-world fraud detection performance."
+}

@@ -1,0 +1,104 @@
+{
+  "risks": [
+    {
+      "risk": "False-positive burden",
+      "severity": "HIGH",
+      "evidence": "20,634 FP, 107 alerts/1K txns",
+      "mitigation": "Operational capacity must be established",
+      "residual": "UNMITIGATED"
+    },
+    {
+      "risk": "Prevalence uncertainty",
+      "severity": "HIGH",
+      "evidence": "Production prevalence unknown",
+      "mitigation": "Monitor real-world alert rates",
+      "residual": "UNMITIGATED"
+    },
+    {
+      "risk": "Label latency",
+      "severity": "HIGH",
+      "evidence": "3 fraud-rate features: label timing UNVERIFIED",
+      "mitigation": "Remove features and retrain, or document degradation",
+      "residual": "UNMITIGATED"
+    },
+    {
+      "risk": "Synthetic data representativeness",
+      "severity": "HIGH",
+      "evidence": "IBM synthetic dataset, real-world relevance UNVERIFIED",
+      "mitigation": "Obtain real-world validation data",
+      "residual": "UNMITIGATED"
+    },
+    {
+      "risk": "Temporal robustness",
+      "severity": "MEDIUM",
+      "evidence": "2017 failure is synthetic regime artifact",
+      "mitigation": "Documented, production unaffected by generator artifact",
+      "residual": "MITIGATED (synthetic only)"
+    },
+    {
+      "risk": "Feature drift",
+      "severity": "MEDIUM",
+      "evidence": "PSI monitoring exists, tested with synthetic data",
+      "mitigation": "Monitoring infrastructure in place",
+      "residual": "PARTIALLY MITIGATED"
+    },
+    {
+      "risk": "Concept drift uncertainty",
+      "severity": "MEDIUM",
+      "evidence": "Real-world drift undetectable from synthetic data",
+      "mitigation": "Monitoring + real-world data needed",
+      "residual": "UNMITIGATED"
+    },
+    {
+      "risk": "Security",
+      "severity": "LOW",
+      "evidence": "0 findings post-fix",
+      "mitigation": "CORS fixed, dependency scan passes",
+      "residual": "MITIGATED"
+    },
+    {
+      "risk": "Dependency risk",
+      "severity": "LOW",
+      "evidence": "Pinned versions in requirements.txt",
+      "mitigation": "Regular dependency updates",
+      "residual": "MITIGATED"
+    },
+    {
+      "risk": "Privacy",
+      "severity": "MEDIUM",
+      "evidence": "Architecture well-designed, label latency unverified",
+      "mitigation": "DB separation, data minimization",
+      "residual": "PARTIALLY MITIGATED"
+    },
+    {
+      "risk": "Model artifact integrity",
+      "severity": "LOW",
+      "evidence": "SHA-256 manifests, bit-identical replay",
+      "mitigation": "Hash verification",
+      "residual": "MITIGATED"
+    },
+    {
+      "risk": "Rollback",
+      "severity": "LOW",
+      "evidence": "backup_restore_test.py passes",
+      "mitigation": "Tested rollback procedure",
+      "residual": "MITIGATED"
+    },
+    {
+      "risk": "Monitoring",
+      "severity": "LOW",
+      "evidence": "PSI, drift detection, health endpoints",
+      "mitigation": "Infrastructure in place",
+      "residual": "MITIGATED"
+    },
+    {
+      "risk": "Operational capacity",
+      "severity": "HIGH",
+      "evidence": "107 alerts/1K, no documented capacity",
+      "mitigation": "Must establish alert-handling capacity",
+      "residual": "UNMITIGATED"
+    }
+  ],
+  "critical_count": 0,
+  "high_count": 5
+}

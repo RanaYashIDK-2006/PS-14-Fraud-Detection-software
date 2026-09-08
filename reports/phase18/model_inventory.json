@@ -1,0 +1,120 @@
+{
+  "production_model": {
+    "id": "altman_native_E_hardneg_cert_20260904",
+    "type": "xgb_lgb_cb_native",
+    "n_features": 48,
+    "feature_contract": [
+      "amt",
+      "log_amt",
+      "amt_sq",
+      "hr",
+      "mn",
+      "dow",
+      "Month",
+      "Day",
+      "hour_sin",
+      "hour_cos",
+      "is_night",
+      "is_business_hours",
+      "chip",
+      "is_online",
+      "is_swipe",
+      "err",
+      "has_zip",
+      "has_state",
+      "is_online_or_no_state",
+      "mcc",
+      "mcc_high",
+      "mcc_restaurant",
+      "mcc_gas",
+      "mcc_grocery",
+      "mcc_travel",
+      "mcc_online",
+      "merchant_id",
+      "city_id",
+      "card_id",
+      "user_tx_count",
+      "card_tx_count",
+      "user_avg_amt",
+      "amt_vs_user_avg",
+      "amt_zscore",
+      "merch_tx_count",
+      "user_merchant_diversity",
+      "user_city_diversity",
+      "user_fraud_rate",
+      "merch_fraud_rate",
+      "city_fraud_rate",
+      "high_amt",
+      "very_high_amt",
+      "amt_x_hr",
+      "amt_x_mcc",
+      "amt_x_chip",
+      "amt_x_online",
+      "amt_x_night",
+      "user_merch_count"
+    ],
+    "threshold": 0.018758,
+    "training_period": "< 2018 (temporal split)",
+    "validation_period": "2016-2017",
+    "final_test_period": "2018-2020",
+    "artifacts": {
+      "cb_native.joblib": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+      "feature_list.json": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+      "lgb_native.joblib": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+      "manifest.json": "9882ff1dd058d5e29b469272d1386455ad63242874c549302c71db55d138a98f",
+      "scaler_native.joblib": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+      "xgb_native.joblib": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc"
+    },
+    "manifest": {
+      "model_version": "altman_native_E_hardneg_cert_20260904",
+      "model_type": "xgb_lgb_cb_native",
+      "n_features": 48,
+      "ensemble_weights": {
+        "xgb": 0.34,
+        "lgb": 0.33,
+        "cb": 0.33
+      },
+      "locked_threshold": 0.018758,
+      "artifacts": {
+        "xgb_native.joblib": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+        "lgb_native.joblib": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+        "cb_native.joblib": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+        "scaler_native.joblib": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+        "feature_list.json": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f"
+      },
+      "training_note": "mission_E_hardneg on the state-parse-corrected frame, seed 42, val-locked P2 threshold (recall>=0.995)"
+    },
+    "contains_unavailable_features": [
+      "user_fraud_rate",
+      "merch_fraud_rate",
+      "city_fraud_rate"
+    ],
+    "unavailable_features_note": "The production model artifact includes user_fraud_rate, merch_fraud_rate, and city_fraud_rate. Phase 10C determined these features have UNVERIFIED label availability at decision time. Numerical parity also FAILS between offline expanding means and production tracker values."
+  },
+  "experimental_models": {
+    "P11": {
+      "status": "REJECTED (temporal robustness failed)",
+      "features": 45
+    },
+    "V_rawplus": {
+      "status": "BLOCKED (parity/certification incomplete)",
+      "features": 48
+    },
+    "Phase14_C0": {
+      "status": "RESEARCH_ONLY",
+      "training_cutoff": "<=2013"
+    },
+    "Phase14_C1": {
+      "status": "RESEARCH_ONLY",
+      "training_cutoff": "<=2014"
+    },
+    "Phase14_C2": {
+      "status": "RESEARCH_ONLY",
+      "training_cutoff": "<=2015"
+    },
+    "Candidate_D": {
+      "status": "SUPERSEDED",
+      "training_cutoff": "<=2013"
+    }
+  }
+}

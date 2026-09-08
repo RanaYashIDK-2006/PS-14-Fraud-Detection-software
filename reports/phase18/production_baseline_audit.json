@@ -1,0 +1,22 @@
+{
+  "model_id": "altman_native_E_hardneg_cert_20260904",
+  "certified_final_test": {
+    "recall": 0.9967,
+    "fpr": 0.1099,
+    "precision": 0.1811,
+    "tp": 4563,
+    "fn": 15,
+    "fp": 20634,
+    "tn": 167160,
+    "total": 192372,
+    "source": "Phase 9 certification (independently verified)"
+  },
+  "training_provenance": "mission_E_hardneg, state-parse-corrected frame, seed 42",
+  "leakage_audit": "PASS (Phases 11A-11B, 12-14)",
+  "causal_features": "45 of 48 verified; 3 fraud-rate features UNVERIFIED",
+  "threshold_selection": "Validation-only, recall>=0.995 frontier",
+  "production_parity": "CONDITIONAL (3 features unavailable, numerical parity fails)",
+  "reproducibility": "PASS (bit-identical replay verified)",
+  "security": "PASS (0 findings post-CORS fix)",
+  "privacy": "CONDITIONAL (label latency unresolved)"
+}

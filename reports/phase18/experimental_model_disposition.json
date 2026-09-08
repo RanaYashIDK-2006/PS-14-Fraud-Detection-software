@@ -1,0 +1,26 @@
+{
+  "P11": {
+    "status": "REJECTED",
+    "reason": "Temporal robustness failed (2017 recall collapse). Production-compatible features but does not outperform E_hardneg on final test."
+  },
+  "V_rawplus": {
+    "status": "BLOCKED",
+    "reason": "Development improvement (FPR reduction) but certification blocked by Gate A (label availability) and weight-identity with E_hardneg (threshold-only difference)."
+  },
+  "Phase14_C0": {
+    "status": "RESEARCH_ONLY",
+    "reason": "Control candidate, <=2013 training, 57.3% 2017 recall. Research artifact."
+  },
+  "Phase14_C1": {
+    "status": "RESEARCH_ONLY",
+    "reason": "2014 chip supervision, 37.6% 2017 recall. Hurt transfer."
+  },
+  "Phase14_C2": {
+    "status": "RESEARCH_ONLY",
+    "reason": "2014-15 chip supervision (301 cases), 33.3% 2017 recall. Hurt transfer further."
+  },
+  "Candidate_D": {
+    "status": "SUPERSEDED",
+    "reason": "Original temporal candidate, superseded by C0 in Phase 14."
+  }
+}
