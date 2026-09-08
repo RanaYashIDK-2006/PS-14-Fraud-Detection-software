@@ -1,0 +1,362 @@
+{
+  "conclusion": "All labeled data sources in this project are SYNTHETIC (IBM generator, PaySim, Kaggle). Labels were assigned at generation time, NOT at production decision time. No source provides production-realistic label availability timing. The production feedback snapshot has retrospective labels (post-decision verification).",
+  "sources": [
+    {
+      "path": "data\\batch_scores.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\credit_card_transactions-ibm_v2.csv",
+      "label_timing": "AT_GENERATION_TIME (not production-realistic)",
+      "is_ground_truth": false,
+      "is_retrospective": true,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\creditcard.csv",
+      "label_timing": "UNKNOWN (PCA features, no temporal info)",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\feedback_labeled.csv",
+      "label_timing": "POST_DECISION (retrospective verification)",
+      "is_ground_truth": true,
+      "is_retrospective": true,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\feedback_labeled_sim.csv",
+      "label_timing": "POST_DECISION (retrospective verification)",
+      "is_ground_truth": true,
+      "is_retrospective": true,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\fraud_data.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\ood_scenarios.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\paysim.csv",
+      "label_timing": "AT_GENERATION_TIME",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\paysim_1m.csv",
+      "label_timing": "AT_GENERATION_TIME",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\scores_1m.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\scores_2m.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\scores_500k.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\scores_500k_vec.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\sd254_cards.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\sd254_users.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\sub_data.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\transactions.csv",
+      "label_timing": "DERIVED (features computed from IBM raw data)",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\transactions_1m.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\transactions_2m.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\transactions_500k.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\transactions_causal.csv",
+      "label_timing": "AT_GENERATION_TIME",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\transactions_v2.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\User0_credit_card_transactions.csv",
+      "label_timing": "DERIVED (features computed from IBM raw data)",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\validation_kaggle.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\validation_paysim.csv",
+      "label_timing": "AT_GENERATION_TIME",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\validation_realistic.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\validation_uci_default.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\ealtman2019\\credit_card_transactions-ibm_v2.csv",
+      "label_timing": "AT_GENERATION_TIME (not production-realistic)",
+      "is_ground_truth": false,
+      "is_retrospective": true,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\ealtman2019\\sd254_cards.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\ealtman2019\\sd254_users.csv",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\ealtman2019\\User0_credit_card_transactions.csv",
+      "label_timing": "DERIVED (features computed from IBM raw data)",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\kaggle_fraud\\fraudTest.csv",
+      "label_timing": "UNKNOWN (timestamps present, different schema)",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\kaggle_fraud\\fraudTrain.csv",
+      "label_timing": "UNKNOWN (timestamps present, different schema)",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": true
+    },
+    {
+      "path": "data\\feedback_snapshots\\feedback_20260816_153042.csv",
+      "label_timing": "POST_DECISION (retrospective verification)",
+      "is_ground_truth": true,
+      "is_retrospective": true,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_cov_frame_10_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_cov_frame_20_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_cov_frame_40_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_cov_frame_C_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_cs_frame_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_mission_frame_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_p6_frame_C_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_p6_frame_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_p7_42_10_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_p7_42_20_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_p7_42_40_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_p7_42_5_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_p7_43_10_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_p7_43_20_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_p7_44_20_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_p7_45_20_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    },
+    {
+      "path": "data\\_raw_parity_cache_tr_meta.json",
+      "label_timing": "UNKNOWN",
+      "is_ground_truth": false,
+      "is_retrospective": false,
+      "is_synthetic": false
+    }
+  ]
+}

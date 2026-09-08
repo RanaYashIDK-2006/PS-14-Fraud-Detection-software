@@ -1,0 +1,310 @@
+{
+  "sources": [
+    {
+      "path": "data\\batch_scores.csv",
+      "label": "batch_scores",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\credit_card_transactions-ibm_v2.csv",
+      "label": "credit_card_transactions-ibm_v2",
+      "classification": "A_DEVELOPMENT_ELIGIBLE",
+      "reason": "Primary dataset. Contains 1991-2020 transactions with year/channel/merchant/user info. Synthetic but covers the full temporal range including 2016-2020. Labels assigned at generation time. Used by all existing experiments."
+    },
+    {
+      "path": "data\\creditcard.csv",
+      "label": "creditcard",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\feedback_labeled.csv",
+      "label": "feedback_labeled",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "Production feedback. Labels are retrospective (post-decision verification). Small sample."
+    },
+    {
+      "path": "data\\feedback_labeled_sim.csv",
+      "label": "feedback_labeled_sim",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "Production feedback. Labels are retrospective (post-decision verification). Small sample."
+    },
+    {
+      "path": "data\\fraud_data.csv",
+      "label": "fraud_data",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\ood_scenarios.csv",
+      "label": "ood_scenarios",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "OOD test scenarios. Manually curated. Used for monitoring, not training."
+    },
+    {
+      "path": "data\\paysim.csv",
+      "label": "paysim",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\paysim_1m.csv",
+      "label": "paysim_1m",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\scores_1m.csv",
+      "label": "scores_1m",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\scores_2m.csv",
+      "label": "scores_2m",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\scores_500k.csv",
+      "label": "scores_500k",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\scores_500k_vec.csv",
+      "label": "scores_500k_vec",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\sd254_cards.csv",
+      "label": "sd254_cards",
+      "classification": "C_INVALID",
+      "reason": "Entity metadata (card/user profiles). No fraud labels, no transaction data."
+    },
+    {
+      "path": "data\\sd254_users.csv",
+      "label": "sd254_users",
+      "classification": "C_INVALID",
+      "reason": "Entity metadata (card/user profiles). No fraud labels, no transaction data."
+    },
+    {
+      "path": "data\\sub_data.csv",
+      "label": "sub_data",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\transactions.csv",
+      "label": "transactions",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\transactions_1m.csv",
+      "label": "transactions_1m",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\transactions_2m.csv",
+      "label": "transactions_2m",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\transactions_500k.csv",
+      "label": "transactions_500k",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\transactions_causal.csv",
+      "label": "transactions_causal",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\transactions_v2.csv",
+      "label": "transactions_v2",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\User0_credit_card_transactions.csv",
+      "label": "User0_credit_card_transactions",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\validation_kaggle.csv",
+      "label": "validation_kaggle",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\validation_paysim.csv",
+      "label": "validation_paysim",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\validation_realistic.csv",
+      "label": "validation_realistic",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\validation_uci_default.csv",
+      "label": "validation_uci_default",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\ealtman2019\\credit_card_transactions-ibm_v2.csv",
+      "label": "ealtman2019/credit_card_transactions-ibm_v2.csv",
+      "classification": "A_DEVELOPMENT_ELIGIBLE",
+      "reason": "Primary dataset. Contains 1991-2020 transactions with year/channel/merchant/user info. Synthetic but covers the full temporal range including 2016-2020. Labels assigned at generation time. Used by all existing experiments."
+    },
+    {
+      "path": "data\\ealtman2019\\sd254_cards.csv",
+      "label": "ealtman2019/sd254_cards.csv",
+      "classification": "C_INVALID",
+      "reason": "Entity metadata (card/user profiles). No fraud labels, no transaction data."
+    },
+    {
+      "path": "data\\ealtman2019\\sd254_users.csv",
+      "label": "ealtman2019/sd254_users.csv",
+      "classification": "C_INVALID",
+      "reason": "Entity metadata (card/user profiles). No fraud labels, no transaction data."
+    },
+    {
+      "path": "data\\ealtman2019\\User0_credit_card_transactions.csv",
+      "label": "ealtman2019/User0_credit_card_transactions.csv",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\kaggle_fraud\\fraudTest.csv",
+      "label": "kaggle_fraud/fraudTest.csv",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\kaggle_fraud\\fraudTrain.csv",
+      "label": "kaggle_fraud/fraudTrain.csv",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "synthetic data, labels not production-realistic"
+    },
+    {
+      "path": "data\\feedback_snapshots\\feedback_20260816_153042.csv",
+      "label": "feedback_snapshots/feedback_20260816_153042.csv",
+      "classification": "B_DIAGNOSTIC_ONLY",
+      "reason": "Production feedback. Labels are retrospective (post-decision verification). Small sample."
+    },
+    {
+      "path": "data\\_cov_frame_10_meta.json",
+      "label": "_cov_frame_10_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_cov_frame_20_meta.json",
+      "label": "_cov_frame_20_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_cov_frame_40_meta.json",
+      "label": "_cov_frame_40_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_cov_frame_C_meta.json",
+      "label": "_cov_frame_C_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_cs_frame_meta.json",
+      "label": "_cs_frame_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_mission_frame_meta.json",
+      "label": "_mission_frame_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_p6_frame_C_meta.json",
+      "label": "_p6_frame_C_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_p6_frame_meta.json",
+      "label": "_p6_frame_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_p7_42_10_meta.json",
+      "label": "_p7_42_10_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_p7_42_20_meta.json",
+      "label": "_p7_42_20_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_p7_42_40_meta.json",
+      "label": "_p7_42_40_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_p7_42_5_meta.json",
+      "label": "_p7_42_5_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_p7_43_10_meta.json",
+      "label": "_p7_43_10_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_p7_43_20_meta.json",
+      "label": "_p7_43_20_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_p7_44_20_meta.json",
+      "label": "_p7_44_20_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_p7_45_20_meta.json",
+      "label": "_p7_45_20_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    },
+    {
+      "path": "data\\_raw_parity_cache_tr_meta.json",
+      "label": "_raw_parity_cache_tr_meta",
+      "classification": "C_INVALID",
+      "reason": "Cached numpy arrays from previous experiments. Not a data source."
+    }
+  ]
+}

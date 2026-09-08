@@ -1,0 +1,1518 @@
+{
+  "n_sources": 51,
+  "sources": [
+    {
+      "path": "data\\batch_scores.csv",
+      "label": "batch_scores",
+      "sha256": "d23db00d51e07f9902719218a761d8f86dc630939dc8c83bdc48c073cdd2c6f5",
+      "file_size_bytes": 6337083,
+      "columns": [
+        "ml_score",
+        "risk_score",
+        "decision"
+      ],
+      "n_cols": 3,
+      "n_rows_sampled": 200000,
+      "n_rows_total": 200000,
+      "fraud_col": null
+    },
+    {
+      "path": "data\\credit_card_transactions-ibm_v2.csv",
+      "label": "credit_card_transactions-ibm_v2",
+      "sha256": "b01fa323c98522f8c710c7f7242581860c97c50183f1c5fa9e772e5c674a7f15",
+      "file_size_bytes": 2350744057,
+      "columns": [
+        "User",
+        "Card",
+        "Year",
+        "Month",
+        "Day",
+        "Time",
+        "Amount",
+        "Use Chip",
+        "Merchant Name",
+        "Merchant City",
+        "Merchant State",
+        "Zip",
+        "MCC",
+        "Errors?",
+        "Is Fraud?"
+      ],
+      "n_cols": 15,
+      "n_rows_sampled": 10000,
+      "n_rows_total": 24386900,
+      "year_range": [
+        2002,
+        2020
+      ],
+      "year_col": "Year",
+      "fraud_col": "Is Fraud?",
+      "fraud_distribution": {
+        "No": 9985,
+        "Yes": 15
+      },
+      "channel_col": "Use Chip",
+      "channel_distribution": {
+        "Swipe Transaction": 7108,
+        "Chip Transaction": 2310,
+        "Online Transaction": 582
+      }
+    },
+    {
+      "path": "data\\creditcard.csv",
+      "label": "creditcard",
+      "sha256": "76274b691b16a6c49d3f159c883398e03ccd6d1ee12d9d8ee38f4b4b98551a89",
+      "file_size_bytes": 150828752,
+      "columns": [
+        "Time",
+        "V1",
+        "V2",
+        "V3",
+        "V4",
+        "V5",
+        "V6",
+        "V7",
+        "V8",
+        "V9",
+        "V10",
+        "V11",
+        "V12",
+        "V13",
+        "V14",
+        "V15",
+        "V16",
+        "V17",
+        "V18",
+        "V19",
+        "V20",
+        "V21",
+        "V22",
+        "V23",
+        "V24",
+        "V25",
+        "V26",
+        "V27",
+        "V28",
+        "Amount",
+        "Class"
+      ],
+      "n_cols": 31,
+      "n_rows_sampled": 284807,
+      "n_rows_total": 284807,
+      "fraud_col": "Class",
+      "fraud_distribution": {
+        "0": 284315,
+        "1": 492
+      }
+    },
+    {
+      "path": "data\\feedback_labeled.csv",
+      "label": "feedback_labeled",
+      "sha256": "2dd28cabd123ccc85949c2e453cf5b67ea628c4f33482b5bcdd78c9530cfcf55",
+      "file_size_bytes": 986,
+      "columns": [
+        "event_id",
+        "fraud_id",
+        "ts",
+        "hour_of_day",
+        "is_weekend",
+        "amount_ratio",
+        "txn_amount_bucket",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "archetype",
+        "label"
+      ],
+      "n_cols": 19,
+      "n_rows_sampled": 5,
+      "n_rows_total": 5,
+      "year_range": [
+        2026,
+        2026
+      ],
+      "year_col": "(derived from ts)",
+      "fraud_col": "label",
+      "fraud_distribution": {
+        "0": 3,
+        "1": 2
+      }
+    },
+    {
+      "path": "data\\feedback_labeled_sim.csv",
+      "label": "feedback_labeled_sim",
+      "sha256": "a365ebcc1582067e1358b45975d6f25e9e5c573e117516eb3202bb72eb63be62",
+      "file_size_bytes": 70078,
+      "columns": [
+        "event_id",
+        "fraud_id",
+        "ts",
+        "hour_of_day",
+        "is_weekend",
+        "amount_ratio",
+        "txn_amount_bucket",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "archetype",
+        "label"
+      ],
+      "n_cols": 19,
+      "n_rows_sampled": 502,
+      "n_rows_total": 502,
+      "year_range": [
+        2025,
+        2026
+      ],
+      "year_col": "(derived from ts)",
+      "fraud_col": "label",
+      "fraud_distribution": {
+        "0": 492,
+        "1": 10
+      }
+    },
+    {
+      "path": "data\\fraud_data.csv",
+      "label": "fraud_data",
+      "sha256": "3702c41af6f706f95006f0f64d3b971dec7e472d818d4b144b6c30d3517b5030",
+      "file_size_bytes": 7699716,
+      "columns": [
+        "V1",
+        "V2",
+        "V3",
+        "V4",
+        "V5",
+        "V6",
+        "V7",
+        "V8",
+        "V9",
+        "V10",
+        "V11",
+        "V12",
+        "V13",
+        "V14",
+        "V15",
+        "V16",
+        "V17",
+        "V18",
+        "V19",
+        "V20",
+        "V21",
+        "V22",
+        "V23",
+        "V24",
+        "V25",
+        "V26",
+        "V27",
+        "V28",
+        "Amount",
+        "Class"
+      ],
+      "n_cols": 30,
+      "n_rows_sampled": 21693,
+      "n_rows_total": 21693,
+      "fraud_col": "Class",
+      "fraud_distribution": {
+        "0": 21337,
+        "1": 356
+      }
+    },
+    {
+      "path": "data\\ood_scenarios.csv",
+      "label": "ood_scenarios",
+      "sha256": "295d0d9e6672dc6ae542a352cb471ceeacb71347ac800751c808084074ff009a",
+      "file_size_bytes": 1394,
+      "columns": [
+        "scenario",
+        "note",
+        "amount_ratio",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "hour_of_day",
+        "is_weekend",
+        "shared_device_accounts",
+        "shared_recipient_accounts",
+        "mule_ring_score",
+        "hour_deviation",
+        "amount_zscore",
+        "velocity_deviation",
+        "recipient_novelty",
+        "txn_regularity"
+      ],
+      "n_cols": 23,
+      "n_rows_sampled": 8,
+      "n_rows_total": 8,
+      "fraud_col": null
+    },
+    {
+      "path": "data\\paysim.csv",
+      "label": "paysim",
+      "sha256": "71c42b3b1c961ee25c37049c78fdac7d1f3fd90c225c716c3b7b6c882cdcd647",
+      "file_size_bytes": 10543137,
+      "columns": [
+        "type",
+        "amount",
+        "oldbalanceOrg",
+        "newbalanceOrig",
+        "oldbalanceDest",
+        "newbalanceDest",
+        "isFraud",
+        "isFlaggedFraud"
+      ],
+      "n_cols": 8,
+      "n_rows_sampled": 100000,
+      "n_rows_total": 100000,
+      "fraud_col": "isFraud",
+      "fraud_distribution": {
+        "0": 95105,
+        "1": 4895
+      },
+      "channel_col": "type",
+      "channel_distribution": {
+        "CASH_OUT": 35166,
+        "TRANSFER": 24829,
+        "CASH_IN": 20100,
+        "PAYMENT": 15034,
+        "DEBIT": 4871
+      }
+    },
+    {
+      "path": "data\\paysim_1m.csv",
+      "label": "paysim_1m",
+      "sha256": "fa1df0f1b65905cc8ed217e62d1d577f82c0029eac8ac369e914683d72f551f6",
+      "file_size_bytes": 63358199,
+      "columns": [
+        "type",
+        "amount",
+        "oldbalanceOrg",
+        "newbalanceOrig",
+        "oldbalanceDest",
+        "newbalanceDest",
+        "isFraud",
+        "isFlaggedFraud"
+      ],
+      "n_cols": 8,
+      "n_rows_sampled": 1200000,
+      "n_rows_total": 1200000,
+      "fraud_col": "isFraud",
+      "fraud_distribution": {
+        "0": 1141200,
+        "1": 58800
+      },
+      "channel_col": "type",
+      "channel_distribution": {
+        "CASH_OUT": 627184,
+        "TRANSFER": 446736,
+        "CASH_IN": 57723,
+        "PAYMENT": 45402,
+        "DEBIT": 22955
+      }
+    },
+    {
+      "path": "data\\scores_1m.csv",
+      "label": "scores_1m",
+      "sha256": "080e08730495518f931bee39e27dde21849b63337ccd6da5d629614a31c71bbe",
+      "file_size_bytes": 31793839,
+      "columns": [
+        "ml_score",
+        "risk_score",
+        "decision"
+      ],
+      "n_cols": 3,
+      "n_rows_sampled": 1000000,
+      "n_rows_total": 1000000,
+      "fraud_col": null
+    },
+    {
+      "path": "data\\scores_2m.csv",
+      "label": "scores_2m",
+      "sha256": "2ae3442e69d82b15789e93e3350b984be9c2429bdf2523154be9dd47b4e7a0aa",
+      "file_size_bytes": 63587663,
+      "columns": [
+        "ml_score",
+        "risk_score",
+        "decision"
+      ],
+      "n_cols": 3,
+      "n_rows_sampled": 2000000,
+      "n_rows_total": 2000000,
+      "fraud_col": null
+    },
+    {
+      "path": "data\\scores_500k.csv",
+      "label": "scores_500k",
+      "sha256": "c7a20e369e524c3f55dac7d5669b3c10780cba2e52872d986c43d23a84c9e009",
+      "file_size_bytes": 15896203,
+      "columns": [
+        "ml_score",
+        "risk_score",
+        "decision"
+      ],
+      "n_cols": 3,
+      "n_rows_sampled": 500000,
+      "n_rows_total": 500000,
+      "fraud_col": null
+    },
+    {
+      "path": "data\\scores_500k_vec.csv",
+      "label": "scores_500k_vec",
+      "sha256": "0a7b290dc521cb958a389eaa778d2504e07503b133a2c981e77e2ce6161815a7",
+      "file_size_bytes": 15896929,
+      "columns": [
+        "ml_score",
+        "risk_score",
+        "decision"
+      ],
+      "n_cols": 3,
+      "n_rows_sampled": 500000,
+      "n_rows_total": 500000,
+      "fraud_col": null
+    },
+    {
+      "path": "data\\sd254_cards.csv",
+      "label": "sd254_cards",
+      "sha256": "85af46a5789cf5ac9674cee4184c828688fcf2c00566549f752393112ed14a7b",
+      "file_size_bytes": 487120,
+      "columns": [
+        "User",
+        "CARD INDEX",
+        "Card Brand",
+        "Card Type",
+        "Card Number",
+        "Expires",
+        "CVV",
+        "Has Chip",
+        "Cards Issued",
+        "Credit Limit",
+        "Acct Open Date",
+        "Year PIN last Changed",
+        "Card on Dark Web"
+      ],
+      "n_cols": 13,
+      "n_rows_sampled": 6146,
+      "n_rows_total": 6146,
+      "fraud_col": null
+    },
+    {
+      "path": "data\\sd254_users.csv",
+      "label": "sd254_users",
+      "sha256": "99eff71679d5dcf3f49e537fd65ba848271faa4e8ba8e4d9ab368c26034a3d03",
+      "file_size_bytes": 224394,
+      "columns": [
+        "Person",
+        "Current Age",
+        "Retirement Age",
+        "Birth Year",
+        "Birth Month",
+        "Gender",
+        "Address",
+        "Apartment",
+        "City",
+        "State",
+        "Zipcode",
+        "Latitude",
+        "Longitude",
+        "Per Capita Income - Zipcode",
+        "Yearly Income - Person",
+        "Total Debt",
+        "FICO Score",
+        "Num Credit Cards"
+      ],
+      "n_cols": 18,
+      "n_rows_sampled": 2000,
+      "n_rows_total": 2000,
+      "fraud_col": null
+    },
+    {
+      "path": "data\\sub_data.csv",
+      "label": "sub_data",
+      "sha256": "42c4d4758ca199c30221ae100f221b27edacaa34f8fbdd6ccf0db7353616faf0",
+      "file_size_bytes": 137190,
+      "columns": [
+        "Unnamed: 0.1",
+        "Unnamed: 0",
+        "step",
+        "type",
+        "amount",
+        "nameOrig",
+        "oldbalanceOrg",
+        "newbalanceOrig",
+        "nameDest",
+        "oldbalanceDest",
+        "newbalanceDest",
+        "isFraud",
+        "isFlaggedFraud",
+        "amount_oldbalanceOrg",
+        "orig_transaction_error",
+        "dest_transaction_error",
+        "orig_dest",
+        "transaction_duration"
+      ],
+      "n_cols": 18,
+      "n_rows_sampled": 1000,
+      "n_rows_total": 1000,
+      "fraud_col": "isFraud",
+      "fraud_distribution": {
+        "0": 1000
+      },
+      "channel_col": "type",
+      "channel_distribution": {
+        "PAYMENT": 354,
+        "CASH_OUT": 351,
+        "CASH_IN": 209,
+        "TRANSFER": 79,
+        "DEBIT": 7
+      }
+    },
+    {
+      "path": "data\\transactions.csv",
+      "label": "transactions",
+      "sha256": "37c64721fbdf4c5da3e3231e36557933fe23e59187f481f272bb2fa68f73ea7a",
+      "file_size_bytes": 20002127,
+      "columns": [
+        "ts",
+        "amount_ratio",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "hour_of_day",
+        "is_weekend",
+        "shared_device_accounts",
+        "shared_recipient_accounts",
+        "mule_ring_score",
+        "hour_deviation",
+        "amount_zscore",
+        "velocity_deviation",
+        "recipient_novelty",
+        "txn_regularity",
+        "label"
+      ],
+      "n_cols": 23,
+      "n_rows_sampled": 200000,
+      "n_rows_total": 200000,
+      "year_range": [
+        2012,
+        2012
+      ],
+      "year_col": "(derived from ts)",
+      "fraud_col": "label",
+      "fraud_distribution": {
+        "0": 198355,
+        "1": 1645
+      }
+    },
+    {
+      "path": "data\\transactions_1m.csv",
+      "label": "transactions_1m",
+      "sha256": "ad0708c22a0d8c8a62e6c4473bdb1f723b1cf3a22fe0c495dab96c1f69f64a3b",
+      "file_size_bytes": 98749956,
+      "columns": [
+        "ts",
+        "amount_ratio",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "hour_of_day",
+        "is_weekend",
+        "shared_device_accounts",
+        "shared_recipient_accounts",
+        "mule_ring_score",
+        "hour_deviation",
+        "amount_zscore",
+        "velocity_deviation",
+        "recipient_novelty",
+        "txn_regularity",
+        "label"
+      ],
+      "n_cols": 23,
+      "n_rows_sampled": 1000000,
+      "n_rows_total": 1000000,
+      "year_range": [
+        2012,
+        2013
+      ],
+      "year_col": "(derived from ts)",
+      "fraud_col": "label",
+      "fraud_distribution": {
+        "0": 993766,
+        "1": 6234
+      }
+    },
+    {
+      "path": "data\\transactions_2m.csv",
+      "label": "transactions_2m",
+      "sha256": "3e013e185870c48d527e190a1231f1be7263c869164b813e1fa48d84d2021982",
+      "file_size_bytes": 197499510,
+      "columns": [
+        "ts",
+        "amount_ratio",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "hour_of_day",
+        "is_weekend",
+        "shared_device_accounts",
+        "shared_recipient_accounts",
+        "mule_ring_score",
+        "hour_deviation",
+        "amount_zscore",
+        "velocity_deviation",
+        "recipient_novelty",
+        "txn_regularity",
+        "label"
+      ],
+      "n_cols": 23,
+      "n_rows_sampled": 2000000,
+      "n_rows_total": 2000000,
+      "year_range": [
+        2012,
+        2013
+      ],
+      "year_col": "(derived from ts)",
+      "fraud_col": "label",
+      "fraud_distribution": {
+        "0": 1987532,
+        "1": 12468
+      }
+    },
+    {
+      "path": "data\\transactions_500k.csv",
+      "label": "transactions_500k",
+      "sha256": "00e8ea1da16c7fe74134c83fa27c05df19dacf1638c104e9a7829ef919035055",
+      "file_size_bytes": 49375179,
+      "columns": [
+        "ts",
+        "amount_ratio",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "hour_of_day",
+        "is_weekend",
+        "shared_device_accounts",
+        "shared_recipient_accounts",
+        "mule_ring_score",
+        "hour_deviation",
+        "amount_zscore",
+        "velocity_deviation",
+        "recipient_novelty",
+        "txn_regularity",
+        "label"
+      ],
+      "n_cols": 23,
+      "n_rows_sampled": 500000,
+      "n_rows_total": 500000,
+      "year_range": [
+        2012,
+        2013
+      ],
+      "year_col": "(derived from ts)",
+      "fraud_col": "label",
+      "fraud_distribution": {
+        "0": 496883,
+        "1": 3117
+      }
+    },
+    {
+      "path": "data\\transactions_causal.csv",
+      "label": "transactions_causal",
+      "sha256": "c81c26cff1b3f39d31b1ca08dd1047ee97b4621b210e8381f2737134e88e4616",
+      "file_size_bytes": 35350876,
+      "columns": [
+        "event_id",
+        "fraud_id",
+        "ts",
+        "hour_of_day",
+        "is_weekend",
+        "amount_ratio",
+        "txn_amount_bucket",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "shared_device_accounts",
+        "shared_recipient_accounts",
+        "mule_ring_score",
+        "hour_deviation",
+        "amount_zscore",
+        "velocity_deviation",
+        "recipient_novelty",
+        "txn_regularity",
+        "archetype",
+        "label"
+      ],
+      "n_cols": 27,
+      "n_rows_sampled": 197645,
+      "n_rows_total": 197645,
+      "year_range": [
+        2025,
+        2025
+      ],
+      "year_col": "(derived from ts)",
+      "fraud_col": "label",
+      "fraud_distribution": {
+        "0": 195291,
+        "1": 2354
+      }
+    },
+    {
+      "path": "data\\transactions_v2.csv",
+      "label": "transactions_v2",
+      "sha256": "b173321939774196e5708c706fe0a1350ebb441c50fa334e068f9e4ab600d2bd",
+      "file_size_bytes": 77593417,
+      "columns": [
+        "amount_ratio",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "hour_of_day",
+        "is_weekend",
+        "shared_device_accounts",
+        "shared_recipient_accounts",
+        "mule_ring_score",
+        "hour_deviation",
+        "amount_zscore",
+        "velocity_deviation",
+        "recipient_novelty",
+        "txn_regularity",
+        "amount_log",
+        "amount_bucket",
+        "v_magnitude",
+        "v_asymmetry",
+        "pca_anomaly_score",
+        "amount_v_correlation",
+        "v_extreme_count",
+        "amount_time_interaction",
+        "time_normalized",
+        "label"
+      ],
+      "n_cols": 31,
+      "n_rows_sampled": 284807,
+      "n_rows_total": 284807,
+      "fraud_col": "label",
+      "fraud_distribution": {
+        "0": 284315,
+        "1": 492
+      }
+    },
+    {
+      "path": "data\\User0_credit_card_transactions.csv",
+      "label": "User0_credit_card_transactions",
+      "sha256": "61c4ed49a98bf924c5df0a740e1c415b91624c83821f8415bd8db34c2d6a0d3c",
+      "file_size_bytes": 1899258,
+      "columns": [
+        "User",
+        "Card",
+        "Year",
+        "Month",
+        "Day",
+        "Time",
+        "Amount",
+        "Use Chip",
+        "Merchant Name",
+        "Merchant City",
+        "Merchant State",
+        "Zip",
+        "MCC",
+        "Errors?",
+        "Is Fraud?"
+      ],
+      "n_cols": 15,
+      "n_rows_sampled": 19963,
+      "n_rows_total": 19963,
+      "year_range": [
+        2002,
+        2020
+      ],
+      "year_col": "Year",
+      "fraud_col": "Is Fraud?",
+      "fraud_distribution": {
+        "No": 19936,
+        "Yes": 27
+      },
+      "channel_col": "Use Chip",
+      "channel_distribution": {
+        "Swipe Transaction": 15840,
+        "Chip Transaction": 2808,
+        "Online Transaction": 1315
+      }
+    },
+    {
+      "path": "data\\validation_kaggle.csv",
+      "label": "validation_kaggle",
+      "sha256": "0ffb090e07a62a5aa545cb0397820bc7aec298c4f410f99ec70e51ccd7434d0a",
+      "file_size_bytes": 46192650,
+      "columns": [
+        "event_id",
+        "ts",
+        "txn_amount_bucket",
+        "amount_ratio",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "hour_of_day",
+        "is_weekend",
+        "shared_device_accounts",
+        "shared_recipient_accounts",
+        "mule_ring_score",
+        "account_daily_spend_ratio",
+        "device_daily_count",
+        "label",
+        "archetype"
+      ],
+      "n_cols": 23,
+      "n_rows_sampled": 284807,
+      "n_rows_total": 284807,
+      "year_range": [
+        2026,
+        2026
+      ],
+      "year_col": "(derived from ts)",
+      "fraud_col": "label",
+      "fraud_distribution": {
+        "0": 284315,
+        "1": 492
+      }
+    },
+    {
+      "path": "data\\validation_paysim.csv",
+      "label": "validation_paysim",
+      "sha256": "8eded9ebb2746f98ea4b271deb1752a7fb4cdbf6b4ec4d5e97df0cacc846bd0a",
+      "file_size_bytes": 9921303,
+      "columns": [
+        "amount_ratio",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "hour_of_day",
+        "is_weekend",
+        "shared_device_accounts",
+        "shared_recipient_accounts",
+        "mule_ring_score",
+        "label"
+      ],
+      "n_cols": 17,
+      "n_rows_sampled": 100000,
+      "n_rows_total": 100000,
+      "fraud_col": "label",
+      "fraud_distribution": {
+        "0": 95105,
+        "1": 4895
+      }
+    },
+    {
+      "path": "data\\validation_realistic.csv",
+      "label": "validation_realistic",
+      "sha256": "ac213f3f41c93273d41de13807f51eefd759abc8b6c7e78799911a407c52c9fe",
+      "file_size_bytes": 211989,
+      "columns": [
+        "event_id",
+        "ts",
+        "txn_amount_bucket",
+        "amount_ratio",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "shared_device_accounts",
+        "shared_recipient_accounts",
+        "mule_ring_score",
+        "account_tenure_days",
+        "account_daily_spend_ratio",
+        "device_daily_count",
+        "hour_of_day",
+        "label",
+        "archetype"
+      ],
+      "n_cols": 20,
+      "n_rows_sampled": 1514,
+      "n_rows_total": 1514,
+      "year_range": [
+        2026,
+        2026
+      ],
+      "year_col": "(derived from ts)",
+      "fraud_col": "label",
+      "fraud_distribution": {
+        "1": 1414,
+        "0": 100
+      }
+    },
+    {
+      "path": "data\\validation_uci_default.csv",
+      "label": "validation_uci_default",
+      "sha256": "49553597825701206cacb34484d31d30d67a7afa6e6f14f86e491f299df3ad04",
+      "file_size_bytes": 1368175,
+      "columns": [
+        "amount_ratio",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "hour_of_day",
+        "is_weekend",
+        "shared_device_accounts",
+        "shared_recipient_accounts",
+        "mule_ring_score",
+        "label"
+      ],
+      "n_cols": 17,
+      "n_rows_sampled": 30000,
+      "n_rows_total": 30000,
+      "fraud_col": "label",
+      "fraud_distribution": {
+        "0": 23364,
+        "1": 6636
+      }
+    },
+    {
+      "path": "data\\ealtman2019\\credit_card_transactions-ibm_v2.csv",
+      "label": "ealtman2019/credit_card_transactions-ibm_v2.csv",
+      "sha256": "b01fa323c98522f8c710c7f7242581860c97c50183f1c5fa9e772e5c674a7f15",
+      "file_size_bytes": 2350744057,
+      "columns": [
+        "User",
+        "Card",
+        "Year",
+        "Month",
+        "Day",
+        "Time",
+        "Amount",
+        "Use Chip",
+        "Merchant Name",
+        "Merchant City",
+        "Merchant State",
+        "Zip",
+        "MCC",
+        "Errors?",
+        "Is Fraud?"
+      ],
+      "n_cols": 15,
+      "n_rows_sampled": 10000,
+      "n_rows_total": 24386900,
+      "year_range": [
+        2002,
+        2020
+      ],
+      "year_col": "Year",
+      "fraud_col": "Is Fraud?",
+      "fraud_distribution": {
+        "No": 9985,
+        "Yes": 15
+      },
+      "channel_col": "Use Chip",
+      "channel_distribution": {
+        "Swipe Transaction": 7108,
+        "Chip Transaction": 2310,
+        "Online Transaction": 582
+      }
+    },
+    {
+      "path": "data\\ealtman2019\\sd254_cards.csv",
+      "label": "ealtman2019/sd254_cards.csv",
+      "sha256": "85af46a5789cf5ac9674cee4184c828688fcf2c00566549f752393112ed14a7b",
+      "file_size_bytes": 487120,
+      "columns": [
+        "User",
+        "CARD INDEX",
+        "Card Brand",
+        "Card Type",
+        "Card Number",
+        "Expires",
+        "CVV",
+        "Has Chip",
+        "Cards Issued",
+        "Credit Limit",
+        "Acct Open Date",
+        "Year PIN last Changed",
+        "Card on Dark Web"
+      ],
+      "n_cols": 13,
+      "n_rows_sampled": 6146,
+      "n_rows_total": 6146,
+      "fraud_col": null
+    },
+    {
+      "path": "data\\ealtman2019\\sd254_users.csv",
+      "label": "ealtman2019/sd254_users.csv",
+      "sha256": "99eff71679d5dcf3f49e537fd65ba848271faa4e8ba8e4d9ab368c26034a3d03",
+      "file_size_bytes": 224394,
+      "columns": [
+        "Person",
+        "Current Age",
+        "Retirement Age",
+        "Birth Year",
+        "Birth Month",
+        "Gender",
+        "Address",
+        "Apartment",
+        "City",
+        "State",
+        "Zipcode",
+        "Latitude",
+        "Longitude",
+        "Per Capita Income - Zipcode",
+        "Yearly Income - Person",
+        "Total Debt",
+        "FICO Score",
+        "Num Credit Cards"
+      ],
+      "n_cols": 18,
+      "n_rows_sampled": 2000,
+      "n_rows_total": 2000,
+      "fraud_col": null
+    },
+    {
+      "path": "data\\ealtman2019\\User0_credit_card_transactions.csv",
+      "label": "ealtman2019/User0_credit_card_transactions.csv",
+      "sha256": "61c4ed49a98bf924c5df0a740e1c415b91624c83821f8415bd8db34c2d6a0d3c",
+      "file_size_bytes": 1899258,
+      "columns": [
+        "User",
+        "Card",
+        "Year",
+        "Month",
+        "Day",
+        "Time",
+        "Amount",
+        "Use Chip",
+        "Merchant Name",
+        "Merchant City",
+        "Merchant State",
+        "Zip",
+        "MCC",
+        "Errors?",
+        "Is Fraud?"
+      ],
+      "n_cols": 15,
+      "n_rows_sampled": 19963,
+      "n_rows_total": 19963,
+      "year_range": [
+        2002,
+        2020
+      ],
+      "year_col": "Year",
+      "fraud_col": "Is Fraud?",
+      "fraud_distribution": {
+        "No": 19936,
+        "Yes": 27
+      },
+      "channel_col": "Use Chip",
+      "channel_distribution": {
+        "Swipe Transaction": 15840,
+        "Chip Transaction": 2808,
+        "Online Transaction": 1315
+      }
+    },
+    {
+      "path": "data\\kaggle_fraud\\fraudTest.csv",
+      "label": "kaggle_fraud/fraudTest.csv",
+      "sha256": "12d553ab19440c752d2531ee1af44bb64f12cc3d3839f1649f19e81c230545f0",
+      "file_size_bytes": 150354339,
+      "columns": [
+        "Unnamed: 0",
+        "trans_date_trans_time",
+        "cc_num",
+        "merchant",
+        "category",
+        "amt",
+        "first",
+        "last",
+        "gender",
+        "street",
+        "city",
+        "state",
+        "zip",
+        "lat",
+        "long",
+        "city_pop",
+        "job",
+        "dob",
+        "trans_num",
+        "unix_time",
+        "merch_lat",
+        "merch_long",
+        "is_fraud"
+      ],
+      "n_cols": 23,
+      "n_rows_sampled": 555719,
+      "n_rows_total": 555719,
+      "year_range": [
+        2020,
+        2020
+      ],
+      "year_col": "(derived from trans_date_trans_time)",
+      "fraud_col": "is_fraud",
+      "fraud_distribution": {
+        "0": 553574,
+        "1": 2145
+      }
+    },
+    {
+      "path": "data\\kaggle_fraud\\fraudTrain.csv",
+      "label": "kaggle_fraud/fraudTrain.csv",
+      "sha256": "fd7139200dbfcbed0b6742bbe05a4f1abce532c4fef20918228a651647a3e75d",
+      "file_size_bytes": 351238196,
+      "columns": [
+        "Unnamed: 0",
+        "trans_date_trans_time",
+        "cc_num",
+        "merchant",
+        "category",
+        "amt",
+        "first",
+        "last",
+        "gender",
+        "street",
+        "city",
+        "state",
+        "zip",
+        "lat",
+        "long",
+        "city_pop",
+        "job",
+        "dob",
+        "trans_num",
+        "unix_time",
+        "merch_lat",
+        "merch_long",
+        "is_fraud"
+      ],
+      "n_cols": 23,
+      "n_rows_sampled": 1296675,
+      "n_rows_total": 1296675,
+      "year_range": [
+        2019,
+        2020
+      ],
+      "year_col": "(derived from trans_date_trans_time)",
+      "fraud_col": "is_fraud",
+      "fraud_distribution": {
+        "0": 1289169,
+        "1": 7506
+      }
+    },
+    {
+      "path": "data\\feedback_snapshots\\feedback_20260816_153042.csv",
+      "label": "feedback_snapshots/feedback_20260816_153042.csv",
+      "sha256": "2dd28cabd123ccc85949c2e453cf5b67ea628c4f33482b5bcdd78c9530cfcf55",
+      "file_size_bytes": 986,
+      "columns": [
+        "event_id",
+        "fraud_id",
+        "ts",
+        "hour_of_day",
+        "is_weekend",
+        "amount_ratio",
+        "txn_amount_bucket",
+        "txn_freq_last_24h",
+        "txn_time_unusual",
+        "new_device_flag",
+        "unusual_location_flag",
+        "unusual_recipient_flag",
+        "failed_auth_count_24h",
+        "days_since_last_similar_txn",
+        "gradual_escalation_score",
+        "known_device_count",
+        "account_tenure_days",
+        "archetype",
+        "label"
+      ],
+      "n_cols": 19,
+      "n_rows_sampled": 5,
+      "n_rows_total": 5,
+      "year_range": [
+        2026,
+        2026
+      ],
+      "year_col": "(derived from ts)",
+      "fraud_col": "label",
+      "fraud_distribution": {
+        "0": 3,
+        "1": 2
+      }
+    },
+    {
+      "path": "data\\_cov_frame_10_meta.json",
+      "label": "_cov_frame_10_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "rows",
+        "fraud",
+        "features",
+        "sampling",
+        "windows",
+        "window_rows",
+        "window_fraud"
+      ]
+    },
+    {
+      "path": "data\\_cov_frame_20_meta.json",
+      "label": "_cov_frame_20_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "rows",
+        "fraud",
+        "features",
+        "sampling",
+        "windows",
+        "window_rows",
+        "window_fraud"
+      ]
+    },
+    {
+      "path": "data\\_cov_frame_40_meta.json",
+      "label": "_cov_frame_40_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "rows",
+        "fraud",
+        "features",
+        "sampling",
+        "windows",
+        "window_rows",
+        "window_fraud"
+      ]
+    },
+    {
+      "path": "data\\_cov_frame_C_meta.json",
+      "label": "_cov_frame_C_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "rows",
+        "fraud",
+        "features",
+        "sampling",
+        "windows",
+        "window_rows",
+        "window_fraud"
+      ]
+    },
+    {
+      "path": "data\\_cs_frame_meta.json",
+      "label": "_cs_frame_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "features",
+        "novelty_features",
+        "n_features",
+        "window_rows"
+      ]
+    },
+    {
+      "path": "data\\_mission_frame_meta.json",
+      "label": "_mission_frame_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "rows",
+        "fraud",
+        "features",
+        "sampling",
+        "windows",
+        "window_rows",
+        "window_fraud",
+        "per_year_rows_fraud"
+      ]
+    },
+    {
+      "path": "data\\_p6_frame_C_meta.json",
+      "label": "_p6_frame_C_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "rows",
+        "fraud",
+        "native_features",
+        "rate_features",
+        "n_native",
+        "n_rate",
+        "n_total",
+        "sampling",
+        "windows",
+        "window_rows",
+        "window_fraud"
+      ]
+    },
+    {
+      "path": "data\\_p6_frame_meta.json",
+      "label": "_p6_frame_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "rows",
+        "fraud",
+        "native_features",
+        "rate_features",
+        "n_native",
+        "n_rate",
+        "n_total",
+        "sampling",
+        "row_identical_to_mission_frame",
+        "windows",
+        "window_rows",
+        "window_fraud"
+      ]
+    },
+    {
+      "path": "data\\_p7_42_10_meta.json",
+      "label": "_p7_42_10_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "seed",
+        "frac",
+        "pct",
+        "rows",
+        "fraud",
+        "train_rows",
+        "val_rows",
+        "forward_dev_rows",
+        "tail_rows",
+        "train_fraud",
+        "val_fraud",
+        "fwd_dev_fraud",
+        "sampling"
+      ]
+    },
+    {
+      "path": "data\\_p7_42_20_meta.json",
+      "label": "_p7_42_20_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "seed",
+        "frac",
+        "pct",
+        "rows",
+        "fraud",
+        "train_rows",
+        "val_rows",
+        "forward_dev_rows",
+        "tail_rows",
+        "train_fraud",
+        "val_fraud",
+        "fwd_dev_fraud",
+        "sampling"
+      ]
+    },
+    {
+      "path": "data\\_p7_42_40_meta.json",
+      "label": "_p7_42_40_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "seed",
+        "frac",
+        "pct",
+        "rows",
+        "fraud",
+        "train_rows",
+        "val_rows",
+        "forward_dev_rows",
+        "tail_rows",
+        "train_fraud",
+        "val_fraud",
+        "fwd_dev_fraud",
+        "sampling"
+      ]
+    },
+    {
+      "path": "data\\_p7_42_5_meta.json",
+      "label": "_p7_42_5_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "seed",
+        "frac",
+        "pct",
+        "rows",
+        "fraud",
+        "train_rows",
+        "val_rows",
+        "forward_dev_rows",
+        "tail_rows",
+        "train_fraud",
+        "val_fraud",
+        "fwd_dev_fraud",
+        "sampling"
+      ]
+    },
+    {
+      "path": "data\\_p7_43_10_meta.json",
+      "label": "_p7_43_10_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "seed",
+        "frac",
+        "pct",
+        "rows",
+        "fraud",
+        "train_rows",
+        "val_rows",
+        "forward_dev_rows",
+        "tail_rows",
+        "train_fraud",
+        "val_fraud",
+        "fwd_dev_fraud",
+        "sampling"
+      ]
+    },
+    {
+      "path": "data\\_p7_43_20_meta.json",
+      "label": "_p7_43_20_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "seed",
+        "frac",
+        "pct",
+        "rows",
+        "fraud",
+        "train_rows",
+        "val_rows",
+        "forward_dev_rows",
+        "tail_rows",
+        "train_fraud",
+        "val_fraud",
+        "fwd_dev_fraud",
+        "sampling"
+      ]
+    },
+    {
+      "path": "data\\_p7_44_20_meta.json",
+      "label": "_p7_44_20_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "seed",
+        "frac",
+        "pct",
+        "rows",
+        "fraud",
+        "train_rows",
+        "val_rows",
+        "forward_dev_rows",
+        "tail_rows",
+        "train_fraud",
+        "val_fraud",
+        "fwd_dev_fraud",
+        "sampling"
+      ]
+    },
+    {
+      "path": "data\\_p7_45_20_meta.json",
+      "label": "_p7_45_20_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "seed",
+        "frac",
+        "pct",
+        "rows",
+        "fraud",
+        "train_rows",
+        "val_rows",
+        "forward_dev_rows",
+        "tail_rows",
+        "train_fraud",
+        "val_fraud",
+        "fwd_dev_fraud",
+        "sampling"
+      ]
+    },
+    {
+      "path": "data\\_raw_parity_cache_tr_meta.json",
+      "label": "_raw_parity_cache_tr_meta",
+      "type": "npz_metadata",
+      "keys": [
+        "path",
+        "sha256",
+        "rows",
+        "fraud",
+        "year_min",
+        "year_max",
+        "sampling",
+        "window",
+        "final_test_rows_present",
+        "built_at_utc",
+        "note"
+      ]
+    }
+  ]
+}

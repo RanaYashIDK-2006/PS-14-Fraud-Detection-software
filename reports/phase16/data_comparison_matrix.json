@@ -1,0 +1,83 @@
+{
+  "datasets": [
+    {
+      "name": "IBM credit_card_transactions-ibm_v2.csv",
+      "years": "1991-2020",
+      "rows": "24.4M",
+      "has_channel": true,
+      "has_merchant": true,
+      "has_user": true,
+      "has_mcc": true,
+      "has_fraud_labels": true,
+      "synthetic": true,
+      "used_in_project": true,
+      "contains_final_test": true
+    },
+    {
+      "name": "UCI creditcard.csv",
+      "years": "UNKNOWN (Time column)",
+      "rows": "284K",
+      "has_channel": false,
+      "has_merchant": false,
+      "has_user": false,
+      "has_mcc": false,
+      "has_fraud_labels": true,
+      "synthetic": true,
+      "used_in_project": true,
+      "contains_final_test": false
+    },
+    {
+      "name": "PaySim paysim.csv",
+      "years": "N/A (step-based)",
+      "rows": "636K",
+      "has_channel": false,
+      "has_merchant": false,
+      "has_user": false,
+      "has_mcc": false,
+      "has_fraud_labels": true,
+      "synthetic": true,
+      "used_in_project": true,
+      "contains_final_test": false
+    },
+    {
+      "name": "Kaggle fraudTrain/fraudTest",
+      "years": "2019-2020",
+      "rows": "1.85M",
+      "has_channel": false,
+      "has_merchant": true,
+      "has_user": true,
+      "has_mcc": false,
+      "has_fraud_labels": true,
+      "synthetic": true,
+      "used_in_project": true,
+      "contains_final_test": false
+    },
+    {
+      "name": "Preprocessed transactions.csv",
+      "years": "derived from IBM",
+      "rows": "varies",
+      "has_channel": false,
+      "has_merchant": false,
+      "has_user": false,
+      "has_mcc": false,
+      "has_fraud_labels": true,
+      "synthetic": true,
+      "used_in_project": true,
+      "contains_final_test": true
+    },
+    {
+      "name": "Feedback snapshots",
+      "years": "2026 (production)",
+      "rows": "~20",
+      "has_channel": false,
+      "has_merchant": false,
+      "has_user": false,
+      "has_mcc": false,
+      "has_fraud_labels": true,
+      "synthetic": false,
+      "used_in_project": true,
+      "contains_final_test": false
+    }
+  ],
+  "conclusion": "Only the IBM dataset has the year/channel/merchant/user/MCC information needed for the chip-fraud analysis. All other datasets lack the schema required to study channel composition or merchant-level patterns."
+}

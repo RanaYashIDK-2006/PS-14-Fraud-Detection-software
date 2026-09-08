@@ -1,0 +1,76 @@
+{
+  "sources": [
+    {
+      "path": "data\\credit_card_transactions-ibm_v2.csv",
+      "generator": "IBM/synthetic",
+      "independent_of_2017_regime": false
+    },
+    {
+      "path": "data\\creditcard.csv",
+      "generator": "UNKNOWN",
+      "independent_of_2017_regime": false
+    },
+    {
+      "path": "data\\fraud_data.csv",
+      "generator": "UNKNOWN",
+      "independent_of_2017_regime": false
+    },
+    {
+      "path": "data\\paysim.csv",
+      "generator": "IBM/synthetic",
+      "independent_of_2017_regime": false
+    },
+    {
+      "path": "data\\paysim_1m.csv",
+      "generator": "IBM/synthetic",
+      "independent_of_2017_regime": false
+    },
+    {
+      "path": "data\\transactions.csv",
+      "generator": "IBM/synthetic",
+      "independent_of_2017_regime": false
+    },
+    {
+      "path": "data\\transactions_causal.csv",
+      "generator": "IBM/synthetic",
+      "independent_of_2017_regime": false
+    },
+    {
+      "path": "data\\transactions_v2.csv",
+      "generator": "IBM/synthetic",
+      "independent_of_2017_regime": false
+    },
+    {
+      "path": "data\\User0_credit_card_transactions.csv",
+      "generator": "IBM/synthetic",
+      "independent_of_2017_regime": false
+    },
+    {
+      "path": "data\\validation_paysim.csv",
+      "generator": "IBM/synthetic",
+      "independent_of_2017_regime": false
+    },
+    {
+      "path": "data\\ealtman2019\\credit_card_transactions-ibm_v2.csv",
+      "generator": "IBM/synthetic",
+      "independent_of_2017_regime": false
+    },
+    {
+      "path": "data\\ealtman2019\\User0_credit_card_transactions.csv",
+      "generator": "IBM/synthetic",
+      "independent_of_2017_regime": false
+    },
+    {
+      "path": "data\\kaggle_fraud\\fraudTest.csv",
+      "generator": "IBM/synthetic",
+      "independent_of_2017_regime": false
+    },
+    {
+      "path": "data\\kaggle_fraud\\fraudTrain.csv",
+      "generator": "IBM/synthetic",
+      "independent_of_2017_regime": false
+    }
+  ],
+  "conclusion": "All data in this project is SYNTHETIC (IBM generator, PaySim, Kaggle). No real-world transaction data is available. The IBM generator produces transactions with year-specific behavior, but the 2017 chip-fraud pattern is an artifact of the generator, not a reflection of real-world fraud evolution. The generator's 2017 regime produces 248 chip-fraud cases out of 255 total fraud, creating an artificial channel shift that may not reflect real production behavior.",
+  "synthetic_representation_limitation": "The IBM generator is the ONLY source of 2017-like chip-fraud patterns. There is no independent data source to validate or extend the 2017 regime. Any model trained on IBM data and evaluated on IBM 2017 is testing against the same generator's distribution, not a genuinely different real-world regime."
+}

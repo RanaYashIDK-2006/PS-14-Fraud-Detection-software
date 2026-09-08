@@ -1,0 +1,38 @@
+{
+  "current_protocol": {
+    "train": "Year < 2016",
+    "validation": "Year 2016-2017",
+    "test": "Year >= 2018",
+    "status": "LEGITIMATE (temporally ordered, no leakage)"
+  },
+  "alternative_protocols": [
+    {
+      "name": "Expand train to include 2016",
+      "train": "Year <= 2016",
+      "validation": "Year 2017",
+      "test": "Year >= 2018",
+      "advantage": "2016 chip fraud (279 cases) added to training",
+      "disadvantage": "Validation shrinks to 255 total fraud (248 chip). Threshold selection becomes unstable.",
+      "feasibility": "MARGINAL - 255 validation fraud cases may be insufficient for reliable threshold selection"
+    },
+    {
+      "name": "Expand train to include 2016-17",
+      "train": "Year <= 2017",
+      "validation": "??? (no data between 2017 and 2018)",
+      "test": "Year >= 2018",
+      "advantage": "Full 2016-17 regime in training",
+      "disadvantage": "NO VALIDATION WINDOW EXISTS. Cannot select threshold legitimately.",
+      "feasibility": "INVALID - no temporal validation possible"
+    },
+    {
+      "name": "Stratified split within 2017",
+      "train": "Year < 2016 + 80% of 2017",
+      "validation": "20% of 2017",
+      "test": "Year >= 2018",
+      "advantage": "Uses 2017 data for training with some held out",
+      "disadvantage": "Violation of temporal ordering. 2017 validation samples are temporally interleaved with training samples.",
+      "feasibility": "INVALID - temporal contamination"
+    }
+  ],
+  "conclusion": "No legitimate temporal protocol exists that adds post-2016 data to training while maintaining a valid validation window. The information boundary is real."
+}

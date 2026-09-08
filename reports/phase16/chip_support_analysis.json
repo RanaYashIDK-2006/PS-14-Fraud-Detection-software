@@ -1,0 +1,43 @@
+{
+  "2014": {
+    "total_fraud": 1052,
+    "chip_fraud": 0,
+    "chip_pct": 0.0,
+    "unique_chip_fraud_merchants": 0,
+    "unique_chip_fraud_users": 0,
+    "unique_chip_fraud_mccs": 0
+  },
+  "2015": {
+    "total_fraud": 3281,
+    "chip_fraud": 301,
+    "chip_pct": 9.2,
+    "unique_chip_fraud_merchants": 292,
+    "unique_chip_fraud_users": 187,
+    "unique_chip_fraud_mccs": 32
+  },
+  "2016": {
+    "total_fraud": 3579,
+    "chip_fraud": 279,
+    "chip_pct": 7.8,
+    "unique_chip_fraud_merchants": 278,
+    "unique_chip_fraud_users": 225,
+    "unique_chip_fraud_mccs": 32
+  },
+  "2017": {
+    "total_fraud": 255,
+    "chip_fraud": 248,
+    "chip_pct": 97.3,
+    "unique_chip_fraud_merchants": 49,
+    "unique_chip_fraud_users": 33,
+    "unique_chip_fraud_mccs": 33
+  },
+  "2018": {
+    "total_fraud": 2491,
+    "chip_fraud": 2113,
+    "chip_pct": 84.8,
+    "unique_chip_fraud_merchants": 74,
+    "unique_chip_fraud_users": 223,
+    "unique_chip_fraud_mccs": 45
+  },
+  "conclusion": "2017 chip fraud (248 cases, 97.3% of all 2017 fraud) is ALREADY in the IBM dataset. The question is not whether this data EXISTS but whether it can be LEGITIMATELY used for training under a defensible temporal protocol. Currently it is reserved for validation."
+}

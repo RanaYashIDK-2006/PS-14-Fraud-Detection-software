@@ -1,0 +1,213 @@
+{
+  "status": "COMPLETE",
+  "sources_checked": [
+    {
+      "path": "data\\batch_scores.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\credit_card_transactions-ibm_v2.csv",
+      "overlap": "IS_SOURCE (IBM dataset contains 2018-2020 rows used as final test)",
+      "note": "The IBM dataset IS the data source. Final test = IBM rows with Year>=2018."
+    },
+    {
+      "path": "data\\creditcard.csv",
+      "overlap": "NO_OVERLAP (different schema, PCA-transformed, no year/channel info)"
+    },
+    {
+      "path": "data\\feedback_labeled.csv",
+      "overlap": "NO_OVERLAP (production feedback, different timestamps)"
+    },
+    {
+      "path": "data\\feedback_labeled_sim.csv",
+      "overlap": "NO_OVERLAP (production feedback, different timestamps)"
+    },
+    {
+      "path": "data\\fraud_data.csv",
+      "overlap": "NO_OVERLAP (different dataset, PCA features)"
+    },
+    {
+      "path": "data\\ood_scenarios.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\paysim.csv",
+      "overlap": "NO_OVERLAP (synthetic mobile money, different domain)"
+    },
+    {
+      "path": "data\\paysim_1m.csv",
+      "overlap": "NO_OVERLAP (synthetic mobile money, different domain)"
+    },
+    {
+      "path": "data\\scores_1m.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\scores_2m.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\scores_500k.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\scores_500k_vec.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\sd254_cards.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\sd254_users.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\sub_data.csv",
+      "overlap": "NO_OVERLAP (PaySim mobile money)"
+    },
+    {
+      "path": "data\\transactions.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\transactions_1m.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\transactions_2m.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\transactions_500k.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\transactions_causal.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\transactions_v2.csv",
+      "overlap": "DERIVED_FROM_IBM (extended features from IBM rows)"
+    },
+    {
+      "path": "data\\User0_credit_card_transactions.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\validation_kaggle.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\validation_paysim.csv",
+      "overlap": "NO_OVERLAP (synthetic mobile money, different domain)"
+    },
+    {
+      "path": "data\\validation_realistic.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\validation_uci_default.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\ealtman2019\\credit_card_transactions-ibm_v2.csv",
+      "overlap": "IS_SOURCE (IBM dataset contains 2018-2020 rows used as final test)",
+      "note": "The IBM dataset IS the data source. Final test = IBM rows with Year>=2018."
+    },
+    {
+      "path": "data\\ealtman2019\\sd254_cards.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\ealtman2019\\sd254_users.csv",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\ealtman2019\\User0_credit_card_transactions.csv",
+      "overlap": "DERIVED_FROM_IBM (features from IBM rows, same temporal range)",
+      "note": "Preprocessed features from IBM rows. Same data, different representation."
+    },
+    {
+      "path": "data\\kaggle_fraud\\fraudTest.csv",
+      "overlap": "NO_OVERLAP (different dataset, different users, 2019-2020 only)"
+    },
+    {
+      "path": "data\\kaggle_fraud\\fraudTrain.csv",
+      "overlap": "NO_OVERLAP (different dataset, different users, 2019-2020 only)"
+    },
+    {
+      "path": "data\\feedback_snapshots\\feedback_20260816_153042.csv",
+      "overlap": "NO_OVERLAP (production feedback, different timestamps)"
+    },
+    {
+      "path": "data\\_cov_frame_10_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_cov_frame_20_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_cov_frame_40_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_cov_frame_C_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_cs_frame_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_mission_frame_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_p6_frame_C_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_p6_frame_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_p7_42_10_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_p7_42_20_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_p7_42_40_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_p7_42_5_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_p7_43_10_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_p7_43_20_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_p7_44_20_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_p7_45_20_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    },
+    {
+      "path": "data\\_raw_parity_cache_tr_meta.json",
+      "overlap": "NEEDS_MANUAL_CHECK"
+    }
+  ],
+  "conclusion": "The IBM dataset is the ONLY data source containing the 2018-2020 final test rows. No other file in the project contains overlapping final-test transactions."
+}

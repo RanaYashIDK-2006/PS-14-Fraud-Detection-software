@@ -1,0 +1,182 @@
+{
+  "ibm_dataset_year_distribution": {
+    "1991": {
+      "total_rows": 1585,
+      "fraud": 0,
+      "legitimate": 1585
+    },
+    "1992": {
+      "total_rows": 5134,
+      "fraud": 0,
+      "legitimate": 5134
+    },
+    "1993": {
+      "total_rows": 8378,
+      "fraud": 0,
+      "legitimate": 8378
+    },
+    "1994": {
+      "total_rows": 14316,
+      "fraud": 0,
+      "legitimate": 14316
+    },
+    "1995": {
+      "total_rows": 20928,
+      "fraud": 0,
+      "legitimate": 20928
+    },
+    "1996": {
+      "total_rows": 29945,
+      "fraud": 10,
+      "legitimate": 29935
+    },
+    "1997": {
+      "total_rows": 49753,
+      "fraud": 32,
+      "legitimate": 49721
+    },
+    "1998": {
+      "total_rows": 78345,
+      "fraud": 32,
+      "legitimate": 78313
+    },
+    "1999": {
+      "total_rows": 118250,
+      "fraud": 24,
+      "legitimate": 118226
+    },
+    "2000": {
+      "total_rows": 177729,
+      "fraud": 171,
+      "legitimate": 177558
+    },
+    "2001": {
+      "total_rows": 257998,
+      "fraud": 354,
+      "legitimate": 257644
+    },
+    "2002": {
+      "total_rows": 350732,
+      "fraud": 139,
+      "legitimate": 350593
+    },
+    "2003": {
+      "total_rows": 466408,
+      "fraud": 311,
+      "legitimate": 466097
+    },
+    "2004": {
+      "total_rows": 597003,
+      "fraud": 620,
+      "legitimate": 596383
+    },
+    "2005": {
+      "total_rows": 746653,
+      "fraud": 229,
+      "legitimate": 746424
+    },
+    "2006": {
+      "total_rows": 908793,
+      "fraud": 1118,
+      "legitimate": 907675
+    },
+    "2007": {
+      "total_rows": 1064483,
+      "fraud": 1881,
+      "legitimate": 1062602
+    },
+    "2008": {
+      "total_rows": 1223460,
+      "fraud": 3710,
+      "legitimate": 1219750
+    },
+    "2009": {
+      "total_rows": 1355434,
+      "fraud": 1140,
+      "legitimate": 1354294
+    },
+    "2010": {
+      "total_rows": 1491225,
+      "fraud": 3835,
+      "legitimate": 1487390
+    },
+    "2011": {
+      "total_rows": 1570551,
+      "fraud": 55,
+      "legitimate": 1570496
+    },
+    "2012": {
+      "total_rows": 1610829,
+      "fraud": 1333,
+      "legitimate": 1609496
+    },
+    "2013": {
+      "total_rows": 1650917,
+      "fraud": 2018,
+      "legitimate": 1648899
+    },
+    "2014": {
+      "total_rows": 1672343,
+      "fraud": 1052,
+      "legitimate": 1671291
+    },
+    "2015": {
+      "total_rows": 1701371,
+      "fraud": 3281,
+      "legitimate": 1698090
+    },
+    "2016": {
+      "total_rows": 1708924,
+      "fraud": 3579,
+      "legitimate": 1705345
+    },
+    "2017": {
+      "total_rows": 1723360,
+      "fraud": 255,
+      "legitimate": 1723105
+    },
+    "2018": {
+      "total_rows": 1721615,
+      "fraud": 2491,
+      "legitimate": 1719124
+    },
+    "2019": {
+      "total_rows": 1723938,
+      "fraud": 2087,
+      "legitimate": 1721851
+    },
+    "2020": {
+      "total_rows": 336500,
+      "fraud": 0,
+      "legitimate": 336500
+    }
+  },
+  "post2016_fraud_by_year": {
+    "2016": 3579,
+    "2017": 255,
+    "2018": 2491,
+    "2019": 2087
+  },
+  "post2016_chip_fraud_by_year": {
+    "2016": 279,
+    "2017": 248,
+    "2018": 2113,
+    "2019": 1895
+  },
+  "sources_with_post2016_data": [
+    "data\\credit_card_transactions-ibm_v2.csv",
+    "data\\feedback_labeled.csv",
+    "data\\feedback_labeled_sim.csv",
+    "data\\transactions_causal.csv",
+    "data\\User0_credit_card_transactions.csv",
+    "data\\validation_kaggle.csv",
+    "data\\validation_realistic.csv",
+    "data\\ealtman2019\\credit_card_transactions-ibm_v2.csv",
+    "data\\ealtman2019\\User0_credit_card_transactions.csv",
+    "data\\kaggle_fraud\\fraudTest.csv",
+    "data\\kaggle_fraud\\fraudTrain.csv",
+    "data\\feedback_snapshots\\feedback_20260816_153042.csv",
+    "data/kaggle_fraud/ (2019-2020, different schema)"
+  ],
+  "conclusion": "The IBM dataset contains ALL post-2016 data in this project. 2016: 3,579 fraud (279 chip). 2017: 255 fraud (248 chip). 2018: 2,491 fraud (2,113 chip). 2019: 2,087 fraud (1,895 chip). The Kaggle dataset covers 2019-2020 but with a completely different schema (no merchant IDs, no channel info, different feature space). No independent post-2016 chip-fraud dataset exists."
+}

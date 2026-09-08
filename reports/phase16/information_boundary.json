@@ -1,0 +1,10 @@
+{
+  "new_regime_information": "NONE",
+  "redundant_information": "ALL existing pre-2016 data",
+  "uncertain_information": "Kaggle fraud (2019-2020, different schema)",
+  "key_finding": "The IBM dataset contains ALL information available in this project, including 2016-2020 data. There is NO independent data source that provides post-2016 chip-fraud representation. The 2017 chip-fraud regime (248 cases) exists in the IBM dataset but is currently used for VALIDATION, not training. Adding it to training would require sacrificing the validation window.",
+  "information_boundary_reached": true,
+  "information_boundary_type": "DATA_PROTOCOL_CONSTRAINT",
+  "explanation": "The information boundary is NOT that post-2016 data does not exist (it does, in the IBM dataset). The boundary is that using it for training leaves no legitimate temporal validation window. The existing protocol: train <2016 | validate 2016-17 | test >=2018. If 2016-17 moves to training, validation must come from somewhere else, and there is no data between 2017 and 2018 to serve as validation.",
+  "possible_restructuring": "Alternative protocol: train <=2015 | validate 2016 | forward 2017 | test >=2018. This sacrifices 2017 from validation but adds 2016. However, 2016 has only 279 chip fraud (vs 248 in 2017) and is still predominantly online fraud (3,073 online vs 279 chip). This restructuring would NOT substantially change the chip-fraud training signal."
+}

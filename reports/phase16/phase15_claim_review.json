@@ -1,0 +1,20 @@
+{
+  "phase15_claim": "Further optimization against pre-2016 training data cannot solve the 2017 chip-fraud failure.",
+  "claim_strength": "STRONGLY_SUPPORTED",
+  "evidence_for": [
+    "Phase 14 showed adding 301 legitimate 2014-2015 chip-fraud examples HURT 2017 transfer (-25pp)",
+    "Phase 15 showed 2017 chip fraud is distributionally distinct (train-vs-2017 AUC=0.94)",
+    "Phase 15 showed 2017 has a completely different channel composition (97.3% chip vs <10% pre-2016)",
+    "Phase 15 showed the fraud boundary itself didn't move (pre-2016 AUC=0.994, 2017 AUC=1.000)",
+    "Phase 16 confirms NO independent data source exists to provide post-2016 chip-fraud representation"
+  ],
+  "evidence_against": [
+    "The IBM dataset DOES contain 2016-2017 data that could be used for training under a different protocol",
+    "The restriction is PROTOCOL-based (no validation window), not INFORMATION-based",
+    "A model with 2016-17 in training might perform better, but cannot be validated legitimately"
+  ],
+  "refinement": "Phase 15's claim was slightly too strong. The correct statement is: 'Under the current temporal protocol (train<2016, validate 2016-17, test>=2018), no amount of pre-2016 optimization will solve the 2017 failure, because the 2017 distribution is not represented in the training data, and there is no legitimate way to add it without sacrificing the validation window.' The information boundary is PROTOCOL-CONSTRAINED, not INFORMATION-THEORETICALLY-IMPOSSIBLE.",
+  "empirically_unsolved": true,
+  "information_theoretically_unsolvable": false,
+  "diagnosis": "DATA_PROTOCOL_CONSTRAINT"
+}
