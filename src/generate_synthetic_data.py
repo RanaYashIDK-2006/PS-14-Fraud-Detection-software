@@ -350,7 +350,7 @@ def derive_features(events: list[dict], account_start: pd.Timestamp, base_device
         ratio = ratios[i]
         window = ratios[max(0, i - 9) : i + 1]
         # Deviation features
-        from src.privacy_layer.features import (
+        from privacy_layer.features import (
             hour_deviation_score, amount_zscore, velocity_deviation_score,
             recipient_novelty_score, txn_regularity_score,
         )
@@ -469,7 +469,7 @@ def derive_features_causal(events: list[dict], account_start: pd.Timestamp, base
             similar_days = float((ts - account_start).total_seconds() / 86400.0)
         ratio = ratios[i]
         window = ratios[max(0, i - 9) : i + 1]
-        from src.privacy_layer.features import (
+        from privacy_layer.features import (
             hour_deviation_score, amount_zscore, velocity_deviation_score,
             recipient_novelty_score, txn_regularity_score,
         )
