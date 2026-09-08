@@ -1,0 +1,7 @@
+{
+  "artifact": "lgb_native.joblib",
+  "expected_sha256": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+  "actual_sha256": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+  "on_disk": true,
+  "match": true
+}

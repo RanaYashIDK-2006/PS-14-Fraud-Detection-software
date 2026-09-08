@@ -1,0 +1,131 @@
+{
+  "phase": "10C",
+  "purpose": "Root-cause audit for 7 divergent features identified in Phase 10B",
+  "features": [
+    {
+      "feature": "merchant_id",
+      "training_definition": "_code(str(Merchant Name)) \u2014 sha256(merchant_name)[:8] mod 100000",
+      "offline_implementation": "retrain_native_consistent.build_context_and_features passes merchant_name='Merchant Name' to derive_native_features; _code hashes it",
+      "production_implementation": "_from_raw_native reads features.get('merchant_id','') \u2192 _code('') = 0.0 constant for every row",
+      "source_of_gap": "IngestTransactionRequest has NO merchant identity field; FeatureVector.merchant_id defaults ''; privacy layer never forwards merchant name/token",
+      "decision_time_available": "YES \u2014 recipient_id exists as merchant proxy; merchant_name exists in IBM dataset rows",
+      "privacy_permitted": "YES \u2014 merchant identity is a counterparty token; only a stable hash code reaches the model; no customer PII",
+      "causal": true,
+      "reproducible": "YES on IBM replay (same merchant_name strings); CONDITIONAL on live PS-14 (recipient tokens = cold-start codes)",
+      "retraining_required": false,
+      "should_remove": false,
+      "remediation": "Add optional merchant_name field to IngestTransactionRequest; forward as merchant_id in native-raw response block; hash scheme identical to training"
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "training_definition": "distinct merchants seen by this user BEFORE this transaction (first-seen cumsum, shifted)",
+      "offline_implementation": "duplicated([User, Merchant Name], keep='first').groupby(User).cumsum() - first_m",
+      "production_implementation": "FeatureVector default 0.0 \u2192 derive clamps max(0, 1.0) = 1.0 constant for all rows",
+      "source_of_gap": "UserVelocityTracker tracks only 4 keys (user_tx_count, user_avg_amt, card_tx_count, merch_tx_count); no per-user merchant set tracked",
+      "decision_time_available": "YES \u2014 velocity tracker sees every (user, merchant) event before the current one",
+      "privacy_permitted": "YES \u2014 only a count (not raw strings) reaches the model",
+      "causal": true,
+      "reproducible": "YES \u2014 per-user distinct-merchant set, updated after each event, read before",
+      "retraining_required": false,
+      "should_remove": false,
+      "remediation": "Extend UserVelocityTracker with per-user ts-aware distinct-merchant set (incremental); forward user_merchant_diversity in payload"
+    },
+    {
+      "feature": "user_city_diversity",
+      "training_definition": "distinct cities seen by this user BEFORE this transaction",
+      "offline_implementation": "duplicated([User, Merchant City], keep='first').groupby(User).cumsum() - first_c",
+      "production_implementation": "FeatureVector default 0.0 \u2192 derive clamps max(0, 1.0) = 1.0 constant",
+      "source_of_gap": "UserVelocityTracker does not track per-user city sets",
+      "decision_time_available": "YES",
+      "privacy_permitted": "YES \u2014 count only",
+      "causal": true,
+      "reproducible": "YES \u2014 per-user distinct-city set, incremental, ts-aware",
+      "retraining_required": false,
+      "should_remove": false,
+      "remediation": "Extend UserVelocityTracker with per-user distinct-city set"
+    },
+    {
+      "feature": "user_merch_count",
+      "training_definition": "number of (user, merchant) interactions BEFORE this transaction",
+      "offline_implementation": "groupby([User, Merchant Name]).cumcount()",
+      "production_implementation": "FeatureVector default 0.0 \u2192 derive returns 0.0",
+      "source_of_gap": "UserVelocityTracker does not track per-user-merchant pair counts",
+      "decision_time_available": "YES",
+      "privacy_permitted": "YES \u2014 count only",
+      "causal": true,
+      "reproducible": "YES \u2014 per-(user, merchant) counter, incremental",
+      "retraining_required": false,
+      "should_remove": false,
+      "remediation": "Extend UserVelocityTracker with per-(user, merchant) count dict"
+    },
+    {
+      "feature": "user_fraud_rate",
+      "training_definition": "confirmed-fraud labels for this user strictly before t / all transactions for this user strictly before t (expanding mean, unbounded)",
+      "offline_implementation": "(cumsum(is_fraud) - is_fraud) / user_tx_count; default 0.001 when count == 0",
+      "production_implementation": "FeatureVector default 0.0 \u2192 _f2(0.0) or COLD_START = 0.001 constant (wired path); EntityFraudRateTracker variant: 100-event window, min 5 events",
+      "source_of_gap": "No confirmed-label pipeline at decision time; risk_engine records is_fraud = score >= 70 (model prediction proxy, forbidden); VerificationOutcome labels are retrospective (investigator latency, retraining pool only)",
+      "decision_time_available": "NO",
+      "decision_time_available_evidence": "1) _record_entity_rates: is_fraud=score>=70 (proxy, forbidden); 2) _seed_entity_tracker: is_fraud=risk_score>=70; 3) VerificationOutcome written AFTER investigator confirms/disputes (retrospective); 4) scripts/export_feedback.py exports for RETRAINING only; 5) no in-repo pipeline feeds confirmed labels before a new decision",
+      "privacy_permitted": "YES for a rate, but the label input is not available",
+      "availability_class": "UNAVAILABLE_AT_DECISION_TIME",
+      "causal_offline": true,
+      "causal_production": "IMPOSSIBLE \u2014 cannot expand a mean over labels that don't exist yet",
+      "reproducible": false,
+      "retraining_required": true,
+      "should_remove": true,
+      "remediation": "NONE LEGITIMATE \u2014 cannot fabricate confirmed labels. Feature must be removed from production model, requiring retraining."
+    },
+    {
+      "feature": "merch_fraud_rate",
+      "training_definition": "confirmed-fraud labels for this merchant strictly before t / all merchant transactions strictly before t",
+      "offline_implementation": "expanding mean per Merchant Name",
+      "production_implementation": "constant 0.001 wired / 100-event tracker proxy",
+      "decision_time_available": "NO \u2014 same evidence as user_fraud_rate",
+      "availability_class": "UNAVAILABLE_AT_DECISION_TIME",
+      "causal_offline": true,
+      "causal_production": "IMPOSSIBLE",
+      "reproducible": false,
+      "retraining_required": true,
+      "should_remove": true,
+      "remediation": "NONE LEGITIMATE \u2014 feature must be removed, model retrained"
+    },
+    {
+      "feature": "city_fraud_rate",
+      "training_definition": "confirmed-fraud labels for this city strictly before t / all city transactions strictly before t",
+      "offline_implementation": "expanding mean per Merchant City",
+      "production_implementation": "constant 0.001 wired / 100-event tracker proxy",
+      "decision_time_available": "NO \u2014 same evidence as user_fraud_rate",
+      "availability_class": "UNAVAILABLE_AT_DECISION_TIME",
+      "causal_offline": true,
+      "causal_production": "IMPOSSIBLE",
+      "reproducible": false,
+      "retraining_required": true,
+      "should_remove": true,
+      "remediation": "NONE LEGITIMATE \u2014 feature must be removed, model retrained"
+    }
+  ],
+  "temporal_divergence": {
+    "description": "Production trackers accumulate in ingestion order with no timestamp cutoff; offline sorts by timestamp before expanding context",
+    "required_semantics": "feature(t) may use only events with timestamp < t",
+    "current_violation": "EntityFraudRateTracker.record(is_fraud, ts=None) and UserVelocityTracker.record_event(user, amount, card, merch) accept no ts \u2014 state keyed by entity only, ordered by ingestion",
+    "test_a_result": "future row ingested first changes earlier row's features (max delta 9999 \u2014 confirmed in Phase 10B)",
+    "remediation": "UserVelocityTracker and EntityFraudRateTracker must accept optional ts parameter; state must sort events by ts for context queries"
+  },
+  "summary": {
+    "remediable_features": [
+      "merchant_id",
+      "user_merchant_diversity",
+      "user_city_diversity",
+      "user_merch_count"
+    ],
+    "irremovable_features": [
+      "user_fraud_rate",
+      "merch_fraud_rate",
+      "city_fraud_rate"
+    ],
+    "remediable_count": 4,
+    "irremovable_count": 3,
+    "conclusion": "3 of 7 divergent features (the fraud-rate features) are UNAVAILABLE_AT_DECISION_TIME with no legitimate remediation. Existing 48-feature model is PRODUCTION_INCOMPATIBLE. PATH B triggered: new production-native candidate required."
+  },
+  "cert_time_utc": "2026-09-07T15:04:09Z"
+}

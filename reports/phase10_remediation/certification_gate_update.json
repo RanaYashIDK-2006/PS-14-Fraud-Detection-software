@@ -1,0 +1,36 @@
+{
+  "gate_A_label_availability": {
+    "status": "FAIL",
+    "evidence": "Three fraud-rate features remain UNVERIFIED for label availability; real label-availability timing not established; CASE C applied",
+    "blocking": true
+  },
+  "gate_B_feature_parity": {
+    "status": "UNVERIFIED",
+    "evidence": "Offline/production parity not run in Phase 9; still pending in Phase 10 scope",
+    "blocking": true
+  },
+  "gate_C_production_impact": {
+    "status": "UNVERIFIED",
+    "evidence": "PSI/alert-rate/online-loading/rollback not characterized in Phase 9; remaining Phase 10 scope",
+    "blocking": true
+  },
+  "certification_status_before_remediation": "CONDITIONAL",
+  "blockers": [
+    {
+      "gate": "Gate A - label availability",
+      "status": "FAIL",
+      "note": "Cannot be upgraded until label timing is proven OR features removed AND candidate re-certified"
+    },
+    {
+      "gate": "Gate B - 48-feature parity",
+      "status": "UNVERIFIED",
+      "note": "Must be run before FULL; residual production parity bugs known in project (e.g. city_fraud_rate cache reset) must be checked against V_rawplus path"
+    },
+    {
+      "gate": "Gate C - production impact",
+      "status": "UNVERIFIED",
+      "note": "PSI/alert-rate/online-loading/rollback characterization required"
+    }
+  ],
+  "cert_time_utc": "2026-09-06T17:06:36Z"
+}

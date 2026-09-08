@@ -1,0 +1,275 @@
+{
+  "chip_signal": [
+    {
+      "feature": "amt",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "log_amt",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "amt_sq",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "hr",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "mn",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "dow",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "Month",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "Day",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "hour_sin",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "hour_cos",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "is_night",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "is_business_hours",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "chip",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "is_online",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "is_swipe",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "err",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "has_zip",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "has_state",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "is_online_or_no_state",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "mcc",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "mcc_high",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "mcc_restaurant",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "mcc_gas",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "mcc_grocery",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "mcc_travel",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "mcc_online",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "merchant_id",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "city_id",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "card_id",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "user_tx_count",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "card_tx_count",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "user_avg_amt",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "amt_vs_user_avg",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "amt_zscore",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "merch_tx_count",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "user_city_diversity",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "high_amt",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "very_high_amt",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "amt_x_hr",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "amt_x_mcc",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "amt_x_chip",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "amt_x_online",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "amt_x_night",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "user_merch_count",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    }
+  ],
+  "cert_time_utc": "2026-09-07T15:47:14Z"
+}

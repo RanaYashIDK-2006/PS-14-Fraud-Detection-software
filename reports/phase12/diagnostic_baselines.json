@@ -1,0 +1,79 @@
+{
+  "p11_baseline": {
+    "threshold": 0.7731440385812249,
+    "val_recall": 0.904943,
+    "val_fpr": 0.009643
+  },
+  "no_online_baseline": {
+    "threshold": 0.7597850063065764,
+    "n_features": 42,
+    "dropped": [
+      "amt_x_online",
+      "is_online_or_no_state",
+      "is_online"
+    ]
+  },
+  "chip_signal_top10": [
+    {
+      "feature": "amt",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "log_amt",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "amt_sq",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "hr",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "mn",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "dow",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "Month",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "Day",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "hour_sin",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    },
+    {
+      "feature": "hour_cos",
+      "auc": 0.5,
+      "fraud": 0,
+      "legit": 0
+    }
+  ],
+  "cert_time_utc": "2026-09-07T15:47:14Z"
+}

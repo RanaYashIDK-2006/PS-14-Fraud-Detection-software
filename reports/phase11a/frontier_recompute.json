@@ -1,0 +1,112 @@
+{
+  "recomputed_frontier": [
+    {
+      "target_recall": 0.99,
+      "threshold": 0.09964915,
+      "recall": 0.990089,
+      "fpr": 0.115277,
+      "precision": 0.492348,
+      "tp": 3796,
+      "fp": 3914,
+      "fn": 38,
+      "tn": 30039,
+      "alerts_per_1k": 204.04
+    },
+    {
+      "target_recall": 0.995,
+      "threshold": 0.0633539,
+      "recall": 0.995044,
+      "fpr": 0.141401,
+      "precision": 0.442781,
+      "tp": 3815,
+      "fp": 4801,
+      "fn": 19,
+      "tn": 29152,
+      "alerts_per_1k": 228.01
+    },
+    {
+      "target_recall": 0.997,
+      "threshold": 0.03752768,
+      "recall": 0.997131,
+      "fpr": 0.180338,
+      "precision": 0.384376,
+      "tp": 3823,
+      "fp": 6123,
+      "fn": 11,
+      "tn": 27830,
+      "alerts_per_1k": 263.21
+    },
+    {
+      "target_recall": 0.998,
+      "threshold": 0.02697329,
+      "recall": 0.998174,
+      "fpr": 0.212529,
+      "precision": 0.346554,
+      "tp": 3827,
+      "fp": 7216,
+      "fn": 7,
+      "tn": 26737,
+      "alerts_per_1k": 292.24
+    },
+    {
+      "target_recall": 0.999,
+      "threshold": 0.01303225,
+      "recall": 0.999218,
+      "fpr": 0.300062,
+      "precision": 0.273272,
+      "tp": 3831,
+      "fp": 10188,
+      "fn": 3,
+      "tn": 23765,
+      "alerts_per_1k": 371.0
+    }
+  ],
+  "comparison_with_phase11": [
+    {
+      "target_recall": 0.99,
+      "existing_threshold": 0.09964915,
+      "recomputed_threshold": 0.09964915,
+      "threshold_delta": 0.0,
+      "existing_fpr": 0.115277,
+      "recomputed_fpr": 0.115277,
+      "status": "MATCH"
+    },
+    {
+      "target_recall": 0.995,
+      "existing_threshold": 0.0633539,
+      "recomputed_threshold": 0.0633539,
+      "threshold_delta": 0.0,
+      "existing_fpr": 0.141401,
+      "recomputed_fpr": 0.141401,
+      "status": "MATCH"
+    },
+    {
+      "target_recall": 0.997,
+      "existing_threshold": 0.03752768,
+      "recomputed_threshold": 0.03752768,
+      "threshold_delta": 0.0,
+      "existing_fpr": 0.180338,
+      "recomputed_fpr": 0.180338,
+      "status": "MATCH"
+    },
+    {
+      "target_recall": 0.998,
+      "existing_threshold": 0.02697329,
+      "recomputed_threshold": 0.02697329,
+      "threshold_delta": 0.0,
+      "existing_fpr": 0.212529,
+      "recomputed_fpr": 0.212529,
+      "status": "MATCH"
+    },
+    {
+      "target_recall": 0.999,
+      "existing_threshold": 0.01303225,
+      "recomputed_threshold": 0.01303225,
+      "threshold_delta": 0.0,
+      "existing_fpr": 0.300062,
+      "recomputed_fpr": 0.300062,
+      "status": "MATCH"
+    }
+  ],
+  "cert_time_utc": "2026-09-07T15:18:10Z"
+}

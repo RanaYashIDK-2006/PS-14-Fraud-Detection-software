@@ -1,0 +1,98 @@
+{
+  "candidate": "P11_45feat",
+  "cases": [
+    {
+      "case": "normal",
+      "vector_len": 45,
+      "nonzero_count": 25,
+      "status": "PASS"
+    },
+    {
+      "case": "zero_amount",
+      "vector_len": 45,
+      "nonzero_count": 19,
+      "status": "PASS"
+    },
+    {
+      "case": "missing_amount",
+      "vector_len": 45,
+      "nonzero_count": 19,
+      "status": "PASS"
+    },
+    {
+      "case": "nan_optional",
+      "vector_len": 45,
+      "nonzero_count": 24,
+      "status": "PASS"
+    },
+    {
+      "case": "missing_merchant",
+      "vector_len": 45,
+      "nonzero_count": 22,
+      "status": "PASS"
+    },
+    {
+      "case": "unseen_merchant",
+      "vector_len": 45,
+      "nonzero_count": 25,
+      "status": "PASS"
+    },
+    {
+      "case": "unseen_city",
+      "vector_len": 45,
+      "nonzero_count": 25,
+      "status": "PASS"
+    },
+    {
+      "case": "unseen_category",
+      "vector_len": 45,
+      "nonzero_count": 24,
+      "status": "PASS"
+    },
+    {
+      "case": "missing_mcc",
+      "vector_len": 45,
+      "nonzero_count": 21,
+      "status": "PASS"
+    },
+    {
+      "case": "online",
+      "vector_len": 45,
+      "nonzero_count": 25,
+      "status": "PASS"
+    },
+    {
+      "case": "swipe",
+      "vector_len": 45,
+      "nonzero_count": 24,
+      "status": "PASS"
+    },
+    {
+      "case": "chip",
+      "vector_len": 45,
+      "nonzero_count": 25,
+      "status": "PASS"
+    },
+    {
+      "case": "extreme_amount",
+      "vector_len": 45,
+      "nonzero_count": 25,
+      "status": "PASS"
+    },
+    {
+      "case": "malformed",
+      "vector_len": 45,
+      "nonzero_count": 25,
+      "status": "PASS"
+    },
+    {
+      "case": "minimum_valid",
+      "vector_len": 45,
+      "nonzero_count": 19,
+      "status": "PASS"
+    }
+  ],
+  "n_cases": 15,
+  "n_fail": 0,
+  "cert_time_utc": "2026-09-07T15:12:08Z"
+}

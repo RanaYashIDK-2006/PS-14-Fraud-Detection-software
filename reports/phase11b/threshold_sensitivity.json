@@ -1,0 +1,156 @@
+{
+  "thresholds": [
+    {
+      "threshold": 0.1,
+      "2016": {
+        "recall": 0.993574,
+        "fpr": 0.114795,
+        "precision": 0.647959,
+        "alerts_per_1k": 268.9
+      },
+      "2017": {
+        "recall": 0.937255,
+        "fpr": 0.115284,
+        "precision": 0.107998,
+        "alerts_per_1k": 127.34
+      }
+    },
+    {
+      "threshold": 0.2,
+      "2016": {
+        "recall": 0.984353,
+        "fpr": 0.07861,
+        "precision": 0.726991,
+        "alerts_per_1k": 237.44
+      },
+      "2017": {
+        "recall": 0.85098,
+        "fpr": 0.07925,
+        "precision": 0.137865,
+        "alerts_per_1k": 90.57
+      }
+    },
+    {
+      "threshold": 0.3,
+      "2016": {
+        "recall": 0.97625,
+        "fpr": 0.057041,
+        "precision": 0.784463,
+        "alerts_per_1k": 218.24
+      },
+      "2017": {
+        "recall": 0.756863,
+        "fpr": 0.059102,
+        "precision": 0.160166,
+        "alerts_per_1k": 69.34
+      }
+    },
+    {
+      "threshold": 0.4,
+      "2016": {
+        "recall": 0.963118,
+        "fpr": 0.043791,
+        "precision": 0.823853,
+        "alerts_per_1k": 205.01
+      },
+      "2017": {
+        "recall": 0.623529,
+        "fpr": 0.044093,
+        "precision": 0.173961,
+        "alerts_per_1k": 52.6
+      }
+    },
+    {
+      "threshold": 0.5,
+      "2016": {
+        "recall": 0.946354,
+        "fpr": 0.033155,
+        "precision": 0.858555,
+        "alerts_per_1k": 193.3
+      },
+      "2017": {
+        "recall": 0.564706,
+        "fpr": 0.034048,
+        "precision": 0.198074,
+        "alerts_per_1k": 41.83
+      }
+    },
+    {
+      "threshold": 0.6,
+      "2016": {
+        "recall": 0.925119,
+        "fpr": 0.023827,
+        "precision": 0.891972,
+        "alerts_per_1k": 181.88
+      },
+      "2017": {
+        "recall": 0.47451,
+        "fpr": 0.02482,
+        "precision": 0.221612,
+        "alerts_per_1k": 31.42
+      }
+    },
+    {
+      "threshold": 0.7,
+      "2016": {
+        "recall": 0.89606,
+        "fpr": 0.015983,
+        "precision": 0.922612,
+        "alerts_per_1k": 170.32
+      },
+      "2017": {
+        "recall": 0.352941,
+        "fpr": 0.016703,
+        "precision": 0.239362,
+        "alerts_per_1k": 21.64
+      }
+    },
+    {
+      "threshold": 0.793435,
+      "2016": {
+        "recall": 0.851635,
+        "fpr": 0.009507,
+        "precision": 0.950125,
+        "alerts_per_1k": 157.19
+      },
+      "2017": {
+        "recall": 0.266667,
+        "fpr": 0.010454,
+        "precision": 0.275304,
+        "alerts_per_1k": 14.21
+      }
+    },
+    {
+      "threshold": 0.8,
+      "2016": {
+        "recall": 0.847443,
+        "fpr": 0.009269,
+        "precision": 0.951082,
+        "alerts_per_1k": 156.25
+      },
+      "2017": {
+        "recall": 0.262745,
+        "fpr": 0.010103,
+        "precision": 0.279167,
+        "alerts_per_1k": 13.81
+      }
+    },
+    {
+      "threshold": 0.9,
+      "2016": {
+        "recall": 0.768371,
+        "fpr": 0.003922,
+        "precision": 0.976562,
+        "alerts_per_1k": 137.98
+      },
+      "2017": {
+        "recall": 0.14902,
+        "fpr": 0.003854,
+        "precision": 0.365385,
+        "alerts_per_1k": 5.98
+      }
+    }
+  ],
+  "locked_threshold": 0.793435,
+  "cert_time_utc": "2026-09-07T15:28:52Z"
+}

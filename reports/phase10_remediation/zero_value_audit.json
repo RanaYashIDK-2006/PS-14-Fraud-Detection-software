@@ -1,0 +1,210 @@
+{
+  "amount_zero_preserved": true,
+  "count_zero_not_missing": true,
+  "rate_zero_label_not_missing": true,
+  "falsy_default_patterns_found": 130,
+  "falsy_default_hits": [
+    {
+      "file": "src\\risk_engine\\altman_ensemble.py",
+      "line": 111,
+      "pattern": ".get(\"is_weekend\", 0)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_ensemble.py",
+      "line": 112,
+      "pattern": ".get(\"new_device_flag\", 0)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_ensemble.py",
+      "line": 117,
+      "pattern": ".get(\"amount_zscore\", 0.0)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_ensemble.py",
+      "line": 121,
+      "pattern": ".get(\"user_id\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_ensemble.py",
+      "line": 122,
+      "pattern": ".get(\"merchant_id\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_ensemble.py",
+      "line": 123,
+      "pattern": ".get(\"city_id\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_ensemble.py",
+      "line": 126,
+      "pattern": ".get(\"user_fraud_rate\", None)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_ensemble.py",
+      "line": 127,
+      "pattern": ".get(\"merch_fraud_rate\", None)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_ensemble.py",
+      "line": 128,
+      "pattern": ".get(\"city_fraud_rate\", None)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_ensemble.py",
+      "line": 179,
+      "pattern": ".get(\"merch_tx_count\", 0.0)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 76,
+      "pattern": ".get(\"user_tx_count\", 0)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 77,
+      "pattern": ".get(\"user_avg_amt\", 0.0)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 78,
+      "pattern": ".get(\"card_tx_count\", 0)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 79,
+      "pattern": ".get(\"merch_tx_count\", 0)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 82,
+      "pattern": ".get(\"user_merch_count\", 0)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 91,
+      "pattern": ".get(\"user_id\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 92,
+      "pattern": ".get(\"merchant_id\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 93,
+      "pattern": ".get(\"city_id\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 112,
+      "pattern": ".get(\"use_chip\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 113,
+      "pattern": ".get(\"mcc\", 0)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 114,
+      "pattern": ".get(\"merchant_city\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 115,
+      "pattern": ".get(\"merchant_state\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 116,
+      "pattern": ".get(\"zip\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 117,
+      "pattern": ".get(\"card\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 118,
+      "pattern": ".get(\"errors\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 119,
+      "pattern": ".get(\"merchant_id\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 120,
+      "pattern": ".get(\"merchant_id\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 121,
+      "pattern": ".get(\"city_id\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 122,
+      "pattern": ".get(\"card_id\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 142,
+      "pattern": ".get(\"is_weekend\", 0)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 143,
+      "pattern": ".get(\"new_device_flag\", 0)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 147,
+      "pattern": ".get(\"amount_zscore\", 0.0)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 155,
+      "pattern": ".get(\"user_id\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 156,
+      "pattern": ".get(\"merchant_id\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 157,
+      "pattern": ".get(\"city_id\", \"\")"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 158,
+      "pattern": ".get(\"user_fraud_rate\", None)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 159,
+      "pattern": ".get(\"merch_fraud_rate\", None)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 160,
+      "pattern": ".get(\"city_fraud_rate\", None)"
+    },
+    {
+      "file": "src\\risk_engine\\altman_native_ensemble.py",
+      "line": 225,
+      "pattern": ".get(\"locked_threshold\", 0.0)"
+    },
+    {
+      "file": "src\\risk_engine\\industry_features.py",
+      "line": 503,
+      "pattern": ".get(\"user_agent\", \"\")"
+    }
+  ],
+  "note": "hits are candidate patterns to review (a 0 default for a count can be correct); the runtime test above proves amount=0 and count=0 are preserved, and the wired 0.0 fraud-rate -> 0.001 cold-start conversion is the intended documented behavior (COLD_START_FRAUD_RATE).",
+  "cert_time_utc": "2026-09-07T14:06:52Z"
+}

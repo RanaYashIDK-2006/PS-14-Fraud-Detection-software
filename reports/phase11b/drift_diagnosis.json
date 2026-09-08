@@ -1,0 +1,38 @@
+{
+  "dominant_drift_type": "CONCEPT_DRIFT",
+  "dominant_cause_confidence": "STRONGLY_SUPPORTED",
+  "all_causes": [
+    {
+      "cause": "CONCEPT_DRIFT",
+      "evidence": "22 features show degraded AUC in 2017 vs 2016",
+      "strength": "STRONGLY_SUPPORTED",
+      "top_degraded_features": [
+        "amt_x_online",
+        "is_online",
+        "is_online_or_no_state",
+        "city_id",
+        "amt_vs_user_avg"
+      ]
+    },
+    {
+      "cause": "SCORE_DISTRIBUTION_SHIFT",
+      "evidence": "Mean fraud score shifted by -0.357979",
+      "strength": "PROVEN"
+    },
+    {
+      "cause": "COVERAGE_SHIFT",
+      "evidence": "808 novel merchants, 31 novel users in 2017",
+      "strength": "SUPPORTED"
+    }
+  ],
+  "summary": {
+    "fraud_score_shift": -0.357979,
+    "legit_score_shift": 0.000883,
+    "features_degraded": 22,
+    "features_improved": 17,
+    "features_high_shift": 0,
+    "novel_merchants_2017": 808,
+    "novel_users_2017": 31
+  },
+  "cert_time_utc": "2026-09-07T15:28:52Z"
+}

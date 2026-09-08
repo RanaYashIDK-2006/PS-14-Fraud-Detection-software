@@ -1,0 +1,326 @@
+{
+  "missed_count": 187,
+  "caught_2017_count": 68,
+  "caught_2016_count": 3048,
+  "missed_score_distribution": {
+    "count": 187,
+    "min": 0.025548,
+    "p01": 0.053887,
+    "p05": 0.081771,
+    "p10": 0.136561,
+    "p25": 0.246199,
+    "median": 0.37878,
+    "p75": 0.619764,
+    "p90": 0.718136,
+    "p95": 0.743777,
+    "p99": 0.775415,
+    "max": 0.787446,
+    "mean": 0.416586,
+    "std": 0.214268
+  },
+  "caught_2017_score_distribution": {
+    "count": 68,
+    "min": 0.796959,
+    "p01": 0.8023,
+    "p05": 0.820434,
+    "p10": 0.827479,
+    "p25": 0.864301,
+    "median": 0.909591,
+    "p75": 0.93999,
+    "p90": 0.954883,
+    "p95": 0.966584,
+    "p99": 0.976057,
+    "max": 0.97811,
+    "mean": 0.901253,
+    "std": 0.04828
+  },
+  "caught_2016_score_distribution": {
+    "count": 3048,
+    "min": 0.793435,
+    "p01": 0.808461,
+    "p05": 0.857348,
+    "p10": 0.902659,
+    "p25": 0.960273,
+    "median": 0.986924,
+    "p75": 0.994876,
+    "p90": 0.997609,
+    "p95": 0.998409,
+    "p99": 0.999195,
+    "max": 0.999663,
+    "mean": 0.967326,
+    "std": 0.04436
+  },
+  "feature_comparison": [
+    {
+      "feature": "amt",
+      "missed_2017_mean": 74.636154,
+      "caught_2017_mean": 128.031326,
+      "caught_2016_mean": 147.131088
+    },
+    {
+      "feature": "log_amt",
+      "missed_2017_mean": 3.271886,
+      "caught_2017_mean": 3.545941,
+      "caught_2016_mean": 4.154299
+    },
+    {
+      "feature": "amt_sq",
+      "missed_2017_mean": 21105.375,
+      "caught_2017_mean": 79641.101562,
+      "caught_2016_mean": 53523.683594
+    },
+    {
+      "feature": "hr",
+      "missed_2017_mean": 14.930481,
+      "caught_2017_mean": 13.367647,
+      "caught_2016_mean": 12.351377
+    },
+    {
+      "feature": "mn",
+      "missed_2017_mean": 31.978609,
+      "caught_2017_mean": 34.264706,
+      "caught_2016_mean": 28.538385
+    },
+    {
+      "feature": "dow",
+      "missed_2017_mean": 3.048128,
+      "caught_2017_mean": 3.058824,
+      "caught_2016_mean": 3.600066
+    },
+    {
+      "feature": "Month",
+      "missed_2017_mean": 11.791444,
+      "caught_2017_mean": 11.720589,
+      "caught_2016_mean": 5.976706
+    },
+    {
+      "feature": "Day",
+      "missed_2017_mean": 17.983957,
+      "caught_2017_mean": 18.117647,
+      "caught_2016_mean": 15.480643
+    },
+    {
+      "feature": "hour_sin",
+      "missed_2017_mean": -0.529279,
+      "caught_2017_mean": -0.269013,
+      "caught_2016_mean": -0.050004
+    },
+    {
+      "feature": "hour_cos",
+      "missed_2017_mean": -0.512072,
+      "caught_2017_mean": -0.779534,
+      "caught_2016_mean": -0.770089
+    },
+    {
+      "feature": "is_night",
+      "missed_2017_mean": 0.005348,
+      "caught_2017_mean": 0.0,
+      "caught_2016_mean": 0.014108
+    },
+    {
+      "feature": "is_business_hours",
+      "missed_2017_mean": 0.737968,
+      "caught_2017_mean": 0.941176,
+      "caught_2016_mean": 0.912402
+    },
+    {
+      "feature": "chip",
+      "missed_2017_mean": 0.97861,
+      "caught_2017_mean": 0.955882,
+      "caught_2016_mean": 0.028215
+    },
+    {
+      "feature": "is_online",
+      "missed_2017_mean": 0.0,
+      "caught_2017_mean": 0.0,
+      "caught_2016_mean": 0.944554
+    },
+    {
+      "feature": "is_swipe",
+      "missed_2017_mean": 0.02139,
+      "caught_2017_mean": 0.044118,
+      "caught_2016_mean": 0.027231
+    },
+    {
+      "feature": "err",
+      "missed_2017_mean": 0.048128,
+      "caught_2017_mean": 0.029412,
+      "caught_2016_mean": 0.046916
+    },
+    {
+      "feature": "has_zip",
+      "missed_2017_mean": 0.0,
+      "caught_2017_mean": 0.0,
+      "caught_2016_mean": 0.055446
+    },
+    {
+      "feature": "has_state",
+      "missed_2017_mean": 1.0,
+      "caught_2017_mean": 1.0,
+      "caught_2016_mean": 0.055446
+    },
+    {
+      "feature": "is_online_or_no_state",
+      "missed_2017_mean": 0.0,
+      "caught_2017_mean": 0.0,
+      "caught_2016_mean": 0.944554
+    },
+    {
+      "feature": "mcc",
+      "missed_2017_mean": 5177.288574,
+      "caught_2017_mean": 5454.603027,
+      "caught_2016_mean": 5194.676758
+    },
+    {
+      "feature": "mcc_high",
+      "missed_2017_mean": 0.828877,
+      "caught_2017_mean": 0.970588,
+      "caught_2016_mean": 0.670276
+    },
+    {
+      "feature": "mcc_restaurant",
+      "missed_2017_mean": 0.053476,
+      "caught_2017_mean": 0.044118,
+      "caught_2016_mean": 0.025591
+    },
+    {
+      "feature": "mcc_gas",
+      "missed_2017_mean": 0.032086,
+      "caught_2017_mean": 0.0,
+      "caught_2016_mean": 0.0
+    },
+    {
+      "feature": "mcc_grocery",
+      "missed_2017_mean": 0.069519,
+      "caught_2017_mean": 0.029412,
+      "caught_2016_mean": 0.003937
+    },
+    {
+      "feature": "mcc_travel",
+      "missed_2017_mean": 0.010695,
+      "caught_2017_mean": 0.0,
+      "caught_2016_mean": 0.023622
+    },
+    {
+      "feature": "mcc_online",
+      "missed_2017_mean": 0.0,
+      "caught_2017_mean": 0.0,
+      "caught_2016_mean": 0.0
+    },
+    {
+      "feature": "merchant_id",
+      "missed_2017_mean": 46705.496094,
+      "caught_2017_mean": 30343.529297,
+      "caught_2016_mean": 51175.222656
+    },
+    {
+      "feature": "city_id",
+      "missed_2017_mean": 31705.0,
+      "caught_2017_mean": 31705.0,
+      "caught_2016_mean": 48268.699219
+    },
+    {
+      "feature": "card_id",
+      "missed_2017_mean": 60669.910156,
+      "caught_2017_mean": 64075.207031,
+      "caught_2016_mean": 65259.210938
+    },
+    {
+      "feature": "user_tx_count",
+      "missed_2017_mean": 173.572189,
+      "caught_2017_mean": 159.955887,
+      "caught_2016_mean": 152.407486
+    },
+    {
+      "feature": "card_tx_count",
+      "missed_2017_mean": 56257.824219,
+      "caught_2017_mean": 48956.234375,
+      "caught_2016_mean": 46056.234375
+    },
+    {
+      "feature": "user_avg_amt",
+      "missed_2017_mean": 60.142254,
+      "caught_2017_mean": 66.586601,
+      "caught_2016_mean": 54.965858
+    },
+    {
+      "feature": "amt_vs_user_avg",
+      "missed_2017_mean": 1.324469,
+      "caught_2017_mean": 2.050722,
+      "caught_2016_mean": 3.07331
+    },
+    {
+      "feature": "amt_zscore",
+      "missed_2017_mean": 0.324469,
+      "caught_2017_mean": 1.050722,
+      "caught_2016_mean": 2.07331
+    },
+    {
+      "feature": "merch_tx_count",
+      "missed_2017_mean": 1183.096313,
+      "caught_2017_mean": 29.044117,
+      "caught_2016_mean": 1957.745117
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "missed_2017_mean": 60.080215,
+      "caught_2017_mean": 58.588234,
+      "caught_2016_mean": 52.141731
+    },
+    {
+      "feature": "user_city_diversity",
+      "missed_2017_mean": 23.379679,
+      "caught_2017_mean": 21.264706,
+      "caught_2016_mean": 20.598425
+    },
+    {
+      "feature": "high_amt",
+      "missed_2017_mean": 0.176471,
+      "caught_2017_mean": 0.220588,
+      "caught_2016_mean": 0.474409
+    },
+    {
+      "feature": "very_high_amt",
+      "missed_2017_mean": 0.053476,
+      "caught_2017_mean": 0.117647,
+      "caught_2016_mean": 0.191601
+    },
+    {
+      "feature": "amt_x_hr",
+      "missed_2017_mean": 1109.917969,
+      "caught_2017_mean": 1748.075317,
+      "caught_2016_mean": 1818.490112
+    },
+    {
+      "feature": "amt_x_mcc",
+      "missed_2017_mean": 349642.9375,
+      "caught_2017_mean": 722803.4375,
+      "caught_2016_mean": 729717.6875
+    },
+    {
+      "feature": "amt_x_chip",
+      "missed_2017_mean": 72.944176,
+      "caught_2017_mean": 123.371758,
+      "caught_2016_mean": 5.109206
+    },
+    {
+      "feature": "amt_x_online",
+      "missed_2017_mean": 0.0,
+      "caught_2017_mean": 0.0,
+      "caught_2016_mean": 138.052643
+    },
+    {
+      "feature": "amt_x_night",
+      "missed_2017_mean": 0.0,
+      "caught_2017_mean": 0.0,
+      "caught_2016_mean": 1.558297
+    },
+    {
+      "feature": "user_merch_count",
+      "missed_2017_mean": 1.176471,
+      "caught_2017_mean": 0.117647,
+      "caught_2016_mean": 1.55479
+    }
+  ],
+  "cert_time_utc": "2026-09-07T15:28:52Z"
+}

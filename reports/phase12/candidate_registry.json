@@ -1,0 +1,30 @@
+{
+  "candidates": {
+    "A_p11_baseline": {
+      "description": "Standard P11 training on <=2013",
+      "threshold": 0.7731440385812249,
+      "n_features": 45
+    },
+    "B_channel_balanced": {
+      "description": "Channel-balanced: chip fraud 3x, swipe fraud 2x weight",
+      "threshold": 0.7901066274039061,
+      "n_features": 45
+    },
+    "C_chip_hardneg": {
+      "description": "Chip-focused hard-negative mining (0 samples)",
+      "threshold": 0.7731440385812249,
+      "n_features": 45
+    },
+    "D_no_online_features": {
+      "description": "P11 without 3 online features (42 features)",
+      "threshold": 0.7597850063065764,
+      "n_features": 42
+    },
+    "E_balanced_combo": {
+      "description": "Channel-balanced + chip hard-negatives",
+      "threshold": 0.7901066274039061,
+      "n_features": 45
+    }
+  },
+  "cert_time_utc": "2026-09-07T15:47:14Z"
+}

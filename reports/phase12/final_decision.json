@@ -1,0 +1,57 @@
+{
+  "outcome": "ROBUST_WIN",
+  "best_candidate": "D_no_online_features",
+  "comparison_table": [
+    {
+      "model": "A_p11_baseline",
+      "2016_recall": 0.79715,
+      "2016_fpr": 0.007605,
+      "2017_recall": 0.337255,
+      "2017_fpr": 0.008819,
+      "chip_recall_2017": 0.33871,
+      "online_recall_2017": 0.0,
+      "status": "NOT_WINNER"
+    },
+    {
+      "model": "B_channel_balanced",
+      "2016_recall": 0.79715,
+      "2016_fpr": 0.008021,
+      "2017_recall": 0.196078,
+      "2017_fpr": 0.008994,
+      "chip_recall_2017": 0.201613,
+      "online_recall_2017": 0.0,
+      "status": "NOT_WINNER"
+    },
+    {
+      "model": "C_chip_hardneg",
+      "2016_recall": 0.79715,
+      "2016_fpr": 0.007605,
+      "2017_recall": 0.337255,
+      "2017_fpr": 0.008819,
+      "chip_recall_2017": 0.33871,
+      "online_recall_2017": 0.0,
+      "status": "NOT_WINNER"
+    },
+    {
+      "model": "D_no_online_features",
+      "2016_recall": 0.80637,
+      "2016_fpr": 0.008497,
+      "2017_recall": 0.509804,
+      "2017_fpr": 0.011038,
+      "chip_recall_2017": 0.512097,
+      "online_recall_2017": 0.0,
+      "status": "POTENTIAL_WINNER"
+    },
+    {
+      "model": "E_balanced_combo",
+      "2016_recall": 0.79715,
+      "2016_fpr": 0.008021,
+      "2017_recall": 0.196078,
+      "2017_fpr": 0.008994,
+      "chip_recall_2017": 0.201613,
+      "online_recall_2017": 0.0,
+      "status": "NOT_WINNER"
+    }
+  ],
+  "cert_time_utc": "2026-09-07T15:47:14Z"
+}

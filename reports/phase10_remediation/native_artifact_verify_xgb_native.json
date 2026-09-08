@@ -1,0 +1,7 @@
+{
+  "artifact": "xgb_native.joblib",
+  "expected_sha256": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+  "actual_sha256": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+  "on_disk": true,
+  "match": true
+}

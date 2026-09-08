@@ -1,0 +1,12 @@
+{
+  "threshold_tvstar": 0.0298937337,
+  "n_rows": 300000,
+  "score_delta_max": 0.99478724,
+  "score_delta_mean": 0.0527137702,
+  "score_delta_p99": 0.87919572,
+  "decision_disagreements": 67576,
+  "decision_disagreement_frac": 0.225253,
+  "boundary_disagreements": 19623,
+  "note": "scores computed from the SAME 48-vector set through each path's scaler+members; the delta reflects feature divergence, not model divergence (weights bit-identical, verified).",
+  "cert_time_utc": "2026-09-07T14:06:52Z"
+}

@@ -1,0 +1,320 @@
+{
+  "features": [
+    {
+      "feature": "amt_x_online",
+      "auc_2016": 0.869364,
+      "auc_2017": 0.438329,
+      "delta": -0.431036,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "is_online",
+      "auc_2016": 0.866832,
+      "auc_2017": 0.438241,
+      "delta": -0.428591,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "is_online_or_no_state",
+      "auc_2016": 0.866179,
+      "auc_2017": 0.437745,
+      "delta": -0.428434,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "city_id",
+      "auc_2016": 0.475419,
+      "auc_2017": 0.270163,
+      "delta": -0.205256,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "amt_vs_user_avg",
+      "auc_2016": 0.68748,
+      "auc_2017": 0.50855,
+      "delta": -0.17893,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "amt_zscore",
+      "auc_2016": 0.68748,
+      "auc_2017": 0.50855,
+      "delta": -0.17893,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "amt_x_mcc",
+      "auc_2016": 0.697373,
+      "auc_2017": 0.533744,
+      "delta": -0.163629,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "log_amt",
+      "auc_2016": 0.702847,
+      "auc_2017": 0.540855,
+      "delta": -0.161993,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "amt",
+      "auc_2016": 0.702847,
+      "auc_2017": 0.540855,
+      "delta": -0.161992,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "amt_sq",
+      "auc_2016": 0.702847,
+      "auc_2017": 0.540855,
+      "delta": -0.161992,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "hour_sin",
+      "auc_2016": 0.472067,
+      "auc_2017": 0.31063,
+      "delta": -0.161437,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "amt_x_hr",
+      "auc_2016": 0.70538,
+      "auc_2017": 0.576098,
+      "delta": -0.129282,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "high_amt",
+      "auc_2016": 0.661241,
+      "auc_2017": 0.535249,
+      "delta": -0.125992,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "merch_tx_count",
+      "auc_2016": 0.441277,
+      "auc_2017": 0.346609,
+      "delta": -0.094668,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "merchant_id",
+      "auc_2016": 0.467998,
+      "auc_2017": 0.385171,
+      "delta": -0.082826,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "dow",
+      "auc_2016": 0.585545,
+      "auc_2017": 0.507471,
+      "delta": -0.078074,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "has_zip",
+      "auc_2016": 0.136881,
+      "auc_2017": 0.065467,
+      "delta": -0.071414,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "is_business_hours",
+      "auc_2016": 0.663522,
+      "auc_2017": 0.610614,
+      "delta": -0.052908,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "very_high_amt",
+      "auc_2016": 0.578283,
+      "auc_2017": 0.526534,
+      "delta": -0.051749,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "card_id",
+      "auc_2016": 0.493793,
+      "auc_2017": 0.461544,
+      "delta": -0.032249,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "user_merch_count",
+      "auc_2016": 0.197359,
+      "auc_2017": 0.168106,
+      "delta": -0.029254,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "is_swipe",
+      "auc_2016": 0.446359,
+      "auc_2017": 0.428781,
+      "delta": -0.017578,
+      "direction": "DEGRADED_2017"
+    },
+    {
+      "feature": "mcc_travel",
+      "auc_2016": 0.509108,
+      "auc_2017": 0.502812,
+      "delta": -0.006296,
+      "direction": "STABLE"
+    },
+    {
+      "feature": "is_night",
+      "auc_2016": 0.471459,
+      "auc_2017": 0.46692,
+      "delta": -0.004539,
+      "direction": "STABLE"
+    },
+    {
+      "feature": "amt_x_night",
+      "auc_2016": 0.469568,
+      "auc_2017": 0.466449,
+      "delta": -0.00312,
+      "direction": "STABLE"
+    },
+    {
+      "feature": "err",
+      "auc_2016": 0.514922,
+      "auc_2017": 0.514093,
+      "delta": -0.000829,
+      "direction": "STABLE"
+    },
+    {
+      "feature": "mcc_online",
+      "auc_2016": 0.5,
+      "auc_2017": 0.5,
+      "delta": 0.0,
+      "direction": "STABLE"
+    },
+    {
+      "feature": "mcc_restaurant",
+      "auc_2016": 0.451892,
+      "auc_2017": 0.459701,
+      "delta": 0.00781,
+      "direction": "STABLE"
+    },
+    {
+      "feature": "mcc_gas",
+      "auc_2016": 0.447861,
+      "auc_2017": 0.460284,
+      "delta": 0.012423,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "mcc_grocery",
+      "auc_2016": 0.448758,
+      "auc_2017": 0.470806,
+      "delta": 0.022048,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "mcc",
+      "auc_2016": 0.383293,
+      "auc_2017": 0.406059,
+      "delta": 0.022766,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "user_tx_count",
+      "auc_2016": 0.473643,
+      "auc_2017": 0.505023,
+      "delta": 0.03138,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "user_city_diversity",
+      "auc_2016": 0.508784,
+      "auc_2017": 0.549938,
+      "delta": 0.041153,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "user_avg_amt",
+      "auc_2016": 0.560903,
+      "auc_2017": 0.620502,
+      "delta": 0.0596,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "mn",
+      "auc_2016": 0.479561,
+      "auc_2017": 0.550075,
+      "delta": 0.070514,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "Day",
+      "auc_2016": 0.492366,
+      "auc_2017": 0.574525,
+      "delta": 0.082159,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "mcc_high",
+      "auc_2016": 0.451254,
+      "auc_2017": 0.540441,
+      "delta": 0.089187,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "auc_2016": 0.543025,
+      "auc_2017": 0.636242,
+      "delta": 0.093217,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "hour_cos",
+      "auc_2016": 0.299278,
+      "auc_2017": 0.400948,
+      "delta": 0.10167,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "hr",
+      "auc_2016": 0.516977,
+      "auc_2017": 0.638448,
+      "delta": 0.12147,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "card_tx_count",
+      "auc_2016": 0.439463,
+      "auc_2017": 0.585768,
+      "delta": 0.146304,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "has_state",
+      "auc_2016": 0.133821,
+      "auc_2017": 0.562255,
+      "delta": 0.428434,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "chip",
+      "auc_2016": 0.186809,
+      "auc_2017": 0.632978,
+      "delta": 0.446169,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "amt_x_chip",
+      "auc_2016": 0.214726,
+      "auc_2017": 0.664897,
+      "delta": 0.450171,
+      "direction": "IMPROVED_2017"
+    },
+    {
+      "feature": "Month",
+      "auc_2016": 0.456295,
+      "auc_2017": 0.940451,
+      "delta": 0.484156,
+      "direction": "IMPROVED_2017"
+    }
+  ],
+  "cert_time_utc": "2026-09-07T15:28:52Z"
+}

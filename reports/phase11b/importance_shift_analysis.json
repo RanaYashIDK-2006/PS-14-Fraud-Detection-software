@@ -1,0 +1,397 @@
+{
+  "features": [
+    {
+      "feature": "has_zip",
+      "importance_xgb": 0.269439,
+      "importance_lgb": 0.018125,
+      "importance_cb": 0.221681,
+      "importance_avg": 0.169748,
+      "shift_normalized": 0.1246
+    },
+    {
+      "feature": "is_online_or_no_state",
+      "importance_xgb": 0.371453,
+      "importance_lgb": 0.000839,
+      "importance_cb": 0.018383,
+      "importance_avg": 0.130225,
+      "shift_normalized": 0.1191
+    },
+    {
+      "feature": "mcc",
+      "importance_xgb": 0.013692,
+      "importance_lgb": 0.146094,
+      "importance_cb": 0.171338,
+      "importance_avg": 0.110374,
+      "shift_normalized": 0.1175
+    },
+    {
+      "feature": "user_merch_count",
+      "importance_xgb": 0.051518,
+      "importance_lgb": 0.036922,
+      "importance_cb": 0.118233,
+      "importance_avg": 0.068891,
+      "shift_normalized": 0.0
+    },
+    {
+      "feature": "card_tx_count",
+      "importance_xgb": 0.005265,
+      "importance_lgb": 0.118738,
+      "importance_cb": 0.050516,
+      "importance_avg": 0.058173,
+      "shift_normalized": 0.0453
+    },
+    {
+      "feature": "merch_tx_count",
+      "importance_xgb": 0.008587,
+      "importance_lgb": 0.071075,
+      "importance_cb": 0.073874,
+      "importance_avg": 0.051179,
+      "shift_normalized": 0.0298
+    },
+    {
+      "feature": "is_online",
+      "importance_xgb": 0.097305,
+      "importance_lgb": 0.012755,
+      "importance_cb": 0.013795,
+      "importance_avg": 0.041285,
+      "shift_normalized": 0.155
+    },
+    {
+      "feature": "merchant_id",
+      "importance_xgb": 0.005831,
+      "importance_lgb": 0.051523,
+      "importance_cb": 0.037872,
+      "importance_avg": 0.031742,
+      "shift_normalized": 0.0542
+    },
+    {
+      "feature": "city_id",
+      "importance_xgb": 0.00371,
+      "importance_lgb": 0.068474,
+      "importance_cb": 0.010722,
+      "importance_avg": 0.027635,
+      "shift_normalized": 0.0528
+    },
+    {
+      "feature": "mcc_high",
+      "importance_xgb": 0.012304,
+      "importance_lgb": 0.003608,
+      "importance_cb": 0.042378,
+      "importance_avg": 0.01943,
+      "shift_normalized": 0.1142
+    },
+    {
+      "feature": "hr",
+      "importance_xgb": 0.004831,
+      "importance_lgb": 0.033985,
+      "importance_cb": 0.01851,
+      "importance_avg": 0.019109,
+      "shift_normalized": 0.2999
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "importance_xgb": 0.005406,
+      "importance_lgb": 0.034153,
+      "importance_cb": 0.014941,
+      "importance_avg": 0.018167,
+      "shift_normalized": 0.0268
+    },
+    {
+      "feature": "amt_x_online",
+      "importance_xgb": 0.004844,
+      "importance_lgb": 0.015272,
+      "importance_cb": 0.034075,
+      "importance_avg": 0.018064,
+      "shift_normalized": 0.004
+    },
+    {
+      "feature": "hour_cos",
+      "importance_xgb": 0.009296,
+      "importance_lgb": 0.016363,
+      "importance_cb": 0.025766,
+      "importance_avg": 0.017141,
+      "shift_normalized": 0.1711
+    },
+    {
+      "feature": "amt",
+      "importance_xgb": 0.005671,
+      "importance_lgb": 0.029454,
+      "importance_cb": 0.016122,
+      "importance_avg": 0.017082,
+      "shift_normalized": 0.3428
+    },
+    {
+      "feature": "user_avg_amt",
+      "importance_xgb": 0.002281,
+      "importance_lgb": 0.039775,
+      "importance_cb": 0.006036,
+      "importance_avg": 0.016031,
+      "shift_normalized": 0.0434
+    },
+    {
+      "feature": "user_city_diversity",
+      "importance_xgb": 0.0055,
+      "importance_lgb": 0.029202,
+      "importance_cb": 0.010771,
+      "importance_avg": 0.015158,
+      "shift_normalized": 0.0177
+    },
+    {
+      "feature": "card_id",
+      "importance_xgb": 0.003766,
+      "importance_lgb": 0.031468,
+      "importance_cb": 0.007592,
+      "importance_avg": 0.014275,
+      "shift_normalized": 0.0519
+    },
+    {
+      "feature": "has_state",
+      "importance_xgb": 0.02734,
+      "importance_lgb": 0.002853,
+      "importance_cb": 0.011022,
+      "importance_avg": 0.013738,
+      "shift_normalized": 0.1195
+    },
+    {
+      "feature": "user_tx_count",
+      "importance_xgb": 0.002179,
+      "importance_lgb": 0.031635,
+      "importance_cb": 0.003483,
+      "importance_avg": 0.012433,
+      "shift_normalized": 0.046
+    },
+    {
+      "feature": "amt_x_mcc",
+      "importance_xgb": 0.004279,
+      "importance_lgb": 0.021398,
+      "importance_cb": 0.011228,
+      "importance_avg": 0.012302,
+      "shift_normalized": 0.007
+    },
+    {
+      "feature": "log_amt",
+      "importance_xgb": 0.008109,
+      "importance_lgb": 0.011077,
+      "importance_cb": 0.015527,
+      "importance_avg": 0.011571,
+      "shift_normalized": 0.3423
+    },
+    {
+      "feature": "dow",
+      "importance_xgb": 0.002682,
+      "importance_lgb": 0.024671,
+      "importance_cb": 0.004527,
+      "importance_avg": 0.010627,
+      "shift_normalized": 0.2879
+    },
+    {
+      "feature": "Month",
+      "importance_xgb": 0.0021,
+      "importance_lgb": 0.025342,
+      "importance_cb": 0.003115,
+      "importance_avg": 0.010186,
+      "shift_normalized": 0.2454
+    },
+    {
+      "feature": "amt_vs_user_avg",
+      "importance_xgb": 0.002583,
+      "importance_lgb": 0.018797,
+      "importance_cb": 0.00801,
+      "importance_avg": 0.009796,
+      "shift_normalized": 0.0423
+    },
+    {
+      "feature": "hour_sin",
+      "importance_xgb": 0.002822,
+      "importance_lgb": 0.018629,
+      "importance_cb": 0.00652,
+      "importance_avg": 0.009324,
+      "shift_normalized": 0.1717
+    },
+    {
+      "feature": "mcc_restaurant",
+      "importance_xgb": 0.006246,
+      "importance_lgb": 0.005035,
+      "importance_cb": 0.011276,
+      "importance_avg": 0.007519,
+      "shift_normalized": 0.0891
+    },
+    {
+      "feature": "amt_x_hr",
+      "importance_xgb": 0.001913,
+      "importance_lgb": 0.01737,
+      "importance_cb": 0.001309,
+      "importance_avg": 0.006864,
+      "shift_normalized": 0.0072
+    },
+    {
+      "feature": "amt_sq",
+      "importance_xgb": 0.009688,
+      "importance_lgb": 0.002014,
+      "importance_cb": 0.008715,
+      "importance_avg": 0.006806,
+      "shift_normalized": 0.3423
+    },
+    {
+      "feature": "amt_zscore",
+      "importance_xgb": 0.005806,
+      "importance_lgb": 0.008307,
+      "importance_cb": 0.003894,
+      "importance_avg": 0.006002,
+      "shift_normalized": 0.0374
+    },
+    {
+      "feature": "Day",
+      "importance_xgb": 0.001351,
+      "importance_lgb": 0.015104,
+      "importance_cb": 0.000313,
+      "importance_avg": 0.005589,
+      "shift_normalized": 0.1769
+    },
+    {
+      "feature": "mn",
+      "importance_xgb": 0.001186,
+      "importance_lgb": 0.010321,
+      "importance_cb": 7.7e-05,
+      "importance_avg": 0.003861,
+      "shift_normalized": 0.2923
+    },
+    {
+      "feature": "chip",
+      "importance_xgb": 0.004893,
+      "importance_lgb": 0.003692,
+      "importance_cb": 0.002725,
+      "importance_avg": 0.00377,
+      "shift_normalized": 0.1553
+    },
+    {
+      "feature": "is_business_hours",
+      "importance_xgb": 0.006559,
+      "importance_lgb": 0.002769,
+      "importance_cb": 0.001951,
+      "importance_avg": 0.00376,
+      "shift_normalized": 0.1663
+    },
+    {
+      "feature": "is_swipe",
+      "importance_xgb": 0.002951,
+      "importance_lgb": 0.004783,
+      "importance_cb": 0.002999,
+      "importance_avg": 0.003578,
+      "shift_normalized": 0.1495
+    },
+    {
+      "feature": "amt_x_chip",
+      "importance_xgb": 0.002489,
+      "importance_lgb": 0.003524,
+      "importance_cb": 0.004647,
+      "importance_avg": 0.003553,
+      "shift_normalized": 0.0065
+    },
+    {
+      "feature": "err",
+      "importance_xgb": 0.00386,
+      "importance_lgb": 0.003524,
+      "importance_cb": 0.001278,
+      "importance_avg": 0.002887,
+      "shift_normalized": 0.1347
+    },
+    {
+      "feature": "mcc_grocery",
+      "importance_xgb": 0.002751,
+      "importance_lgb": 0.003273,
+      "importance_cb": 0.001595,
+      "importance_avg": 0.00254,
+      "shift_normalized": 0.0681
+    },
+    {
+      "feature": "mcc_travel",
+      "importance_xgb": 0.003891,
+      "importance_lgb": 0.001678,
+      "importance_cb": 0.001978,
+      "importance_avg": 0.002516,
+      "shift_normalized": 0.0643
+    },
+    {
+      "feature": "is_night",
+      "importance_xgb": 0.005741,
+      "importance_lgb": 0.000923,
+      "importance_cb": 0.0,
+      "importance_avg": 0.002221,
+      "shift_normalized": 0.1711
+    },
+    {
+      "feature": "mcc_gas",
+      "importance_xgb": 0.002514,
+      "importance_lgb": 0.003608,
+      "importance_cb": 0.000364,
+      "importance_avg": 0.002162,
+      "shift_normalized": 0.0797
+    },
+    {
+      "feature": "amt_x_night",
+      "importance_xgb": 0.0019,
+      "importance_lgb": 0.001594,
+      "importance_cb": 0.000617,
+      "importance_avg": 0.001371,
+      "shift_normalized": 0.0021
+    },
+    {
+      "feature": "high_amt",
+      "importance_xgb": 0.001693,
+      "importance_lgb": 0.000252,
+      "importance_cb": 0.000105,
+      "importance_avg": 0.000683,
+      "shift_normalized": 0.0172
+    },
+    {
+      "feature": "very_high_amt",
+      "importance_xgb": 0.001777,
+      "importance_lgb": 0.0,
+      "importance_cb": 0.000121,
+      "importance_avg": 0.000633,
+      "shift_normalized": 0.016
+    },
+    {
+      "feature": "mcc_online",
+      "importance_xgb": 0.0,
+      "importance_lgb": 0.0,
+      "importance_cb": 0.0,
+      "importance_avg": 0.0,
+      "shift_normalized": 0.0607
+    }
+  ],
+  "top10_importance_features": [
+    "has_zip",
+    "is_online_or_no_state",
+    "mcc",
+    "user_merch_count",
+    "card_tx_count",
+    "merch_tx_count",
+    "is_online",
+    "merchant_id",
+    "city_id",
+    "mcc_high"
+  ],
+  "top10_shift_features": [
+    "is_online",
+    "has_state",
+    "is_online_or_no_state",
+    "amt_x_online",
+    "has_zip",
+    "card_tx_count",
+    "chip",
+    "amt",
+    "high_amt",
+    "amt_vs_user_avg"
+  ],
+  "overlap_count": 4,
+  "overlap_features": [
+    "card_tx_count",
+    "is_online",
+    "has_zip",
+    "is_online_or_no_state"
+  ],
+  "status": "AVAILABLE",
+  "cert_time_utc": "2026-09-07T15:28:52Z"
+}

@@ -1,0 +1,172 @@
+{
+  "results": {
+    "A_p11_baseline": {
+      "n": 17378,
+      "fraud": 255,
+      "legit": 17123,
+      "tp": 86,
+      "fp": 151,
+      "fn": 169,
+      "tn": 16972,
+      "recall": 0.337255,
+      "fpr": 0.008819,
+      "precision": 0.362869,
+      "alerts": 237,
+      "alerts_per_1k": 13.64,
+      "channel_breakdown": {
+        "Chip Transaction": {
+          "recall": 0.33871,
+          "fpr": 0.001157,
+          "fraud": 248
+        },
+        "Swipe Transaction": {
+          "recall": 0.285714,
+          "fpr": 0.000688,
+          "fraud": 7
+        },
+        "Online Transaction": {
+          "recall": 0.0,
+          "fpr": 0.0,
+          "fraud": 0,
+          "note": "no fraud in segment"
+        }
+      }
+    },
+    "B_channel_balanced": {
+      "n": 17378,
+      "fraud": 255,
+      "legit": 17123,
+      "tp": 50,
+      "fp": 154,
+      "fn": 205,
+      "tn": 16969,
+      "recall": 0.196078,
+      "fpr": 0.008994,
+      "precision": 0.245098,
+      "alerts": 204,
+      "alerts_per_1k": 11.74,
+      "channel_breakdown": {
+        "Chip Transaction": {
+          "recall": 0.201613,
+          "fpr": 0.001488,
+          "fraud": 248
+        },
+        "Swipe Transaction": {
+          "recall": 0.0,
+          "fpr": 0.001375,
+          "fraud": 7
+        },
+        "Online Transaction": {
+          "recall": 0.0,
+          "fpr": 0.0,
+          "fraud": 0,
+          "note": "no fraud in segment"
+        }
+      }
+    },
+    "C_chip_hardneg": {
+      "n": 17378,
+      "fraud": 255,
+      "legit": 17123,
+      "tp": 86,
+      "fp": 151,
+      "fn": 169,
+      "tn": 16972,
+      "recall": 0.337255,
+      "fpr": 0.008819,
+      "precision": 0.362869,
+      "alerts": 237,
+      "alerts_per_1k": 13.64,
+      "channel_breakdown": {
+        "Chip Transaction": {
+          "recall": 0.33871,
+          "fpr": 0.001157,
+          "fraud": 248
+        },
+        "Swipe Transaction": {
+          "recall": 0.285714,
+          "fpr": 0.000688,
+          "fraud": 7
+        },
+        "Online Transaction": {
+          "recall": 0.0,
+          "fpr": 0.0,
+          "fraud": 0,
+          "note": "no fraud in segment"
+        }
+      }
+    },
+    "D_no_online_features": {
+      "n": 17378,
+      "fraud": 255,
+      "legit": 17123,
+      "tp": 130,
+      "fp": 189,
+      "fn": 125,
+      "tn": 16934,
+      "recall": 0.509804,
+      "fpr": 0.011038,
+      "precision": 0.407524,
+      "alerts": 319,
+      "alerts_per_1k": 18.36,
+      "channel_breakdown": {
+        "Chip Transaction": {
+          "recall": 0.512097,
+          "fpr": 0.003802,
+          "fraud": 248
+        },
+        "Swipe Transaction": {
+          "recall": 0.428571,
+          "fpr": 0.000688,
+          "fraud": 7
+        },
+        "Online Transaction": {
+          "recall": 0.0,
+          "fpr": 0.0,
+          "fraud": 0,
+          "note": "no fraud in segment"
+        }
+      }
+    },
+    "E_balanced_combo": {
+      "n": 17378,
+      "fraud": 255,
+      "legit": 17123,
+      "tp": 50,
+      "fp": 154,
+      "fn": 205,
+      "tn": 16969,
+      "recall": 0.196078,
+      "fpr": 0.008994,
+      "precision": 0.245098,
+      "alerts": 204,
+      "alerts_per_1k": 11.74,
+      "channel_breakdown": {
+        "Chip Transaction": {
+          "recall": 0.201613,
+          "fpr": 0.001488,
+          "fraud": 248
+        },
+        "Swipe Transaction": {
+          "recall": 0.0,
+          "fpr": 0.001375,
+          "fraud": 7
+        },
+        "Online Transaction": {
+          "recall": 0.0,
+          "fpr": 0.0,
+          "fraud": 0,
+          "note": "no fraud in segment"
+        }
+      }
+    }
+  },
+  "locked_thresholds": {
+    "A_p11_baseline": 0.7731440385812249,
+    "B_channel_balanced": 0.7901066274039061,
+    "C_chip_hardneg": 0.7731440385812249,
+    "D_no_online_features": 0.7597850063065764,
+    "E_balanced_combo": 0.7901066274039061
+  },
+  "cert_time_utc": "2026-09-07T15:47:14Z"
+}

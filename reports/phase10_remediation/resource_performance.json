@@ -1,0 +1,10 @@
+{
+  "model_load_time_ms": 104.3,
+  "batch_10k_rows_total_ms": 82.13,
+  "batch_10k_rows_per_row_ms": 0.0082,
+  "single_row_scaler_ms": 0.1202,
+  "peak_rss_mb": null,
+  "failure_rate": 0.0,
+  "notes": "member predict_proba dominates; scaler+cache measured separately; production per-request latency SLO (P99<100ms) monitored at /internal/latency-slo, not re-derived here",
+  "cert_time_utc": "2026-09-07T14:04:33Z"
+}

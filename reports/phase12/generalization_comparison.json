@@ -1,0 +1,59 @@
+{
+  "p11_baseline": {
+    "2016_recall": 0.79715,
+    "2017_recall": 0.337255
+  },
+  "candidates": {
+    "A_p11_baseline": {
+      "2016_recall": 0.7972,
+      "2017_recall": 0.3373,
+      "2016_fpr": 0.0076,
+      "2017_fpr": 0.00882,
+      "meets_2016_criterion": false,
+      "improves_2017": false,
+      "no_fpr_regression": true,
+      "overall": "NOT_WINNER"
+    },
+    "B_channel_balanced": {
+      "2016_recall": 0.7972,
+      "2017_recall": 0.1961,
+      "2016_fpr": 0.00802,
+      "2017_fpr": 0.00899,
+      "meets_2016_criterion": false,
+      "improves_2017": false,
+      "no_fpr_regression": true,
+      "overall": "NOT_WINNER"
+    },
+    "C_chip_hardneg": {
+      "2016_recall": 0.7972,
+      "2017_recall": 0.3373,
+      "2016_fpr": 0.0076,
+      "2017_fpr": 0.00882,
+      "meets_2016_criterion": false,
+      "improves_2017": false,
+      "no_fpr_regression": true,
+      "overall": "NOT_WINNER"
+    },
+    "D_no_online_features": {
+      "2016_recall": 0.8064,
+      "2017_recall": 0.5098,
+      "2016_fpr": 0.0085,
+      "2017_fpr": 0.01104,
+      "meets_2016_criterion": true,
+      "improves_2017": true,
+      "no_fpr_regression": true,
+      "overall": "POTENTIAL_WINNER"
+    },
+    "E_balanced_combo": {
+      "2016_recall": 0.7972,
+      "2017_recall": 0.1961,
+      "2016_fpr": 0.00802,
+      "2017_fpr": 0.00899,
+      "meets_2016_criterion": false,
+      "improves_2017": false,
+      "no_fpr_regression": true,
+      "overall": "NOT_WINNER"
+    }
+  },
+  "cert_time_utc": "2026-09-07T15:47:14Z"
+}

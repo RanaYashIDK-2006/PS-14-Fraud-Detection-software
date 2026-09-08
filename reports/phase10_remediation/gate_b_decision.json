@@ -1,0 +1,123 @@
+{
+  "gate": "B",
+  "gate_name": "48-feature offline/production parity",
+  "status": "FAIL",
+  "decision_time_utc": "2026-09-07T14:10:00Z",
+  "execution_basis": "actual harness execution (phase10b_gateB.py), not preflight",
+  "input_firewall": {
+    "dataset": "data/_raw_parity_cache_tr.npz",
+    "sha256": "9c866f118ac2c7065a7b668daa46ba7d94ec801d30f92ca63c6ad090fd5aa882",
+    "rows": 879196,
+    "min_year": 1991,
+    "max_year": 2015,
+    "asserted_max_year_lt_2016": true,
+    "final_test_rows_loaded": 0,
+    "2018_2020_fraud_rows_present": 0
+  },
+  "evidence_files": [
+    "feature_parity_results.json",
+    "edge_case_parity.json",
+    "cache_reset_regression.json",
+    "temporal_parity.json",
+    "fraud_rate_parity.json",
+    "score_parity.json",
+    "precision_audit.json",
+    "zero_value_audit.json",
+    "input_manifest_tr.json"
+  ],
+  "results": {
+    "48_feature_matrix": {
+      "features_tested": 48,
+      "pass": 38,
+      "fail": 10,
+      "semantic_failures": {
+        "merchant_id": {"frac_rows_exceed_tol": 1.0, "offline_mean": 54740.84, "production_mean": 0.0, "cause": "privacy layer ingest schema (IngestTransactionRequest) has NO merchant-name/merchant-id field; FeatureVector.merchant_id defaults to ''; _from_raw_native maps merchant_id->merchant_name->_code('')=0.0 constant. Offline trained on real merchant hash codes."},
+        "user_merchant_diversity": {"frac_rows_exceed_tol": 0.99642, "offline_mean": 67.15, "production_mean": 1.0, "cause": "FeatureVector default 0.0 -> derive clamps max(0,1.0)=1.0 constant; offline used real distinct-merchant counts."},
+        "user_city_diversity": {"frac_rows_exceed_tol": 0.99316, "offline_mean": 32.82, "production_mean": 1.0, "cause": "same clamp; offline used real distinct-city counts."},
+        "user_merch_count": {"frac_rows_exceed_tol": 0.84743, "offline_mean": 39.88, "production_mean": 0.0, "cause": "FeatureVector default 0; UserVelocityTracker never tracks per-user-merchant interaction counts."},
+        "user_fraud_rate": {"frac_rows_exceed_tol": 0.58354, "offline_mean": 0.0212, "production_mean": 0.001, "cause": "wired path feeds 0.0 default -> COLD_START_FRAUD_RATE 0.001 constant."},
+        "merch_fraud_rate": {"frac_rows_exceed_tol": 0.57241, "offline_mean": 0.0201, "production_mean": 0.001, "cause": "same wired cold-start constant."},
+        "city_fraud_rate": {"frac_rows_exceed_tol": 0.47720, "offline_mean": 0.0228, "production_mean": 0.001, "cause": "same wired cold-start constant."}
+      },
+      "precision_boundary_failures": {
+        "user_avg_amt": {"frac_rows_exceed_tol": 0.000737, "max_delta": 0.0001, "cause": "float32 storage of offline cache vs float64 prod; delta equals tolerance exactly (rounding boundary)"},
+        "amt_vs_user_avg": {"frac_rows_exceed_tol": 0.00022, "max_delta": 128.06, "cause": "divides by user_avg_amt; tiny denominator errors amplify at the 4-decimal rounding boundary"},
+        "amt_zscore": {"frac_rows_exceed_tol": 0.00022, "max_delta": 128.07, "cause": "same denominator amplification"}
+      },
+      "note": "The 3 precision-boundary failures affect <0.08% of rows at exactly the 1e-4 tolerance boundary (float32 storage vs float64 compute); the 7 semantic failures affect 48-100% of rows and are material."
+    },
+    "edge_cases_20": {
+      "tested": 20,
+      "pass": 20,
+      "fail": 0,
+      "note": "when context inputs are identical, the shared derivation (derive_native_features) produces identical vectors on all 20 edge cases (normal, zero amount, missing amount->0.0 boundary, NaN, unseen entities, channels, extreme amounts, malformed fields)."
+    },
+    "cache_reset_regression": {
+      "cold_equals_warm": true,
+      "cold_equals_reset": true,
+      "cold_equals_restart": true,
+      "reordered_batch_first_observation_empty": true,
+      "zero_amount_preserved": true,
+      "zero_count_not_missing": true,
+      "note": "unrelated prior state does not contaminate later events; first-observed row always sees empty context; amount=0 is a value, not missing."
+    },
+    "temporal_parity": {
+      "offline_strict_before_ts_cutoff": true,
+      "production_trackers_have_no_ts_cutoff": true,
+      "out_of_order_ingest_changes_earlier_row_features": true,
+      "max_delta_after_future_row_ingested_first": 9999.0,
+      "affected_features": ["user_tx_count", "card_tx_count", "user_avg_amt", "amt_vs_user_avg", "amt_zscore", "merch_tx_count"],
+      "same_day_ordering": true,
+      "duplicate_ts_handled": true,
+      "first_observation_empty": true,
+      "note": "production UserVelocityTracker/EntityFraudRateTracker accumulate in INGESTION order with no ts parameter; a backdated/future-dated row ingested early leaks into earlier-dated rows' features. Offline sorts by ts before expanding context (by construction). Material semantic divergence for replay/backdate workloads."
+    },
+    "fraud_rate_parity_split": {
+      "CAUSALITY_STATUS": "PASS",
+      "NUMERICAL_PARITY_STATUS_WIRED": "FAIL",
+      "NUMERICAL_PARITY_STATUS_TRACKER": "FAIL",
+      "PRODUCTION_LABEL_AVAILABILITY": "UNVERIFIED",
+      "note": "numerical parity and label availability are reported separately; a tracker that numerically matched offline would still not resolve Gate A."
+    },
+    "score_parity": {
+      "threshold": 0.0298937337,
+      "rows_compared": 300000,
+      "score_delta_max": 0.995,
+      "decision_disagreements": 67576,
+      "decision_disagreement_frac": 0.22525,
+      "note": "22.5% of sampled shadow rows flip the tV* decision between offline scoring and production-path scoring, driven by the 7 semantic feature divergences."
+    },
+    "precision_audit": {
+      "scaler_float32_vs_float64_max_delta": "see precision_audit.json",
+      "prediction_float32_vs_float64_max_delta": "see precision_audit.json",
+      "note": "both paths cast to float32 before scaling (matches training); measured deltas recorded."
+    },
+    "zero_value_audit": {
+      "amount_zero_preserved": true,
+      "count_zero_not_missing": true,
+      "falsy_default_patterns": "40 candidate regex hits reviewed; the wired 0.0->0.001 cold-start fraud-rate conversion is the documented COLD_START_FRAUD_RATE behavior, not a zero->missing bug."
+    }
+  },
+  "material_divergences": [
+    "merchant_id is a constant 0.0 in production-as-wired (privacy layer never forwards merchant identity) — 100% of rows diverge from training",
+    "user_merchant_diversity / user_city_diversity are constant 1.0 (clamp of the 0.0 default) — ~99% of rows diverge",
+    "user_merch_count is constant 0.0 — 85% of rows diverge",
+    "user/merch/city fraud rates are constant 0.001 cold-start in production-as-wired — 48-58% of rows diverge; even the EntityFraudRateTracker variant (100-event window, min-5) differs from the offline unbounded expanding mean",
+    "production trackers have no timestamp cutoff — out-of-order/backdated ingestion changes earlier rows' features (offline sorts by ts)",
+    "score parity shows 22.5% decision disagreements at the frozen threshold tV*"
+  ],
+  "gate_b_decision": "FAIL",
+  "gate_b_decision_verb": "Material offline/production feature divergence is PROVEN by execution: 7 of 48 features are semantically divergent in production-as-wired (48-100% of rows), temporal semantics diverge for out-of-order ingestion, and 22.5% of threshold decisions flip between offline and production scoring.",
+  "evidence_classification": {
+    "merchant_id_divergence": "PROVEN",
+    "diversity_divergence": "PROVEN",
+    "merch_count_divergence": "PROVEN",
+    "fraud_rate_wired_divergence": "PROVEN",
+    "fraud_rate_tracker_divergence": "PROVEN",
+    "temporal_cutoff_divergence": "PROVEN",
+    "score_decision_disagreement": "PROVEN",
+    "edge_case_derivation_parity": "PROVEN",
+    "cache_reset_safety": "PROVEN",
+    "zero_value_safety": "PROVEN"
+  }
+}

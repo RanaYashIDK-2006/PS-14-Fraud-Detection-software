@@ -1,0 +1,40 @@
+{
+  "features_under_investigation": [
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate"
+  ],
+  "offline_definition": "expanding mean of confirmed-fraud labels strictly before transaction timestamp (unbounded window)",
+  "label_sources_in_project": {
+    "ibm_static_dataset": {
+      "path": "data/credit_card_transactions-ibm_v2.csv",
+      "nature": "pre-labeled synthetic dataset with Is Fraud? column",
+      "production_relevance": "static file; labels are properties of the dataset, NOT produced by a live confirmation pipeline before decisions",
+      "verdict": "RETROSPECTIVE only \u2014 does not constitute production label availability at decision time"
+    },
+    "verification_outcome": {
+      "module": "src/verification_service/main.py",
+      "mechanism": "Investigator confirms/disputes alerts \u2192 VerificationOutcome(score_id, outcome='confirmed'/'disputed', case_id)",
+      "timing": "AFTER the alert is generated and investigator reviews \u2014 retrospective, not decision-time",
+      "consumed_by": "scripts/export_feedback.py \u2192 retraining pool; NOT fed to EntityFraudRateTracker before new decisions",
+      "verdict": "AVAILABLE_ONLY_RETROSPECTIVELY"
+    },
+    "risk_engine_entity_tracker": {
+      "module": "src/risk_engine/main.py _record_entity_rates",
+      "is_fraud_value": "score >= 70 (model prediction proxy)",
+      "timing": "Called via background_task AFTER each evaluation \u2014 uses model's own score as the label",
+      "verdict": "FORBIDDEN \u2014 model predictions must not be used as confirmed fraud labels per Phase 10C \u00a73"
+    },
+    "entity_tracker_seeding": {
+      "module": "src/risk_engine/main.py _seed_entity_tracker",
+      "is_fraud_value": "row.risk_score >= 70 (from DB-2 risk scores)",
+      "timing": "Called at startup from DB-2 history \u2014 uses risk_score threshold, not confirmed labels",
+      "verdict": "FORBIDDEN \u2014 same proxy issue"
+    }
+  },
+  "in_repo_label_pipeline_at_decision_time": "NONE \u2014 no pipeline exists that feeds confirmed fraud labels to the risk engine before a new transaction is evaluated",
+  "confirmed_label_availability": "UNAVAILABLE_AT_DECISION_TIME",
+  "evidence_summary": "The project has NO mechanism to receive a confirmed fraud label for an entity's history before evaluating a new transaction. VerificationOutcome labels arrive after investigation (retrospective). The risk engine uses score>=70 as a proxy (forbidden). The IBM dataset labels exist statically but are not a live stream.",
+  "verdict": "The three fraud-rate features CANNOT be produced with legitimate confirmed labels at decision time. They must be removed from the production model. This triggers PATH B (new production-native candidate required).",
+  "cert_time_utc": "2026-09-07T15:04:09Z"
+}

@@ -1,0 +1,17 @@
+{
+  "candidate": "V_rawplus",
+  "candidate_artifact": "models/model_records/mission_E_hardneg/models.joblib",
+  "candidate_sha256": "8875030e3636a1b59aa24ed7a68f96481d66c9e07e531127f721aae4ec6fdc7e",
+  "production_model": "altman_native_E_hardneg_cert_20260904",
+  "production_member_hashes": {
+    "xgb": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+    "lgb": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+    "cb": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f"
+  },
+  "weight_identity_evidence": "Phase-10B: max |prediction delta| = 0.0 on random vectors between candidate and production members",
+  "production_threshold": 0.018758,
+  "candidate_threshold_tvstar": 0.0298937337,
+  "verdict": "V_rawplus == E_hardneg weights. The observed FPR/alert-rate advantage is THRESHOLD-ONLY (same model, different operating point). V_rawplus is NOT a superior model.",
+  "n_features": 48,
+  "cert_time_utc": "2026-09-07T15:04:09Z"
+}

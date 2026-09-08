@@ -1,0 +1,47 @@
+{
+  "channels": {
+    "Chip Transaction": {
+      "2016": {
+        "fraud": 279,
+        "recall": 0.308244,
+        "fpr": 0.002615,
+        "rows": 12133
+      },
+      "2017": {
+        "fraud": 248,
+        "recall": 0.262097,
+        "fpr": 0.003058,
+        "rows": 12347
+      }
+    },
+    "Swipe Transaction": {
+      "2016": {
+        "fraud": 227,
+        "recall": 0.365639,
+        "fpr": 0.005569,
+        "rows": 3100
+      },
+      "2017": {
+        "fraud": 7,
+        "recall": 0.428571,
+        "fpr": 0.002406,
+        "rows": 2916
+      }
+    },
+    "Online Transaction": {
+      "2016": {
+        "fraud": 3073,
+        "recall": 0.93687,
+        "fpr": 0.053733,
+        "rows": 5176
+      },
+      "2017": {
+        "fraud": 0,
+        "recall": 0.0,
+        "fpr": 0.06383,
+        "rows": 2115
+      }
+    }
+  },
+  "cert_time_utc": "2026-09-07T15:28:52Z"
+}

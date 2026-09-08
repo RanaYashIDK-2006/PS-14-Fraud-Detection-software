@@ -1,0 +1,101 @@
+{
+  "candidate": "V_rawplus",
+  "features_audited": [
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate"
+  ],
+  "dataset_label_audit": {
+    "dataset_path": "data/credit_card_transactions-ibm_v2.csv",
+    "dataset_sha256": "b01fa323c98522f8c710c7f7242581860c97c50183f1c5fa9e772e5c674a7f15",
+    "label_column": "Is Fraud? (Yes/No)",
+    "label_1_meaning": "Transaction flagged fraudulent at dataset generation time by the synthetic generator (pre-labeled static file) - source: reports/data_provenance.json label_audit",
+    "label_created_when": "At dataset generation; no in-repo label-creation pipeline, investigation step, or confirmation timestamp exists (source: reports/data_provenance.json label_audit)",
+    "labels_change_later": "No mechanism in the dataset; static file (documented)",
+    "label_availability_timestamp": "ABSENT - no column or metadata records when a label would become available to a real-time scorer",
+    "verdict": "UNVERIFIED - the raw dataset cannot establish that a fraud label exists at the moment the model scores a later transaction",
+    "generator_semantics": "Fraud events are generated as bursts/archetypes; the generator assigns the label at transaction creation. In the synthetic world labels exist at t=0 for the CURRENT row and are usable for any LATER row by construction. This is a dataset-construction property, NOT a production label-availability property.",
+    "producer_synthetic_property_note": "IBM synthetic generator DOES construct labels at the moment of transaction creation. That means historical fraud-rate features can be computed retroactively in this dataset. It does NOT prove the production system receives finalized fraud labels fast enough to reconstruct them online at decision time."
+  },
+  "feature_lineage": {
+    "user_fraud_rate": {
+      "source": "aggregated historical fraud rate over prior transactions for the user",
+      "input": {
+        "entity_key": "User",
+        "source_label_column": "Is Fraud?",
+        "aggregation": "cumulative fraud count / cumulative transaction count over prior rows"
+      },
+      "temporal_cutoff": "prior transactions only (before current row) - training pipeline uses expanding-window/state-based aggregation",
+      "label_dependency": "Yes - numerator and denominator both depend on fraud labels of prior transactions",
+      "label_finalization_established": "NO - no label finalization timestamp in dataset or pipeline",
+      "could_be_computed_at_decision_time_with_only_available_info": "UNVERIFIED - depends on label availability timing which is not established"
+    },
+    "merch_fraud_rate": {
+      "source": "aggregated historical fraud rate over prior transactions for the merchant",
+      "input": {
+        "entity_key": "Merchant Name",
+        "source_label_column": "Is Fraud?",
+        "aggregation": "cumulative fraud count / cumulative transaction count over prior rows"
+      },
+      "temporal_cutoff": "prior transactions only",
+      "label_dependency": "Yes",
+      "label_finalization_established": "NO",
+      "could_be_computed_at_decision_time_with_only_available_info": "UNVERIFIED"
+    },
+    "city_fraud_rate": {
+      "source": "aggregated historical fraud rate over prior transactions for the city",
+      "input": {
+        "entity_key": "Merchant City",
+        "source_label_column": "Is Fraud?",
+        "aggregation": "cumulative fraud count / cumulative transaction count over prior rows"
+      },
+      "temporal_cutoff": "prior transactions only",
+      "label_dependency": "Yes",
+      "label_finalization_established": "NO",
+      "could_be_computed_at_decision_time_with_only_available_info": "UNVERIFIED"
+    }
+  },
+  "evidence_table": [
+    {
+      "feature": "user_fraud_rate",
+      "label_source": "static synthetic label (Is Fraud?)",
+      "event_time": "transaction Time",
+      "label_available_time": "ABSENT (not established)",
+      "delay": "ABSENT (not established)",
+      "production_available?": "UNVERIFIED",
+      "status": "UNVERIFIED"
+    },
+    {
+      "feature": "merch_fraud_rate",
+      "label_source": "static synthetic label (Is Fraud?)",
+      "event_time": "transaction Time",
+      "label_available_time": "ABSENT (not established)",
+      "delay": "ABSENT (not established)",
+      "production_available?": "UNVERIFIED",
+      "status": "UNVERIFIED"
+    },
+    {
+      "feature": "city_fraud_rate",
+      "label_source": "static synthetic label (Is Fraud?)",
+      "event_time": "transaction Time",
+      "label_available_time": "ABSENT (not established)",
+      "delay": "ABSENT (not established)",
+      "production_available?": "UNVERIFIED",
+      "status": "UNVERIFIED"
+    }
+  ],
+  "classification_of_each_feature": {
+    "user_fraud_rate": "UNVERIFIED",
+    "merch_fraud_rate": "UNVERIFIED",
+    "city_fraud_rate": "UNVERIFIED"
+  },
+  "critical_decision_case_applied": "CASE C - UNVERIFIED. The required evidence (real label availability timing) does not exist in data/provenance. Cannot be upgraded to VERIFIED_AVAILABLE merely because the synthetic dataset permits retroactive computation.",
+  "distinction_usefulness_vs_validated": {
+    "message": "Phase-8 showed removing these features damages AUC 0.9960->0.9869 and FPR 0.0992->0.1349. That proves predictive usefulness, NOT production validity.",
+    "usefulness_status": "PROVEN (Phase-8 D_safe comparison)",
+    "causal_validated_status": "SUPPORTED (prior audits found prior-only aggregation; current row label does not feed its own features)",
+    "label_availability_status": "UNVERIFIED",
+    "production_reconstruction_status": "UNVERIFIED"
+  },
+  "cert_time_utc": "2026-09-06T17:05:31Z"
+}

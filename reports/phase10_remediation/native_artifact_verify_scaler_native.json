@@ -1,0 +1,7 @@
+{
+  "artifact": "scaler_native.joblib",
+  "expected_sha256": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+  "actual_sha256": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+  "on_disk": true,
+  "match": true
+}

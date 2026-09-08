@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "no_target_leakage": true,
+  "no_temporal_leakage": true,
+  "no_future_aggregation": true,
+  "no_2016_2017_in_training": true,
+  "no_final_test_access": true,
+  "cert_time_utc": "2026-09-07T15:59:31Z"
+}

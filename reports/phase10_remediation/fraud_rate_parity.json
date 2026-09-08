@@ -1,0 +1,42 @@
+{
+  "user_fraud_rate": {
+    "feature": "user_fraud_rate",
+    "offline_mean": 0.021173,
+    "wired_mean": 0.001,
+    "tracker_mean": 0.022288,
+    "wired_max_delta": 0.999,
+    "wired_frac_exceed_1e-4": 0.582691,
+    "tracker_max_delta": 0.999,
+    "tracker_frac_exceed_1e-4": 0.965226
+  },
+  "merch_fraud_rate": {
+    "feature": "merch_fraud_rate",
+    "offline_mean": 0.020087,
+    "wired_mean": 0.001,
+    "tracker_mean": 0.020599,
+    "wired_max_delta": 0.999,
+    "wired_frac_exceed_1e-4": 0.572117,
+    "tracker_max_delta": 0.999,
+    "tracker_frac_exceed_1e-4": 0.882971
+  },
+  "city_fraud_rate": {
+    "feature": "city_fraud_rate",
+    "offline_mean": 0.022783,
+    "wired_mean": 0.001,
+    "tracker_mean": 0.023601,
+    "wired_max_delta": 0.999,
+    "wired_frac_exceed_1e-4": 0.477125,
+    "tracker_max_delta": 0.999,
+    "tracker_frac_exceed_1e-4": 0.925974
+  },
+  "CAUSALITY_STATUS": "PASS",
+  "CAUSALITY_EVIDENCE": "offline expanding mean is shifted (cumsum - current)/count; production tracker reads before record() \u2014 no row contributes to its own rate",
+  "NUMERICAL_PARITY_STATUS_WIRED": "FAIL",
+  "NUMERICAL_PARITY_EVIDENCE_WIRED": "production-as-wired feeds FeatureVector defaults (0.0) which derive_native_features maps to COLD_START 0.001 constant; offline used real expanding means",
+  "NUMERICAL_PARITY_STATUS_TRACKER": "FAIL",
+  "NUMERICAL_PARITY_EVIDENCE_TRACKER": "EntityFraudRateTracker uses a 100-event sliding window with min_events=5; offline used an unbounded expanding mean \u2014 different semantics produce different numbers",
+  "PRODUCTION_LABEL_AVAILABILITY": "UNVERIFIED",
+  "LABEL_EVIDENCE": "no genuine evidence that confirmed labels are available at scoring time in production; entity tracker record() is fed score>=70 proxy by risk engine, not a confirmed label (Phase-10A)",
+  "note": "numerical parity conclusions are SEPARATE from label availability; a tracker that numerically matches offline would still not resolve Gate A.",
+  "cert_time_utc": "2026-09-07T14:06:52Z"
+}

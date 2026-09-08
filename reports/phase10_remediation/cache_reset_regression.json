@@ -1,0 +1,30 @@
+{
+  "cold_warm_reset_restart": {
+    "cold_equals_warm": {
+      "equal": true,
+      "label": "cold vs warm",
+      "explanation": "cold==warm requires unrelated prior state to have zero influence"
+    },
+    "cold_equals_reset": {
+      "equal": true,
+      "label": "cold vs reset",
+      "explanation": "cold==warm requires unrelated prior state to have zero influence"
+    },
+    "cold_equals_restart": {
+      "equal": true,
+      "label": "cold vs restart",
+      "explanation": "cold==warm requires unrelated prior state to have zero influence"
+    }
+  },
+  "reorder": {
+    "expected_causal_dependence": true,
+    "row1_same_when_processed_first": true,
+    "note": "first-observed row must always see empty context regardless of batch ordering; later rows may differ by design (causal, not contamination)"
+  },
+  "zero_value": {
+    "amount_zero_preserved": true,
+    "count_zero_not_missing": true,
+    "rate_zero_label_not_missing": true,
+    "note": "amount=0 increments the count (0 is a value, not missing); fraud-rate stays baseline until 5 events (min_events)"
+  }
+}

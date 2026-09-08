@@ -1,0 +1,23 @@
+{
+  "target_candidate": "V_rawplus",
+  "target_threshold": 0.0298937337,
+  "production_threshold": 0.018758,
+  "shadow_dataset_required": {
+    "status": "PENDING - must select approved dev/shadow dataset outside final-test window",
+    "must_not_overlap_final_test": true,
+    "must_record": {
+      "path": "",
+      "sha256": "",
+      "date_range": "",
+      "row_count": "",
+      "fraud_count_if_available": "",
+      "reason_permitted": ""
+    }
+  },
+  "existing_psi_implementation": "must use existing production PSI implementation (not invent new metric)",
+  "controlled_shift_required": true,
+  "alert_rate_analysis_required": true,
+  "no_operational_alert_limit_instantiated": true,
+  "gate_C_status_before_run": "UNVERIFIED",
+  "cert_time_utc": "2026-09-06T17:11:28Z"
+}

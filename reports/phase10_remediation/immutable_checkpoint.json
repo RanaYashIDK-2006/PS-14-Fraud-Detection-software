@@ -1,0 +1,23 @@
+{
+  "production_model_id": "altman_native_E_hardneg_cert_20260904",
+  "production_threshold": 0.018758,
+  "candidate": "V_rawplus",
+  "candidate_artifact_sha256": "8875030e3636a1b59aa24ed7a68f96481d66c9e07e531127f721aae4ec6fdc7e",
+  "candidate_config_sha256": "0babb32e58f57a50e9fa9bb494cb89e659076ab12339aa3b8f273b6eed9c2cf3",
+  "candidate_scores_sha256": "cc2a9c79d8abae5a7613f9f6c1d3620bae6f16f7f5f5bf6437f94b91dde35545",
+  "candidate_threshold_tvstar": 0.0298937337,
+  "locked_val_reference": {
+    "tp": 3815,
+    "fp": 16939,
+    "fn": 19,
+    "tn": 153757,
+    "recall": 0.995044,
+    "fpr": 0.099235,
+    "precision": 0.18382,
+    "alerts": 20754,
+    "alerts_per_1k": 118.9136538
+  },
+  "candidate_model_type": "NativeMissionEnsemble (XGB+LightGBM+CatBoost)",
+  "candidate_n_features": 48,
+  "candidate_name_in_record": "mission_E_hardneg"
+}

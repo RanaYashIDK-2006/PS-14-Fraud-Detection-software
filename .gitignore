@@ -84,3 +84,22 @@ models/production/
 *.npy
 *.npz
 
+
+# Large data files (too big for git)
+data/*.csv
+data/*.npz
+data/kaggle_fraud/
+models/*.joblib
+models/*.json
+models/artifacts/
+models/production/
+models/cache/
+models/model_records/
+experiments/
+reports/phase6b_preflight.json
+reports/phase7_*.json
+reports/phase8_*.json
+reports/phase9_certification/
+reports/altman_*.json
+benchmarks/
+scripts/

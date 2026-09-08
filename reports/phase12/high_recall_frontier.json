@@ -1,0 +1,190 @@
+{
+  "frontiers": {
+    "A_p11_baseline": [
+      {
+        "target_recall": 0.99,
+        "threshold": 0.19252549,
+        "recall": 0.990494,
+        "fpr": 0.073011,
+        "alerts_per_1k": 127.39
+      },
+      {
+        "target_recall": 0.995,
+        "threshold": 0.14685461,
+        "recall": 0.995247,
+        "fpr": 0.087985,
+        "alerts_per_1k": 141.76
+      },
+      {
+        "target_recall": 0.997,
+        "threshold": 0.13080087,
+        "recall": 0.997148,
+        "fpr": 0.09643,
+        "alerts_per_1k": 149.82
+      },
+      {
+        "target_recall": 0.998,
+        "threshold": 0.04561436,
+        "recall": 0.998099,
+        "fpr": 0.171239,
+        "alerts_per_1k": 220.25
+      },
+      {
+        "target_recall": 0.999,
+        "threshold": 0.04228389,
+        "recall": 0.999049,
+        "fpr": 0.178306,
+        "alerts_per_1k": 226.96
+      }
+    ],
+    "B_channel_balanced": [
+      {
+        "target_recall": 0.99,
+        "threshold": 0.22586449,
+        "recall": 0.990494,
+        "fpr": 0.07397,
+        "alerts_per_1k": 128.3
+      },
+      {
+        "target_recall": 0.995,
+        "threshold": 0.16604777,
+        "recall": 0.995247,
+        "fpr": 0.093495,
+        "alerts_per_1k": 146.95
+      },
+      {
+        "target_recall": 0.997,
+        "threshold": 0.13954885,
+        "recall": 0.997148,
+        "fpr": 0.104756,
+        "alerts_per_1k": 157.65
+      },
+      {
+        "target_recall": 0.998,
+        "threshold": 0.07787856,
+        "recall": 0.998099,
+        "fpr": 0.145424,
+        "alerts_per_1k": 195.97
+      },
+      {
+        "target_recall": 0.999,
+        "threshold": 0.06754866,
+        "recall": 0.999049,
+        "fpr": 0.155307,
+        "alerts_per_1k": 205.32
+      }
+    ],
+    "C_chip_hardneg": [
+      {
+        "target_recall": 0.99,
+        "threshold": 0.19252549,
+        "recall": 0.990494,
+        "fpr": 0.073011,
+        "alerts_per_1k": 127.39
+      },
+      {
+        "target_recall": 0.995,
+        "threshold": 0.14685461,
+        "recall": 0.995247,
+        "fpr": 0.087985,
+        "alerts_per_1k": 141.76
+      },
+      {
+        "target_recall": 0.997,
+        "threshold": 0.13080087,
+        "recall": 0.997148,
+        "fpr": 0.09643,
+        "alerts_per_1k": 149.82
+      },
+      {
+        "target_recall": 0.998,
+        "threshold": 0.04561436,
+        "recall": 0.998099,
+        "fpr": 0.171239,
+        "alerts_per_1k": 220.25
+      },
+      {
+        "target_recall": 0.999,
+        "threshold": 0.04228389,
+        "recall": 0.999049,
+        "fpr": 0.178306,
+        "alerts_per_1k": 226.96
+      }
+    ],
+    "D_no_online_features": [
+      {
+        "target_recall": 0.99,
+        "threshold": 0.23592275,
+        "recall": 0.990494,
+        "fpr": 0.063967,
+        "alerts_per_1k": 118.89
+      },
+      {
+        "target_recall": 0.995,
+        "threshold": 0.15655706,
+        "recall": 0.995247,
+        "fpr": 0.087087,
+        "alerts_per_1k": 140.92
+      },
+      {
+        "target_recall": 0.997,
+        "threshold": 0.12590695,
+        "recall": 0.997148,
+        "fpr": 0.101402,
+        "alerts_per_1k": 154.5
+      },
+      {
+        "target_recall": 0.998,
+        "threshold": 0.04852079,
+        "recall": 0.998099,
+        "fpr": 0.171897,
+        "alerts_per_1k": 220.87
+      },
+      {
+        "target_recall": 0.999,
+        "threshold": 0.03426448,
+        "recall": 0.999049,
+        "fpr": 0.204001,
+        "alerts_per_1k": 251.13
+      }
+    ],
+    "E_balanced_combo": [
+      {
+        "target_recall": 0.99,
+        "threshold": 0.22586449,
+        "recall": 0.990494,
+        "fpr": 0.07397,
+        "alerts_per_1k": 128.3
+      },
+      {
+        "target_recall": 0.995,
+        "threshold": 0.16604777,
+        "recall": 0.995247,
+        "fpr": 0.093495,
+        "alerts_per_1k": 146.95
+      },
+      {
+        "target_recall": 0.997,
+        "threshold": 0.13954885,
+        "recall": 0.997148,
+        "fpr": 0.104756,
+        "alerts_per_1k": 157.65
+      },
+      {
+        "target_recall": 0.998,
+        "threshold": 0.07787856,
+        "recall": 0.998099,
+        "fpr": 0.145424,
+        "alerts_per_1k": 195.97
+      },
+      {
+        "target_recall": 0.999,
+        "threshold": 0.06754866,
+        "recall": 0.999049,
+        "fpr": 0.155307,
+        "alerts_per_1k": 205.32
+      }
+    ]
+  },
+  "cert_time_utc": "2026-09-07T15:47:14Z"
+}

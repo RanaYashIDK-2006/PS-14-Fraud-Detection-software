@@ -1,0 +1,338 @@
+[
+  {
+    "feature": "amt",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "raw amount (clamped >= 0)",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "log_amt",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "log1p(amt)",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "amt_sq",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "amt ** 2",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "hr",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "event hour",
+    "contract_missing_behavior": "absent -> 12.0"
+  },
+  {
+    "feature": "mn",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "event minute",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "dow",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "event weekday",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "Month",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "event month",
+    "contract_missing_behavior": "absent -> 8.0"
+  },
+  {
+    "feature": "Day",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "event day",
+    "contract_missing_behavior": "absent -> 15.0"
+  },
+  {
+    "feature": "hour_sin",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "sin transform of hr",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "hour_cos",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "cos transform of hr",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "is_night",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "1 if hr < 6 or hr >= 22",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "is_business_hours",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "1 if 9 <= hr <= 17",
+    "contract_missing_behavior": "absent -> 1"
+  },
+  {
+    "feature": "chip",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "use_chip == 'Chip Transaction'",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "is_online",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "use_chip == 'Online Transaction'",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "is_swipe",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "use_chip == 'Swipe Transaction'",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "err",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "errors field non-empty",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "has_zip",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "zip field non-empty",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "has_state",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "merchant_state field non-empty",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "is_online_or_no_state",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "is_online OR has_state == 0",
+    "contract_missing_behavior": "absent -> 1"
+  },
+  {
+    "feature": "mcc",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "raw mcc",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "mcc_high",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "mcc >= 5000",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "mcc_restaurant",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "5812 <= mcc <= 5814",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "mcc_gas",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "5541 <= mcc <= 5542",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "mcc_grocery",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "5411 <= mcc <= 5422",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "mcc_travel",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "3000 <= mcc <= 3350",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "mcc_online",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "5967 <= mcc <= 5969",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "merchant_id",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "sha256(merchant name) mod 100000; same code train==prod",
+    "contract_missing_behavior": "absent -> 0.0 (cold-start bucket)"
+  },
+  {
+    "feature": "city_id",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "sha256(merchant_city) mod 100000",
+    "contract_missing_behavior": "absent -> 0.0 (cold-start bucket)"
+  },
+  {
+    "feature": "card_id",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "sha256(card) mod 100000",
+    "contract_missing_behavior": "absent -> 0.0 (cold-start bucket)"
+  },
+  {
+    "feature": "user_tx_count",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "prior events for user_id (velocity tracker, shifted)",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "card_tx_count",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "prior events for card (velocity tracker, shifted)",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "user_avg_amt",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "prior mean amount for user (shifted average)",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "amt_vs_user_avg",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "amt / user_avg_amt (prior mean)",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "amt_zscore",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "(amt - prior mean) / prior std (shifted)",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "merch_tx_count",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "prior events for merchant (velocity tracker, shifted)",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "user_merchant_diversity",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "distinct prior merchants for user",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "user_city_diversity",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "distinct prior cities for user",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "user_fraud_rate",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "prior fraud rate for user (entity tracker, shifted; labels recorded only after the scored event)",
+    "contract_missing_behavior": "absent -> 0.001 cold-start baseline"
+  },
+  {
+    "feature": "merch_fraud_rate",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "prior fraud rate for merchant (shifted)",
+    "contract_missing_behavior": "absent -> 0.001 cold-start baseline"
+  },
+  {
+    "feature": "city_fraud_rate",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "prior fraud rate for city (shifted)",
+    "contract_missing_behavior": "absent -> 0.001 cold-start baseline"
+  },
+  {
+    "feature": "high_amt",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "amt > 2 * user_avg_amt",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "very_high_amt",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "int {0,1}",
+    "contract_formula": "amt > 5 * user_avg_amt",
+    "contract_missing_behavior": "absent -> 0"
+  },
+  {
+    "feature": "amt_x_hr",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "amt * hr",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "amt_x_mcc",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "amt * mcc",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "amt_x_chip",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "amt * chip",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "amt_x_online",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "amt * is_online",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "amt_x_night",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "amt * is_night",
+    "contract_missing_behavior": "absent -> 0.0"
+  },
+  {
+    "feature": "user_merch_count",
+    "offline_dtype_from_frame": "float64",
+    "offline_dtype_from_contract": "float",
+    "contract_formula": "prior merchant count for user (velocity tracker, shifted)",
+    "contract_missing_behavior": "absent -> 0.0"
+  }
+]

@@ -1,0 +1,31 @@
+{
+  "target_candidate": "V_rawplus",
+  "target_artifact_path": "models/model_records/mission_E_hardneg/models.joblib (candidate record altman_native_E_hardneg_cert_20260904) — loaded with joblib for offline reproduction",
+  "native_artifact_members": "models/production/altman_native/{xgb,lgb,cb,scaler}_native.joblib + feature_list.json (feature_list.json exposes the 48-feature contract list; the altman_runtime inference path uses src/privacy_layer/native_features.derive_native_features + native_vector + src/risk_engine/altman_native_ensemble.py ensemble weights)",
+  "native_feature_contract": "models/feature_contract.json (altman_native_v2 schema, 48 features in fixed order, identical to ALTMAN_NATIVE_FEATURES and cfg.features_used)",
+  "native_feature_identity_summary": {
+    "feature_contract_sha256": "643a9b71b8cbda566fa6bd62ea56609d9467992a8705b1ea039a8e068be88a88",
+    "contract_order_sha256_48_list": "698e3adec143d2ca4fd575aeefaf28ed03937350068388bdc6ef3912a527d5d5",
+    "contract_equals_cfg_equals_ALTMAN_NATIVE_FEATURES": true,
+    "note": "feature_list.json in models/production/altman_native is a DIFFERENT manifest (altman_runtime feature/weight manifest) and must NOT be used as the 48-contract list; the 48-contract binding is models/feature_contract.json and ALTMAN_NATIVE_FEATURES in native_features.py"
+  },
+  "offline_feature_derivation": "src/privacy_layer/native_features.derive_native_features (single derivation used by offline training AND live scoring), with src/risk_engine/altman_native_ensemble.py ensemble weighting and scaler_native.joblib",
+  "production_inference_path": "src/risk_engine/altman_native_ensemble.py (load + score via native_vector(derive_native_features(...))) feeding models/production/altman_native/{xgb,lgb,cb}_native.joblib + scaler_native.joblib",
+  "parity_dataset": {
+    "status": "PENDING - must select locked dev/shadow sample outside final-test window; SHA-256 and date range to be recorded before run",
+    "must_not_overlap_final_test": true
+  },
+  "edge_case_suite_required": 20,
+  "known_bug_regression_required": [
+    "cache reset / cold vs warm vs restart",
+    "city_fraud_rate cache reset (chunk-rowgroup reset bug previously seen in project)",
+    "merchant state cold/warm/new/deep/zero-frame",
+    "user state cold/warm/reset",
+    "zero-value not treated as missing/default"
+  ],
+  "fraud_rate_parity_required": true,
+  "score_parity_required": true,
+  "precision_parity_required": true,
+  "gate_B_status_before_run": "UNVERIFIED",
+  "cert_time_utc": "2026-09-06T17:11:28Z"
+}

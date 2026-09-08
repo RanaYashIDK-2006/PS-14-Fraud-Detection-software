@@ -1,0 +1,26 @@
+{
+  "channels": {
+    "Chip Transaction": {
+      "fraud_count": 0,
+      "total": 0,
+      "legit": 0,
+      "prevalence": 0.0,
+      "support": "INSUFFICIENT_SUPPORT"
+    },
+    "Swipe Transaction": {
+      "fraud_count": 5534,
+      "total": 129403,
+      "legit": 123869,
+      "prevalence": 0.042766,
+      "support": "STRONG_SUPPORT"
+    },
+    "Online Transaction": {
+      "fraud_count": 11478,
+      "total": 25353,
+      "legit": 13875,
+      "prevalence": 0.452727,
+      "support": "STRONG_SUPPORT"
+    }
+  },
+  "cert_time_utc": "2026-09-07T15:47:14Z"
+}

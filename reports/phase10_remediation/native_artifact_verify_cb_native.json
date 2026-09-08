@@ -1,0 +1,7 @@
+{
+  "artifact": "cb_native.joblib",
+  "expected_sha256": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+  "actual_sha256": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+  "on_disk": true,
+  "match": true
+}

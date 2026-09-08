@@ -1,0 +1,10 @@
+{
+  "excluded_features_absent": true,
+  "no_model_score_as_label": true,
+  "no_retrospective_label_online": true,
+  "privacy_layer_intact": true,
+  "no_new_sensitive_field_exposed": true,
+  "model_artifact_integrity": true,
+  "model_hash": "395467fcab7688c2c8d917ee1e934ef69e4fd85d1843a4cb320dd4a50e0dae3e",
+  "cert_time_utc": "2026-09-07T15:12:08Z"
+}

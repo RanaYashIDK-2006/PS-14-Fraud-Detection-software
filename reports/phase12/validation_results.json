@@ -1,0 +1,50 @@
+{
+  "validation": {
+    "A_p11_baseline": {
+      "threshold": 0.7731440385812249,
+      "val_auc": 0.996343,
+      "val_pr_auc": 0.959717,
+      "recall": 0.904943,
+      "fpr": 0.009643,
+      "precision": 0.855346,
+      "alerts_per_1k": 62.71
+    },
+    "B_channel_balanced": {
+      "threshold": 0.7901066274039061,
+      "val_auc": 0.996391,
+      "val_pr_auc": 0.960028,
+      "recall": 0.907795,
+      "fpr": 0.009943,
+      "precision": 0.851918,
+      "alerts_per_1k": 63.16
+    },
+    "C_chip_hardneg": {
+      "threshold": 0.7731440385812249,
+      "val_auc": 0.996343,
+      "val_pr_auc": 0.959717,
+      "recall": 0.904943,
+      "fpr": 0.009643,
+      "precision": 0.855346,
+      "alerts_per_1k": 62.71
+    },
+    "D_no_online_features": {
+      "threshold": 0.7597850063065764,
+      "val_auc": 0.996336,
+      "val_pr_auc": 0.95956,
+      "recall": 0.906844,
+      "fpr": 0.009943,
+      "precision": 0.851786,
+      "alerts_per_1k": 63.11
+    },
+    "E_balanced_combo": {
+      "threshold": 0.7901066274039061,
+      "val_auc": 0.996391,
+      "val_pr_auc": 0.960028,
+      "recall": 0.907795,
+      "fpr": 0.009943,
+      "precision": 0.851918,
+      "alerts_per_1k": 63.16
+    }
+  },
+  "cert_time_utc": "2026-09-07T15:47:14Z"
+}

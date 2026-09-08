@@ -1,0 +1,16 @@
+{
+  "phase": "13",
+  "final_test_accessed": false,
+  "final_test_authorized": false,
+  "e_hardneg_untouched": true,
+  "p11_untouched": true,
+  "production_untouched": true,
+  "training_cutoff": 2013,
+  "max_transaction_year_in_training": 2013,
+  "2016_used_for_training": false,
+  "2017_used_for_training": false,
+  "2016_used_for_threshold_selection": false,
+  "2017_used_for_threshold_selection": false,
+  "status": "PASS",
+  "cert_time_utc": "2026-09-07T22:00:00Z"
+}

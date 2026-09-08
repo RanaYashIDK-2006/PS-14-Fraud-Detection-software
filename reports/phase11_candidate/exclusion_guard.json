@@ -1,0 +1,29 @@
+{
+  "excluded_features": [
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate"
+  ],
+  "guard_checks": [
+    {
+      "feature": "user_fraud_rate",
+      "in_45_feature_contract": false,
+      "in_alzman_native_features": true,
+      "excluded_correctly": true
+    },
+    {
+      "feature": "merch_fraud_rate",
+      "in_45_feature_contract": false,
+      "in_alzman_native_features": true,
+      "excluded_correctly": true
+    },
+    {
+      "feature": "city_fraud_rate",
+      "in_45_feature_contract": false,
+      "in_alzman_native_features": true,
+      "excluded_correctly": true
+    }
+  ],
+  "all_pass": true,
+  "cert_time_utc": "2026-09-07T15:12:08Z"
+}

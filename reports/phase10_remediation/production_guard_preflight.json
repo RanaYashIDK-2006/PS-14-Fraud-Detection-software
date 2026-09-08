@@ -1,0 +1,16 @@
+{
+  "production_artifact_dir": "models/model_records/mission_E_hardneg",
+  "production_model_sha256": "8875030e3636a1b59aa24ed7a68f96481d66c9e07e531127f721aae4ec6fdc7e",
+  "production_config_sha256": "0babb32e58f57a50e9fa9bb494cb89e659076ab12339aa3b8f273b6eed9c2cf3",
+  "production_scores_sha256": "cc2a9c79d8abae5a7613f9f6c1d3620bae6f16f7f5f5bf6437f94b91dde35545",
+  "production_threshold": 0.018758,
+  "guard_assertions": {
+    "production_artifact_was_not_replaced": true,
+    "production_config_was_not_overwritten": true,
+    "production_threshold_was_not_changed": true,
+    "production_data_paths_were_not_modified": true,
+    "no_production_model_was_retrained": true,
+    "no_production_registry_entry_was_overwritten": true,
+    "no_production_rollback_target_was_altered": true
+  }
+}

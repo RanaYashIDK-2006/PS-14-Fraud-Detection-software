@@ -1,0 +1,34 @@
+{
+  "policy": "feature(t) may use only events with timestamp < t (strict-before causality)",
+  "tests": {
+    "A_future_insertion": {
+      "pass": true,
+      "max_delta": 0.0,
+      "description": "future row (ts=2016-01-01) ingested before row at 2015-01-02; row A's features must be unchanged because its ts is before the future row"
+    },
+    "B_backdated_insertion": {
+      "pass": true,
+      "max_delta": 7.5,
+      "description": "backdated row (ts=2014-12-31) IS included in history of 2015-01-02 (ts < t is the correct criterion)"
+    },
+    "C_shuffled_ingestion": {
+      "pass": true,
+      "max_delta": 0.0,
+      "description": "identical timestamps \u2192 sorted state is deterministic regardless of ingestion order"
+    },
+    "D_replay": {
+      "pass": true,
+      "max_delta": 0.0,
+      "description": "identical replay \u2192 identical features"
+    }
+  },
+  "all_tests_pass": true,
+  "current_production_violates": true,
+  "current_violation_evidence": {
+    "sequential_tx_count": 3,
+    "future_first_tx_count": 4,
+    "equal": false
+  },
+  "remediation_required": "UserVelocityTracker and EntityFraudRateTracker must accept optional ts parameter; sorted-state behavior for feature computation; incremental counters for large-scale replay",
+  "cert_time_utc": "2026-09-07T15:04:09Z"
+}

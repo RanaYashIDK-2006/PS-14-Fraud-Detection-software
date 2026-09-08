@@ -1,0 +1,97 @@
+{
+  "cases": [
+    {
+      "case": "normal",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "zero_amount",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "missing_amount",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "nan_optional",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "missing_merchant",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "unseen_merchant",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "unseen_city",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "unseen_category",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "missing_mcc",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "online",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "swipe",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "chip",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "extreme_amount",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "malformed",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    },
+    {
+      "case": "minimum_valid",
+      "max_delta": 0.0,
+      "n_mismatch_gt_1e-4": 0,
+      "status": "PASS"
+    }
+  ],
+  "n_cases": 15,
+  "n_fail": 0,
+  "cert_time_utc": "2026-09-07T15:04:09Z"
+}

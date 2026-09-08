@@ -1,0 +1,26 @@
+{
+  "2016": {
+    "total_rows": 20409,
+    "fraud_rows": 3579,
+    "legitimate_rows": 16830,
+    "fraud_prevalence": 0.175364,
+    "label_values": [
+      0,
+      1
+    ],
+    "missing_labels": 0
+  },
+  "2017": {
+    "total_rows": 17378,
+    "fraud_rows": 255,
+    "legitimate_rows": 17123,
+    "fraud_prevalence": 0.014674,
+    "label_values": [
+      0,
+      1
+    ],
+    "missing_labels": 0
+  },
+  "label_semantics_identical": true,
+  "cert_time_utc": "2026-09-07T15:28:52Z"
+}

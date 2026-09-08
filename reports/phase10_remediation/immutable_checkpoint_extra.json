@@ -1,0 +1,35 @@
+{
+  "native_artifacts_verified": {
+    "xgb_native.joblib": {
+      "expected_sha256": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+      "actual_sha256": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+      "match": true
+    },
+    "lgb_native.joblib": {
+      "expected_sha256": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+      "actual_sha256": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+      "match": true
+    },
+    "cb_native.joblib": {
+      "expected_sha256": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+      "actual_sha256": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+      "match": true
+    },
+    "scaler_native.joblib": {
+      "expected_sha256": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+      "actual_sha256": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+      "match": true
+    },
+    "feature_list.json": {
+      "expected_sha256": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+      "actual_sha256": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+      "match": true
+    }
+  },
+  "native_artifacts_all_match": true,
+  "feature_contract_sha256": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+  "production_inventory_present": true,
+  "native_score_path_present": true,
+  "production_candidate_mismatch_note": "V_rawplus candidate artifact (models/model_records/mission_E_hardneg/models.joblib) is a DIFFERENT packaging than the altman_runtime native member files in models/production/altman_native/. This is expected and mandated by the two distinct model lineages/artifacts. For Gate B/C parity, the binding is: (1) the 48-contract feature identity is models/feature_contract.json + ALTMAN_NATIVE_FEATURES (identical to cfg.features_used); (2) the candidate's model logic is reproduced by joblib-loading models.joblib; (3) production inference uses src/risk_engine/altman_native_ensemble.py over models/production/altman_native/{xgb,lgb,cb,scaler}_native.joblib. Gate B/C below must be run against the correct paired path per question (offline candidate reproduction vs production inference path).",
+  "cert_time_utc": "2026-09-06T17:11:28Z"
+}

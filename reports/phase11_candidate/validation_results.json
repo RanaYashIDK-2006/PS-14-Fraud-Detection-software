@@ -1,0 +1,37 @@
+{
+  "candidate": "P11_45feat",
+  "threshold": 0.7934350508898499,
+  "validation": {
+    "rows": 37787,
+    "fraud": 3834,
+    "auc": 0.991008,
+    "pr_auc": 0.941365,
+    "recall_at_1pct_fpr": 0.812728,
+    "recall_at_locked": 0.812728,
+    "fpr_at_locked": 0.009984,
+    "precision_at_locked": 0.901881
+  },
+  "test_untouched": {
+    "rows": 41996,
+    "fraud": 4578,
+    "auc": 0.944804,
+    "pr_auc": 0.554786,
+    "recall_at_1pct_fpr": 0.109436,
+    "recall": 0.117519,
+    "fpr": 0.011011,
+    "precision": 0.566316,
+    "tp": 538,
+    "fp": 412,
+    "fn": 4040,
+    "tn": 37006,
+    "alerts": 950,
+    "alert_rate": 0.022621
+  },
+  "e_hardneg_comparison": {
+    "note": "E_hardneg uses 48 features including 3 fraud-rate features; this candidate uses 45 features. Direct comparison requires running E_hardneg on the SAME 45-feature subset.",
+    "e_hardneg_threshold": 0.018758,
+    "e_hardneg_test_recall": 0.9967,
+    "e_hardneg_test_fpr": 0.1099
+  },
+  "cert_time_utc": "2026-09-07T15:12:08Z"
+}

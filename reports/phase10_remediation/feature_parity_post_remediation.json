@@ -1,0 +1,454 @@
+{
+  "comparison": "offline cached X vs remediated ts-aware causal replay (correct user_id key + merchant forwarding + diversity/merch_count state + oracle fraud rates)",
+  "rows": 879196,
+  "tolerance": 0.0001,
+  "n_pass": 44,
+  "n_fail": 1,
+  "n_unavailable": 3,
+  "failed_features": [
+    "user_avg_amt"
+  ],
+  "unavailable_features": [
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate"
+  ],
+  "matrix": [
+    {
+      "feature": "amt",
+      "offline_mean": 51.052653,
+      "remediated_mean": 51.052653,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "log_amt",
+      "offline_mean": 3.178715,
+      "remediated_mean": 3.178715,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "amt_sq",
+      "offline_mean": 9036.628037,
+      "remediated_mean": 9036.628037,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "hr",
+      "offline_mean": 12.381447,
+      "remediated_mean": 12.381447,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "mn",
+      "offline_mean": 29.586371,
+      "remediated_mean": 29.586371,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "dow",
+      "offline_mean": 3.006451,
+      "remediated_mean": 3.006451,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "Month",
+      "offline_mean": 6.630809,
+      "remediated_mean": 6.630809,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "Day",
+      "offline_mean": 15.718934,
+      "remediated_mean": 15.718934,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "hour_sin",
+      "offline_mean": -0.012456,
+      "remediated_mean": -0.012456,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "hour_cos",
+      "offline_mean": -0.388329,
+      "remediated_mean": -0.388329,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "is_night",
+      "offline_mean": 0.068307,
+      "remediated_mean": 0.068307,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "is_business_hours",
+      "offline_mean": 0.58134,
+      "remediated_mean": 0.58134,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "chip",
+      "offline_mean": 0.068968,
+      "remediated_mean": 0.068968,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "is_online",
+      "offline_mean": 0.119633,
+      "remediated_mean": 0.119633,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "is_swipe",
+      "offline_mean": 0.811399,
+      "remediated_mean": 0.811399,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "err",
+      "offline_mean": 0.016662,
+      "remediated_mean": 0.016662,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "has_zip",
+      "offline_mean": 0.872214,
+      "remediated_mean": 0.872214,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "has_state",
+      "offline_mean": 0.880297,
+      "remediated_mean": 0.880297,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "is_online_or_no_state",
+      "offline_mean": 0.119703,
+      "remediated_mean": 0.119703,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "mcc",
+      "offline_mean": 5556.319668,
+      "remediated_mean": 5556.319668,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "mcc_high",
+      "offline_mean": 0.792988,
+      "remediated_mean": 0.792988,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "mcc_restaurant",
+      "offline_mean": 0.125693,
+      "remediated_mean": 0.125693,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "mcc_gas",
+      "offline_mean": 0.107678,
+      "remediated_mean": 0.107678,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "mcc_grocery",
+      "offline_mean": 0.114303,
+      "remediated_mean": 0.114303,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "mcc_travel",
+      "offline_mean": 0.002564,
+      "remediated_mean": 0.002564,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "mcc_online",
+      "offline_mean": 0.0,
+      "remediated_mean": 0.0,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "merchant_id",
+      "offline_mean": 54765.082615,
+      "remediated_mean": 54765.082615,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "city_id",
+      "offline_mean": 50744.320477,
+      "remediated_mean": 50744.320477,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "card_id",
+      "offline_mean": 65676.766831,
+      "remediated_mean": 65676.766831,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "user_tx_count",
+      "offline_mean": 420.755018,
+      "remediated_mean": 420.755018,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "card_tx_count",
+      "offline_mean": 105600.661094,
+      "remediated_mean": 105600.661094,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "user_avg_amt",
+      "offline_mean": 46.105202,
+      "remediated_mean": 46.105202,
+      "max_delta": 0.00010681,
+      "mean_delta": 2.982e-07,
+      "frac_exceed_1e-4": 0.000854,
+      "status": "FAIL"
+    },
+    {
+      "feature": "amt_vs_user_avg",
+      "offline_mean": 1.22201,
+      "remediated_mean": 1.22201,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "amt_zscore",
+      "offline_mean": 0.22201,
+      "remediated_mean": 0.22201,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "merch_tx_count",
+      "offline_mean": 5518.777612,
+      "remediated_mean": 5518.777612,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "offline_mean": 67.114902,
+      "remediated_mean": 67.114902,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "user_city_diversity",
+      "offline_mean": 32.821156,
+      "remediated_mean": 32.821156,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "user_fraud_rate",
+      "offline_mean": 0.021173,
+      "remediated_mean": 0.021173,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "UNAVAILABLE_AT_DECISION_TIME",
+      "note": "fraud-rate features use oracle labels (offline); production cannot produce confirmed labels at decision time"
+    },
+    {
+      "feature": "merch_fraud_rate",
+      "offline_mean": 0.020087,
+      "remediated_mean": 0.020087,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "UNAVAILABLE_AT_DECISION_TIME",
+      "note": "fraud-rate features use oracle labels (offline); production cannot produce confirmed labels at decision time"
+    },
+    {
+      "feature": "city_fraud_rate",
+      "offline_mean": 0.022783,
+      "remediated_mean": 0.022783,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "UNAVAILABLE_AT_DECISION_TIME",
+      "note": "fraud-rate features use oracle labels (offline); production cannot produce confirmed labels at decision time"
+    },
+    {
+      "feature": "high_amt",
+      "offline_mean": 0.15337,
+      "remediated_mean": 0.15337,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "very_high_amt",
+      "offline_mean": 0.025689,
+      "remediated_mean": 0.025689,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "amt_x_hr",
+      "offline_mean": 651.774877,
+      "remediated_mean": 651.774877,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "amt_x_mcc",
+      "offline_mean": 276853.513213,
+      "remediated_mean": 276853.513213,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "amt_x_chip",
+      "offline_mean": 3.251524,
+      "remediated_mean": 3.251524,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "amt_x_online",
+      "offline_mean": 8.233495,
+      "remediated_mean": 8.233495,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "amt_x_night",
+      "offline_mean": 4.263077,
+      "remediated_mean": 4.263077,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    },
+    {
+      "feature": "user_merch_count",
+      "offline_mean": 39.785793,
+      "remediated_mean": 39.785793,
+      "max_delta": 0.0,
+      "mean_delta": 0.0,
+      "frac_exceed_1e-4": 0.0,
+      "status": "PASS"
+    }
+  ],
+  "cert_time_utc": "2026-09-07T15:04:09Z"
+}

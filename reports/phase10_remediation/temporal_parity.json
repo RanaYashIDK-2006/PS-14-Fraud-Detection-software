@@ -1,0 +1,22 @@
+{
+  "future_row_ingested_before_earlier_row_changes_features": true,
+  "max_delta_after_out_of_order_ingest": 9999.0,
+  "affected_features": [
+    "user_tx_count",
+    "card_tx_count",
+    "user_avg_amt",
+    "amt_vs_user_avg",
+    "amt_zscore",
+    "merch_tx_count"
+  ],
+  "mechanism": "production trackers key state by entity and accumulate in ingestion order with NO ts cutoff; offline training sorts by ts before building expanding context. A future-dated row ingested early (backdate/replay) therefore leaks into earlier-dated rows' velocity/fraud-rate features in production-as-wired.",
+  "offline_strict_before_ts_cutoff": true,
+  "offline_evidence": "retrain_native_consistent sorts by ts then uses cumcount / (cumsum-current) \u2014 earlier rows can never see later rows",
+  "same_day_ordering": true,
+  "same_day_evidence": "row1 (same day, duplicate ts) sees exactly row0's history (user_tx_count==1)",
+  "duplicate_ts_handled": true,
+  "duplicate_ts_evidence": "row2 sees both same-day rows (user_tx_count==2)",
+  "first_observation_empty": true,
+  "first_observation_evidence": "row0 on empty trackers has empty context",
+  "cert_time_utc": "2026-09-07T14:06:52Z"
+}

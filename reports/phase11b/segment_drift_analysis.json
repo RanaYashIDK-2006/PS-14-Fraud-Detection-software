@@ -1,0 +1,471 @@
+{
+  "segments": [
+    {
+      "segment": "channel=Chip Transaction",
+      "2016": {
+        "n": 12133,
+        "fraud": 279,
+        "legit": 11854,
+        "tp": 86,
+        "fp": 31,
+        "fn": 193,
+        "tn": 11823,
+        "recall": 0.308244,
+        "fpr": 0.002615,
+        "precision": 0.735043,
+        "alerts": 117,
+        "alerts_per_1k": 9.64
+      },
+      "2017": {
+        "n": 12347,
+        "fraud": 248,
+        "legit": 12099,
+        "tp": 65,
+        "fp": 37,
+        "fn": 183,
+        "tn": 12062,
+        "recall": 0.262097,
+        "fpr": 0.003058,
+        "precision": 0.637255,
+        "alerts": 102,
+        "alerts_per_1k": 8.26
+      }
+    },
+    {
+      "segment": "channel=Swipe Transaction",
+      "2016": {
+        "n": 3100,
+        "fraud": 227,
+        "legit": 2873,
+        "tp": 83,
+        "fp": 16,
+        "fn": 144,
+        "tn": 2857,
+        "recall": 0.365639,
+        "fpr": 0.005569,
+        "precision": 0.838384,
+        "alerts": 99,
+        "alerts_per_1k": 31.94
+      },
+      "2017": {
+        "n": 2916,
+        "fraud": 7,
+        "legit": 2909,
+        "tp": 3,
+        "fp": 7,
+        "fn": 4,
+        "tn": 2902,
+        "recall": 0.428571,
+        "fpr": 0.002406,
+        "precision": 0.3,
+        "alerts": 10,
+        "alerts_per_1k": 3.43
+      }
+    },
+    {
+      "segment": "channel=Online Transaction",
+      "2016": {
+        "n": 5176,
+        "fraud": 3073,
+        "legit": 2103,
+        "tp": 2879,
+        "fp": 113,
+        "fn": 194,
+        "tn": 1990,
+        "recall": 0.93687,
+        "fpr": 0.053733,
+        "precision": 0.962233,
+        "alerts": 2992,
+        "alerts_per_1k": 578.05
+      },
+      "2017": {
+        "n": 2115,
+        "fraud": 0,
+        "legit": 2115,
+        "tp": 0,
+        "fp": 135,
+        "fn": 0,
+        "tn": 1980,
+        "recall": 0.0,
+        "fpr": 0.06383,
+        "precision": 0.0,
+        "alerts": 135,
+        "alerts_per_1k": 63.83
+      }
+    },
+    {
+      "segment": "amount=amt_0_50",
+      "2016": {
+        "n": 11328,
+        "fraud": 1086,
+        "legit": 10242,
+        "tp": 845,
+        "fp": 61,
+        "fn": 241,
+        "tn": 10181,
+        "recall": 0.778085,
+        "fpr": 0.005956,
+        "precision": 0.932671,
+        "alerts": 906,
+        "alerts_per_1k": 79.98
+      },
+      "2017": {
+        "n": 10766,
+        "fraud": 148,
+        "legit": 10618,
+        "tp": 32,
+        "fp": 81,
+        "fn": 116,
+        "tn": 10537,
+        "recall": 0.216216,
+        "fpr": 0.007629,
+        "precision": 0.283186,
+        "alerts": 113,
+        "alerts_per_1k": 10.5
+      }
+    },
+    {
+      "segment": "amount=amt_50_200",
+      "2016": {
+        "n": 6903,
+        "fraud": 1542,
+        "legit": 5361,
+        "tp": 1310,
+        "fp": 68,
+        "fn": 232,
+        "tn": 5293,
+        "recall": 0.849546,
+        "fpr": 0.012684,
+        "precision": 0.950653,
+        "alerts": 1378,
+        "alerts_per_1k": 199.62
+      },
+      "2017": {
+        "n": 5360,
+        "fraud": 77,
+        "legit": 5283,
+        "tp": 27,
+        "fp": 74,
+        "fn": 50,
+        "tn": 5209,
+        "recall": 0.350649,
+        "fpr": 0.014007,
+        "precision": 0.267327,
+        "alerts": 101,
+        "alerts_per_1k": 18.84
+      }
+    },
+    {
+      "segment": "amount=amt_200_1k",
+      "2016": {
+        "n": 1228,
+        "fraud": 802,
+        "legit": 426,
+        "tp": 748,
+        "fp": 26,
+        "fn": 54,
+        "tn": 400,
+        "recall": 0.932668,
+        "fpr": 0.061033,
+        "precision": 0.966408,
+        "alerts": 774,
+        "alerts_per_1k": 630.29
+      },
+      "2017": {
+        "n": 429,
+        "fraud": 25,
+        "legit": 404,
+        "tp": 6,
+        "fp": 21,
+        "fn": 19,
+        "tn": 383,
+        "recall": 0.24,
+        "fpr": 0.05198,
+        "precision": 0.222222,
+        "alerts": 27,
+        "alerts_per_1k": 62.94
+      }
+    },
+    {
+      "segment": "amount=amt_1k_plus",
+      "2016": {
+        "n": 38,
+        "fraud": 21,
+        "legit": 17,
+        "tp": 18,
+        "fp": 3,
+        "fn": 3,
+        "tn": 14,
+        "recall": 0.857143,
+        "fpr": 0.176471,
+        "precision": 0.857143,
+        "alerts": 21,
+        "alerts_per_1k": 552.63
+      },
+      "2017": {
+        "n": 21,
+        "fraud": 3,
+        "legit": 18,
+        "tp": 3,
+        "fp": 2,
+        "fn": 0,
+        "tn": 16,
+        "recall": 1.0,
+        "fpr": 0.111111,
+        "precision": 0.6,
+        "alerts": 5,
+        "alerts_per_1k": 238.1
+      }
+    },
+    {
+      "segment": "user_coverage=new_user",
+      "2016": {
+        "n": 106,
+        "fraud": 10,
+        "legit": 96,
+        "tp": 8,
+        "fp": 1,
+        "fn": 2,
+        "tn": 95,
+        "recall": 0.8,
+        "fpr": 0.010417,
+        "precision": 0.888889,
+        "alerts": 9,
+        "alerts_per_1k": 84.91
+      },
+      "2017": {
+        "n": 282,
+        "fraud": 0,
+        "legit": 282,
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "tn": 281,
+        "recall": 0.0,
+        "fpr": 0.003546,
+        "precision": 0.0,
+        "alerts": 1,
+        "alerts_per_1k": 3.55
+      }
+    },
+    {
+      "segment": "user_coverage=low_history",
+      "2016": {
+        "n": 189,
+        "fraud": 28,
+        "legit": 161,
+        "tp": 20,
+        "fp": 2,
+        "fn": 8,
+        "tn": 159,
+        "recall": 0.714286,
+        "fpr": 0.012422,
+        "precision": 0.909091,
+        "alerts": 22,
+        "alerts_per_1k": 116.4
+      },
+      "2017": {
+        "n": 190,
+        "fraud": 4,
+        "legit": 186,
+        "tp": 0,
+        "fp": 2,
+        "fn": 4,
+        "tn": 184,
+        "recall": 0.0,
+        "fpr": 0.010753,
+        "precision": 0.0,
+        "alerts": 2,
+        "alerts_per_1k": 10.53
+      }
+    },
+    {
+      "segment": "user_coverage=med_history",
+      "2016": {
+        "n": 6260,
+        "fraud": 1212,
+        "legit": 5048,
+        "tp": 1004,
+        "fp": 46,
+        "fn": 208,
+        "tn": 5002,
+        "recall": 0.828383,
+        "fpr": 0.009113,
+        "precision": 0.95619,
+        "alerts": 1050,
+        "alerts_per_1k": 167.73
+      },
+      "2017": {
+        "n": 5078,
+        "fraud": 70,
+        "legit": 5008,
+        "tp": 24,
+        "fp": 65,
+        "fn": 46,
+        "tn": 4943,
+        "recall": 0.342857,
+        "fpr": 0.012979,
+        "precision": 0.269663,
+        "alerts": 89,
+        "alerts_per_1k": 17.53
+      }
+    },
+    {
+      "segment": "user_coverage=high_history",
+      "2016": {
+        "n": 13854,
+        "fraud": 2329,
+        "legit": 11525,
+        "tp": 2016,
+        "fp": 111,
+        "fn": 313,
+        "tn": 11414,
+        "recall": 0.865608,
+        "fpr": 0.009631,
+        "precision": 0.947814,
+        "alerts": 2127,
+        "alerts_per_1k": 153.53
+      },
+      "2017": {
+        "n": 11828,
+        "fraud": 181,
+        "legit": 11647,
+        "tp": 44,
+        "fp": 111,
+        "fn": 137,
+        "tn": 11536,
+        "recall": 0.243094,
+        "fpr": 0.00953,
+        "precision": 0.283871,
+        "alerts": 155,
+        "alerts_per_1k": 13.1
+      }
+    },
+    {
+      "segment": "merch_coverage=new_merchant",
+      "2016": {
+        "n": 1095,
+        "fraud": 308,
+        "legit": 787,
+        "tp": 92,
+        "fp": 33,
+        "fn": 216,
+        "tn": 754,
+        "recall": 0.298701,
+        "fpr": 0.041931,
+        "precision": 0.736,
+        "alerts": 125,
+        "alerts_per_1k": 114.16
+      },
+      "2017": {
+        "n": 887,
+        "fraud": 48,
+        "legit": 839,
+        "tp": 27,
+        "fp": 25,
+        "fn": 21,
+        "tn": 814,
+        "recall": 0.5625,
+        "fpr": 0.029797,
+        "precision": 0.519231,
+        "alerts": 52,
+        "alerts_per_1k": 58.62
+      }
+    },
+    {
+      "segment": "merch_coverage=low_coverage",
+      "2016": {
+        "n": 2614,
+        "fraud": 147,
+        "legit": 2467,
+        "tp": 59,
+        "fp": 14,
+        "fn": 88,
+        "tn": 2453,
+        "recall": 0.401361,
+        "fpr": 0.005675,
+        "precision": 0.808219,
+        "alerts": 73,
+        "alerts_per_1k": 27.93
+      },
+      "2017": {
+        "n": 2557,
+        "fraud": 33,
+        "legit": 2524,
+        "tp": 11,
+        "fp": 18,
+        "fn": 22,
+        "tn": 2506,
+        "recall": 0.333333,
+        "fpr": 0.007132,
+        "precision": 0.37931,
+        "alerts": 29,
+        "alerts_per_1k": 11.34
+      }
+    },
+    {
+      "segment": "merch_coverage=med_coverage",
+      "2016": {
+        "n": 2239,
+        "fraud": 432,
+        "legit": 1807,
+        "tp": 363,
+        "fp": 33,
+        "fn": 69,
+        "tn": 1774,
+        "recall": 0.840278,
+        "fpr": 0.018262,
+        "precision": 0.916667,
+        "alerts": 396,
+        "alerts_per_1k": 176.86
+      },
+      "2017": {
+        "n": 1869,
+        "fraud": 46,
+        "legit": 1823,
+        "tp": 26,
+        "fp": 35,
+        "fn": 20,
+        "tn": 1788,
+        "recall": 0.565217,
+        "fpr": 0.019199,
+        "precision": 0.42623,
+        "alerts": 61,
+        "alerts_per_1k": 32.64
+      }
+    },
+    {
+      "segment": "merch_coverage=high_coverage",
+      "2016": {
+        "n": 14461,
+        "fraud": 2692,
+        "legit": 11769,
+        "tp": 2534,
+        "fp": 80,
+        "fn": 158,
+        "tn": 11689,
+        "recall": 0.941308,
+        "fpr": 0.006798,
+        "precision": 0.969396,
+        "alerts": 2614,
+        "alerts_per_1k": 180.76
+      },
+      "2017": {
+        "n": 12065,
+        "fraud": 128,
+        "legit": 11937,
+        "tp": 4,
+        "fp": 101,
+        "fn": 124,
+        "tn": 11836,
+        "recall": 0.03125,
+        "fpr": 0.008461,
+        "precision": 0.038095,
+        "alerts": 105,
+        "alerts_per_1k": 8.7
+      }
+    }
+  ],
+  "locked_threshold": 0.793435,
+  "cert_time_utc": "2026-09-07T15:28:52Z"
+}

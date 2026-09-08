@@ -1,0 +1,205 @@
+{
+  "cases": [
+    {
+      "case": "normal_transaction",
+      "inputs": {},
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "zero_amount",
+      "inputs": {
+        "amount": 0.0
+      },
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "missing_amount",
+      "inputs": {
+        "amount": 0.0
+      },
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "nan_optional_value",
+      "inputs": {
+        "merchant_state": "",
+        "zip": ""
+      },
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "missing_merchant",
+      "inputs": {
+        "merchant_city": "",
+        "merchant_state": "",
+        "zip": ""
+      },
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "unseen_merchant",
+      "inputs": {
+        "merchant_city": "Neverland",
+        "merchant_state": "ZZ",
+        "zip": "00000"
+      },
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "unseen_city",
+      "inputs": {
+        "merchant_city": "Atlantis"
+      },
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "unseen_user",
+      "inputs": {},
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "unseen_category",
+      "inputs": {
+        "mcc": 9999
+      },
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "missing_mcc",
+      "inputs": {
+        "mcc": 0
+      },
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "online",
+      "inputs": {
+        "use_chip": "Online Transaction",
+        "merchant_state": ""
+      },
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "swipe",
+      "inputs": {
+        "use_chip": "Swipe Transaction"
+      },
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "chip",
+      "inputs": {
+        "use_chip": "Chip Transaction"
+      },
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "extreme_amount",
+      "inputs": {
+        "amount": 999999.99
+      },
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "repeated_entity",
+      "inputs": {},
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "first_entity_observation",
+      "inputs": {},
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "deep_entity_history",
+      "inputs": {},
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "zero_in_frame_history",
+      "inputs": {},
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "malformed_optional_field",
+      "inputs": {
+        "errors": "nan",
+        "merchant_state": "nan"
+      },
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    },
+    {
+      "case": "minimum_valid_transaction",
+      "inputs": {
+        "amount": 0.01,
+        "mcc": 0,
+        "use_chip": ""
+      },
+      "max_abs_delta": 0.0,
+      "n_features_mismatch_gt_1e-4": 0,
+      "mismatched_features": [],
+      "status": "PASS"
+    }
+  ],
+  "n_cases": 20,
+  "n_fail": 0,
+  "note": "cold-start context (empty trackers) for both paths so the comparison isolates derivation semantics",
+  "cert_time_utc": "2026-09-07T14:06:52Z"
+}

@@ -1,0 +1,10 @@
+{
+  "policy": "feature(t) uses only information with timestamp < t",
+  "future_row_test": "PASS \u2014 future rows do not alter earlier features (sorted expanding context)",
+  "future_label_test": "PASS \u2014 fraud labels are not used as features",
+  "shuffled_ingestion_test": "PASS \u2014 chronological sort ensures deterministic features",
+  "replay_test": "PASS \u2014 identical replay produces identical features",
+  "cache_reset_test": "PASS \u2014 cold start produces same features as warm start for same history",
+  "all_pass": true,
+  "cert_time_utc": "2026-09-07T15:12:08Z"
+}

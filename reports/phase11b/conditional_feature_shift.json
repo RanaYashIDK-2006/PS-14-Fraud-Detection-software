@@ -1,0 +1,410 @@
+{
+  "features": [
+    {
+      "feature": "chip",
+      "fraud_shift": 4.0296,
+      "legit_shift": 0.0049,
+      "fraud_2016_mean": 0.077955,
+      "fraud_2017_mean": 0.972549,
+      "legit_2016_mean": 0.704337,
+      "legit_2017_mean": 0.706593
+    },
+    {
+      "feature": "is_online",
+      "fraud_shift": 3.4851,
+      "legit_shift": 0.0044,
+      "fraud_2016_mean": 0.85862,
+      "fraud_2017_mean": 0.0,
+      "legit_2016_mean": 0.124955,
+      "legit_2017_mean": 0.123518
+    },
+    {
+      "feature": "has_state",
+      "fraud_shift": 3.4851,
+      "legit_shift": 0.0053,
+      "fraud_2016_mean": 0.14138,
+      "fraud_2017_mean": 1.0,
+      "legit_2016_mean": 0.873737,
+      "legit_2017_mean": 0.875489
+    },
+    {
+      "feature": "is_online_or_no_state",
+      "fraud_shift": 3.4851,
+      "legit_shift": 0.0053,
+      "fraud_2016_mean": 0.85862,
+      "fraud_2017_mean": 0.0,
+      "legit_2016_mean": 0.126263,
+      "legit_2017_mean": 0.124511
+    },
+    {
+      "feature": "Month",
+      "fraud_shift": 2.3493,
+      "legit_shift": 0.0036,
+      "fraud_2016_mean": 6.00475,
+      "fraud_2017_mean": 11.772549,
+      "legit_2016_mean": 6.530422,
+      "legit_2017_mean": 6.517958
+    },
+    {
+      "feature": "city_id",
+      "fraud_shift": 2.1606,
+      "legit_shift": 0.0028,
+      "fraud_2016_mean": 48458.902344,
+      "fraud_2017_mean": 31705.0,
+      "legit_2016_mean": 50809.542969,
+      "legit_2017_mean": 50731.644531
+    },
+    {
+      "feature": "amt_x_online",
+      "fraud_shift": 1.0068,
+      "legit_shift": 0.0112,
+      "fraud_2016_mean": 122.367821,
+      "fraud_2017_mean": 0.0,
+      "legit_2016_mean": 7.517312,
+      "legit_2017_mean": 7.105789
+    },
+    {
+      "feature": "hour_sin",
+      "fraud_shift": 0.7273,
+      "legit_shift": 0.0005,
+      "fraud_2016_mean": -0.076708,
+      "fraud_2017_mean": -0.459874,
+      "legit_2016_mean": -0.01386,
+      "legit_2017_mean": -0.013488
+    },
+    {
+      "feature": "hr",
+      "fraud_shift": 0.6851,
+      "legit_shift": 0.0163,
+      "fraud_2016_mean": 12.526404,
+      "fraud_2017_mean": 14.513725,
+      "legit_2016_mean": 12.363696,
+      "legit_2017_mean": 12.446768
+    },
+    {
+      "feature": "amt_x_chip",
+      "fraud_shift": 0.6196,
+      "legit_shift": 0.0102,
+      "fraud_2016_mean": 8.820928,
+      "fraud_2017_mean": 86.391525,
+      "legit_2016_mean": 33.979843,
+      "legit_2017_mean": 33.312424
+    },
+    {
+      "feature": "high_amt",
+      "fraud_shift": 0.5757,
+      "legit_shift": 0.0167,
+      "fraud_2016_mean": 0.445655,
+      "fraud_2017_mean": 0.188235,
+      "legit_2016_mean": 0.123173,
+      "legit_2017_mean": 0.117736
+    },
+    {
+      "feature": "has_zip",
+      "fraud_shift": 0.5739,
+      "legit_shift": 0.0043,
+      "fraud_2016_mean": 0.14138,
+      "fraud_2017_mean": 0.0,
+      "legit_2016_mean": 0.867617,
+      "legit_2017_mean": 0.869065
+    },
+    {
+      "feature": "log_amt",
+      "fraud_shift": 0.4588,
+      "legit_shift": 0.0245,
+      "fraud_2016_mean": 4.100341,
+      "fraud_2017_mean": 3.344968,
+      "legit_2016_mean": 3.17159,
+      "legit_2017_mean": 3.137445
+    },
+    {
+      "feature": "mcc_high",
+      "fraud_shift": 0.4375,
+      "legit_shift": 0.0018,
+      "fraud_2016_mean": 0.689019,
+      "fraud_2017_mean": 0.866667,
+      "legit_2016_mean": 0.786512,
+      "legit_2017_mean": 0.785785
+    },
+    {
+      "feature": "hour_cos",
+      "fraud_shift": 0.4263,
+      "legit_shift": 0.0116,
+      "fraud_2016_mean": -0.753679,
+      "fraud_2017_mean": -0.583395,
+      "legit_2016_mean": -0.380582,
+      "legit_2017_mean": -0.373663
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "fraud_shift": 0.4215,
+      "legit_shift": 0.1361,
+      "fraud_2016_mean": 51.967308,
+      "fraud_2017_mean": 59.682354,
+      "legit_2016_mean": 48.871597,
+      "legit_2017_mean": 51.555161
+    },
+    {
+      "feature": "amt_vs_user_avg",
+      "fraud_shift": 0.3939,
+      "legit_shift": 0.014,
+      "fraud_2016_mean": 2.920924,
+      "fraud_2017_mean": 1.518137,
+      "legit_2016_mean": 1.027921,
+      "legit_2017_mean": 1.005878
+    },
+    {
+      "feature": "amt_zscore",
+      "fraud_shift": 0.3939,
+      "legit_shift": 0.014,
+      "fraud_2016_mean": 1.920924,
+      "fraud_2017_mean": 0.518137,
+      "legit_2016_mean": 0.027921,
+      "legit_2017_mean": 0.005879
+    },
+    {
+      "feature": "card_tx_count",
+      "fraud_shift": 0.3744,
+      "legit_shift": 0.2565,
+      "fraud_2016_mean": 45762.074219,
+      "fraud_2017_mean": 54310.734375,
+      "legit_2016_mean": 49738.996094,
+      "legit_2017_mean": 55009.074219
+    },
+    {
+      "feature": "merch_tx_count",
+      "fraud_shift": 0.3381,
+      "legit_shift": 0.0569,
+      "fraud_2016_mean": 1710.382202,
+      "fraud_2017_mean": 875.348999,
+      "legit_2016_mean": 2435.323975,
+      "legit_2017_mean": 2615.633789
+    },
+    {
+      "feature": "very_high_amt",
+      "fraud_shift": 0.3213,
+      "legit_shift": 0.0041,
+      "fraud_2016_mean": 0.17463,
+      "fraud_2017_mean": 0.070588,
+      "legit_2016_mean": 0.018063,
+      "legit_2017_mean": 0.01752
+    },
+    {
+      "feature": "is_business_hours",
+      "fraud_shift": 0.3095,
+      "legit_shift": 0.0086,
+      "fraud_2016_mean": 0.902207,
+      "fraud_2017_mean": 0.792157,
+      "legit_2016_mean": 0.575163,
+      "legit_2017_mean": 0.570928
+    },
+    {
+      "feature": "merchant_id",
+      "fraud_shift": 0.3013,
+      "legit_shift": 0.0119,
+      "fraud_2016_mean": 50997.160156,
+      "fraud_2017_mean": 42342.304688,
+      "legit_2016_mean": 54487.449219,
+      "legit_2017_mean": 54828.589844
+    },
+    {
+      "feature": "amt",
+      "fraud_shift": 0.2919,
+      "legit_shift": 0.0167,
+      "fraud_2016_mean": 139.334717,
+      "fraud_2017_mean": 88.874863,
+      "legit_2016_mean": 49.58289,
+      "legit_2017_mean": 48.330898
+    },
+    {
+      "feature": "Day",
+      "fraud_shift": 0.2865,
+      "legit_shift": 0.0018,
+      "fraud_2016_mean": 15.522772,
+      "fraud_2017_mean": 18.019608,
+      "legit_2016_mean": 15.750089,
+      "legit_2017_mean": 15.734159
+    },
+    {
+      "feature": "amt_x_mcc",
+      "fraud_shift": 0.2864,
+      "legit_shift": 0.0169,
+      "fraud_2016_mean": 706074.375,
+      "fraud_2017_mean": 449152.375,
+      "legit_2016_mean": 271006.125,
+      "legit_2017_mean": 264213.78125
+    },
+    {
+      "feature": "user_avg_amt",
+      "fraud_shift": 0.2839,
+      "legit_shift": 0.01,
+      "fraud_2016_mean": 54.944782,
+      "fraud_2017_mean": 61.860744,
+      "legit_2016_mean": 50.79401,
+      "legit_2017_mean": 50.997555
+    },
+    {
+      "feature": "dow",
+      "fraud_shift": 0.2612,
+      "legit_shift": 0.0003,
+      "fraud_2016_mean": 3.58955,
+      "fraud_2017_mean": 3.05098,
+      "legit_2016_mean": 2.987225,
+      "legit_2017_mean": 2.987736
+    },
+    {
+      "feature": "mcc_grocery",
+      "fraud_shift": 0.2553,
+      "legit_shift": 0.0085,
+      "fraud_2016_mean": 0.012015,
+      "fraud_2017_mean": 0.058824,
+      "legit_2016_mean": 0.114498,
+      "legit_2017_mean": 0.117211
+    },
+    {
+      "feature": "mn",
+      "fraud_shift": 0.235,
+      "legit_shift": 0.011,
+      "fraud_2016_mean": 28.540094,
+      "fraud_2017_mean": 32.588234,
+      "legit_2016_mean": 29.778788,
+      "legit_2017_mean": 29.586813
+    },
+    {
+      "feature": "user_city_diversity",
+      "fraud_shift": 0.2292,
+      "legit_shift": 0.1167,
+      "fraud_2016_mean": 20.564682,
+      "fraud_2017_mean": 22.815687,
+      "legit_2016_mean": 20.591206,
+      "legit_2017_mean": 21.95503
+    },
+    {
+      "feature": "mcc_gas",
+      "fraud_shift": 0.2195,
+      "legit_shift": 0.0043,
+      "fraud_2016_mean": 0.0,
+      "fraud_2017_mean": 0.023529,
+      "legit_2016_mean": 0.104278,
+      "legit_2017_mean": 0.102961
+    },
+    {
+      "feature": "user_tx_count",
+      "fraud_shift": 0.2177,
+      "legit_shift": 0.1334,
+      "fraud_2016_mean": 151.365189,
+      "fraud_2017_mean": 169.941177,
+      "legit_2016_mean": 164.486038,
+      "legit_2017_mean": 179.338318
+    },
+    {
+      "feature": "amt_x_hr",
+      "fraud_shift": 0.1961,
+      "legit_shift": 0.0076,
+      "fraud_2016_mean": 1736.777832,
+      "fraud_2017_mean": 1280.093262,
+      "legit_2016_mean": 637.428894,
+      "legit_2017_mean": 629.202332
+    },
+    {
+      "feature": "is_swipe",
+      "fraud_shift": 0.1734,
+      "legit_shift": 0.0022,
+      "fraud_2016_mean": 0.063426,
+      "fraud_2017_mean": 0.027451,
+      "legit_2016_mean": 0.170707,
+      "legit_2017_mean": 0.169888
+    },
+    {
+      "feature": "user_merch_count",
+      "fraud_shift": 0.1396,
+      "legit_shift": 0.0462,
+      "fraud_2016_mean": 1.404024,
+      "fraud_2017_mean": 0.894118,
+      "legit_2016_mean": 14.924777,
+      "legit_2017_mean": 16.26222
+    },
+    {
+      "feature": "card_id",
+      "fraud_shift": 0.1184,
+      "legit_shift": 0.0139,
+      "fraud_2016_mean": 64706.09375,
+      "fraud_2017_mean": 61577.988281,
+      "legit_2016_mean": 65348.691406,
+      "legit_2017_mean": 65689.257812
+    },
+    {
+      "feature": "mcc_travel",
+      "fraud_shift": 0.1047,
+      "legit_shift": 0.007,
+      "fraud_2016_mean": 0.020117,
+      "fraud_2017_mean": 0.007843,
+      "legit_2016_mean": 0.001901,
+      "legit_2017_mean": 0.002219
+    },
+    {
+      "feature": "amt_x_night",
+      "fraud_shift": 0.1023,
+      "legit_shift": 0.0089,
+      "fraud_2016_mean": 1.42209,
+      "fraud_2017_mean": 0.0,
+      "legit_2016_mean": 3.967558,
+      "legit_2017_mean": 3.74865
+    },
+    {
+      "feature": "mcc_restaurant",
+      "fraud_shift": 0.0992,
+      "legit_shift": 0.0121,
+      "fraud_2016_mean": 0.031294,
+      "fraud_2017_mean": 0.05098,
+      "legit_2016_mean": 0.12751,
+      "legit_2017_mean": 0.131577
+    },
+    {
+      "feature": "is_night",
+      "fraud_shift": 0.0981,
+      "legit_shift": 0.0006,
+      "fraud_2016_mean": 0.012853,
+      "fraud_2017_mean": 0.003922,
+      "legit_2016_mean": 0.069935,
+      "legit_2017_mean": 0.070081
+    },
+    {
+      "feature": "amt_sq",
+      "fraud_shift": 0.0694,
+      "legit_shift": 0.0004,
+      "fraud_2016_mean": 50383.761719,
+      "fraud_2017_mean": 36714.902344,
+      "legit_2016_mean": 7975.847168,
+      "legit_2017_mean": 8002.466797
+    },
+    {
+      "feature": "mcc",
+      "fraud_shift": 0.0398,
+      "legit_shift": 0.0051,
+      "fraud_2016_mean": 5287.633789,
+      "fraud_2017_mean": 5251.239258,
+      "legit_2016_mean": 5561.876953,
+      "legit_2017_mean": 5566.397461
+    },
+    {
+      "feature": "err",
+      "fraud_shift": 0.0036,
+      "legit_shift": 0.0078,
+      "fraud_2016_mean": 0.043867,
+      "fraud_2017_mean": 0.043137,
+      "legit_2016_mean": 0.014023,
+      "legit_2017_mean": 0.014951
+    },
+    {
+      "feature": "mcc_online",
+      "fraud_shift": 0.0,
+      "legit_shift": 0.0,
+      "fraud_2016_mean": 0.0,
+      "fraud_2017_mean": 0.0,
+      "legit_2016_mean": 0.0,
+      "legit_2017_mean": 0.0
+    }
+  ],
+  "cert_time_utc": "2026-09-07T15:28:52Z"
+}

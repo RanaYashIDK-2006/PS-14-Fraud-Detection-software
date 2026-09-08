@@ -1,0 +1,20 @@
+{
+  "phase": "11A",
+  "status": "RECONCILED",
+  "metric_integrity": "PASS",
+  "forward_validation_execution": "PASS",
+  "temporal_robustness": "FAIL",
+  "certification_status": "BLOCKED",
+  "final_test_authorized": false,
+  "summary": {
+    "locked_threshold": 0.793435,
+    "locked_val_recall": 0.812728,
+    "locked_val_fpr": 0.009984,
+    "locked_val_precision": 0.901881,
+    "2016_recall": 0.851635,
+    "2016_fpr": 0.009507,
+    "2017_recall": 0.266667,
+    "2017_fpr": 0.010454
+  },
+  "cert_time_utc": "2026-09-07T15:18:10Z"
+}

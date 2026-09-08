@@ -1,0 +1,42 @@
+{
+  "metric_traces": [
+    {
+      "metric": "RECALL_AT_SELECTED_THRESHOLD",
+      "reported_value": 0.1175,
+      "actual_source": "TEST set recall at locked threshold (NOT validation)",
+      "code_path": "te_recall = tp / max(tp + fn, 1) where te_pred = (p_te >= locked_thr)",
+      "data_source": "test set (year >= 2018) \u2014 LOCKED, should not be in summary",
+      "is_validation_metric": false,
+      "is_test_metric": true,
+      "status": "BUG \u2014 machine summary reported test metric as validation metric"
+    },
+    {
+      "metric": "FPR_AT_SELECTED_THRESHOLD",
+      "reported_value": 0.01101,
+      "actual_source": "TEST set FPR at locked threshold",
+      "code_path": "te_fpr = fp / max(fp + tn, 1)",
+      "data_source": "test set (year >= 2018) \u2014 LOCKED",
+      "is_validation_metric": false,
+      "is_test_metric": true,
+      "status": "BUG \u2014 same issue as recall"
+    },
+    {
+      "metric": "val_recall_at_locked",
+      "reported_value": 0.8127,
+      "actual_source": "VALIDATION set recall at locked threshold",
+      "code_path": "Correctly computed from validation predictions",
+      "data_source": "validation set (2016-2017)",
+      "status": "CORRECT"
+    },
+    {
+      "metric": "val_fpr_at_locked",
+      "reported_value": 0.00998,
+      "actual_source": "VALIDATION set FPR at locked threshold",
+      "code_path": "Correctly computed from validation predictions",
+      "data_source": "validation set (2016-2017)",
+      "status": "CORRECT"
+    }
+  ],
+  "root_cause": "The Phase 11 harness printed both validation and test metrics. The machine-readable summary section used te_recall/te_fpr (test) instead of val_recall/val_fpr (validation). This is a reporting bug, not a computation bug. The validation metrics (0.8127 recall, 0.00998 FPR) are correct for the locked threshold.",
+  "cert_time_utc": "2026-09-07T15:18:10Z"
+}

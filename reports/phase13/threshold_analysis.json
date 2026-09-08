@@ -1,0 +1,10 @@
+{
+  "thresholds": {
+    "C1_channel_neutral": 0.7597850063065764,
+    "C2_chip_supported": 0.7597850063065764,
+    "C3_channel_balanced": 0.7875714682962114,
+    "C4_chip_hardneg": 0.7597850063065764
+  },
+  "method": "validation-only: max recall within FPR<=1%",
+  "cert_time_utc": "2026-09-07T15:59:31Z"
+}

@@ -1,0 +1,30 @@
+{
+  "candidate_name": "P11_45feat",
+  "model_hash": "395467fcab7688c2c8d917ee1e934ef69e4fd85d1843a4cb320dd4a50e0dae3e",
+  "member_hashes": {
+    "xgb": "51b5d42c79a5b6a35c90ddac91b4f39f0cdd4e29afd1b18211a36b8a70fe120e",
+    "lgb": "727a20b4f4c73d8bf4091a4a6013745673e2584e2462e0188dc9994a1c6fc2aa",
+    "cb": "0c0c990e1e05881a3eaee08bc7e38b2831b5cfa6a2629f8e765621103fcad72c",
+    "scaler": "f01d38fcbafc544d836bdb62b427f99265cb0d5a72bf63ecbe01a2608c2cfea1"
+  },
+  "feature_count": 45,
+  "feature_contract_hash": "cae7ef9ee0da74aa97479a1c7f41a5935fd03b7a9bc0259ac76ed79f7315ff1f",
+  "training_seed": 42,
+  "ensemble_weights": {
+    "xgb": 0.34,
+    "lgb": 0.33,
+    "cb": 0.33
+  },
+  "hyperparameters": {
+    "n_estimators": 400,
+    "max_depth": 7,
+    "learning_rate": 0.05,
+    "subsample": 0.8,
+    "colsample_bytree": 0.7,
+    "min_child_weight": 5
+  },
+  "locked_threshold": 0.7934350508898499,
+  "threshold_policy": "validation-only: max recall within val FPR<=1%",
+  "parent_model_id": "altman_native_E_hardneg_cert_20260904",
+  "cert_time_utc": "2026-09-07T15:12:08Z"
+}

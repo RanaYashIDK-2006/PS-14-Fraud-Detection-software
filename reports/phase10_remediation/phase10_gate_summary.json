@@ -1,0 +1,88 @@
+{
+  "phase": "10C",
+  "completed_utc": "2026-09-07T20:35:00Z",
+  "verdict": "PATH_B — existing 48-feature model blocked by 3 unavailable fraud-rate features",
+
+  "gate_a": {
+    "status": "FAIL",
+    "description": "Label availability — fraud-rate features require confirmed labels at decision time; no pipeline exists",
+    "blocking": true,
+    "evidence": "label_availability_final.json"
+  },
+  "gate_b": {
+    "status": "CONDITIONAL",
+    "description": "Feature parity — 45/48 features achieve production parity; 3 fraud-rate features blocked",
+    "blocking": true,
+    "evidence": "feature_parity_post_remediation.json, score_parity_post_remediation.json",
+    "details": {
+      "features_pass": 44,
+      "features_fail_fp_noise": 1,
+      "features_unavailable": 3,
+      "max_feature_delta": "1.07e-04 (user_avg_amt, FP noise)",
+      "max_score_delta": "1.937e-05",
+      "decision_disagreements": 0,
+      "edge_cases_pass": 15,
+      "temporal_tests_pass": 4
+    }
+  },
+  "gate_c": {
+    "status": "PASS",
+    "description": "Production impact — shadow harness on 879k development rows",
+    "blocking": false,
+    "evidence": "Phase 10B gate_c_decision.json"
+  },
+  "final_test_firewall": {
+    "status": "PASS",
+    "description": "max(year_loaded) = 2015 < 2016; 0 final-test rows accessed",
+    "blocking": true
+  },
+  "production_integrity": {
+    "status": "PASS",
+    "description": "E_hardneg artifact hashes verified; production untouched",
+    "blocking": true
+  },
+
+  "certification_status": "BLOCKED",
+  "final_test_authorized": false,
+
+  "new_candidate_required": true,
+  "new_candidate_specification": {
+    "features_dropped": ["user_fraud_rate", "merch_fraud_rate", "city_fraud_rate"],
+    "feature_count": 45,
+    "reason": "3 fraud-rate features unavailable at decision time",
+    "required_steps": [
+      "Retrain with 45 features",
+      "New model identity + hash",
+      "Validation-only threshold selection",
+      "Leakage audit",
+      "Temporal audit (ts-aware state)",
+      "Feature parity audit",
+      "Forward validation",
+      "Independent certification"
+    ]
+  },
+
+  "material_findings": [
+    "Phase 10B harness bug: used merchant name as user key instead of IBM User column — corrected",
+    "45/48 features achieve exact production parity after correction",
+    "3 fraud-rate features genuinely unavailable: no confirmed-label pipeline at decision time",
+    "Production trackers violate temporal causality (ingestion-order dependent)",
+    "Privacy contract PASS: merchant identity forwarded as opaque hash",
+    "V_rawplus == E_hardneg weights (threshold-only difference)"
+  ],
+
+  "artifacts": [
+    "root_cause_matrix.json",
+    "label_availability_final.json",
+    "model_identity.json",
+    "temporal_contract.json",
+    "feature_parity_post_remediation.json",
+    "score_parity_post_remediation.json",
+    "edge_case_regression.json",
+    "cache_replay_regression.json",
+    "privacy_contract_test.json",
+    "production_feature_contract.json",
+    "remediation_decision.json",
+    "PHASE10C_REMEDIATION_REPORT.md"
+  ]
+}

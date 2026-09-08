@@ -1,0 +1,44 @@
+{
+  "implementation": "src/drift_monitor/psi.py (production DriftDetector uses this exact psi_proportions/bin_edges)",
+  "baseline": {
+    "rows": 300000,
+    "features": [
+      "amt",
+      "log_amt",
+      "mcc"
+    ]
+  },
+  "normal_window": {
+    "amt": {
+      "psi": 0.003,
+      "level": "ok"
+    },
+    "log_amt": {
+      "psi": 0.003,
+      "level": "ok"
+    },
+    "mcc": {
+      "psi": 0.0009,
+      "level": "ok"
+    }
+  },
+  "controlled_shift_window": {
+    "amt": {
+      "psi": 0.1525,
+      "level": "warn"
+    },
+    "log_amt": {
+      "psi": 0.1526,
+      "level": "warn"
+    },
+    "mcc": {
+      "psi": 11.7237,
+      "level": "alert"
+    }
+  },
+  "controlled_shift_detectable": true,
+  "no_nan_no_divzero": true,
+  "empty_bin_handling": "psi_proportions uses EPS=1e-4 smoothing; bin_edges returns None for constant input (handled by check_feature)",
+  "PSI_COMPATIBILITY": "PASS",
+  "cert_time_utc": "2026-09-07T14:04:33Z"
+}

@@ -1,0 +1,71 @@
+{
+  "E_hardneg": {
+    "model": "E_hardneg",
+    "threshold": 0.018758,
+    "rows": 879196,
+    "alerts": 204668,
+    "alert_rate": 0.23279,
+    "alerts_per_1k": 232.79,
+    "score_min": 1.04e-06,
+    "score_max": 0.99984188,
+    "score_mean": 0.053852,
+    "score_median": 0.002969,
+    "score_p1": 2.4e-05,
+    "score_p5": 8.6e-05,
+    "score_p25": 0.000644,
+    "score_p75": 0.016117,
+    "score_p95": 0.318442,
+    "score_p99": 0.99215
+  },
+  "V_rawplus": {
+    "model": "V_rawplus",
+    "threshold": 0.0298937337,
+    "rows": 879196,
+    "alerts": 163198,
+    "alert_rate": 0.185622,
+    "alerts_per_1k": 185.622,
+    "score_min": 1.04e-06,
+    "score_max": 0.99984188,
+    "score_mean": 0.053852,
+    "score_median": 0.002969,
+    "score_p1": 2.4e-05,
+    "score_p5": 8.6e-05,
+    "score_p25": 0.000644,
+    "score_p75": 0.016117,
+    "score_p95": 0.318442,
+    "score_p99": 0.99215
+  },
+  "operational_alert_limit": "UNDEFINED",
+  "operational_alert_limit_note": "no formal alert-rate ceiling is defined anywhere in configs/governance records \u2014 not invented here",
+  "shadow_dataset": "data/_raw_parity_cache_tr.npz (train window <2016, 879,196 rows)",
+  "score_identity": "candidate and production ensembles verified weight-identical (max |d|=0.0 on random vectors); single score array, two frozen thresholds",
+  "channel_alert_rate": {
+    "online": {
+      "rows": 105181,
+      "E_alerts_per_1k": 495.974,
+      "V_alerts_per_1k": 446.202
+    },
+    "swipe": {
+      "rows": 713379,
+      "E_alerts_per_1k": 207.735,
+      "V_alerts_per_1k": 158.302
+    },
+    "chip": {
+      "rows": 60636,
+      "E_alerts_per_1k": 71.03,
+      "V_alerts_per_1k": 55.033
+    },
+    "zero_merchant_code": {
+      "rows": 1,
+      "E_alerts_per_1k": 1000.0,
+      "V_alerts_per_1k": 1000.0
+    },
+    "nonzero_merchant_code": {
+      "rows": 879195,
+      "E_alerts_per_1k": 232.789,
+      "V_alerts_per_1k": 185.621
+    }
+  },
+  "segment_note": "channel/coverage segments below use the same shadow scores",
+  "cert_time_utc": "2026-09-07T14:04:33Z"
+}

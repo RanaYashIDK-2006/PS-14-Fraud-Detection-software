@@ -1,0 +1,13 @@
+{
+  "target": "altman_native_E_hardneg_cert_20260904",
+  "manifest_model_version": "altman_native_E_hardneg_cert_20260904",
+  "manifest_threshold": 0.018758,
+  "manifest_model_type": "xgb_lgb_cb_native",
+  "identity_ok": true,
+  "reload_time_ms": 46.86,
+  "scores_reproduced_on_reload": true,
+  "schema": "48-feature contract unchanged",
+  "logging_monitoring": "risk engine lifespan reloads manifest -> AltmanNativeEnsembleEngine; drift baseline and entity tracker seeding re-initialize on startup",
+  "production_untouched": true,
+  "cert_time_utc": "2026-09-07T14:04:33Z"
+}

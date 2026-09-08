@@ -1,0 +1,94 @@
+{
+  "case": "CASE_C_SUBSTANTIAL_PRE2016_CHIP_FRAUD",
+  "pre2016_chip_fraud_count": 301,
+  "outcome": "NO_ROBUST_WIN",
+  "comparison_table": [
+    {
+      "candidate": "C1_channel_neutral",
+      "chip_fraud_count": 0,
+      "2014_recall": 0.906844,
+      "2015_recall": 0.828711,
+      "2016_recall": 0.8064,
+      "2017_recall": 0.5098,
+      "2017_chip_recall": 0.5121,
+      "2017_fpr": 0.01104
+    },
+    {
+      "candidate": "C2_chip_supported",
+      "chip_fraud_count": 0,
+      "2014_recall": 0.906844,
+      "2015_recall": 0.828711,
+      "2016_recall": 0.8064,
+      "2017_recall": 0.5098,
+      "2017_chip_recall": 0.5121,
+      "2017_fpr": 0.01104
+    },
+    {
+      "candidate": "C3_channel_balanced",
+      "chip_fraud_count": 0,
+      "2014_recall": 0.912548,
+      "2015_recall": 0.818348,
+      "2016_recall": 0.7969,
+      "2017_recall": 0.4431,
+      "2017_chip_recall": 0.4556,
+      "2017_fpr": 0.00987
+    },
+    {
+      "candidate": "C4_chip_hardneg",
+      "chip_fraud_count": 0,
+      "2014_recall": 0.906844,
+      "2015_recall": 0.828711,
+      "2016_recall": 0.8064,
+      "2017_recall": 0.5098,
+      "2017_chip_recall": 0.5121,
+      "2017_fpr": 0.01104
+    }
+  ],
+  "robust_win_analysis": {
+    "C1_channel_neutral": {
+      "2017_recall": 0.5098,
+      "2017_chip_recall": 0.5121,
+      "2016_recall": 0.8064,
+      "2017_fpr": 0.01104,
+      "improves_2017": false,
+      "improves_chip": false,
+      "no_2016_regression": true,
+      "fpr_ok": true,
+      "overall": "NOT_WINNER"
+    },
+    "C2_chip_supported": {
+      "2017_recall": 0.5098,
+      "2017_chip_recall": 0.5121,
+      "2016_recall": 0.8064,
+      "2017_fpr": 0.01104,
+      "improves_2017": false,
+      "improves_chip": false,
+      "no_2016_regression": true,
+      "fpr_ok": true,
+      "overall": "NOT_WINNER"
+    },
+    "C3_channel_balanced": {
+      "2017_recall": 0.4431,
+      "2017_chip_recall": 0.4556,
+      "2016_recall": 0.7969,
+      "2017_fpr": 0.00987,
+      "improves_2017": false,
+      "improves_chip": false,
+      "no_2016_regression": true,
+      "fpr_ok": true,
+      "overall": "NOT_WINNER"
+    },
+    "C4_chip_hardneg": {
+      "2017_recall": 0.5098,
+      "2017_chip_recall": 0.5121,
+      "2016_recall": 0.8064,
+      "2017_fpr": 0.01104,
+      "improves_2017": false,
+      "improves_chip": false,
+      "no_2016_regression": true,
+      "fpr_ok": true,
+      "overall": "NOT_WINNER"
+    }
+  },
+  "cert_time_utc": "2026-09-07T15:59:31Z"
+}

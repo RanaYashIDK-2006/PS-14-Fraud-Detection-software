@@ -1,0 +1,18 @@
+{
+  "shadow_dataset": {
+    "path": "data/_mission_frame.npz (mission dev frame, train window only)",
+    "frame_npz_sha256": "b2eba29a5c774defeb0e0683796b0d48a9513e7a1f44c1cd33845c651e5ced6b",
+    "meta_path": "data/_mission_frame_meta.json",
+    "meta_sha256": "1b8cfce330b63178d452f4f317ab7ed112bfabc0e76d17d14ba50da610a9c32d",
+    "date_range": "year < 2016",
+    "row_count": 879196,
+    "fraud_count": 21345,
+    "legit_count": 857851,
+    "reason_permitted": "mission train window (<2016) is a development sample that is strictly outside the final-test window (>=2018); used only for shadow parity/PSI/alert-rate characterization, never for threshold/model/feature development"
+  },
+  "no_final_test_overlap": {
+    "verified": true,
+    "note": "shadow contains zero rows with year>=2018"
+  },
+  "cert_time_utc": "2026-09-06T17:13:06Z"
+}

@@ -1,0 +1,8 @@
+{
+  "no_unavailable_labels": true,
+  "no_proxy_labels": true,
+  "no_additional_sensitive_fields": true,
+  "feature_lineage_documented": true,
+  "status": "PASS",
+  "cert_time_utc": "2026-09-07T15:47:14Z"
+}

@@ -1,0 +1,22 @@
+{
+  "source_path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\data\\_raw_parity_cache_tr.npz",
+  "sha256": "9c866f118ac2c7065a7b668daa46ba7d94ec801d30f92ca63c6ad090fd5aa882",
+  "row_count": 879196,
+  "fraud_count": 21345,
+  "legit_count": 857851,
+  "min_year": 1991,
+  "max_year": 2015,
+  "n_users": 1558,
+  "n_merchants": 31742,
+  "n_cities": 9216,
+  "n_cards": 9,
+  "filter": "year < 2016 (train window only)",
+  "final_test_exclusion": {
+    "2016+ rows": 0,
+    "2018+ rows": 0,
+    "2018-2020 fraud rows": 0,
+    "asserted_ok": true
+  },
+  "reason_permitted": "development sample strictly outside the final-test window (>=2018); used for parity/PSI/alert-rate characterization only",
+  "cert_time_utc": "2026-09-07T14:06:52Z"
+}

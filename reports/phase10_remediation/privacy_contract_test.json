@@ -1,0 +1,14 @@
+{
+  "merchant_identity_forwarded_as_opaque_string": true,
+  "model_consumes_hash_code_only": true,
+  "merchant_hash_value": 55740.0,
+  "raw_merchant_string_leaked_to_features": false,
+  "raw_identity_fields_in_features": [
+    "merchant_id",
+    "city_id",
+    "card_id"
+  ],
+  "privacy_contract": "PASS",
+  "note": "identity strings live in the ingest payload; only stable numeric hash codes enter the model vector (native_features._code)",
+  "cert_time_utc": "2026-09-07T15:04:09Z"
+}

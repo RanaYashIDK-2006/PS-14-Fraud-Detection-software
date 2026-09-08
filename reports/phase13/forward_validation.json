@@ -1,0 +1,125 @@
+{
+  "2016": {
+    "C1_channel_neutral": {
+      "n": 20409,
+      "fraud": 3579,
+      "legit": 16830,
+      "tp": 2886,
+      "fp": 143,
+      "fn": 693,
+      "tn": 16687,
+      "recall": 0.80637,
+      "fpr": 0.008497,
+      "precision": 0.95279,
+      "alerts": 3029,
+      "alerts_per_1k": 148.41
+    },
+    "C2_chip_supported": {
+      "n": 20409,
+      "fraud": 3579,
+      "legit": 16830,
+      "tp": 2886,
+      "fp": 143,
+      "fn": 693,
+      "tn": 16687,
+      "recall": 0.80637,
+      "fpr": 0.008497,
+      "precision": 0.95279,
+      "alerts": 3029,
+      "alerts_per_1k": 148.41
+    },
+    "C3_channel_balanced": {
+      "n": 20409,
+      "fraud": 3579,
+      "legit": 16830,
+      "tp": 2852,
+      "fp": 139,
+      "fn": 727,
+      "tn": 16691,
+      "recall": 0.796871,
+      "fpr": 0.008259,
+      "precision": 0.953527,
+      "alerts": 2991,
+      "alerts_per_1k": 146.55
+    },
+    "C4_chip_hardneg": {
+      "n": 20409,
+      "fraud": 3579,
+      "legit": 16830,
+      "tp": 2886,
+      "fp": 143,
+      "fn": 693,
+      "tn": 16687,
+      "recall": 0.80637,
+      "fpr": 0.008497,
+      "precision": 0.95279,
+      "alerts": 3029,
+      "alerts_per_1k": 148.41
+    }
+  },
+  "2017": {
+    "C1_channel_neutral": {
+      "n": 17378,
+      "fraud": 255,
+      "legit": 17123,
+      "tp": 130,
+      "fp": 189,
+      "fn": 125,
+      "tn": 16934,
+      "recall": 0.509804,
+      "fpr": 0.011038,
+      "precision": 0.407524,
+      "alerts": 319,
+      "alerts_per_1k": 18.36
+    },
+    "C2_chip_supported": {
+      "n": 17378,
+      "fraud": 255,
+      "legit": 17123,
+      "tp": 130,
+      "fp": 189,
+      "fn": 125,
+      "tn": 16934,
+      "recall": 0.509804,
+      "fpr": 0.011038,
+      "precision": 0.407524,
+      "alerts": 319,
+      "alerts_per_1k": 18.36
+    },
+    "C3_channel_balanced": {
+      "n": 17378,
+      "fraud": 255,
+      "legit": 17123,
+      "tp": 113,
+      "fp": 169,
+      "fn": 142,
+      "tn": 16954,
+      "recall": 0.443137,
+      "fpr": 0.00987,
+      "precision": 0.400709,
+      "alerts": 282,
+      "alerts_per_1k": 16.23
+    },
+    "C4_chip_hardneg": {
+      "n": 17378,
+      "fraud": 255,
+      "legit": 17123,
+      "tp": 130,
+      "fp": 189,
+      "fn": 125,
+      "tn": 16934,
+      "recall": 0.509804,
+      "fpr": 0.011038,
+      "precision": 0.407524,
+      "alerts": 319,
+      "alerts_per_1k": 18.36
+    }
+  },
+  "locked_thresholds": {
+    "C1_channel_neutral": 0.7597850063065764,
+    "C2_chip_supported": 0.7597850063065764,
+    "C3_channel_balanced": 0.7875714682962114,
+    "C4_chip_hardneg": 0.7597850063065764
+  },
+  "cert_time_utc": "2026-09-07T15:59:31Z"
+}

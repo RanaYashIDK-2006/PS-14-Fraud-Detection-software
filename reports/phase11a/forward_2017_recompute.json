@@ -1,0 +1,56 @@
+{
+  "year": 2017,
+  "data": {
+    "year": 2017,
+    "confusion_matrix": {
+      "threshold": 0.793435,
+      "n": 17378,
+      "fraud": 255,
+      "legit": 17123,
+      "tp": 68,
+      "fp": 179,
+      "fn": 187,
+      "tn": 16944,
+      "recall": 0.266667,
+      "fpr": 0.010454,
+      "precision": 0.275304,
+      "alerts": 247,
+      "alert_rate": 0.014213,
+      "alerts_per_1k": 14.21,
+      "roc_auc": 0.960158,
+      "pr_auc": 0.214354
+    },
+    "fraud_score_distribution": {
+      "count": 255,
+      "min": 0.025548,
+      "max": 0.97811,
+      "mean": 0.54583,
+      "median": 0.570909,
+      "p01": 0.059138,
+      "p05": 0.094358,
+      "p25": 0.306919,
+      "p50": 0.570909,
+      "p75": 0.820485,
+      "p95": 0.947224,
+      "p99": 0.970451
+    },
+    "legit_score_distribution": {
+      "count": 17123,
+      "min": 1.6e-05,
+      "max": 0.988175,
+      "mean": 0.053062,
+      "median": 0.004023,
+      "p01": 0.00011,
+      "p05": 0.000307,
+      "p25": 0.001199,
+      "p50": 0.004023,
+      "p75": 0.018777,
+      "p95": 0.355868,
+      "p99": 0.800962
+    },
+    "threshold_used": 0.793435,
+    "fraud_above_threshold": 68,
+    "fraud_below_threshold": 187
+  },
+  "cert_time_utc": "2026-09-07T15:18:10Z"
+}

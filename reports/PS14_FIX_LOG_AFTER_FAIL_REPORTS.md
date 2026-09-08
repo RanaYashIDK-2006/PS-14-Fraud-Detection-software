@@ -613,3 +613,126 @@ the locked one-shot final test:
 Verification: control gate PASS, causal test PASS, reproducibility PASS,
 final-test one-shot recorded; snapshot + backup in
 `reports/phase6_production_snapshot.json` / `BACKUPS/E_hardneg_cert_20260904/`.
+
+---
+
+## PHASE 7 (2026-09-06) — coverage/channel generalization verdict + one methodology fix
+
+**Scope:** coverage stress (5/10/20/40% x seeds on the locked dev val), exposure
+ablation (raw / norm / raw+norm), channel audit, 3 dev-only forward windows,
+threshold robustness, FN mechanism. Final test never loaded by Phase-7 code;
+E_hardneg @ 0.018758 byte-identical throughout.
+
+**METHODOLOGY FIX (OUTCOME-D event):** the first forward-validation pass used an
+eval window of 2018<=year<2020, which contains ALL 4,578 final-test fraud rows
+(2020 has zero fraud in this dataset) — threshold selection on the locked test,
+a Rule-2 violation. Caught in review; section rewritten to three strictly
+pre-2018 expanding windows (eval 2014/2015/2016). All reports regenerated;
+`phase7_forward_validation.json` + `PHASE7_GENERALIZATION_REPORT.md` are clean.
+No final deliverable used the contaminated window.
+
+**Key results (dev only, exact >=99.5% recall floors):**
+- Ablation on identical rows: raw_only FPR 0.1051, norm_only 0.1048,
+  rawplus 0.0992 — raw counts carry signal the rates don't replace; raw+rate best.
+- Channel: V_rawplus cuts chip 0.0653->0.0611, swipe 0.1030->0.0800,
+  online 0.4174->0.3432 at matched recall; no asymmetric segment loss.
+- Forward windows (eval 2014/2015/2016): rawplus holds >=99.5% recall
+  everywhere, FPR equal/better than raw_only (-11% 2015, -12% 2016).
+- Coverage stress: absent-merchant FPR stays 0.68-0.79 at EVERY coverage level;
+  coverage is NOT the dominant lever, and naive scaling worsens overall FPR
+  (0.105@5% -> 0.236@40%) — Phase-5 count-scale confound confirmed.
+- Val FN parity E=19 / V=19 (E-only 3, V-only 3, both 16): the Phase-6 test gap
+  (FN 15 vs 42) has no dev analogue; it is a val->test shift, not a V defect.
+
+**Verdict: OUTCOME A (ROBUST DEV WIN) — V_rawplus dev-robust, freeze stands,
+sent to INDEPENDENT CERTIFICATION.** E_hardneg REMAINS DEPLOYED (rule 1) until
+certification completes; certification may re-authorize one clean final-test
+one-shot at the true floor tV* (0.0298937337).
+
+**Reports:** reports/phase7_preflight.json, phase7_coverage_stress.json,
+phase7_exposure_ablation.json, phase7_channel_audit.json,
+phase7_forward_validation.json, phase7_threshold_robustness.json,
+phase7_fn_mechanism.json, phase7_conditional_experiment.json,
+phase7_final_decision.json + PHASE7_GENERALIZATION_REPORT.md
+
+## Phase 8 — Robust model improvement & forward generalization (2026-09-06)
+
+- **Controls reproduced exactly**: E_hardneg floor fpr 0.115304 (cert 0.1153), V_rawplus
+  floor fpr 0.099235 (cert 0.0992) at the exact >=99.5% recall constraint on the locked
+  val (174,530 rows / 3,834 fraud). AUC: E 0.995594 / V 0.995986.
+- **Candidates tested** (identical train recipe, threshold locked on val only):
+  - C_cov = V_rawplus (54) + 4 label-free real-corpus merchant-depth cols (real_prior_tx_log,
+    real_active_years, real_age_years, under_covered; years strictly < row year).
+  - D_safe = C_cov minus the 3 UNVERIFIED label-dependent fraud-rate cols (37-39).
+- **Fixed-val >=99.5% floor**: E 0.1153 / V 0.0992 / C_cov 0.1121 / D_safe 0.1349.
+  No candidate beat V_rawplus. Real-depth cols cut the G4 deep-real/zero-frame FPR
+  (E 0.443 -> C_cov 0.344 -> D_safe 0.312) but worsened genuinely-new-merchant FPR
+  (V 0.731 -> C_cov 0.817 -> D_safe 0.857) and cost AUC (V 0.9960 -> C_cov 0.9917 ->
+  D_safe 0.9869). Dropping the fraud-rate cols (H2) is rejected on dev.
+- **Forward windows (2014/2015/2016, dev-only)**: C_cov does NOT transfer — FV-2015 FPR
+  0.252 vs V_rawplus 0.154 (H3 rejected); D_safe worse on all three windows.
+- **Reproducibility**: C_cov and D_safe trained twice from scratch — max|dp| = 0.0, metrics
+  identical (bit-identical, better than the 1e-6 tolerance).
+- **Verdict: OUTCOME C (NO WIN)**. No candidate qualifies for freeze/certification.
+  E_hardneg @ 0.018758 remains production; V_rawplus remains the dev-robust candidate for
+  independent certification review. Final test untouched (>=2018 never loaded/scored);
+  production guard passed (altman_native_E_hardneg_cert_20260904).
+- Deliverables: reports/phase8_*.json (11 files) + PHASE8_ROBUST_MODEL_IMPROVEMENT_REPORT.md.
+
+
+## Phase 9 - Independent certification of V_rawplus (2026-09-06T16:50:41Z)
+
+- Certification status: CONDITIONAL
+- FINAL_TEST_AUTHORIZED: FALSE
+- Production model altman_native_E_hardneg_cert_20260904: UNTOUCHED (guard snapshot recorded)
+- Final test (>=2018): NOT loaded, NOT scored; firewall artifact written
+- V_rawplus = native 48-feature mission_E_hardneg ensemble; artifact/config/scores SHA-256 recorded
+- Threshold tV* = 0.0298937337 re-verified against Phase-6b threshold_selection.json and Phase-8 controls.json at_floor (TP/FP/FN/TN identical)
+- Locked-val reproduction: E_hardneg FPR 0.115304, V_rawplus FPR 0.099235 - matches certified records
+- Clean forward windows (FV-2014/2015/2016) reviewed: V_rawplus >=99.5% recall with FPR <= E on all three
+- Segment/coverage/channel behavior documented; segment tradeoffs preserved (G4 improved, G1 worsened)
+- Reproducibility: max delta p = 0.0 (Phase-8 candidates); V_rawplus bit-identical in Phase-7
+- FAIL gate: label availability (fraud-rate features UNVERIFIED)
+- UNVERIFIED gate: offline/production feature parity not run in this gate
+- PARTIAL gate: production compatibility (technical OK; PSI/alert-rate/parity/online-loading pending)
+- 2018-2019 forward window used in an earlier Phase-7 draft was marked INVALID and excluded; documented in Phase-7 methodology-integrity note and fix log; no deliverable used it
+- Historical Phase-6 one-shot preserved: E_hardneg 0.9967 / V_rawplus 0.9908; not erased, not relabeled
+- Next authorized step only after conditions resolved: resolve label latency OR remove fraud-rate features + complete parity verification + PSI/alert-rate/online-loading verification
+
+
+## Phase 9 - Independent certification of V_rawplus (2026-09-06T16:57:34Z)
+- Certification status: CONDITIONAL
+- FINAL_TEST_AUTHORIZED: FALSE
+- Production model altman_native_E_hardneg_cert_20260904: UNTOUCHED (guard snapshot recorded)
+- Final test (>=2018): NOT loaded, NOT scored; firewall artifact written
+- V_rawplus = native 48-feature mission_E_hardneg ensemble; artifact/config/scores SHA-256 recorded
+- Threshold tV* = 0.0298937337 re-verified against Phase-6b threshold_selection.json and Phase-8 controls.json at_floor (TP/FP/FN/TN identical)
+- Locked-val reproduction: E_hardneg FPR 0.115304, V_rawplus FPR 0.099235 - matches certified records
+- Clean forward windows (FV-2014/2015/2016) reviewed: V_rawplus >=99.5% recall with FPR <= E on all three
+- Segment/coverage/channel behavior documented; segment tradeoffs preserved (G4 improved, G1 worsened)
+- Reproducibility: max delta p = 0.0 (Phase-8 candidates); V_rawplus bit-identical in Phase-7
+- FAIL gate: label availability (fraud-rate features UNVERIFIED)
+- UNVERIFIED gate: offline/production feature parity not run in this gate
+- PARTIAL gate: production compatibility (technical OK; PSI/alert-rate/parity/online-loading pending)
+- 2018-2019 forward window used in an earlier Phase-7 draft was marked INVALID and excluded; documented in Phase-7 methodology-integrity note and fix log; no deliverable used it
+- Historical Phase-6 one-shot preserved: E_hardneg 0.9967 / V_rawplus 0.9908; not erased, not relabeled
+- Next authorized step only after conditions resolved: resolve label latency OR remove fraud-rate features + complete parity verification + PSI/alert-rate/online-loading verification
+
+
+## Phase 10B - Gate B/C execution (2026-09-07T14:12:00Z)
+
+- CERTIFICATION_STATUS = FAIL; FINAL_TEST_AUTHORIZED = FALSE
+- Production model altman_native_E_hardneg_cert_20260904 @ 0.018758: UNTOUCHED (hash re-checked in both harnesses)
+- Final test (>=2018): NOT loaded, NOT scored; harness asserts max(year)<2016 on data/_raw_parity_cache_tr.npz (879,196 rows, SHA-256 9c866f11...)
+- GATE B = FAIL (executed, PROVEN): production-as-wired diverges on 7/48 features:
+  * merchant_id constant 0.0 (100% rows) - privacy layer IngestTransactionRequest has NO merchant-name/merchant-id field; _code("")=0
+  * user_merchant_diversity / user_city_diversity constant 1.0 (~99% rows) - FeatureVector default 0.0 -> clamp max(0,1.0)
+  * user_merch_count constant 0.0 (85% rows) - never tracked in production
+  * user/merch/city fraud rates constant 0.001 cold-start (48-58% rows) - wired 0.0 default -> COLD_START_FRAUD_RATE; tracker variant (100-window/min-5) also != offline unbounded expanding mean
+  * production trackers have NO ts cutoff - out-of-order/backdated ingestion changes earlier rows' features (max delta 9999)
+  * score parity at tV*=0.0298937337: max|d|=0.995, 67,576/300,000 decision disagreements (22.5%)
+- Edge cases 20/20 PASS; cache/reset/reorder/zero-value PASS; temporal offline strict-before-ts PASS by construction
+- GATE C = PASS (executed): shadow alert rate E=232.79/1k vs V=185.62/1k on 879,196 train-window rows; PSI detects controlled shift (warn/alert, no NaN); online loading OK; rollback OK with reproduced scores; resources OK
+- STRUCTURAL FINDING: candidate V_rawplus ensemble is weight-IDENTICAL to production E_hardneg (max|d|=0.0) - the FPR/alert-rate advantage is threshold-only (0.0298937337 vs 0.018758), NOT a model improvement
+- Prior placeholder alert_rate_analysis.json (identical score distributions for both models) replaced with real shadow scoring
+- Next: do NOT patch candidate; either fix production feature wiring (merchant identity, diversity, merch_count, confirmed-label fraud rates -> new version => new validation/certification) or build a genuinely new candidate without the 7 divergent features

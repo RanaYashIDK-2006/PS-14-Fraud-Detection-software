@@ -1,0 +1,17 @@
+{
+  "final_test_access": false,
+  "final_test_fingerprint": {
+    "dataset": "IBM credit-card transaction corpus (>=2018 final test window)",
+    "expected_rows": 3782053,
+    "expected_fraud": 4578,
+    "expected_prevalence_pct": 0.121,
+    "time_window": ">=2018"
+  },
+  "guard_assertions": {
+    "no_final_test_npz_loaded": true,
+    "no_final_test_labels_loaded": true,
+    "no_final_test_scores_generated": true
+  },
+  "note": "Phase 10 is certification remediation, not experimentation. No final-test path opened, loaded, scored, sampled, queried, or used for parity/PSI/label development.",
+  "cert_time_utc": "2026-09-06T17:05:31Z"
+}

@@ -1,0 +1,12 @@
+{
+  "target_leakage": "PASS \u2014 no feature uses current row's fraud label",
+  "temporal_leakage": "PASS \u2014 expanding context is shifted (event not counted in own history)",
+  "train_val_contamination": "PASS \u2014 chronological split, no val data in training",
+  "threshold_leakage": "PASS \u2014 threshold selected on validation only",
+  "early_stopping_leakage": "PASS \u2014 early stopping uses validation only (eval_set)",
+  "hyperparameter_leakage": "PASS \u2014 hyperparameters fixed (no Optuna sweep on this run)",
+  "feature_contract_leakage": "PASS \u2014 45 features from shared derivation, no fraud-rate features",
+  "fraud_rate_exclusion": "PASS \u2014 user_fraud_rate, merch_fraud_rate, city_fraud_rate dropped",
+  "all_pass": true,
+  "cert_time_utc": "2026-09-07T15:12:08Z"
+}

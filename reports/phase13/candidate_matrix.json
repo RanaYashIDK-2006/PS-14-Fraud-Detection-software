@@ -1,0 +1,26 @@
+{
+  "case": "CASE_C_SUBSTANTIAL_PRE2016_CHIP_FRAUD",
+  "candidates": {
+    "C1_channel_neutral": {
+      "description": "Insufficient chip fraud for hard-neg mining",
+      "threshold": 0.7597850063065764,
+      "chip_fraud": 0
+    },
+    "C2_chip_supported": {
+      "description": "Insufficient chip fraud for hard-neg mining",
+      "threshold": 0.7597850063065764,
+      "chip_fraud": 0
+    },
+    "C3_channel_balanced": {
+      "description": "Channel-neutral + channel-balanced fraud weighting",
+      "threshold": 0.7875714682962114,
+      "chip_fraud": 0
+    },
+    "C4_chip_hardneg": {
+      "description": "Insufficient chip fraud for hard-neg mining",
+      "threshold": 0.7597850063065764,
+      "chip_fraud": 0
+    }
+  },
+  "cert_time_utc": "2026-09-07T15:59:31Z"
+}

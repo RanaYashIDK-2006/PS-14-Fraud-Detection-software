@@ -1,0 +1,8 @@
+{
+  "training_end": "2015-12-31",
+  "validation_start": "2016-01-01",
+  "temporal_separation": "PASS \u2014 no overlap",
+  "feature_causality": "PASS \u2014 expanding context sorted by ts, shifted",
+  "no_future_leak": "PASS \u2014 future rows cannot alter prior features",
+  "cert_time_utc": "2026-09-07T15:18:10Z"
+}

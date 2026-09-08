@@ -1,0 +1,492 @@
+{
+  "yearly_breakdown": {
+    "1991": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 14,
+        "fraud": 0
+      },
+      "Online Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "total": 14,
+      "fraud": 0
+    },
+    "1992": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 61,
+        "fraud": 0
+      },
+      "Online Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "total": 61,
+      "fraud": 0
+    },
+    "1993": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 82,
+        "fraud": 0
+      },
+      "Online Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "total": 82,
+      "fraud": 0
+    },
+    "1994": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 133,
+        "fraud": 0
+      },
+      "Online Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "total": 133,
+      "fraud": 0
+    },
+    "1995": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 198,
+        "fraud": 0
+      },
+      "Online Transaction": {
+        "total": 1,
+        "fraud": 0
+      },
+      "total": 199,
+      "fraud": 0
+    },
+    "1996": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 284,
+        "fraud": 10
+      },
+      "Online Transaction": {
+        "total": 6,
+        "fraud": 0
+      },
+      "total": 290,
+      "fraud": 10
+    },
+    "1997": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 475,
+        "fraud": 32
+      },
+      "Online Transaction": {
+        "total": 20,
+        "fraud": 0
+      },
+      "total": 495,
+      "fraud": 32
+    },
+    "1998": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 800,
+        "fraud": 32
+      },
+      "Online Transaction": {
+        "total": 31,
+        "fraud": 0
+      },
+      "total": 831,
+      "fraud": 32
+    },
+    "1999": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 1130,
+        "fraud": 24
+      },
+      "Online Transaction": {
+        "total": 64,
+        "fraud": 0
+      },
+      "total": 1194,
+      "fraud": 24
+    },
+    "2000": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 1832,
+        "fraud": 171
+      },
+      "Online Transaction": {
+        "total": 125,
+        "fraud": 0
+      },
+      "total": 1957,
+      "fraud": 171
+    },
+    "2001": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 2755,
+        "fraud": 354
+      },
+      "Online Transaction": {
+        "total": 183,
+        "fraud": 0
+      },
+      "total": 2938,
+      "fraud": 354
+    },
+    "2002": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 3309,
+        "fraud": 37
+      },
+      "Online Transaction": {
+        "total": 389,
+        "fraud": 102
+      },
+      "total": 3698,
+      "fraud": 139
+    },
+    "2003": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 4263,
+        "fraud": 47
+      },
+      "Online Transaction": {
+        "total": 634,
+        "fraud": 264
+      },
+      "total": 4897,
+      "fraud": 311
+    },
+    "2004": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 5663,
+        "fraud": 243
+      },
+      "Online Transaction": {
+        "total": 863,
+        "fraud": 377
+      },
+      "total": 6526,
+      "fraud": 620
+    },
+    "2005": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 7036,
+        "fraud": 213
+      },
+      "Online Transaction": {
+        "total": 702,
+        "fraud": 16
+      },
+      "total": 7738,
+      "fraud": 229
+    },
+    "2006": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 9358,
+        "fraud": 1118
+      },
+      "Online Transaction": {
+        "total": 867,
+        "fraud": 0
+      },
+      "total": 10225,
+      "fraud": 1118
+    },
+    "2007": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 10369,
+        "fraud": 630
+      },
+      "Online Transaction": {
+        "total": 2278,
+        "fraud": 1251
+      },
+      "total": 12647,
+      "fraud": 1881
+    },
+    "2008": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 12048,
+        "fraud": 1145
+      },
+      "Online Transaction": {
+        "total": 3824,
+        "fraud": 2565
+      },
+      "total": 15872,
+      "fraud": 3710
+    },
+    "2009": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 12732,
+        "fraud": 446
+      },
+      "Online Transaction": {
+        "total": 2046,
+        "fraud": 694
+      },
+      "total": 14778,
+      "fraud": 1140
+    },
+    "2010": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 13574,
+        "fraud": 377
+      },
+      "Online Transaction": {
+        "total": 5092,
+        "fraud": 3458
+      },
+      "total": 18666,
+      "fraud": 3835
+    },
+    "2011": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 14044,
+        "fraud": 3
+      },
+      "Online Transaction": {
+        "total": 1795,
+        "fraud": 52
+      },
+      "total": 15839,
+      "fraud": 55
+    },
+    "2012": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 14605,
+        "fraud": 340
+      },
+      "Online Transaction": {
+        "total": 2841,
+        "fraud": 993
+      },
+      "total": 17446,
+      "fraud": 1333
+    },
+    "2013": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 14638,
+        "fraud": 312
+      },
+      "Online Transaction": {
+        "total": 3592,
+        "fraud": 1706
+      },
+      "total": 18230,
+      "fraud": 2018
+    },
+    "2014": {
+      "Chip Transaction": {
+        "total": 0,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 14794,
+        "fraud": 159
+      },
+      "Online Transaction": {
+        "total": 2954,
+        "fraud": 893
+      },
+      "total": 17748,
+      "fraud": 1052
+    },
+    "2015": {
+      "Chip Transaction": {
+        "total": 12581,
+        "fraud": 301
+      },
+      "Swipe Transaction": {
+        "total": 3035,
+        "fraud": 203
+      },
+      "Online Transaction": {
+        "total": 4907,
+        "fraud": 2777
+      },
+      "total": 20523,
+      "fraud": 3281
+    },
+    "2016": {
+      "Chip Transaction": {
+        "total": 12133,
+        "fraud": 279
+      },
+      "Swipe Transaction": {
+        "total": 3100,
+        "fraud": 227
+      },
+      "Online Transaction": {
+        "total": 5176,
+        "fraud": 3073
+      },
+      "total": 20409,
+      "fraud": 3579
+    },
+    "2017": {
+      "Chip Transaction": {
+        "total": 12347,
+        "fraud": 248
+      },
+      "Swipe Transaction": {
+        "total": 2916,
+        "fraud": 7
+      },
+      "Online Transaction": {
+        "total": 2115,
+        "fraud": 0
+      },
+      "total": 17378,
+      "fraud": 255
+    },
+    "2018": {
+      "Chip Transaction": {
+        "total": 13958,
+        "fraud": 2113
+      },
+      "Swipe Transaction": {
+        "total": 3130,
+        "fraud": 250
+      },
+      "Online Transaction": {
+        "total": 2227,
+        "fraud": 128
+      },
+      "total": 19315,
+      "fraud": 2491
+    },
+    "2019": {
+      "Chip Transaction": {
+        "total": 14074,
+        "fraud": 1895
+      },
+      "Swipe Transaction": {
+        "total": 3125,
+        "fraud": 192
+      },
+      "Online Transaction": {
+        "total": 2159,
+        "fraud": 0
+      },
+      "total": 19358,
+      "fraud": 2087
+    },
+    "2020": {
+      "Chip Transaction": {
+        "total": 2344,
+        "fraud": 0
+      },
+      "Swipe Transaction": {
+        "total": 554,
+        "fraud": 0
+      },
+      "Online Transaction": {
+        "total": 425,
+        "fraud": 0
+      },
+      "total": 3323,
+      "fraud": 0
+    }
+  },
+  "pre2016_total": 193027,
+  "pre2016_fraud": 21345,
+  "pre2016_chip_fraud": 301,
+  "pre2016_chip_fraud_merchants": 292,
+  "pre2016_chip_fraud_users": 187,
+  "pre2016_online_fraud": 15148,
+  "pre2016_swipe_fraud": 5896,
+  "cert_time_utc": "2026-09-07T15:59:31Z"
+}

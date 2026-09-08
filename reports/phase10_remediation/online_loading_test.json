@@ -1,0 +1,26 @@
+{
+  "artifact": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\models\\model_records\\mission_E_hardneg\\models.joblib",
+  "sha256": "8875030e3636a1b59aa24ed7a68f96481d66c9e07e531127f721aae4ec6fdc7e",
+  "load_time_ms": 104.3,
+  "loads_ok": true,
+  "n_features": 48,
+  "feature_order_matches_contract": true,
+  "threshold_tvstar": 0.0298937337,
+  "members": [
+    "cb",
+    "lgb",
+    "scaler",
+    "xgb"
+  ],
+  "inference_ok": true,
+  "malformed_input_behavior": "AltmanNativeEnsembleEngine.predict wraps failures; risk engine catches and degrades to rules-only (never 500s) \u2014 verified in code path (risk_engine/main.py breaker/degraded)",
+  "missing_input_behavior": "FeatureVector defaults fill missing fields (0.0/''); _from_raw_native substitutes amount_ratio*100 only when amount is None at direct-call level, not at the pydantic boundary (amount defaults 0.0, ge=0)",
+  "monitoring_hooks": [
+    "drift_detector.record (per event)",
+    "entity tracker record (score>=70 proxy)",
+    "latency SLO buffer",
+    "audit chain append"
+  ],
+  "note": "candidate loads through the same joblib pathway production uses; weight-identity with production verified separately (max|d|=0.0).",
+  "cert_time_utc": "2026-09-07T14:04:33Z"
+}

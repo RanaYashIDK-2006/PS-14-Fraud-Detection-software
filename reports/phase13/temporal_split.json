@@ -1,0 +1,26 @@
+{
+  "train": {
+    "period": "<=2013",
+    "rows": 154756,
+    "fraud": 17012
+  },
+  "val": {
+    "period": "2014",
+    "rows": 17748,
+    "fraud": 1052
+  },
+  "fwd_val": {
+    "period": "2015",
+    "rows": 20523,
+    "fraud": 3281
+  },
+  "forward_2016": {
+    "rows": 20409,
+    "fraud": 3579
+  },
+  "forward_2017": {
+    "rows": 17378,
+    "fraud": 255
+  },
+  "cert_time_utc": "2026-09-07T15:59:31Z"
+}

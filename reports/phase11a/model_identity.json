@@ -1,0 +1,10 @@
+{
+  "candidate_name": "P11_45feat",
+  "feature_count": 45,
+  "features_match_45_contract": true,
+  "no_fraud_rate_features": true,
+  "model_hash": "395467fcab7688c2c8d917ee1e934ef69e4fd85d1843a4cb320dd4a50e0dae3e",
+  "config_threshold": 0.7934350508898499,
+  "status": "PASS",
+  "cert_time_utc": "2026-09-07T15:18:10Z"
+}

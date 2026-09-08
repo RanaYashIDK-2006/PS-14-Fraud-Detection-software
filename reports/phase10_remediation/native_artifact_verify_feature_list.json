@@ -1,0 +1,7 @@
+{
+  "artifact": "feature_list.json",
+  "expected_sha256": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+  "actual_sha256": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+  "on_disk": true,
+  "match": true
+}

@@ -1,0 +1,33 @@
+{
+  "candidate": "P11_45feat",
+  "threshold": 0.7934350508898499,
+  "windows": [
+    {
+      "year": 2016,
+      "rows": 20409,
+      "fraud": 3579,
+      "prevalence": 0.175364,
+      "threshold": 0.7934350508898499,
+      "recall": 0.851635,
+      "fpr": 0.009507,
+      "precision": 0.950125,
+      "alerts_per_1k": 157.19,
+      "auc": 0.9933,
+      "pr_auc": 0.9731
+    },
+    {
+      "year": 2017,
+      "rows": 17378,
+      "fraud": 255,
+      "prevalence": 0.014674,
+      "threshold": 0.7934350508898499,
+      "recall": 0.266667,
+      "fpr": 0.010454,
+      "precision": 0.275304,
+      "alerts_per_1k": 14.21,
+      "auc": 0.9602,
+      "pr_auc": 0.2144
+    }
+  ],
+  "cert_time_utc": "2026-09-07T15:12:08Z"
+}

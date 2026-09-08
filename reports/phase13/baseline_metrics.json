@@ -1,0 +1,42 @@
+{
+  "validation": {
+    "C1_channel_neutral": {
+      "threshold": 0.7597850063065764,
+      "val_auc": 0.996336,
+      "val_pr_auc": 0.95956,
+      "recall": 0.906844,
+      "fpr": 0.009943,
+      "precision": 0.851786,
+      "alerts_per_1k": 63.11
+    },
+    "C2_chip_supported": {
+      "threshold": 0.7597850063065764,
+      "val_auc": 0.996336,
+      "val_pr_auc": 0.95956,
+      "recall": 0.906844,
+      "fpr": 0.009943,
+      "precision": 0.851786,
+      "alerts_per_1k": 63.11
+    },
+    "C3_channel_balanced": {
+      "threshold": 0.7875714682962114,
+      "val_auc": 0.99627,
+      "val_pr_auc": 0.95933,
+      "recall": 0.912548,
+      "fpr": 0.009943,
+      "precision": 0.852575,
+      "alerts_per_1k": 63.44
+    },
+    "C4_chip_hardneg": {
+      "threshold": 0.7597850063065764,
+      "val_auc": 0.996336,
+      "val_pr_auc": 0.95956,
+      "recall": 0.906844,
+      "fpr": 0.009943,
+      "precision": 0.851786,
+      "alerts_per_1k": 63.11
+    }
+  },
+  "case": "CASE_C_SUBSTANTIAL_PRE2016_CHIP_FRAUD",
+  "cert_time_utc": "2026-09-07T15:59:31Z"
+}

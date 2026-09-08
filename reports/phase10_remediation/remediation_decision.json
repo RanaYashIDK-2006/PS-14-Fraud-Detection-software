@@ -1,0 +1,39 @@
+{
+  "decision": "PATH_B",
+  "status": "EXISTING_MODEL_BLOCKED",
+  "reason": "3 of 48 features (user_fraud_rate, merch_fraud_rate, city_fraud_rate) are UNAVAILABLE_AT_DECISION_TIME \u2014 no confirmed-label pipeline exists at decision time; risk engine uses score>=70 proxy (forbidden); VerificationOutcome labels are retrospective only. The remaining 45 features ACHIEVE production parity (max|delta|=1.937e-05, 0 decision disagreements). The model is blocked by 3 features, not 7.",
+  "gate_a": "FAIL (label availability unverified \u2014 fraud-rate features cannot be produced with legitimate confirmed labels at decision time)",
+  "gate_b": "CONDITIONAL (45/48 features achieve parity; 3 fraud-rate features blocked by label availability)",
+  "new_candidate_required": true,
+  "new_candidate_specification": {
+    "model_type": "xgb_lgb_cb_ensemble (45 native features)",
+    "features_dropped": [
+      "user_fraud_rate",
+      "merch_fraud_rate",
+      "city_fraud_rate"
+    ],
+    "new_feature_count": 45,
+    "training_window": "<2016 (chronological)",
+    "validation_window": "2016-2017 (for threshold selection only)",
+    "final_test": ">=2018 (LOCKED, never accessed during certification)",
+    "seed": 42,
+    "ensemble_weights": {
+      "xgb": 0.34,
+      "lgb": 0.33,
+      "cb": 0.33
+    },
+    "threshold_policy": "validation-only: min FPR at val recall >= 0.995 (P2)",
+    "required_steps": [
+      "1. Retrain with 45 features on train < 2016",
+      "2. New model identity + new hash",
+      "3. Validation-only threshold selection",
+      "4. Leakage audit",
+      "5. Temporal audit (ts-aware state)",
+      "6. Feature parity audit",
+      "7. Forward validation on clean segments",
+      "8. Independent certification"
+    ]
+  },
+  "final_test_authorized": false,
+  "cert_time_utc": "2026-09-07T15:04:09Z"
+}

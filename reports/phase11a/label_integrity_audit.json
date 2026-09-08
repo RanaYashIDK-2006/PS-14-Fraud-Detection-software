@@ -1,0 +1,20 @@
+{
+  "2016": {
+    "label_values": [
+      0,
+      1
+    ],
+    "fraud_count": 3579,
+    "dtype": "int64"
+  },
+  "2017": {
+    "label_values": [
+      0,
+      1
+    ],
+    "fraud_count": 255,
+    "dtype": "int64"
+  },
+  "identical_encoding": true,
+  "cert_time_utc": "2026-09-07T15:18:10Z"
+}

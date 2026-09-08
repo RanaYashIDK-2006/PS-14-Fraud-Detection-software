@@ -1,0 +1,12 @@
+{
+  "candidate": "P11_45feat",
+  "run1_model_hash": "395467fcab7688c2c8d917ee1e934ef69e4fd85d1843a4cb320dd4a50e0dae3e",
+  "run2_predictions_on_val_sample": {
+    "n_sample": 10000,
+    "max_abs_prediction_delta": 0.0,
+    "mean_abs_prediction_delta": 0.0,
+    "identical": true
+  },
+  "note": "Both runs use identical seed/hyperparameters/data. Differences come from non-deterministic multithreaded tree building (expected < 1e-4 on most rows).",
+  "cert_time_utc": "2026-09-07T15:12:08Z"
+}

@@ -1,0 +1,12 @@
+{
+  "threshold_tvstar": 0.0298937337,
+  "n_rows": 300000,
+  "max_abs_score_delta": 1.937e-05,
+  "mean_abs_score_delta": 1e-10,
+  "p95_abs_score_delta": 0.0,
+  "p99_abs_score_delta": 0.0,
+  "decision_disagreements": 0,
+  "decision_disagreement_rate": 0.0,
+  "note": "remediation restored merchant_id/diversity/merch_count parity; remaining deltas from 3 fraud-rate features (offline oracle vs live 0.001 cold-start). Decision disagreements = threshold-drops due to fraud-rate differences near tV*.",
+  "cert_time_utc": "2026-09-07T15:04:09Z"
+}

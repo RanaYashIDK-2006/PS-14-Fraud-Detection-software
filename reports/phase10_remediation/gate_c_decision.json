@@ -1,0 +1,85 @@
+{
+  "gate": "C",
+  "gate_name": "production-impact compatibility (shadow)",
+  "status": "PASS",
+  "decision_time_utc": "2026-09-07T14:10:00Z",
+  "execution_basis": "actual harness execution (phase10b_gateC.py), not preflight",
+  "input_firewall": {
+    "dataset": "data/_raw_parity_cache_tr.npz",
+    "rows": 879196,
+    "max_year": 2015,
+    "asserted_max_year_lt_2016": true,
+    "final_test_rows_loaded": 0
+  },
+  "evidence_files": [
+    "alert_rate_analysis.json",
+    "psi_compatibility.json",
+    "online_loading_test.json",
+    "rollback_compatibility.json",
+    "resource_performance.json"
+  ],
+  "results": {
+    "alert_rate_shadow": {
+      "rows": 879196,
+      "E_hardneg": {"threshold": 0.018758, "alerts": 204668, "alert_rate": 0.23279, "alerts_per_1k": 232.79},
+      "V_rawplus": {"threshold": 0.0298937337, "alerts": 163198, "alert_rate": 0.18562, "alerts_per_1k": 185.62},
+      "score_identity_note": "candidate and production ensembles verified weight-identical (max |d| = 0.0 on random vectors), so the alert-rate difference is threshold-only, not model improvement",
+      "operational_alert_limit": "UNDEFINED",
+      "operational_alert_limit_note": "no formal alert-rate ceiling exists in configs/governance records; none invented"
+    },
+    "channel_alert_rates_per_1k": {
+      "online": {"rows": 105181, "E": 495.97, "V": 446.20},
+      "swipe": {"rows": 713379, "E": 207.74, "V": 158.30},
+      "chip": {"rows": 60636, "E": 71.03, "V": 55.03}
+    },
+    "psi_compatibility": {
+      "status": "PASS",
+      "implementation": "src/drift_monitor/psi.py (same functions DriftDetector uses)",
+      "normal_window": {"amt": {"psi": 0.003, "level": "ok"}, "log_amt": {"psi": 0.003, "level": "ok"}, "mcc": {"psi": 0.0009, "level": "ok"}},
+      "controlled_shift": {"amt": {"psi": 0.1525, "level": "warn"}, "log_amt": {"psi": 0.1526, "level": "warn"}, "mcc": {"psi": 11.7237, "level": "alert"}},
+      "controlled_shift_detectable": true,
+      "no_nan_no_divzero": true,
+      "empty_bin_handling": "EPS=1e-4 smoothing; bin_edges returns None for constant input",
+      "no_false_no_drift_claim": true
+    },
+    "online_loading": {
+      "status": "PASS",
+      "artifact_sha256": "8875030e3636a1b59aa24ed7a68f96481d66c9e07e531127f721aae4ec6fdc7e",
+      "load_time_ms": 104.3,
+      "n_features": 48,
+      "feature_order_matches_contract": true,
+      "members": ["cb", "lgb", "scaler", "xgb"],
+      "malformed_input_behavior": "risk engine catches ML failures and degrades to rules-only (never 500s)",
+      "missing_input_behavior": "FeatureVector defaults fill missing fields (0.0/''); amount defaults 0.0 at the pydantic boundary"
+    },
+    "rollback_compatibility": {
+      "status": "PASS",
+      "target": "altman_native_E_hardneg_cert_20260904",
+      "identity_ok": true,
+      "manifest_threshold": 0.018758,
+      "scores_reproduced_on_reload": true,
+      "production_untouched": true
+    },
+    "resource_performance": {
+      "model_load_time_ms": 104.3,
+      "batch_10k_rows_per_row_ms": 0.0082,
+      "single_row_scaler_ms": 0.1202,
+      "failure_rate": 0.0,
+      "note": "per-request SLO (P99<100ms) is production-monitored via /internal/latency-slo; not re-derived here"
+    }
+  },
+  "material_findings": [
+    "Gate C technical harness passes: PSI detects a controlled shift (warn/alert, no NaN), candidate loads through the production pathway with correct 48-feature contract, rollback to E_hardneg reloads with reproduced scores, resource usage is modest.",
+    "The alert-rate reduction attributed to V_rawplus is threshold-only: the candidate ensemble is weight-identical to the certified production model (max |d| = 0.0), so E@0.018758 vs V@0.0298937337 differ only by the frozen threshold."
+  ],
+  "gate_c_decision": "PASS",
+  "gate_c_decision_verb": "Shadow production-impact harness executed cleanly: PSI compatible with controlled-shift detection, online loading OK, rollback OK, resource usage OK. Gate C is NOT the blocker — it does not resolve Gate A (label availability), and it does not repair Gate B (feature parity FAIL).",
+  "evidence_classification": {
+    "alert_rate_numbers": "PROVEN",
+    "threshold_only_difference": "PROVEN",
+    "psi_compatibility": "PROVEN",
+    "online_loading": "PROVEN",
+    "rollback": "PROVEN",
+    "resource_usage": "PROVEN"
+  }
+}

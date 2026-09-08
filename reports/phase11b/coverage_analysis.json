@@ -1,0 +1,10 @@
+{
+  "new_users_2016": 106,
+  "new_users_2017": 282,
+  "new_merchants_2016": 1095,
+  "new_merchants_2017": 887,
+  "cert_time_utc": "2026-09-07T15:28:52Z",
+  "new_user_2016_recall": 0.8,
+  "new_merch_2016_recall": 0.2987,
+  "new_merch_2017_recall": 0.5625
+}

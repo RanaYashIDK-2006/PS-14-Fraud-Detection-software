@@ -1,0 +1,15 @@
+{
+  "train_merchants": 16279,
+  "train_users": 1554,
+  "2016_merchants": 4129,
+  "2017_merchants": 3810,
+  "2016_merchants_in_train": 3079,
+  "2017_merchants_in_train": 3002,
+  "2016_merchants_novel": 1050,
+  "2017_merchants_novel": 808,
+  "2016_users_in_train": 1502,
+  "2017_users_in_train": 1489,
+  "2016_users_novel": 18,
+  "2017_users_novel": 31,
+  "cert_time_utc": "2026-09-07T15:28:52Z"
+}

@@ -1,0 +1,9 @@
+{
+  "candidate_C": {
+    "hard_neg_count": 0,
+    "hard_neg_source": "pre-2016 legitimate chip transactions with high fraud scores",
+    "out_of_sample": true,
+    "no_2016_or_2017_labels_used": true
+  },
+  "cert_time_utc": "2026-09-07T15:47:14Z"
+}

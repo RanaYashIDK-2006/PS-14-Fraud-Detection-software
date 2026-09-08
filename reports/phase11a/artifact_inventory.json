@@ -1,0 +1,83 @@
+{
+  "phase": "11A",
+  "artifacts": {
+    "candidate_decision.json": {
+      "sha256": "aa8d16488186c18a598fcb0ec68beedd7a7bcccc3a06889a24cf2c9768a65455",
+      "size": 610
+    },
+    "causality_audit.json": {
+      "sha256": "2898d210b4edbead024a803a1af1c30966c81fff0831ab736aad189dfe48e8df",
+      "size": 595
+    },
+    "edge_case_results.json": {
+      "sha256": "4a0a3a14a307981846c2f777f078ebbf467cb69044bd22bd59e87a472b8be304",
+      "size": 1957
+    },
+    "exclusion_guard.json": {
+      "sha256": "be912b5afd388ceda403137261c8194c87bc2507327c5147f791aa7095542f5c",
+      "size": 703
+    },
+    "feature_contract_45.json": {
+      "sha256": "e43909bdd4213374b2d64e5d12bc5c005b4bdb806b2da1a38ebdfbbc8f1f73bd",
+      "size": 1420
+    },
+    "forward_validation.json": {
+      "sha256": "ff3c467dc7628a40b63f72d89c5ebefce38f371d57aa0ee3bcf9032b5cf0e776",
+      "size": 752
+    },
+    "high_recall_frontier.json": {
+      "sha256": "0262a6bbd93cc7660dcf482e4b9b16975f02dedbdeebbd006a35749d4a9a535b",
+      "size": 1511
+    },
+    "leakage_audit.json": {
+      "sha256": "43c91132bc2ea405235cf79fbc90ef43d4f2ffc08de6708940297e9d112beb28",
+      "size": 808
+    },
+    "model_identity.json": {
+      "sha256": "2de2c35a7dca1005cd307d7ae4dfdcbe82df6c15a98472316369bdde5acd4f29",
+      "size": 1107
+    },
+    "production_parity.json": {
+      "sha256": "d98c1c50190e7eb17c895a23e99bac62502975cc3088dde71c68d6e243970fed",
+      "size": 399
+    },
+    "reproducibility.json": {
+      "sha256": "1b3b431a3b7a7583bbd3a1c7516c665c6e8737561c98348f8a273ef7e7c66a71",
+      "size": 501
+    },
+    "security_privacy_audit.json": {
+      "sha256": "21d7711bbd383027d3ce7c823f71bf61d7287d6c8f1fee101dcb4083f9043af2",
+      "size": 360
+    },
+    "training_manifest.json": {
+      "sha256": "e274f4e7c3ee8ad6608859afcc7587e55bc774fc915cb340f280639037926ab7",
+      "size": 996
+    },
+    "validation_results.json": {
+      "sha256": "441b9e82730f9857b5b58a7840cd24e2a77891bf752a1afd644c155a11ce7fb5",
+      "size": 1039
+    },
+    "PHASE11_CANDIDATE_REPORT.md": {
+      "sha256": "b1ebeba6144971104db026a3b17f69519ff1152d284b5fa16aa384224c2a3970",
+      "size": 1092
+    },
+    "model/cb.joblib": {
+      "sha256": "0c0c990e1e05881a3eaee08bc7e38b2831b5cfa6a2629f8e765621103fcad72c",
+      "size": 815010
+    },
+    "model/lgb.joblib": {
+      "sha256": "727a20b4f4c73d8bf4091a4a6013745673e2584e2462e0188dc9994a1c6fc2aa",
+      "size": 1419972
+    },
+    "model/scaler.joblib": {
+      "sha256": "f01d38fcbafc544d836bdb62b427f99265cb0d5a72bf63ecbe01a2608c2cfea1",
+      "size": 1071
+    },
+    "model/xgb.joblib": {
+      "sha256": "51b5d42c79a5b6a35c90ddac91b4f39f0cdd4e29afd1b18211a36b8a70fe120e",
+      "size": 2380680
+    }
+  },
+  "n_artifacts": 19,
+  "cert_time_utc": "2026-09-07T15:18:10Z"
+}

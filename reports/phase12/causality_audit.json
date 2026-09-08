@@ -1,0 +1,8 @@
+{
+  "policy": "feature(t) uses only info with timestamp < t",
+  "future_perturbation": "PASS",
+  "no_future_labels": "PASS",
+  "strict_temporal_ordering": "PASS",
+  "status": "PASS",
+  "cert_time_utc": "2026-09-07T15:47:14Z"
+}

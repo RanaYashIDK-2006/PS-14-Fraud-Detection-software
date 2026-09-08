@@ -1,0 +1,13 @@
+{
+  "training_precision": "float32 (mission_train.py casts X to float32 before scaling)",
+  "stored_model_precision": "float32 members (XGB/LGB/CB native)",
+  "offline_inference_precision": "float32 path via mission_train (X float32 -> scaler)",
+  "production_inference_precision": "float32 (AltmanNativeEnsembleEngine casts vec to float32 before scaler.transform)",
+  "feature_precision": "float32 in cache X; raw amount float64",
+  "aggregation_precision": "float64 weights accumulation (0.34/0.33/0.33)",
+  "scaler_f32_vs_f64_max_delta": 0.00102731,
+  "prediction_f32_vs_f64_max_delta": 0.0,
+  "prediction_f32_vs_f64_max_delta_percent": 0.0,
+  "note": "both paths cast to float32 before scaling, matching training; residual float32/float64 delta measured above.",
+  "cert_time_utc": "2026-09-07T14:06:52Z"
+}

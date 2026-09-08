@@ -1,0 +1,62 @@
+{
+  "candidate": "P11_45feat",
+  "operating_points": [
+    {
+      "target_recall": 0.99,
+      "threshold": 0.09964915,
+      "val_recall": 0.990089,
+      "val_fpr": 0.115277,
+      "val_precision": 0.492348,
+      "alerts_per_1k": 204.04
+    },
+    {
+      "target_recall": 0.995,
+      "threshold": 0.0633539,
+      "val_recall": 0.995044,
+      "val_fpr": 0.141401,
+      "val_precision": 0.442781,
+      "alerts_per_1k": 228.01
+    },
+    {
+      "target_recall": 0.997,
+      "threshold": 0.03752768,
+      "val_recall": 0.997131,
+      "val_fpr": 0.180338,
+      "val_precision": 0.384376,
+      "alerts_per_1k": 263.21
+    },
+    {
+      "target_recall": 0.998,
+      "threshold": 0.02697329,
+      "val_recall": 0.998174,
+      "val_fpr": 0.212529,
+      "val_precision": 0.346554,
+      "alerts_per_1k": 292.24
+    },
+    {
+      "target_recall": 0.999,
+      "threshold": 0.01303225,
+      "val_recall": 0.999218,
+      "val_fpr": 0.300062,
+      "val_precision": 0.273272,
+      "alerts_per_1k": 371.0
+    },
+    {
+      "target_recall": 0.9995,
+      "threshold": 0.00195908,
+      "val_recall": 0.999739,
+      "val_fpr": 0.646217,
+      "val_precision": 0.148716,
+      "alerts_per_1k": 682.09
+    },
+    {
+      "target_recall": 1.0,
+      "threshold": 0.00160369,
+      "val_recall": 1.0,
+      "val_fpr": 0.688157,
+      "val_precision": 0.140961,
+      "alerts_per_1k": 719.8
+    }
+  ],
+  "cert_time_utc": "2026-09-07T15:12:08Z"
+}

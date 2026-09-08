@@ -1,0 +1,13 @@
+{
+  "candidate": "P11_45feat",
+  "comparison": "offline cached X (45 features) vs remediated causal replay",
+  "rows": 879196,
+  "max_feature_delta": 0.00010681,
+  "mean_feature_delta": 6.6e-09,
+  "score_max_abs_delta": 0.0,
+  "score_mean_abs_delta": 0.0,
+  "decision_disagreements": 0,
+  "decision_disagreement_rate": 0.0,
+  "status": "PASS",
+  "cert_time_utc": "2026-09-07T15:12:08Z"
+}
