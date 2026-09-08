@@ -1,0 +1,14 @@
+{
+  "gate_status": "FAIL",
+  "reason": "No legitimate real-world transaction dataset with trustworthy labels exists in this repository. The only real-world-adjacent data is a 5-row production feedback snapshot with labels from verification outcomes (not ground-truth fraud investigation). All other datasets are synthetic.",
+  "requirements": {
+    "real_transactions": "FAIL (all synthetic except 5-row feedback)",
+    "fraud_labels": "FAIL (no ground-truth fraud investigation labels)",
+    "timestamps": "FAIL (feedback has timestamps but insufficient volume)",
+    "label_association": "FAIL (5 rows insufficient for evaluation)",
+    "label_timing": "UNVERIFIED (feedback labels are retrospective)",
+    "feature_reconstruction": "FAIL (feedback lacks merchant/user/channel info)",
+    "temporal_coverage": "FAIL (5 rows, single day)",
+    "provenance": "FAIL (no documented data provenance for production data)"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "boundary_type": "DATA",
+  "explanation": "The required real-world validation dataset does not exist in the environment. This is a DATA limitation, not a technical, governance, or protocol limitation. The project cannot validate production performance without real labeled transaction data.",
+  "what_would_help": [
+    "Real production transaction data with confirmed fraud labels",
+    "Labels with documented timing (when fraud was confirmed)",
+    "Sufficient volume for statistically valid evaluation",
+    "Representative channel/merchant/user distribution",
+    "Temporal coverage matching the deployment window"
+  ],
+  "technical_feasibility": "The pipeline can process real data if it follows the IBM schema",
+  "governance_feasibility": "Requires data-sharing agreements and label-provenance documentation"
+}

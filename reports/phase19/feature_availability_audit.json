@@ -1,0 +1,295 @@
+{
+  "total_features": 48,
+  "pass": 45,
+  "fail": 3,
+  "features": [
+    {
+      "feature": "amt",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "log_amt",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "amt_sq",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "hr",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "mn",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "dow",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "Month",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "Day",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "hour_sin",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "hour_cos",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "is_night",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "is_business_hours",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "chip",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "is_online",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "is_swipe",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "err",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "has_zip",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "has_state",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "is_online_or_no_state",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "mcc",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "mcc_high",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "mcc_restaurant",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "mcc_gas",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "mcc_grocery",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "mcc_travel",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "mcc_online",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "merchant_id",
+      "status": "PASS",
+      "reason": "Historical aggregates from entity tracking, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "city_id",
+      "status": "PASS",
+      "reason": "Historical aggregates from entity tracking, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "card_id",
+      "status": "PASS",
+      "reason": "Historical aggregates from entity tracking, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "user_tx_count",
+      "status": "PASS",
+      "reason": "Historical aggregates from entity tracking, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "card_tx_count",
+      "status": "PASS",
+      "reason": "Historical aggregates from entity tracking, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "user_avg_amt",
+      "status": "PASS",
+      "reason": "Historical aggregates from entity tracking, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "amt_vs_user_avg",
+      "status": "PASS",
+      "reason": "Historical aggregates from entity tracking, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "amt_zscore",
+      "status": "PASS",
+      "reason": "Historical aggregates from entity tracking, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "merch_tx_count",
+      "status": "PASS",
+      "reason": "Historical aggregates from entity tracking, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "status": "PASS",
+      "reason": "Historical aggregates from entity tracking, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "user_city_diversity",
+      "status": "PASS",
+      "reason": "Historical aggregates from entity tracking, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "user_fraud_rate",
+      "status": "FAIL",
+      "reason": "Requires confirmed labels not available at decision time",
+      "label_dependency": true
+    },
+    {
+      "feature": "merch_fraud_rate",
+      "status": "FAIL",
+      "reason": "Requires confirmed labels not available at decision time",
+      "label_dependency": true
+    },
+    {
+      "feature": "city_fraud_rate",
+      "status": "FAIL",
+      "reason": "Requires confirmed labels not available at decision time",
+      "label_dependency": true
+    },
+    {
+      "feature": "high_amt",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "very_high_amt",
+      "status": "PASS",
+      "reason": "Direct transaction attributes, available at decision time",
+      "label_dependency": false
+    },
+    {
+      "feature": "amt_x_hr",
+      "status": "PASS",
+      "reason": "Interaction features from direct attributes",
+      "label_dependency": false
+    },
+    {
+      "feature": "amt_x_mcc",
+      "status": "PASS",
+      "reason": "Interaction features from direct attributes",
+      "label_dependency": false
+    },
+    {
+      "feature": "amt_x_chip",
+      "status": "PASS",
+      "reason": "Interaction features from direct attributes",
+      "label_dependency": false
+    },
+    {
+      "feature": "amt_x_online",
+      "status": "PASS",
+      "reason": "Interaction features from direct attributes",
+      "label_dependency": false
+    },
+    {
+      "feature": "amt_x_night",
+      "status": "PASS",
+      "reason": "Interaction features from direct attributes",
+      "label_dependency": false
+    },
+    {
+      "feature": "user_merch_count",
+      "status": "PASS",
+      "reason": "Historical aggregates from entity tracking, available at decision time",
+      "label_dependency": false
+    }
+  ]
+}

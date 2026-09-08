@@ -1,0 +1,7 @@
+{
+  "recommendation": "REMOVE_AND_RETRAIN",
+  "reasoning": "Confirmed fraud labels are not available at scoring time. The production tracker uses proxy labels (score>=70), which are model outputs, not ground truth. Training with ground-truth expanding means and producing with proxy-fed sliding windows creates a systematic distribution shift. The cleanest remediation is to remove these 3 features and retrain the model.",
+  "alternative": "RETAIN_WITH_DOCUMENTED_LIMITATION",
+  "alternative_condition": "Only acceptable if the exact production behavior is understood and its statistical impact is explicitly characterized. This has NOT been done.",
+  "pseudo_label_warning": "NEVER use score>=70 or model predictions as ground-truth labels. This creates a feedback loop and invalidates the model's training."
+}

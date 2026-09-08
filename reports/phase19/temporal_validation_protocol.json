@@ -1,0 +1,15 @@
+{
+  "protocol": {
+    "train": "Historical data with confirmed labels",
+    "validation": "Later historical data with confirmed labels",
+    "forward_validation": "Even later data with confirmed labels",
+    "final_test": "Most recent data, locked until authorization"
+  },
+  "blocker": "No real-world dataset with confirmed labels exists. The protocol cannot be instantiated.",
+  "ibm_protocol": {
+    "train": "Year < 2016",
+    "validation": "Year 2016-2017",
+    "final_test": "Year >= 2018",
+    "note": "Valid temporal ordering, but SYNTHETIC labels only"
+  }
+}

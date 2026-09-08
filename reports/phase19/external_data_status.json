@@ -1,0 +1,22 @@
+{
+  "real_world_data_required": true,
+  "real_world_data_available": false,
+  "external_sources_in_repo": [
+    {
+      "name": "Kaggle fraud",
+      "real_world": false,
+      "reason": "PCA-transformed, different schema"
+    },
+    {
+      "name": "PaySim",
+      "real_world": false,
+      "reason": "Simulator, not real transactions"
+    },
+    {
+      "name": "UCI creditcard",
+      "real_world": false,
+      "reason": "PCA features, no temporal/channel info"
+    }
+  ],
+  "note": "No real-world labeled transaction dataset is available in the repository or environment. The project needs actual production or production-like data with trustworthy labels."
+}

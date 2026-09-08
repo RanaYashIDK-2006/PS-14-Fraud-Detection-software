@@ -1,0 +1,20 @@
+{
+  "valid_for": [
+    "Software testing (API, pipeline, integration)",
+    "Feature pipeline testing (derivation, parity)",
+    "Leakage testing (temporal, causal)",
+    "Reproducibility testing (deterministic inference)",
+    "Regression testing (CI/CD)",
+    "Methodology development (experimental protocols)"
+  ],
+  "not_sufficient_for": [
+    "Claiming real-world fraud performance",
+    "Claiming production prevalence",
+    "Claiming production precision",
+    "Claiming production recall",
+    "Claiming industry superiority",
+    "Validating production deployment decisions"
+  ],
+  "phase17_conclusion_preserved": "The 2017 chip-fraud regime is a SYNTHETIC_REGIME_ARTIFACT. Real-world production relevance is UNVERIFIED.",
+  "recommendation": "Continue using IBM for software/methodology testing. Do NOT use IBM results to claim real-world performance. Obtain real-world validation data before production promotion claims."
+}

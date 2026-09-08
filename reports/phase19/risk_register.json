@@ -1,0 +1,34 @@
+{
+  "risks": [
+    {
+      "risk": "No real-world validation data",
+      "severity": "CRITICAL",
+      "mitigation": "Obtain production data",
+      "residual": "UNMITIGATED"
+    },
+    {
+      "risk": "Unknown production prevalence",
+      "severity": "HIGH",
+      "mitigation": "Monitor real-world alert rates",
+      "residual": "UNMITIGATED"
+    },
+    {
+      "risk": "3 features with unverified labels",
+      "severity": "HIGH",
+      "mitigation": "Remove and retrain",
+      "residual": "UNMITIGATED"
+    },
+    {
+      "risk": "Alert burden unvalidated",
+      "severity": "HIGH",
+      "mitigation": "Establish operational capacity",
+      "residual": "UNMITIGATED"
+    },
+    {
+      "risk": "Synthetic-only performance claims",
+      "severity": "HIGH",
+      "mitigation": "Obtain real-world data",
+      "residual": "UNMITIGATED"
+    }
+  ]
+}

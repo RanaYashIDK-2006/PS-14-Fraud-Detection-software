@@ -1,0 +1,7 @@
+{
+  "alert_burden_ibm": "107.3 alerts per 1,000 transactions",
+  "alert_burden_1m": "107,300 alerts per 1,000,000 transactions",
+  "operational_capacity": "UNVERIFIED",
+  "documented_capacity": "NONE",
+  "note": "No maximum alert-handling capacity is documented in the repository. Whether 107 alerts per 1,000 transactions is operationally acceptable is a business decision that has not been made."
+}

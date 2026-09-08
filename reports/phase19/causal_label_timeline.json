@@ -1,0 +1,14 @@
+{
+  "timeline": {
+    "transaction_occurs": "T",
+    "model_scores_transaction": "T (same millisecond)",
+    "tracker records label": "T + delta (AFTER scoring)",
+    "proxy_label_available": "T + delta (score >= 70 threshold)",
+    "confirmed_label_available": "T + hours/days (investigation outcome)",
+    "expanding_mean_eligible": "T + hours/days (requires confirmed label)"
+  },
+  "causal_constraint": "label_confirmation_time < feature_use_time",
+  "proxy_label": "score >= 70 (model output, NOT ground truth)",
+  "proxy_label_problem": "Using model predictions as training labels creates a feedback loop. The model's own outputs cannot serve as ground truth for its features.",
+  "status": "UNVERIFIED \u2014 confirmed labels not available at decision time"
+}

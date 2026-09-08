@@ -1,0 +1,85 @@
+{
+  "matrix": [
+    {
+      "requirement": "Real transaction data",
+      "status": "UNAVAILABLE",
+      "blocker": "No real-world dataset in repository"
+    },
+    {
+      "requirement": "Fraud labels",
+      "status": "UNAVAILABLE",
+      "blocker": "No ground-truth fraud investigation labels"
+    },
+    {
+      "requirement": "Label provenance",
+      "status": "UNAVAILABLE",
+      "blocker": "No production label pipeline documented"
+    },
+    {
+      "requirement": "Label latency",
+      "status": "UNVERIFIED",
+      "blocker": "No label-timing data available"
+    },
+    {
+      "requirement": "Decision-time features",
+      "status": "CONDITIONAL",
+      "blocker": "45/48 pass, 3 fail"
+    },
+    {
+      "requirement": "Merchant identity",
+      "status": "PASS",
+      "blocker": "Pseudonymized in production"
+    },
+    {
+      "requirement": "User identity",
+      "status": "PASS",
+      "blocker": "Pseudonymized in production"
+    },
+    {
+      "requirement": "Timestamp quality",
+      "status": "UNAVAILABLE",
+      "blocker": "No real timestamps available"
+    },
+    {
+      "requirement": "Temporal coverage",
+      "status": "UNAVAILABLE",
+      "blocker": "No real temporal data"
+    },
+    {
+      "requirement": "Channel coverage",
+      "status": "UNAVAILABLE",
+      "blocker": "No real channel data"
+    },
+    {
+      "requirement": "Production prevalence",
+      "status": "UNVERIFIED",
+      "blocker": "Unknown"
+    },
+    {
+      "requirement": "Feature reconstruction",
+      "status": "CONDITIONAL",
+      "blocker": "3 features fail"
+    },
+    {
+      "requirement": "Operational capacity",
+      "status": "UNVERIFIED",
+      "blocker": "No documented capacity"
+    },
+    {
+      "requirement": "Privacy authorization",
+      "status": "UNVERIFIED",
+      "blocker": "No compliance audit"
+    },
+    {
+      "requirement": "Legal/data-use authorization",
+      "status": "UNVERIFIED",
+      "blocker": "No data-sharing agreements"
+    }
+  ],
+  "overall_readiness": "NOT_READY",
+  "critical_blockers": [
+    "No real-world transaction dataset",
+    "No ground-truth fraud labels",
+    "No label-latency documentation"
+  ]
+}

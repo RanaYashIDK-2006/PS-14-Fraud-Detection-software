@@ -1,0 +1,25 @@
+{
+  "datasets": [
+    {
+      "dataset": "IBM credit_card_transactions-ibm_v2.csv",
+      "label": "Is Fraud?",
+      "label_source": "IBM SDV generator",
+      "first_availability": "AT_GENERATION_TIME",
+      "finalization": "INSTANT",
+      "latency_measurable": false,
+      "decision_time_usable": false,
+      "status": "SYNTHETIC \u2014 not applicable to production"
+    },
+    {
+      "dataset": "feedback_snapshots",
+      "label": "label (0/1)",
+      "label_source": "VerificationOutcome",
+      "first_availability": "POST_DECISION (retrospective)",
+      "finalization": "AFTER_INVESTIGATION",
+      "latency_measurable": false,
+      "decision_time_usable": false,
+      "status": "UNVERIFIED \u2014 retrospective, not decision-time"
+    }
+  ],
+  "overall": "UNVERIFIED \u2014 no dataset provides decision-time-available fraud labels"
+}

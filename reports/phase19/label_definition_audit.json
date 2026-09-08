@@ -1,0 +1,24 @@
+{
+  "ibm_labels": {
+    "definition": "Is Fraud? = Yes/No assigned at generation time",
+    "source": "IBM SDV generator",
+    "finalization": "Instant (generated, not observed)",
+    "real_world_equivalent": "UNKNOWN (generator may model chargebacks, investigation outcomes, or arbitrary rules)",
+    "usable_for_production_validation": false
+  },
+  "feedback_labels": {
+    "definition": "label = 0/1 from verification outcomes (confirmed=legit, disputed=fraud)",
+    "source": "PS-14 verification service",
+    "finalization": "Retrospective (after decision)",
+    "real_world_equivalent": "Closest to production labels, but only 5 rows",
+    "usable_for_production_validation": false,
+    "note": "Labels come from VerificationOutcome, which is a retrospective review, not a real-time fraud investigation."
+  },
+  "production_labels": {
+    "definition": "UNKNOWN \u2014 no production label pipeline documented",
+    "source": "UNKNOWN",
+    "finalization": "UNKNOWN",
+    "real_world_equivalent": "UNKNOWN",
+    "usable_for_production_validation": false
+  }
+}

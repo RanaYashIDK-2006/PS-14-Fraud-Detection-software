@@ -1,0 +1,16 @@
+{
+  "ibm_dataset": {
+    "missingness": "Minimal (some NaN in Zip, Errors?)",
+    "duplicates": "NONE_DETECTED",
+    "timestamp_integrity": "GENERATED (not real timestamps)",
+    "label_conflicts": "NONE (binary labels at generation time)",
+    "impossible_values": "NONE_DETECTED",
+    "schema_stability": "STABLE (single file, no schema evolution)",
+    "quality_status": "ACCEPTABLE_FOR_SYNTHETIC"
+  },
+  "feedback_snapshot": {
+    "missingness": "Minimal",
+    "row_count": 5,
+    "quality_status": "INSUFFICIENT_VOLUME"
+  }
+}

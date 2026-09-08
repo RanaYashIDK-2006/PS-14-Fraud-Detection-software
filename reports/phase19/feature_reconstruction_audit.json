@@ -1,0 +1,7 @@
+{
+  "status": "PARTIAL",
+  "pass_features": 45,
+  "fail_features": 3,
+  "detail": "45 of 48 features can be reconstructed exactly from transaction data at decision time. 3 features (user_fraud_rate, merch_fraud_rate, city_fraud_rate) require confirmed fraud labels that are unavailable at scoring time.",
+  "cold_start_behavior": "Production defaults to 0.001 (COLD_START_FRAUD_RATE) when insufficient history exists. This is a constant, not a computed value."
+}

@@ -1,0 +1,6 @@
+{
+  "ibm_prevalence": 0.00124,
+  "ibm_final_test_prevalence": 0.00124,
+  "production_prevalence": "UNVERIFIED",
+  "note": "The IBM dataset prevalence (~0.12%) may not represent real-world fraud rates. Real production prevalence depends on the merchant population, geography, channel mix, and fraud detection environment. Without real production data, prevalence cannot be estimated."
+}

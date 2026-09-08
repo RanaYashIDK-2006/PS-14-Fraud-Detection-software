@@ -1,0 +1,31 @@
+{
+  "features": [
+    {
+      "feature": "user_fraud_rate",
+      "source": "EntityFraudRateTracker sliding window (last 100 events)",
+      "aggregation_window": "100 events per user",
+      "label_source": "tracker.record() \u2014 fed by score>=70 proxy OR VerificationOutcome",
+      "min_events": 5,
+      "update_frequency": "After each evaluation",
+      "label_latency": "UNVERIFIED \u2014 proxy labels used in production",
+      "strict_temporal_cutoff": "YES (only historical events in window)",
+      "production_availability": "PARTIAL \u2014 tracker exists but uses proxy labels",
+      "status": "UNAVAILABLE_AT_DECISION_TIME",
+      "note": "In production, the tracker is fed by risk engine score>=70 proxy, NOT confirmed fraud labels. Confirmed labels (VerificationOutcome) arrive retrospectively. The training offline expanding mean uses ground-truth labels, creating a distribution shift."
+    },
+    {
+      "feature": "merch_fraud_rate",
+      "source": "EntityFraudRateTracker sliding window",
+      "status": "UNAVAILABLE_AT_DECISION_TIME",
+      "same_issue": "user_fraud_rate"
+    },
+    {
+      "feature": "city_fraud_rate",
+      "source": "EntityFraudRateTracker sliding window",
+      "status": "UNAVAILABLE_AT_DECISION_TIME",
+      "same_issue": "user_fraud_rate"
+    }
+  ],
+  "remediation_recommendation": "REMOVE_AND_RETRAIN",
+  "remediation_reasoning": "Confirmed fraud labels are not available at scoring time. The tracker uses proxy labels (score>=70) which are model outputs, not ground truth. Training with ground-truth expanding means and producing with proxy-fed sliding windows creates a systematic distribution shift. The cleanest fix is to remove these 3 features and retrain the model without them."
+}

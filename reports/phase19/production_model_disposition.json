@@ -1,0 +1,10 @@
+{
+  "model": "E_hardneg (altman_native_E_hardneg_cert_20260904)",
+  "recommendation": "CONDITIONALLY_KEEP_DEPLOYED",
+  "reasoning": "E_hardneg is the best available model. No alternative outperforms it on the locked final test while passing certification. However, it has documented limitations: 3 features with unverified label availability, synthetic-only validation, and unknown real-world performance. It should remain deployed as the best available option while the project works to obtain real-world validation data.",
+  "not_recommended": [
+    "ROLLBACK (no better model exists)",
+    "BLOCK_NEW_TRAFFIC (system works on synthetic data)",
+    "REPLACEMENT (no replacement candidate passes certification)"
+  ]
+}
