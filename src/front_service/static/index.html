@@ -630,7 +630,7 @@ tr:hover td { background: rgba(59,130,246,0.03); }
     <!-- ═══════ VALIDATION PHASES ═══════ -->
     <div class="card anim" id="phases">
       <div class="card-header">
-        <div><div class="card-title">Validation Phase Ledger</div><div class="card-subtitle">Certified phase decisions (14-20) — every conclusion evidence-classified, firewalls verified</div></div>
+        <div><div class="card-title">Validation Phase Ledger</div><div class="card-subtitle">Certified phase decisions (14-23) — every conclusion evidence-classified, firewalls verified</div></div>
         <a href="/monitor-page" class="btn btn-ghost">Live Monitor →</a>
       </div>
       <div class="table-wrap">
@@ -644,12 +644,18 @@ tr:hover td { background: rgba(59,130,246,0.03); }
             <tr><td><b>18</b></td><td>Is the system production-ready?</td><td><span class="badge yellow">CONDITIONALLY_DEPLOYABLE</span></td><td>Security/monitoring/rollback PASS; 3 fraud-rate features with unverified label availability; alert burden ~107/1k unverified</td></tr>
             <tr><td><b>19</b></td><td>Do we have real-world evidence?</td><td><span class="badge yellow">DATA_ACQUISITION_REQUIRED</span></td><td>Every dataset in the environment is synthetic; no ground-truth labels; production prevalence unknown</td></tr>
             <tr><td><b>20</b></td><td>Can the decision-time blocker be removed?</td><td><span class="badge green">CLEAN_PROD_COMPAT_CANDIDATE</span></td><td>P20_45feat: 45 features, all decision-time valid, parity + leakage + causality PASS; eligible for real-world validation</td></tr>
+            <tr><td><b>21</b></td><td>Is real-world validation possible?</td><td><span class="badge yellow">INSUFFICIENT_REAL_WORLD_EVIDENCE</span></td><td>No legitimate real-world dataset available; promotion blocked pending data acquisition</td></tr>
+            <tr><td><b>22</b></td><td>Is the validation harness ready?</td><td><span class="badge green">DATA_ACQUISITION_BLOCKED</span></td><td>Executable CLI runner built and tested; READY but blocked by data absence</td></tr>
+            <tr><td><b>23</b></td><td>Can real-world data be acquired?</td><td><span class="badge yellow">CONDITIONALLY_AVAILABLE</span></td><td>114 sources evaluated; best candidate Kaggle (1.85M rows); provenance unclear, no channel info</td></tr>
           </tbody>
         </table>
       </div>
       <div class="info" style="margin-top:16px;margin-bottom:0;background:var(--surface-2);border-left-color:var(--yellow)">
         <strong>Honest interpretation:</strong> E_hardneg is certified on the <strong>synthetic IBM corpus</strong> (recall 99.67%, FPR 10.99% on the untouched 2018–2020 window) and remains deployed as the best available model. The 2017 regime shift is strongly supported as a generator artifact, so these numbers must not be read as real-world performance. Production promotion of P20_45feat is <strong>blocked pending real-world data</strong> — the next milestone is data acquisition, not more modeling.
-      </div>
+        <br><br>
+        <strong>Phase 22 status:</strong> Executable validation harness READY. Run: <code>python -m phase22.run_real_world_validation --mode prepare</code>
+        <br>
+        <strong>Phase 23 status:</strong> 114 data sources evaluated. Best candidate (Kaggle fraudTrain) has unclear provenance. Next decision: conditional evaluation OR continue external acquisition.
     </div>
 
     <!-- ═══════ PRIVACY ═══════ -->

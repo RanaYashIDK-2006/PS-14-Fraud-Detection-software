@@ -96,7 +96,7 @@ overhead beyond pure model inference.
 **Industry comparisons** in `scripts/benchmark_comparison.py` are approximate
 and use different datasets/protocols — not directly comparable.
 
-## Validation Phases (Phases 14–21)
+## Validation Phases (Phases 14–23)
 
 A rigorous, adversarial audit of the system's real-world readiness.
 Every conclusion is evidence-classified; firewalls are verified.
@@ -111,6 +111,8 @@ Every conclusion is evidence-classified; firewalls are verified.
 | **19** | Real-world data gate | `DATA_ACQUISITION_REQUIRED` | Every dataset in the environment is synthetic; no ground-truth labels; production prevalence unknown |
 | **20** | Decision-time remediation | `CLEAN_PROD_COMPAT_CANDIDATE` | P20_45feat: 45 features, all decision-time valid, parity + leakage + causality PASS |
 | **21** | Real-world validation gate | `INSUFFICIENT_REAL_WORLD_EVIDENCE` | No legitimate real-world transaction dataset available; promotion blocked pending data acquisition |
+| **22** | Executable validation harness | `DATA_ACQUISITION_BLOCKED` | Complete CLI runner built (`phase22.run_real_world_validation`); READY but blocked by data absence |
+| **23** | Data acquisition gate | `CONDITIONALLY_AVAILABLE` | 114 sources evaluated; best candidate Kaggle fraudTrain (1.85M rows); provenance unclear, no channel info, no label timing |
 
 ### Current Model Status
 
@@ -119,12 +121,33 @@ Every conclusion is evidence-classified; firewalls are verified.
 | **E_hardneg** (incumbent) | 48 | 3 fraud-rate features UNVERIFIED | None (synthetic only) | DEPLOYED, UNTOUCHED |
 | **P20_45feat** (candidate) | 45 | All features valid | None (synthetic only) | ELIGIBLE for real-world validation |
 
+### Real-World Validation Status
+
+```text
+PHASE22_RUNNER = READY
+PHASE23_ACQUISITION = CONDITIONALLY_AVAILABLE_WITH_CAVEATS
+REAL_WORLD_VALIDATION = BLOCKED (provenance unclear)
+PROMOTION = BLOCKED
+NEXT_ACTION = DECIDE: conditional Kaggle eval OR continue external acquisition
+```
+
 **Honest interpretation:** E_hardneg is certified on the synthetic IBM corpus
 (recall 99.67%, FPR 10.99% on the untouched 2018–2020 window) and remains
 deployed as the best available model. The 2017 regime shift is strongly
 supported as a generator artifact, so these numbers must not be read as
 real-world performance. Production promotion of P20_45feat is blocked pending
 real-world data — the next milestone is data acquisition, not more modeling.
+
+The Phase 22 executable validation harness is READY:
+```bash
+python -m phase22.run_real_world_validation --mode prepare
+python -m phase22.run_real_world_validation --data DATASET --metadata METADATA
+```
+
+Phase 23 evaluated 114 data sources. The best candidate (Kaggle fraudTrain)
+has unclear provenance and missing channel/label-timing metadata. The project
+must decide whether to proceed with conditional evaluation or seek
+production-grade data from payment processors or banks.
 
 ## Setup
 
