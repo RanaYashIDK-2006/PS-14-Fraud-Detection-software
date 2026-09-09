@@ -1,0 +1,13 @@
+{
+  "e_hardneg": {
+    "threshold_frozen": true,
+    "locked_threshold": 0.018758,
+    "threshold_influence_by_holdout": false
+  },
+  "p20": {
+    "threshold_frozen": true,
+    "threshold_influence_by_holdout": false
+  },
+  "classification": "THRESHOLDS_FROZEN",
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}

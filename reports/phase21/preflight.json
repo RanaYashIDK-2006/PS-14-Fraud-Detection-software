@@ -1,0 +1,39 @@
+{
+  "phase": 21,
+  "objective": "Real-world validation & production promotion gate",
+  "firewall": {
+    "FINAL_TEST_ACCESSED": false,
+    "FINAL_TEST_AUTHORIZED": false,
+    "PRODUCTION_MODEL_STATUS": "UNTOUCHED",
+    "E_HARDNEG_STATUS": "UNCHANGED",
+    "P20_STATUS": "UNCHANGED",
+    "P11_STATUS": "UNCHANGED"
+  },
+  "e_hardneg_hash_verification": {
+    "model_version": "altman_native_E_hardneg_cert_20260904",
+    "n_features": 48,
+    "locked_threshold": 0.018758,
+    "artifacts": {
+      "xgb_native.joblib": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+      "lgb_native.joblib": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+      "cb_native.joblib": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+      "scaler_native.joblib": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+      "feature_list.json": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f"
+    },
+    "verification_result": "ALL_MATCH"
+  },
+  "p20_hash_verification": {
+    "candidate_id": "P20_45feat",
+    "n_features": 45,
+    "feature_list_json_path": "reports/phase20/model_artifacts/feature_list.json",
+    "verification_result": "ALL_MATCH"
+  },
+  "protected_final_test_dataset": {
+    "path": "data/credit_card_transactions-ibm_v2.csv",
+    "size_mb": 2350.7,
+    "classification": "SYNTHETIC",
+    "accessed": false
+  },
+  "status": "FIREWALL_VERIFIED",
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}

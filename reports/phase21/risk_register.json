@@ -1,0 +1,35 @@
+{
+  "risks": [
+    {
+      "id": "R21-01",
+      "description": "No real-world validation data",
+      "impact": "CRITICAL",
+      "status": "OPEN"
+    },
+    {
+      "id": "R21-02",
+      "description": "E_hardneg fraud-rate features unverified",
+      "impact": "MATERIAL",
+      "status": "OPEN"
+    },
+    {
+      "id": "R21-03",
+      "description": "IBM synthetic \u2014 not real-world evidence",
+      "impact": "HIGH",
+      "status": "MITIGATED"
+    },
+    {
+      "id": "R21-04",
+      "description": "2017 regime shift is generator artifact",
+      "impact": "HIGH",
+      "status": "MITIGATED"
+    },
+    {
+      "id": "R21-05",
+      "description": "Operational capacity unverified",
+      "impact": "MEDIUM",
+      "status": "OPEN"
+    }
+  ],
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}

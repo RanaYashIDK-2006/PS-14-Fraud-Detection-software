@@ -1,0 +1,14 @@
+{
+  "findings": {
+    "IBM": {
+      "label_timing": "Labels generated alongside transactions by SDV simulator",
+      "classification": "INVALID_FOR_PRODUCTION"
+    },
+    "ULB": {
+      "label_timing": "No label-availability metadata",
+      "classification": "UNVERIFIED"
+    }
+  },
+  "conclusion": "LABEL_LATENCY=UNVERIFIED for all datasets.",
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}

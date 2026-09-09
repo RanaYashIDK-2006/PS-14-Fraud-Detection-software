@@ -1,0 +1,18 @@
+{
+  "p20": {
+    "total": 45,
+    "removed": [
+      "user_fraud_rate",
+      "merch_fraud_rate",
+      "city_fraud_rate"
+    ],
+    "real_world_reconstruction": "IMPOSSIBLE \u2014 no matching dataset"
+  },
+  "e_hardneg": {
+    "total": 48,
+    "fraud_rate_features_require_labels": true,
+    "real_world_reconstruction": "IMPOSSIBLE \u2014 no matching dataset"
+  },
+  "conclusion": "Decision-time feature reconstruction IMPOSSIBLE for both models on any available dataset.",
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}

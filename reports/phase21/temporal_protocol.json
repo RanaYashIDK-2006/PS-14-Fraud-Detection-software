@@ -1,0 +1,7 @@
+{
+  "protocol": "train < 2016 | validation 2016-17 | test >= 2018",
+  "legacy_split": "Month<=9 \u2014 RETIRED",
+  "real_world_protocol": "NOT_EXECUTABLE",
+  "classification": "PROTOCOL_DEFINED_BUT_NOT_EXECUTABLE",
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}

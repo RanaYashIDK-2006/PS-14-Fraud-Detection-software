@@ -1,0 +1,37 @@
+{
+  "datasets_evaluated": [
+    {
+      "path": "data/credit_card_transactions-ibm_v2.csv",
+      "criteria_met": {
+        "1_represents_actual_transactions": false,
+        "5_label_timing_established": false,
+        "6_inputs_reconstructable": false
+      },
+      "all_critical_conditions_met": false,
+      "classification": "SYNTHETIC_NOT_ELIGIBLE"
+    },
+    {
+      "path": "data/creditcard.csv",
+      "criteria_met": {
+        "4_timestamps_reliable": false,
+        "5_label_timing_established": false,
+        "6_inputs_reconstructable": false,
+        "7_temporal_ordering_possible": false,
+        "9_sufficient_size": false
+      },
+      "all_critical_conditions_met": false,
+      "classification": "LEGACY_INSUFFICIENT"
+    },
+    {
+      "path": "data/kaggle_fraud/fraudTrain.csv",
+      "criteria_met": {
+        "5_label_timing_established": false,
+        "6_inputs_reconstructable": false
+      },
+      "all_critical_conditions_met": false,
+      "classification": "LEGACY_NO_SCHEMA_MATCH"
+    }
+  ],
+  "overall_verdict": "REAL_WORLD_VALIDATION=BLOCKED",
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}

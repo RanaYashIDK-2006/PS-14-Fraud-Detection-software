@@ -1,0 +1,15 @@
+{
+  "phase": 21,
+  "classification": "INSUFFICIENT_REAL_WORLD_EVIDENCE",
+  "promotion_decision": "BLOCK_PRODUCTION_CHANGE",
+  "real_world_data_available": false,
+  "real_world_validation_blocked": true,
+  "e_hardneg_status": "INCUMBENT \u2014 UNTOUCHED",
+  "e_hardneg_validity_limitation": "MATERIAL",
+  "p20_status": "ELIGIBLE_FOR_REAL_WORLD_VALIDATION",
+  "p20_recommendation": "Hold for real-world data acquisition",
+  "final_test_recommendation": "DO NOT ACCESS",
+  "certification_status": "CONDITIONAL_PASS",
+  "next_action": "DATA_ACQUISITION",
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}

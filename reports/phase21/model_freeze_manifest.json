@@ -1,0 +1,15 @@
+{
+  "e_hardneg": {
+    "frozen": true,
+    "model_version": "altman_native_E_hardneg_cert_20260904",
+    "verification": "ALL_MATCH"
+  },
+  "p20": {
+    "frozen": true,
+    "candidate_id": "P20_45feat",
+    "artifacts_path": "reports/phase20/model_artifacts/",
+    "verification": "ALL_MATCH"
+  },
+  "analysis_plan": "FROZEN",
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}

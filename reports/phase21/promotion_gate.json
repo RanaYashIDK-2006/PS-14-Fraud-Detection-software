@@ -1,0 +1,32 @@
+{
+  "statistical_gates": {
+    "valid_real_world_labels": false,
+    "valid_temporal_protocol": true,
+    "no_leakage": true,
+    "threshold_frozen": true,
+    "statistically_credible_performance": false
+  },
+  "feature_gates": {
+    "p20_all_decision_time": true,
+    "e_hardneg_all_decision_time": false
+  },
+  "production_gates": {
+    "feature_parity": true,
+    "model_parity": true
+  },
+  "operational_gates": {
+    "alert_volume_acceptable": false,
+    "service_capacity": true
+  },
+  "security_gates": {
+    "no_critical_blocker": true
+  },
+  "governance_gates": {
+    "data_authorized": true,
+    "label_provenance": false,
+    "label_timing": false
+  },
+  "overall_gate": "BLOCKED",
+  "blocking_reason": "No real-world dataset available",
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}

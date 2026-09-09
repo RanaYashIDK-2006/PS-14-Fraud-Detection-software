@@ -1,0 +1,24 @@
+{
+  "datasets": [
+    {
+      "dataset": "IBM",
+      "label_column": "Is Fraud?",
+      "definition": "Binary fraud flag from SDV simulator",
+      "classification": "INVALID_FOR_PRODUCTION_VALIDATION"
+    },
+    {
+      "dataset": "ULB",
+      "label_column": "Class",
+      "definition": "Binary fraud flag; exact definition undisclosed",
+      "classification": "UNVERIFIED"
+    },
+    {
+      "dataset": "Kaggle",
+      "label_column": "is_fraud",
+      "definition": "Binary fraud flag; exact definition undisclosed",
+      "classification": "UNVERIFIED"
+    }
+  ],
+  "overall_label_governance": "LABEL_LATENCY=UNVERIFIED",
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}

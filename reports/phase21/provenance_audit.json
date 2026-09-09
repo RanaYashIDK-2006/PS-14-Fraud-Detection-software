@@ -1,0 +1,24 @@
+{
+  "findings": [
+    {
+      "dataset": "IBM v2",
+      "classification": "SYNTHETIC",
+      "confidence": "STRONGLY_SUPPORTED",
+      "evidence": "Phase 17 DGP audit: abrupt 2017 regime shift; no real-world analogue"
+    },
+    {
+      "dataset": "ULB creditcard",
+      "classification": "REAL",
+      "confidence": "SUPPORTED",
+      "evidence": "Academic dataset; PCA-transformed; no original metadata"
+    },
+    {
+      "dataset": "Kaggle fraudTrain",
+      "classification": "REAL",
+      "confidence": "SUPPORTED",
+      "evidence": "Published on Kaggle; label provenance partially documented"
+    }
+  ],
+  "conclusion": "Three real-world datasets exist but are LEGACY. No production-eligible dataset available.",
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}

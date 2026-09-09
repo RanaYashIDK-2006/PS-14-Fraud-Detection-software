@@ -1,0 +1,61 @@
+{
+  "total_datasets_found": 114,
+  "datasets": [
+    {
+      "path": "data/credit_card_transactions-ibm_v2.csv",
+      "rows": 24386901,
+      "classification": "SYNTHETIC",
+      "provenance": "IBM Altman SDV generator (Phase 17: SYNTHETIC_REGIME_ARTIFACT)",
+      "date_range": "1991-01-01 to 2019-12-31",
+      "fraud_prevalence": "0.23%",
+      "real_world_eligible": false
+    },
+    {
+      "path": "data/creditcard.csv",
+      "rows": 284808,
+      "classification": "REAL",
+      "provenance": "ULB/MLG 2013 Credit Card Fraud Dataset",
+      "fraud_prevalence": "0.172%",
+      "real_world_eligible": false,
+      "reason": "LEGACY; PCA-transformed; no original metadata; 284K rows insufficient"
+    },
+    {
+      "path": "data/kaggle_fraud/fraudTrain.csv",
+      "rows": 1296676,
+      "classification": "REAL",
+      "provenance": "Kaggle Credit Card Fraud Detection (DV, 2024)",
+      "real_world_eligible": false,
+      "reason": "LEGACY; label timing unknown; no PS-14 schema match"
+    },
+    {
+      "path": "data/kaggle_fraud/fraudTest.csv",
+      "rows": 555720,
+      "classification": "REAL",
+      "provenance": "Kaggle Credit Card Fraud Detection (DV, 2024)",
+      "real_world_eligible": false
+    },
+    {
+      "path": "data/elliptic_bitcoin_dataset/elliptic_txs_features.csv",
+      "rows": 203769,
+      "classification": "UNKNOWN",
+      "provenance": "Elliptic Labs Bitcoin dataset",
+      "real_world_eligible": false,
+      "reason": "Bitcoin transactions, not credit card; no schema match"
+    },
+    {
+      "path": "data/paysim_1m.csv",
+      "rows": 1200001,
+      "classification": "SYNTHETIC",
+      "provenance": "PaySim mobile money simulator",
+      "real_world_eligible": false
+    }
+  ],
+  "summary": {
+    "real_world_datasets": 3,
+    "synthetic_datasets": 2,
+    "unknown_datasets": 1,
+    "real_world_eligible": 0,
+    "verdict": "NO_LEGITIMATE_REAL_WORLD_DATASET_AVAILABLE"
+  },
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}

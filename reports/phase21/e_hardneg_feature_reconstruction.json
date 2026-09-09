@@ -1,0 +1,11 @@
+{
+  "model": "E_hardneg",
+  "reconstruction_feasibility": "IMPOSSIBLE",
+  "reason": "No real-world dataset with 48-feature schema. 3 fraud-rate features require label history.",
+  "feature_contract": {
+    "n_features": 48,
+    "parity_gates": "11/11 PASS"
+  },
+  "real_world_evaluation_status": "INVALID",
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}

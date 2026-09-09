@@ -1,0 +1,11 @@
+{
+  "model": "P20_45feat",
+  "reconstruction_feasibility": "IMPOSSIBLE",
+  "reason": "No real-world dataset with 45-feature schema. Features are decision-time valid but pipeline requires PS-14 infrastructure.",
+  "feature_contract": {
+    "n_features": 45,
+    "label_dependent_features": 0
+  },
+  "real_world_evaluation_status": "BLOCKED",
+  "execution_time_utc": "2026-09-09T11:23:16.411153+00:00"
+}
