@@ -96,7 +96,7 @@ overhead beyond pure model inference.
 **Industry comparisons** in `scripts/benchmark_comparison.py` are approximate
 and use different datasets/protocols — not directly comparable.
 
-## Validation Phases (Phases 14–23)
+## Validation Phases (Phases 14–23B)
 
 A rigorous, adversarial audit of the system's real-world readiness.
 Every conclusion is evidence-classified; firewalls are verified.
@@ -113,6 +113,7 @@ Every conclusion is evidence-classified; firewalls are verified.
 | **21** | Real-world validation gate | `INSUFFICIENT_REAL_WORLD_EVIDENCE` | No legitimate real-world transaction dataset available; promotion blocked pending data acquisition |
 | **22** | Executable validation harness | `DATA_ACQUISITION_BLOCKED` | Complete CLI runner built (`phase22.run_real_world_validation`); READY but blocked by data absence |
 | **23** | Data acquisition gate | `CONDITIONALLY_AVAILABLE` | 114 sources evaluated; best candidate Kaggle fraudTrain (1.85M rows); provenance unclear, no channel info, no label timing |
+| **23B** | Frozen Kaggle external eval | `CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE` | P20_45feat on Kaggle (1.85M rows, 0.58% fraud): ROC-AUC 0.47 (degraded features); E_hardneg unlabeled; production promotion BLOCKED |
 
 ### Current Model Status
 
@@ -126,9 +127,10 @@ Every conclusion is evidence-classified; firewalls are verified.
 ```text
 PHASE22_RUNNER = READY
 PHASE23_ACQUISITION = CONDITIONALLY_AVAILABLE_WITH_CAVEATS
+PHASE23B_EVAL = CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE
 REAL_WORLD_VALIDATION = BLOCKED (provenance unclear)
 PROMOTION = BLOCKED
-NEXT_ACTION = DECIDE: conditional Kaggle eval OR continue external acquisition
+NEXT_ACTION = Continue authorized real-world data acquisition
 ```
 
 **Honest interpretation:** E_hardneg is certified on the synthetic IBM corpus
@@ -145,9 +147,15 @@ python -m phase22.run_real_world_validation --data DATASET --metadata METADATA
 ```
 
 Phase 23 evaluated 114 data sources. The best candidate (Kaggle fraudTrain)
-has unclear provenance and missing channel/label-timing metadata. The project
-must decide whether to proceed with conditional evaluation or seek
-production-grade data from payment processors or banks.
+has unclear provenance and missing channel/label-timing metadata.
+
+Phase 23B executed a frozen conditional evaluation of P20_45feat on the
+Kaggle dataset (1.85M rows, 0.58% fraud). With degraded features (33/45
+required historical context unavailable), P20 scored ROC-AUC 0.47 with
+all alerts firing. E_hardneg could not be evaluated because its
+label-dependent features require verified label timing. Production
+promotion remains BLOCKED — the next milestone is acquiring legitimate
+real-world data with verified provenance and label governance.
 
 ## Setup
 

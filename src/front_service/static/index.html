@@ -630,7 +630,7 @@ tr:hover td { background: rgba(59,130,246,0.03); }
     <!-- ═══════ VALIDATION PHASES ═══════ -->
     <div class="card anim" id="phases">
       <div class="card-header">
-        <div><div class="card-title">Validation Phase Ledger</div><div class="card-subtitle">Certified phase decisions (14-23) — every conclusion evidence-classified, firewalls verified</div></div>
+        <div><div class="card-title">Validation Phase Ledger</div><div class="card-subtitle">Certified phase decisions (14-23B) — every conclusion evidence-classified, firewalls verified</div></div>
         <a href="/monitor-page" class="btn btn-ghost">Live Monitor →</a>
       </div>
       <div class="table-wrap">
@@ -647,6 +647,7 @@ tr:hover td { background: rgba(59,130,246,0.03); }
             <tr><td><b>21</b></td><td>Is real-world validation possible?</td><td><span class="badge yellow">INSUFFICIENT_REAL_WORLD_EVIDENCE</span></td><td>No legitimate real-world dataset available; promotion blocked pending data acquisition</td></tr>
             <tr><td><b>22</b></td><td>Is the validation harness ready?</td><td><span class="badge green">DATA_ACQUISITION_BLOCKED</span></td><td>Executable CLI runner built and tested; READY but blocked by data absence</td></tr>
             <tr><td><b>23</b></td><td>Can real-world data be acquired?</td><td><span class="badge yellow">CONDITIONALLY_AVAILABLE</span></td><td>114 sources evaluated; best candidate Kaggle (1.85M rows); provenance unclear, no channel info</td></tr>
+            <tr><td><b>23B</b></td><td>Frozen Kaggle external eval</td><td><span class="badge yellow">CONDITIONAL_COMPLETE</span></td><td>P20_45feat evaluated on Kaggle (1.85M rows, 0.58% fraud); ROC-AUC 0.47 with degraded features; E_hardneg unlabeled; production promotion BLOCKED</td></tr>
           </tbody>
         </table>
       </div>
@@ -656,6 +657,8 @@ tr:hover td { background: rgba(59,130,246,0.03); }
         <strong>Phase 22 status:</strong> Executable validation harness READY. Run: <code>python -m phase22.run_real_world_validation --mode prepare</code>
         <br>
         <strong>Phase 23 status:</strong> 114 data sources evaluated. Best candidate (Kaggle fraudTrain) has unclear provenance. Next decision: conditional evaluation OR continue external acquisition.
+        <br><br>
+        <strong>Phase 23B status:</strong> Frozen conditional Kaggle evaluation COMPLETE. P20_45feat scored ROC-AUC 0.47 (degraded features, all alerts fire). E_hardneg could not be evaluated (label-dependent features). Production promotion remains BLOCKED.
     </div>
 
     <!-- ═══════ PRIVACY ═══════ -->

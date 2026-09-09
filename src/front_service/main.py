@@ -1821,7 +1821,7 @@ def monitor_test_results() -> JSONResponse:
 
 @app.get("/monitor/phases")
 def monitor_phases() -> JSONResponse:
-    """Return the validation-phase decision ledger (Phases 14-20).
+    """Return the validation-phase decision ledger (Phases 14-23B).
 
     Reads each phase's immutable decision.json from reports/ — the same
     artifacts pushed to GitHub — so the UI shows the certified verdicts
@@ -1836,13 +1836,34 @@ def monitor_phases() -> JSONResponse:
         (18, "System readiness gate", "Is the system production-ready?"),
         (19, "Real-world data gate", "Do we have real-world evidence?"),
         (20, "Decision-time remediation", "Can the fraud-rate blocker be removed?"),
+        (21, "Real-world validation gate", "Is real-world validation possible?"),
+        (22, "Executable validation harness", "Is the validation harness ready?"),
+        (23, "Data acquisition gate", "Can real-world data be acquired?"),
+        ("23B", "Frozen Kaggle eval", "How do frozen models behave on external data?"),
+    ]
+    # File path patterns differ across phases (numbered prefixes, subdirs)
+    _DECISION_PATTERNS = [
+        lambda n: root / "reports" / f"phase{n}" / "decision.json",
+        lambda n: root / "reports" / f"phase{n}" / "final_decision.json",
+        lambda n: root / "reports" / f"phase{n}" / f"{n}_final_decision.json" if isinstance(n, int) else None,
+        lambda n: root / "reports" / f"phase{n}" / "25_final_decision.json" if n == 23 else None,
+        lambda n: root / "reports" / f"phase{n}" / "26_final_decision.json" if n == 22 else None,
+        lambda n: root / "reports" / f"phase{n}" / "kaggle" / "20_final_decision.json" if str(n) == "23B" else None,
     ]
     phases = []
     for num, title, question in phases_meta:
         entry: dict = {"phase": num, "title": title, "question": question,
                        "classification": "UNAVAILABLE"}
-        dpath = root / "reports" / f"phase{num}" / "decision.json"
-        if dpath.exists():
+        dpath = None
+        for pat_fn in _DECISION_PATTERNS:
+            try:
+                p = pat_fn(num)
+                if p and p.exists():
+                    dpath = p
+                    break
+            except Exception:
+                continue
+        if dpath:
             try:
                 d = json.loads(dpath.read_text(encoding="utf-8"))
                 entry["classification"] = (
@@ -1853,7 +1874,7 @@ def monitor_phases() -> JSONResponse:
                     "final_test_accessed": fw.get("FINAL_TEST_ACCESSED", None),
                     "production_untouched": fw.get("PRODUCTION_MODEL_STATUS", "UNKNOWN"),
                 }
-                entry["cert_time"] = d.get("cert_time_utc")
+                entry["cert_time"] = d.get("cert_time_utc") or d.get("execution_time_utc")
             except Exception:
                 entry["classification"] = "PARSE_ERROR"
         phases.append(entry)
