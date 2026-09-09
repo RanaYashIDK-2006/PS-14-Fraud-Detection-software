@@ -1,0 +1,14 @@
+{
+  "contract": {
+    "label_definition": "Must be established via metadata",
+    "label_sources": [
+      "chargeback",
+      "confirmed_fraud"
+    ]
+  },
+  "ibm_disposition": {
+    "classification": "INVALID_FOR_PRODUCTION"
+  },
+  "status": "CONTRACT_DEFINED_NO_DATASET_ELIGIBLE",
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

@@ -1,0 +1,12 @@
+{
+  "contract": {
+    "enforced_ordering": "transaction_time <= decision_time <= label_available_time"
+  },
+  "current_status": {
+    "ibm": "INVALID",
+    "ulb": "UNVERIFIED",
+    "kaggle": "UNVERIFIED"
+  },
+  "latency_status": "UNVERIFIED_FOR_ALL_DATASETS",
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

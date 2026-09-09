@@ -1,0 +1,22 @@
+{
+  "findings": [
+    {
+      "dataset": "IBM v2",
+      "classification": "SYNTHETIC",
+      "confidence": "STRONGLY_SUPPORTED"
+    },
+    {
+      "dataset": "ULB creditcard",
+      "classification": "REAL",
+      "confidence": "SUPPORTED"
+    },
+    {
+      "dataset": "Kaggle fraudTrain",
+      "classification": "REAL",
+      "confidence": "SUPPORTED"
+    }
+  ],
+  "conclusion": "Three real-world datasets exist but are LEGACY. No production-eligible dataset.",
+  "provenance_status": "INSUFFICIENT_FOR_PRODUCTION",
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "duplicates",
+    "timestamps",
+    "labels",
+    "missingness",
+    "ranges",
+    "schema"
+  ],
+  "exclusion_policy": "Every exclusion must be logged",
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

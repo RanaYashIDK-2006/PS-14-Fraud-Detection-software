@@ -1,0 +1,9 @@
+{
+  "requirements": [
+    "Source authorization",
+    "Access controls",
+    "Data minimization"
+  ],
+  "current_status": "UNVERIFIED",
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

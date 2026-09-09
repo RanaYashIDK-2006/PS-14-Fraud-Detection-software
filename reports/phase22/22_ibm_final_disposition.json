@@ -1,0 +1,7 @@
+{
+  "dataset": "credit_card_transactions-ibm_v2.csv",
+  "classification": "SYNTHETIC",
+  "disposition": "NOT_ELIGIBLE_FOR_PRODUCTION_VALIDATION",
+  "phase_22_verdict": "REMAIN_SYNTHETIC_BENCHMARK_ONLY",
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

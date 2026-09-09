@@ -1,0 +1,17 @@
+{
+  "minimum_requirements": {
+    "real_transaction_data": true,
+    "provenance_established": true,
+    "authorization_documented": true,
+    "label_definition_defensible": true,
+    "label_timing_established": true,
+    "timestamps_reliable": true,
+    "schema_compatible": true,
+    "sufficient_size": true,
+    "temporal_ordering_possible": true
+  },
+  "minimum_row_count": 100000,
+  "minimum_fraud_count": 500,
+  "minimum_prevalence_pct": 0.1,
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

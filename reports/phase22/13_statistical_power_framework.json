@@ -1,0 +1,7 @@
+{
+  "method": "Wilson score confidence intervals",
+  "minimum_fraud_per_segment": 30,
+  "confidence_level": 0.95,
+  "status": "FRAMEWORK_DEFINED",
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

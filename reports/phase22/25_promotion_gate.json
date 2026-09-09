@@ -1,0 +1,11 @@
+{
+  "gates": {
+    "real_world_data": "BLOCKED",
+    "label_governance": "UNVERIFIED",
+    "model_integrity": "PASS",
+    "threshold_integrity": "PASS"
+  },
+  "overall_gate": "BLOCKED",
+  "blocking_reason": "No legitimate real-world dataset available",
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

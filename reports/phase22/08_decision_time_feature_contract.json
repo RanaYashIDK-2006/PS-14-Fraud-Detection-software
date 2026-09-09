@@ -1,0 +1,17 @@
+{
+  "p20_contract": {
+    "n_features": 45,
+    "label_dependent_features": 0,
+    "all_decision_time_valid": true
+  },
+  "e_hardneg_contract": {
+    "n_features": 48,
+    "label_dependent_features": [
+      "user_fraud_rate",
+      "merch_fraud_rate",
+      "city_fraud_rate"
+    ]
+  },
+  "status": "P20_VALID_E_HARDNEG_CONDITIONAL",
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

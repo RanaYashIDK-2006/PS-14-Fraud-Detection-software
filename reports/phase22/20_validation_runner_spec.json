@@ -1,0 +1,12 @@
+{
+  "runner_module": "phase22.run_real_world_validation",
+  "cli_command": "python -m phase22.run_real_world_validation --data DATASET --metadata METADATA",
+  "modes": [
+    "prepare",
+    "validate",
+    "auto",
+    "dry-run"
+  ],
+  "status": "IMPLEMENTED",
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

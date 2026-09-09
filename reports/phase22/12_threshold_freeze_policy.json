@@ -1,0 +1,12 @@
+{
+  "e_hardneg": {
+    "threshold": 0.018758,
+    "frozen": true
+  },
+  "p20": {
+    "threshold": 0.018758,
+    "frozen": true
+  },
+  "status": "FROZEN",
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

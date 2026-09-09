@@ -1,0 +1,23 @@
+{
+  "risks": [
+    {
+      "id": "R22-01",
+      "description": "No real-world dataset",
+      "impact": "CRITICAL",
+      "status": "OPEN"
+    },
+    {
+      "id": "R22-02",
+      "description": "E_hardneg fraud-rate features",
+      "impact": "MATERIAL",
+      "status": "OPEN"
+    },
+    {
+      "id": "R22-03",
+      "description": "IBM not real-world evidence",
+      "impact": "HIGH",
+      "status": "MITIGATED"
+    }
+  ],
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

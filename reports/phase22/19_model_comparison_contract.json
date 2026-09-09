@@ -1,0 +1,10 @@
+{
+  "comparison_type": "PAIRED_TRANSACTION_LEVEL",
+  "classification": [
+    "P20_BETTER",
+    "E_HARDNEG_BETTER",
+    "MIXED",
+    "INCOMPARABLE"
+  ],
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

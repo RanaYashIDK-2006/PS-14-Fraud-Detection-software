@@ -1,0 +1,25 @@
+{
+  "registered_sources": [
+    {
+      "id": "IBM_V2",
+      "path": "data/credit_card_transactions-ibm_v2.csv",
+      "classification": "SYNTHETIC",
+      "eligible": false
+    },
+    {
+      "id": "ULB_CREDITCARD",
+      "path": "data/creditcard.csv",
+      "classification": "REAL",
+      "eligible": false
+    },
+    {
+      "id": "KAGGLE_FRAUD",
+      "path": "data/kaggle_fraud/fraudTrain.csv",
+      "classification": "REAL",
+      "eligible": false
+    }
+  ],
+  "active_eligible_sources": [],
+  "status": "NO_ELIGIBLE_SOURCES",
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

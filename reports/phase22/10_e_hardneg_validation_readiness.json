@@ -1,0 +1,7 @@
+{
+  "model": "E_hardneg",
+  "ready_for_evaluation": false,
+  "label_feature_reconstruction": "REQUIRES_LEGITIMATE_LABEL_HISTORY",
+  "blocking_reason": "No legitimate real-world dataset; fraud-rate features need label history",
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

@@ -1,0 +1,28 @@
+{
+  "contract_version": "1.0",
+  "required_fields": [
+    "transaction_id",
+    "timestamp",
+    "amount",
+    "fraud_label"
+  ],
+  "recommended_fields": [
+    "merchant_id",
+    "user_id",
+    "channel",
+    "mcc",
+    "city",
+    "country"
+  ],
+  "label_contract": {
+    "type": "binary",
+    "values": {
+      "0": "legitimate",
+      "1": "fraud"
+    }
+  },
+  "timestamp_contract": {
+    "format": "ISO 8601 or Unix epoch"
+  },
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}

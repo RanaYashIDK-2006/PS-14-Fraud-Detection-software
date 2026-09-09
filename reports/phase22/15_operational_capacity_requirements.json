@@ -1,0 +1,10 @@
+{
+  "required_data": [
+    "analyst_capacity",
+    "alerts_per_hour",
+    "queue_capacity",
+    "SLA"
+  ],
+  "current_status": "UNVERIFIED",
+  "execution_time_utc": "2026-09-09T11:35:55.014057+00:00"
+}
