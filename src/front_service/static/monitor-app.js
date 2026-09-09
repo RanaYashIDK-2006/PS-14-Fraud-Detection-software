@@ -200,6 +200,50 @@ function renderDriftMetrics(data){
   }
 }
 
+/* ═══════ PHASE GOVERNANCE LEDGER ═══════ */
+function classifyBadge(cls){
+  var c=(cls||'').toUpperCase();
+  if(c.indexOf('NO_ROBUST')>=0||c.indexOf('NO_EFFECT')>=0) return ['fail','NO_ROBUST_WIN'];
+  if(c.indexOf('ARTIFACT')>=0) return ['warn','SYNTHETIC_REGIME_ARTIFACT'];
+  if(c.indexOf('CASE_B')>=0) return ['warn','CASE_B_PARTIALLY_REPRESENTED'];
+  if(c.indexOf('DATA_ACQUISITION')>=0) return ['warn','DATA_ACQUISITION_REQUIRED'];
+  if(c.indexOf('CONDITIONALLY_DEPLOYABLE')>=0) return ['warn','CONDITIONALLY_DEPLOYABLE'];
+  if(c.indexOf('CLEAN_PRODUCTION')>=0) return ['pass','CLEAN_PROD_COMPAT_CANDIDATE'];
+  if(c.indexOf('OUTCOME_C')>=0) return ['warn','OUTCOME_C — NO INDEPENDENT DATA'];
+  return ['info',cls||'—'];
+}
+
+function renderPhases(d){
+  var body=document.getElementById('phaseBody');
+  if(!body)return;
+  var rows=d.phases||[];
+  if(rows.length===0){
+    body.innerHTML='<tr><td colspan="4" style="color:var(--dim)">No phase artifacts found in reports/</td></tr>';
+    return;
+  }
+  var h='';
+  for(var i=0;i<rows.length;i++){
+    var p=rows[i];
+    var b=classifyBadge(p.classification);
+    var fw=p.firewall||{};
+    var fwOk=(fw.final_test_accessed===false)&&(fw.production_untouched==='UNTOUCHED');
+    h+='<tr>';
+    h+='<td class="phase-num">'+p.phase+'</td>';
+    h+='<td><b>'+p.title+'</b><span class="phase-q">'+p.question+'</span></td>';
+    h+='<td><span class="badge '+b[0]+'">'+b[1]+'</span></td>';
+    h+='<td><span class="firewall-mini">'+(fwOk?'<span class="ok">✓ final-test locked · production untouched</span>':'⚠ '+JSON.stringify(fw))+'</span></td>';
+    h+='</tr>';
+  }
+  body.innerHTML=h;
+}
+
+async function loadPhases(){
+  try{
+    var r=await fetch('/monitor/phases');
+    if(r.ok){var d=await r.json();renderPhases(d);}
+  }catch(e){console.error('Phase ledger load failed:',e);}
+}
+
 /* ═══════ TEST RESULTS ═══════ */
 function renderTestResults(d){
   var el=document.getElementById('testResults');
@@ -430,7 +474,9 @@ document.addEventListener('DOMContentLoaded', function() {
   fetch('/status').then(()=>poll()).catch(()=>poll());
   loadTestResults();
   loadFraudReport();
+  loadPhases();
   setInterval(poll,5000);
   setInterval(loadTestResults,60000);
   setInterval(loadFraudReport,300000);
+  setInterval(loadPhases,120000);
 });

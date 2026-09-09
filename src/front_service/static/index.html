@@ -386,6 +386,7 @@ tr:hover td { background: rgba(59,130,246,0.03); }
   <div class="sidebar-section">
     <div class="sidebar-label">System</div>
     <nav class="sidebar-nav">
+      <a href="#phases" class="nav-item"><span>🧭</span> Phase Ledger</a>
       <a href="#privacy" class="nav-item"><span>🔒</span> Privacy</a>
       <a href="/fraud-report-page" class="nav-item"><span>📋</span> Full Report</a>
       <a href="#security" class="nav-item"><span>🛡️</span> Security</a>
@@ -626,6 +627,31 @@ tr:hover td { background: rgba(59,130,246,0.03); }
       </div>
     </div>
 
+    <!-- ═══════ VALIDATION PHASES ═══════ -->
+    <div class="card anim" id="phases">
+      <div class="card-header">
+        <div><div class="card-title">Validation Phase Ledger</div><div class="card-subtitle">Certified phase decisions (14-20) — every conclusion evidence-classified, firewalls verified</div></div>
+        <a href="/monitor-page" class="btn btn-ghost">Live Monitor →</a>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Phase</th><th>Question</th><th>Classification</th><th>Key Evidence</th></tr></thead>
+          <tbody>
+            <tr><td><b>14</b></td><td>Does historical chip-fraud supervision improve 2017 transfer?</td><td><span class="badge red">NO_ROBUST_WIN</span></td><td>Chip supervision <b>hurt</b>: C2 chip recall 32.3% vs C0 57.7% (−25.4pp)</td></tr>
+            <tr><td><b>15</b></td><td>Why did 2017 chip-fraud recall fail?</td><td><span class="badge yellow">CASE_B_PARTIALLY_REPRESENTED</span></td><td>Channel composition shift PROVEN; 95% of 2017 patterns have weak/no historical analogue; train-vs-2017 AUC 0.94</td></tr>
+            <tr><td><b>16</b></td><td>Does independent post-2016 data exist?</td><td><span class="badge yellow">OUTCOME_C — NONE</span></td><td>51 datasets inventoried, 1 development-eligible (IBM, synthetic); boundary is protocol-constrained, not information-theoretic</td></tr>
+            <tr><td><b>17</b></td><td>Is the 2017 regime a generator artifact?</td><td><span class="badge yellow">SYNTHETIC_REGIME_ARTIFACT</span></td><td>Abrupt step change at 2017 affecting the whole population, persistent 2017-19; real-world validity UNVERIFIED</td></tr>
+            <tr><td><b>18</b></td><td>Is the system production-ready?</td><td><span class="badge yellow">CONDITIONALLY_DEPLOYABLE</span></td><td>Security/monitoring/rollback PASS; 3 fraud-rate features with unverified label availability; alert burden ~107/1k unverified</td></tr>
+            <tr><td><b>19</b></td><td>Do we have real-world evidence?</td><td><span class="badge yellow">DATA_ACQUISITION_REQUIRED</span></td><td>Every dataset in the environment is synthetic; no ground-truth labels; production prevalence unknown</td></tr>
+            <tr><td><b>20</b></td><td>Can the decision-time blocker be removed?</td><td><span class="badge green">CLEAN_PROD_COMPAT_CANDIDATE</span></td><td>P20_45feat: 45 features, all decision-time valid, parity + leakage + causality PASS; eligible for real-world validation</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="info" style="margin-top:16px;margin-bottom:0;background:var(--surface-2);border-left-color:var(--yellow)">
+        <strong>Honest interpretation:</strong> E_hardneg is certified on the <strong>synthetic IBM corpus</strong> (recall 99.67%, FPR 10.99% on the untouched 2018–2020 window) and remains deployed as the best available model. The 2017 regime shift is strongly supported as a generator artifact, so these numbers must not be read as real-world performance. Production promotion of P20_45feat is <strong>blocked pending real-world data</strong> — the next milestone is data acquisition, not more modeling.
+      </div>
+    </div>
+
     <!-- ═══════ PRIVACY ═══════ -->
     <div class="diagram anim" id="privacy">
       <div class="card-header">
@@ -700,7 +726,7 @@ tr:hover td { background: rgba(59,130,246,0.03); }
     <!-- ═══════ CROSS-DOMAIN TABLE ═══════ -->
     <div class="card anim" id="security">
       <div class="card-header">
-        <div><div class="card-title">Model Benchmark</div><div class="card-subtitle">Certified deployed model + historical cross-dataset runs (legacy, not re-certified)</div></div>
+        <div><div class="card-title">Model Benchmark</div><div class="card-subtitle">Certified on synthetic IBM corpus; historical cross-dataset runs are legacy (Phase 17: IBM is a synthetic SDV dataset — not real-world evidence)</div></div>
         <a href="/fraud-report-page" class="btn btn-ghost">View Full Report →</a>
       </div>
       <div class="filters">

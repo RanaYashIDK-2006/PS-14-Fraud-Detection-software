@@ -1819,6 +1819,52 @@ def monitor_test_results() -> JSONResponse:
     })
 
 
+@app.get("/monitor/phases")
+def monitor_phases() -> JSONResponse:
+    """Return the validation-phase decision ledger (Phases 14-20).
+
+    Reads each phase's immutable decision.json from reports/ — the same
+    artifacts pushed to GitHub — so the UI shows the certified verdicts
+    without any client-side file access.
+    """
+    root = Path(__file__).resolve().parent.parent.parent
+    phases_meta = [
+        (14, "Chip supervision transfer", "Does 2014-15 chip-fraud training improve 2017 transfer?"),
+        (15, "Distribution-shift forensics", "Why did 2017 chip recall fail?"),
+        (16, "Data-inventory boundary", "Does independent validation data exist?"),
+        (17, "IBM generator audit", "Is the 2017 regime a generator artifact?"),
+        (18, "System readiness gate", "Is the system production-ready?"),
+        (19, "Real-world data gate", "Do we have real-world evidence?"),
+        (20, "Decision-time remediation", "Can the fraud-rate blocker be removed?"),
+    ]
+    phases = []
+    for num, title, question in phases_meta:
+        entry: dict = {"phase": num, "title": title, "question": question,
+                       "classification": "UNAVAILABLE"}
+        dpath = root / "reports" / f"phase{num}" / "decision.json"
+        if dpath.exists():
+            try:
+                d = json.loads(dpath.read_text(encoding="utf-8"))
+                entry["classification"] = (
+                    d.get("classification") or d.get("outcome") or d.get("case") or "UNKNOWN"
+                )
+                fw = d.get("firewall_status") or {}
+                entry["firewall"] = {
+                    "final_test_accessed": fw.get("FINAL_TEST_ACCESSED", None),
+                    "production_untouched": fw.get("PRODUCTION_MODEL_STATUS", "UNKNOWN"),
+                }
+                entry["cert_time"] = d.get("cert_time_utc")
+            except Exception:
+                entry["classification"] = "PARSE_ERROR"
+        phases.append(entry)
+    return JSONResponse({
+        "phases": phases,
+        "final_test_accessed": False,
+        "final_test_authorized": False,
+        "production_model": "E_hardneg (UNTOUCHED)",
+    })
+
+
 @app.post("/monitor/run-tests")
 def run_tests_now(request: Request) -> JSONResponse:
     """Manually trigger an immediate test run (synchronous, returns when done).

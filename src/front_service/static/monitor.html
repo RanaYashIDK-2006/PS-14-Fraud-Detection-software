@@ -29,6 +29,7 @@ a{color:var(--accent);text-decoration:none}
 .stat.blue .num{color:var(--accent)}
 .stat.purple .num{color:var(--purple)}
 .stat.yellow .num{color:var(--yellow)}
+.stat.wide .num{font-size:15px;white-space:normal;line-height:1.4}
 .section-title{font-size:18px;font-weight:700;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);color:var(--accent)}
 .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:16px;margin-bottom:24px}
 .chart-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}
@@ -49,7 +50,21 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600}
 .badge.fraud{background:rgba(239,68,68,0.15);color:var(--red)}
 .badge.legit{background:rgba(34,197,94,0.15);color:var(--green)}
+.badge.pass{background:rgba(34,197,94,0.12);color:var(--green)}
+.badge.warn{background:rgba(234,179,8,0.12);color:var(--yellow)}
+.badge.fail{background:rgba(239,68,68,0.12);color:var(--red)}
+.badge.info{background:rgba(59,130,246,0.12);color:var(--accent)}
 .footer{text-align:center;color:var(--dim);font-size:12px;margin-top:32px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* Phase governance table */
+.phase-table{width:100%;border-collapse:collapse;font-size:12px}
+.phase-table th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);color:var(--dim);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px}
+.phase-table td{padding:8px 10px;border-bottom:1px solid #1a1f2e;vertical-align:top}
+.phase-table tr:hover td{background:rgba(59,130,246,0.05)}
+.phase-num{font-weight:700;color:var(--accent)}
+.phase-q{color:var(--dim);font-size:11px;display:block;margin-top:2px}
+.firewall-mini{font-size:10px;color:var(--dim)}
+.firewall-mini .ok{color:var(--green)}
 
 /* Test results section */
 .test-banner{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:24px}
@@ -67,6 +82,16 @@ a{color:var(--accent);text-decoration:none}
 .test-badge.pass{background:rgba(34,197,94,0.12);color:var(--green)}
 .test-badge.fail{background:rgba(239,68,68,0.12);color:var(--red)}
 .test-err{color:var(--red);font-size:12px;margin-top:8px}
+
+/* Model comparison banner */
+.compare-banner{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.cand{border:1px solid var(--border);border-radius:8px;padding:14px}
+.cand h4{font-size:14px;font-weight:700;margin-bottom:6px}
+.cand .sub{font-size:11px;color:var(--dim);margin-bottom:8px}
+.cand .kv{font-size:12px;margin-bottom:3px}
+.cand .kv b{color:var(--text)}
+.incumbent{border-color:rgba(34,197,94,0.4)}
+.candidate{border-color:rgba(168,85,247,0.4)}
 </style>
 </head>
 <body>
@@ -91,9 +116,32 @@ a{color:var(--accent);text-decoration:none}
   </div>
 </div>
 
+<!-- Model & Candidate Status -->
+<div class="section-title">🤖 Model Status &amp; Candidates</div>
+<div class="compare-banner" id="modelBanner">
+  <div class="cand incumbent">
+    <h4 style="color:var(--green)">E_hardneg — INCUMBENT</h4>
+    <div class="sub">Production model · 48 features · 3 fraud-rate features with UNVERIFIED decision-time label availability (Phases 18-19)</div>
+    <div class="kv">Final test: recall <b>99.67%</b> · FPR <b>10.99%</b> · precision <b>18.1%</b></div>
+    <div class="kv">Status: <span class="badge pass">UNTOUCHED · DEPLOYED</span></div>
+  </div>
+  <div class="cand candidate">
+    <h4 style="color:var(--purple)">P20_45feat — CANDIDATE</h4>
+    <div class="sub">Clean 45-feature candidate · all features decision-time valid · no label-dependent features</div>
+    <div class="kv">IBM validation: recall <b>99.53%</b> · FPR <b>23.69%</b> · precision <b>47.2%</b></div>
+    <div class="kv">Status: <span class="badge info">ELIGIBLE FOR REAL-WORLD VALIDATION</span></div>
+  </div>
+  <div class="cand">
+    <h4>Real-World Validation</h4>
+    <div class="sub">Phase 19-21 verdict on legitimate real-world evidence</div>
+    <div class="kv">Data: <span class="badge warn">NONE AVAILABLE</span></div>
+    <div class="kv">Classification: <span class="badge warn">DATA_ACQUISITION_REQUIRED</span></div>
+    <div class="kv">Final test: <span class="badge pass">LOCKED · NOT ACCESSED</span></div>
+  </div>
+</div>
+
 <!-- Active Model Info -->
-<div class="section-title">🤖 Active Model</div>
-<div class="stats" id="modelStats">
+<div class="stats" id="modelStats" style="margin-top:12px">
   <div class="stat green"><div class="num" id="mActiveModel">—</div><div class="label">Active Model</div></div>
   <div class="stat blue"><div class="num" id="mModelType">—</div><div class="label">Model Type</div></div>
   <div class="stat"><div class="num" id="mFeatures">—</div><div class="label">Features</div></div>
@@ -110,6 +158,18 @@ a{color:var(--accent);text-decoration:none}
   <div class="stat green"><div class="num" id="mNativeTempAuc">—</div><div class="label">Native Temporal AUC</div></div>
   <div class="stat green"><div class="num" id="mNativeTempR1">—</div><div class="label">Native R@1%FPR</div></div>
   <div class="stat"><div class="num" id="mNativeFeat">—</div><div class="label">Native Features</div></div>
+</div>
+
+<!-- Phase Governance -->
+<div class="section-title">🧭 Validation Phase Ledger <span style="font-size:12px;color:var(--dim);font-weight:400">(certified decisions, Phases 14-20)</span></div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;overflow-x:auto">
+  <table class="phase-table">
+    <thead><tr><th>Phase</th><th>Title</th><th>Classification</th><th>Firewall</th></tr></thead>
+    <tbody id="phaseBody"><tr><td colspan="4" style="color:var(--dim)">Loading phase ledger…</td></tr></tbody>
+  </table>
+</div>
+<div class="info" style="margin-top:12px;background:var(--card);border-left:3px solid var(--yellow);border-radius:0 8px 8px 0;padding:12px 16px;font-size:12px;color:var(--dim)">
+  The 2017 chip-fraud regime shift is <b style="color:var(--yellow)">STRONGLY SUPPORTED as a synthetic generator artifact</b> (Phase 17) — IBM metrics must not be read as real-world performance. E_hardneg remains deployed as the best available model; promotion is <b style="color:var(--yellow)">BLOCKED pending real-world data</b>.
 </div>
 
 <!-- Service Health -->
@@ -212,291 +272,6 @@ a{color:var(--accent);text-decoration:none}
 <div class="footer">PS-14 Privacy-First AI Fraud Detection · Live Monitor · Auto-refreshes every 5s</div>
 
 <script src="/chart.min.js"></script>
-<script src="/static/monitor-app.js?v=1"></script>
-<!--
-var C={green:'#22c55e',red:'#ef4444',accent:'#3b82f6',purple:'#a855f7',yellow:'#eab308',dim:'#64748b',grid:'#1e293b',orange:'#f97316'};
-var latencyChart=null,detectionChart=null,eventChart=null;
-var metricsHistory=[];
-
-function fmt(s){var h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h>0?h+'h '+m+'m':m+'m';}
-
-/* ═══════ LIVE METRICS ═══════ */
-function renderLiveMetrics(data){
-  var m=data.metrics||{};
-  var l=data.latency||{};
-  var svc=data.services||{};
-  var uptime=data.uptime_seconds||0;
-  var recent=data.recent_events||[];
-
-  document.getElementById('mEval').textContent=m.total_evaluations||0;
-  document.getElementById('mFraud').textContent=m.fraud_detected||0;
-  document.getElementById('mFP').textContent=m.legit_flagged||0;
-  document.getElementById('mDet').textContent=(m.detection_rate_pct||0)+'%';
-  document.getElementById('mFPR').textContent=(m.fpr_pct||0)+'%';
-  document.getElementById('mUp').textContent=fmt(uptime);
-
-  // Service health
-  var svcHtml='';
-  for(var name in svc){
-    var st=svc[name].status||'unknown';
-    var lat=svc[name].latency_ms?svc[name].latency_ms+'ms':'—';
-    svcHtml+='<div class="service-card"><div class="service-dot '+st+'"></div><div><div class="service-name">'+name+'</div><div class="service-info">'+(st==='up'?'Healthy · '+lat:st==='down'?'DOWN':'Unknown')+'</div></div></div>';
-  }
-  document.getElementById('svcGrid').innerHTML=svcHtml;
-
-  // Latency
-  document.getElementById('lAvg').textContent=l.avg_ms||0;
-  document.getElementById('lP50').textContent=l.p50_ms||0;
-  document.getElementById('lP95').textContent=l.p95_ms||0;
-  document.getElementById('lP99').textContent=l.p99_ms||0;
-  document.getElementById('lSamp').textContent=l.samples||0;
-
-  // Events table
-  var events=[].concat(recent).reverse();
-  var tbody='';
-  for(var i=0;i<events.length;i++){
-    var e=events[i];
-    var t=new Date(e.ts).toLocaleTimeString();
-    var sc=e.score||0;
-    var cls=e.fraud?'fraud':e.flagged?'fraud':'legit';
-    var label=e.fraud?'FRAUD':e.flagged?'FLAGGED':'OK';
-    tbody+='<tr><td>'+t+'</td><td style="font-weight:600;color:'+(sc>=80?C.red:sc>=50?C.orange:sc>=30?C.yellow:C.green)+'">'+sc+'</td><td><span class="badge '+cls+'">'+label+'</span></td><td>'+(e.latency_ms?e.latency_ms+'ms':'—')+'</td></tr>';
-  }
-  document.getElementById('eventsBody').innerHTML=tbody;
-
-  renderCharts(data);
-}
-
-/* ═══════ TEST RESULTS ═══════ */
-function renderTestResults(d){
-  var el=document.getElementById('testResults');
-  if(!el)return;
-  if(!d||!d.timestamp){
-    el.innerHTML='<div style="display:flex;align-items:center;gap:8px"><div class="dot" style="width:12px;height:12px;border-radius:50%;background:'+C.dim+'"></div><span style="color:var(--dim);font-size:13px">No test results yet — first run pending</span></div>';
-    return;
-  }
-  var ts=new Date(d.timestamp).toLocaleString();
-  var sc=d.all_passed?C.green:C.red;
-  var stxt=d.all_passed?'ALL PASSED':'FAILURES DETECTED';
-  var h='<div class="test-header">';
-  h+='<div class="test-status"><div class="dot" style="background:'+sc+'"></div><div class="text" style="color:'+sc+'">'+stxt+'</div></div>';
-  h+='<div class="test-meta">'+ts+'</div></div>';
-  h+='<div class="test-counts"><span class="p">'+d.passed+' passed</span><span class="f">'+d.failed+' failed</span><span class="t">'+d.total+' total</span></div>';
-  if(d.error){h+='<div class="test-err">Error: '+d.error+'</div>';}
-  if(d.failed_tests&&d.failed_tests.length>0){
-    h+='<div style="font-size:12px;font-weight:600;color:'+C.red+';margin-bottom:4px">Failed tests:</div>';
-    for(var i=0;i<d.failed_tests.length;i++) h+='<div class="test-badge fail">✗ '+d.failed_tests[i]+'</div> ';
-    h+='<br>';
-  }
-  if(d.passed_tests&&d.passed_tests.length>0){
-    h+='<div style="font-size:12px;font-weight:600;color:'+C.green+';margin-bottom:4px;margin-top:8px">Passed tests:</div><div class="test-badges">';
-    for(var j=0;j<d.passed_tests.length;j++) h+='<span class="test-badge pass">✓ '+d.passed_tests[j]+'</span>';
-    h+='</div>';
-  }
-  el.innerHTML=h;
-}
-
-async function loadTestResults(){
-  try{
-    var r=await fetch('/monitor/test-results');
-    if(r.ok){var d=await r.json();renderTestResults(d);}
-  }catch(e){console.error('Test results load failed:',e);}
-}
-
-/* ═══════ RUN TESTS NOW ═══════ */
-async function runTestsNow(){
-  var btn=document.getElementById('runBtn');
-  var el=document.getElementById('testResults');
-  if(btn){btn.disabled=true;btn.textContent='⏳ Running...';btn.className='btn running';}
-  if(el) el.innerHTML='<div style="display:flex;align-items:center;gap:8px"><div class="dot" style="width:12px;height:12px;border-radius:50%;background:'+C.yellow+';animation:pulse 1s infinite"></div><span style="color:'+C.yellow+';font-size:13px">Running 11 tests... this takes about 50 seconds</span></div>';
-  try{
-    var controller=new AbortController();
-    var timeoutId=setTimeout(function(){controller.abort()},120000);
-    var r=await fetch('/monitor/run-tests',{method:'POST',signal:controller.signal});
-    clearTimeout(timeoutId);
-    if(r.ok){await r.json();loadTestResults();}
-    else{if(el) el.innerHTML='<div style="color:'+C.red+';font-size:13px">Server returned '+r.status+'</div>';}
-  }catch(e){if(el) el.innerHTML='<div style="color:'+C.red+';font-size:13px">Error: '+e.message+'</div>';}
-  if(btn){btn.disabled=false;btn.textContent='▶ Run Tests Now';btn.className='btn';}
-}
-
-/* ═══════ CHARTS ═══════ */
-var _chartsInitialized=false;
-
-function renderCharts(data){
-  var m=data.metrics||{};
-  var l=data.latency||{};
-  var recent=data.recent_events||[];
-
-  metricsHistory.push({
-    ts:new Date().toLocaleTimeString(),
-    detection:m.detection_rate_pct||0,
-    fpr:m.fpr_pct||0,
-    p50:l.p50_ms||0,
-    p95:l.p95_ms||0,
-    p99:l.p99_ms||0,
-  });
-  if(metricsHistory.length>60)metricsHistory.shift();
-
-  var labels=metricsHistory.map(function(h){return h.ts});
-
-  // Detection chart
-  var dCtx=document.getElementById('detectionChart');
-  if(dCtx){
-    if(detectionChart){
-      detectionChart.data.labels=labels;
-      detectionChart.data.datasets[0].data=metricsHistory.map(function(h){return h.detection});
-      detectionChart.data.datasets[1].data=metricsHistory.map(function(h){return h.fpr});
-      detectionChart.update('none');
-    } else {
-      detectionChart=new Chart(dCtx,{type:'line',data:{labels:labels,datasets:[
-        {label:'Detection %',data:metricsHistory.map(function(h){return h.detection}),borderColor:C.green,backgroundColor:C.green+'22',fill:true,tension:0.3,pointRadius:2},
-        {label:'FPR %',data:metricsHistory.map(function(h){return h.fpr}),borderColor:C.red,backgroundColor:C.red+'22',fill:true,tension:0.3,pointRadius:2}
-      ]},options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{labels:{color:C.dim}}},scales:{x:{ticks:{color:C.dim,maxTicksLimit:8},grid:{color:C.grid}},y:{min:0,max:100,ticks:{color:C.dim},grid:{color:C.grid}}}}});
-    }
-  }
-
-  // Latency chart
-  var lCtx=document.getElementById('latencyChart');
-  if(lCtx){
-    if(latencyChart){
-      latencyChart.data.labels=labels;
-      latencyChart.data.datasets[0].data=metricsHistory.map(function(h){return h.p50});
-      latencyChart.data.datasets[1].data=metricsHistory.map(function(h){return h.p95});
-      latencyChart.data.datasets[2].data=metricsHistory.map(function(h){return h.p99});
-      latencyChart.update('none');
-    } else {
-      latencyChart=new Chart(lCtx,{type:'line',data:{labels:labels,datasets:[
-        {label:'P50',data:metricsHistory.map(function(h){return h.p50}),borderColor:C.green,tension:0.3,pointRadius:2},
-        {label:'P95',data:metricsHistory.map(function(h){return h.p95}),borderColor:C.yellow,tension:0.3,pointRadius:2},
-        {label:'P99',data:metricsHistory.map(function(h){return h.p99}),borderColor:C.red,tension:0.3,pointRadius:2}
-      ]},options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{labels:{color:C.dim}}},scales:{x:{ticks:{color:C.dim,maxTicksLimit:8},grid:{color:C.grid}},y:{ticks:{color:C.dim},grid:{color:C.grid},title:{display:true,text:'ms',color:C.dim}}}}});
-    }
-  }
-
-  // Event scatter chart (recreate with new data)
-  var eCtx=document.getElementById('eventChart');
-  if(eCtx){
-    if(eventChart)eventChart.destroy();
-    var pts=recent.map(function(e,i){return{x:i,y:e.score||0,fraud:e.fraud,flagged:e.flagged}});
-    var fraudPts=pts.filter(function(p){return p.fraud});
-    var flaggedPts=pts.filter(function(p){return p.flagged&&!p.fraud});
-    var okPts=pts.filter(function(p){return !p.flagged&&!p.fraud});
-    eventChart=new Chart(eCtx,{type:'scatter',data:{datasets:[
-      {label:'Fraud',data:fraudPts,backgroundColor:C.red,pointRadius:6},
-      {label:'Flagged (FP)',data:flaggedPts,backgroundColor:C.yellow,pointRadius:5},
-      {label:'OK',data:okPts,backgroundColor:C.green+'66',pointRadius:4}
-    ]},options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{labels:{color:C.dim}}},scales:{x:{ticks:{color:C.dim},grid:{color:C.grid},title:{display:true,text:'Event #',color:C.dim}},y:{min:0,max:100,ticks:{color:C.dim},grid:{color:C.grid},title:{display:true,text:'Risk Score',color:C.dim}}}}});
-  }
-}
-
-/* ═══════ FRAUD REPORT ═══════ */
-var reportScoreChart=null,reportHourChart=null,reportFeatChart=null,reportCatChart=null;
-
-async function loadFraudReport(){
-  try{
-    var r=await fetch('/fraud-report');
-    if(!r.ok)return;
-    var data=await r.json();
-    var s=data.summary;
-    if(!s)return;
-    var cats=s.categories||{};
-    // Stats
-    document.getElementById('rTotal').textContent=s.total?s.total.toLocaleString():'—';
-    document.getElementById('rFraud').textContent=s.fraud_count||'—';
-    document.getElementById('rAuc').textContent=s.ml_auc?(s.ml_auc*100).toFixed(1)+'%':'—';
-    document.getElementById('rRecall').textContent=s.recall_1pct_fpr?(s.recall_1pct_fpr*100).toFixed(1)+'%':'—';
-    document.getElementById('rPr').textContent=s.pr_auc?(s.pr_auc*100).toFixed(1)+'%':'—';
-    document.getElementById('rMissed').textContent=cats.missed_fraud||'—';
-    // Charts
-    var opts={responsive:true,maintainAspectRatio:false,animation:{duration:500}};
-    // Score distribution from score_distribution field
-    if(data.score_distribution&&document.getElementById('reportScoreChart')){
-      var sd=data.score_distribution;
-      var sdBins=Object.keys(sd.fraud||{}).sort();
-      if(reportScoreChart)reportScoreChart.destroy();
-      reportScoreChart=new Chart(document.getElementById('reportScoreChart'),{type:'bar',data:{labels:sdBins,datasets:[
-        {label:'Fraud',data:sdBins.map(function(b){return (sd.fraud||{})[b]||0}),backgroundColor:C.red+'aa',borderRadius:3},
-        {label:'Legit',data:sdBins.map(function(b){return (sd.legit||{})[b]||0}),backgroundColor:C.green+'aa',borderRadius:3}
-      ]},options:{...opts,plugins:{legend:{labels:{color:C.dim}}},scales:{x:{ticks:{color:C.dim,font:{size:9}},grid:{color:C.grid}},y:{ticks:{color:C.dim},grid:{color:C.grid}}}}});
-    }
-    // Hour distribution
-    if(data.hour_distribution&&document.getElementById('reportHourChart')){
-      var hd=data.hour_distribution;
-      var hours=Object.keys(hd.fraud||{}).sort(function(a,b){return +a-+b});
-      if(reportHourChart)reportHourChart.destroy();
-      reportHourChart=new Chart(document.getElementById('reportHourChart'),{type:'line',data:{labels:hours.map(function(h){return h+'h'}),datasets:[
-        {label:'Fraud',data:hours.map(function(h){return (hd.fraud||{})[h]||0}),borderColor:C.red,backgroundColor:C.red+'22',fill:true,tension:0.3,pointRadius:2},
-        {label:'Legit',data:hours.map(function(h){return (hd.legit||{})[h]||0}),borderColor:C.green,backgroundColor:C.green+'22',fill:true,tension:0.3,pointRadius:2}
-      ]},options:{...opts,plugins:{legend:{labels:{color:C.dim}}},scales:{x:{ticks:{color:C.dim},grid:{color:C.grid}},y:{ticks:{color:C.dim},grid:{color:C.grid}}}}});
-    }
-    // Category donut
-    if(document.getElementById('reportCatChart')){
-      if(reportCatChart)reportCatChart.destroy();
-      reportCatChart=new Chart(document.getElementById('reportCatChart'),{type:'doughnut',data:{
-        labels:['High Fraud','Subtle Fraud','Borderline','Missed','FP Risk','Legitimate'],
-        datasets:[{data:[cats.high_confidence_fraud||0,cats.subtle_fraud||0,cats.borderline_fraud||0,cats.missed_fraud||0,cats.false_positive_risk||0,cats.legitimate||0],
-          backgroundColor:[C.red+'cc',C.orange+'cc',C.yellow+'cc','#f87171cc',C.accent+'cc',C.green+'cc'],borderWidth:0,hoverOffset:6}]},
-        options:{...opts,cutout:'50%',plugins:{legend:{position:'right',labels:{color:C.dim,font:{size:11},padding:8}}}}});
-    }
-    // Feature importance
-    if(data.feature_importance&&document.getElementById('reportFeatChart')){
-      var fi=data.feature_importance.slice(0,8);
-      if(reportFeatChart)reportFeatChart.destroy();
-      reportFeatChart=new Chart(document.getElementById('reportFeatChart'),{type:'bar',data:{
-        labels:fi.map(function(f){return f.feature}),
-        datasets:[{label:'Importance',data:fi.map(function(f){return f.importance}),backgroundColor:C.accent+'aa',borderRadius:4}]},
-        options:{indexAxis:'y',...opts,plugins:{legend:{display:false}},scales:{x:{ticks:{color:C.dim},grid:{color:C.grid}},y:{ticks:{color:C.text,font:{size:11}},grid:{display:false}}}}});
-    }
-  }catch(e){console.error('Fraud report load failed:',e);}
-}
-
-/* ═══════ POLL ═══════ */
-var _chartsSeeded=false;
-
-function seedChartHistory(data){
-  if(_chartsSeeded)return;
-  _chartsSeeded=true;
-  var m=data.metrics||{};
-  var l=data.latency||{};
-  var det=m.detection_rate_pct||0.17;
-  var fpr=m.fpr_pct||0;
-  var p50=l.p50_ms||0;
-  var p95=l.p95_ms||0;
-  var p99=l.p99_ms||0;
-  // Generate 10 historical points with realistic variation
-  var now=Date.now();
-  for(var i=9;i>=0;i--){
-    var t=new Date(now-i*60000);
-    metricsHistory.push({
-      ts:t.toLocaleTimeString(),
-      detection:Math.max(0,Math.min(100,det+((Math.random()-0.5)*0.3))),
-      fpr:Math.max(0,Math.min(100,fpr+((Math.random()-0.5)*0.1))),
-      p50:Math.max(0,p50+((Math.random()-0.5)*5)),
-      p95:Math.max(0,p95+((Math.random()-0.5)*8)),
-      p99:Math.max(0,p99+((Math.random()-0.5)*10)),
-    });
-  }
-}
-
-async function poll(){
-  try{
-    var r=await fetch('/monitor/metrics');
-    if(r.ok){
-      var d=await r.json();
-      seedChartHistory(d);
-      renderLiveMetrics(d);
-    }
-  }catch(e){console.error('Monitor poll failed:',e);}
-}
-
-// Warm the /status cache first, then poll
-fetch('/status').then(()=>poll()).catch(()=>poll());
-loadTestResults();
-loadFraudReport();
-setInterval(poll,5000);
-setInterval(loadTestResults,60000);
-setInterval(loadFraudReport,300000);
--->
+<script src="/static/monitor-app.js?v=2"></script>
 </body>
 </html>

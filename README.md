@@ -96,6 +96,36 @@ overhead beyond pure model inference.
 **Industry comparisons** in `scripts/benchmark_comparison.py` are approximate
 and use different datasets/protocols — not directly comparable.
 
+## Validation Phases (Phases 14–21)
+
+A rigorous, adversarial audit of the system's real-world readiness.
+Every conclusion is evidence-classified; firewalls are verified.
+
+| Phase | Title | Classification | Key Finding |
+|---|---|---|---|
+| **14** | Chip supervision transfer | `NO_ROBUST_WIN` | Chip supervision **hurt**: C2 chip recall 32.3% vs C0 57.7% (−25.4pp) |
+| **15** | Distribution-shift forensics | `CASE_B_PARTIALLY_REPRESENTED` | Channel composition shift PROVEN; 95% of 2017 patterns have weak/no historical analogue |
+| **16** | Data-inventory boundary | `OUTCOME_C — NONE` | 51 datasets inventoried, 1 development-eligible (IBM, synthetic); boundary is protocol-constrained |
+| **17** | IBM generator audit | `SYNTHETIC_REGIME_ARTIFACT` | Abrupt step change at 2017 affecting the whole population; real-world validity UNVERIFIED |
+| **18** | System readiness gate | `CONDITIONALLY_DEPLOYABLE` | Security/monitoring/rollback PASS; 3 fraud-rate features with unverified label availability |
+| **19** | Real-world data gate | `DATA_ACQUISITION_REQUIRED` | Every dataset in the environment is synthetic; no ground-truth labels; production prevalence unknown |
+| **20** | Decision-time remediation | `CLEAN_PROD_COMPAT_CANDIDATE` | P20_45feat: 45 features, all decision-time valid, parity + leakage + causality PASS |
+| **21** | Real-world validation gate | `INSUFFICIENT_REAL_WORLD_EVIDENCE` | No legitimate real-world transaction dataset available; promotion blocked pending data acquisition |
+
+### Current Model Status
+
+| Model | Features | Decision-Time Valid | Real-World Evidence | Status |
+|---|---|---|---|---|
+| **E_hardneg** (incumbent) | 48 | 3 fraud-rate features UNVERIFIED | None (synthetic only) | DEPLOYED, UNTOUCHED |
+| **P20_45feat** (candidate) | 45 | All features valid | None (synthetic only) | ELIGIBLE for real-world validation |
+
+**Honest interpretation:** E_hardneg is certified on the synthetic IBM corpus
+(recall 99.67%, FPR 10.99% on the untouched 2018–2020 window) and remains
+deployed as the best available model. The 2017 regime shift is strongly
+supported as a generator artifact, so these numbers must not be read as
+real-world performance. Production promotion of P20_45feat is blocked pending
+real-world data — the next milestone is data acquisition, not more modeling.
+
 ## Setup
 
 Requires Python 3.10+.
