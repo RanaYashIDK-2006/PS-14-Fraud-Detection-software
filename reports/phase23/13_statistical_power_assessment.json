@@ -1,0 +1,18 @@
+{
+  "kaggle_fraudTrain": {
+    "rows": 1296676,
+    "fraud_rate": "0.47%",
+    "fraud_count": "~6100",
+    "power": "SUFFICIENT for aggregate metrics",
+    "temporal_power": "LIMITED (single 2-year period)",
+    "channel_power": "INSUFFICIENT (no channel column)"
+  },
+  "kaggle_fraudTest": {
+    "rows": 555720,
+    "fraud_rate": "0.47%",
+    "fraud_count": "~2600",
+    "power": "SUFFICIENT for aggregate metrics"
+  },
+  "statistical_power_status": "SUFFICIENT_FOR_AGGREGATE_LIMITED_FOR_SEGMENTS",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

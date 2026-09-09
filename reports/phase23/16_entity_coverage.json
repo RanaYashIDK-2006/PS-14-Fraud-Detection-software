@@ -1,0 +1,10 @@
+{
+  "kaggle_fraudTrain": {
+    "unique_merchants": "UNKNOWN (not counted on sample)",
+    "unique_cards": "UNKNOWN",
+    "entity_history": "DERIVABLE \u2014 can compute from cc_num and merchant over time",
+    "causal_history": "POSSIBLE \u2014 sort by timestamp, compute rolling features"
+  },
+  "entity_coverage_status": "PARTIALLY_DERIVABLE",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

@@ -1,0 +1,19 @@
+{
+  "dataset": "credit_card_transactions-ibm_v2.csv",
+  "classification": "SYNTHETIC",
+  "phase_17_verdict": "SYNTHETIC_REGIME_ARTIFACT",
+  "phase_21_verdict": "INSUFFICIENT_REAL_WORLD_EVIDENCE",
+  "phase_22_verdict": "REMAIN_SYNTHETIC_BENCHMARK_ONLY",
+  "phase_23_verdict": "REJECTED_FOR_REAL_WORLD_VALIDATION",
+  "usable_for": [
+    "software_tests",
+    "regression",
+    "pipeline_validation",
+    "methodology_testing"
+  ],
+  "not_usable_for": [
+    "production_validation",
+    "real_world_performance_claims"
+  ],
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

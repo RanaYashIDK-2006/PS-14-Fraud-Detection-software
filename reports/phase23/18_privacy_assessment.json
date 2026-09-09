@@ -1,0 +1,19 @@
+{
+  "kaggle_fraudTrain": {
+    "pii_present": true,
+    "pii_fields": [
+      "first",
+      "last",
+      "street",
+      "city",
+      "state",
+      "zip",
+      "dob",
+      "job"
+    ],
+    "privacy_risk": "MEDIUM \u2014 contains PII that should not be in reports",
+    "mitigation": "Reports must aggregate; never include raw PII"
+  },
+  "privacy_status": "REQUIRES_PII_MINIMIZATION_IN_REPORTS",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

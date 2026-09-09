@@ -1,0 +1,8 @@
+{
+  "data_at_rest": "CSV files on disk \u2014 no encryption",
+  "access_control": "File system permissions only",
+  "secrets_in_data": "NONE detected",
+  "dependency_integrity": "Not applicable for data files",
+  "security_status": "STANDARD_FILE_SYSTEM_SECURITY",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

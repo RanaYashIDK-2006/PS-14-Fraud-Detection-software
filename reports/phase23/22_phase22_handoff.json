@@ -1,0 +1,18 @@
+{
+  "handoff_ready": false,
+  "blocking_reasons": [
+    "Provenance not VERIFIED",
+    "Label governance not VERIFIED",
+    "Label latency not VERIFIED",
+    "Channel information missing",
+    "Schema compatibility PARTIAL"
+  ],
+  "conditions_for_handoff": [
+    "Create metadata.json with honest provenance assessment",
+    "Acknowledge caveats in metadata",
+    "Accept CONDITIONAL evaluation"
+  ],
+  "phase22_command": "python -m phase22.run_real_world_validation --data data/kaggle_fraud/fraudTrain.csv --metadata reports/phase23/kaggle_metadata.json",
+  "phase22_handoff_status": "PENDING_CONDITIONS",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

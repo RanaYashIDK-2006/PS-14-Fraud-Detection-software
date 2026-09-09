@@ -1,0 +1,45 @@
+{
+  "risks": [
+    {
+      "id": "R23-01",
+      "description": "Kaggle dataset provenance unclear \u2014 may be simulated",
+      "impact": "HIGH",
+      "likelihood": "UNCERTAIN",
+      "mitigation": "CONDITIONAL evaluation with caveats; do not cite as production evidence",
+      "status": "OPEN"
+    },
+    {
+      "id": "R23-02",
+      "description": "No channel information in any candidate",
+      "impact": "MEDIUM",
+      "likelihood": "CONFIRMED",
+      "mitigation": "Channel robustness evaluation impossible; document as limitation",
+      "status": "OPEN"
+    },
+    {
+      "id": "R23-03",
+      "description": "Label timing unknown for all candidates",
+      "impact": "HIGH",
+      "likelihood": "CONFIRMED",
+      "mitigation": "LABEL_LATENCY=UNVERIFIED; E_hardneg fraud-rate features cannot be validated",
+      "status": "OPEN"
+    },
+    {
+      "id": "R23-04",
+      "description": "PII present in Kaggle dataset",
+      "impact": "MEDIUM",
+      "likelihood": "CONFIRMED",
+      "mitigation": "Aggregate reports only; never include raw PII",
+      "status": "MITIGATED"
+    },
+    {
+      "id": "R23-05",
+      "description": "No legitimate production-grade dataset exists",
+      "impact": "CRITICAL",
+      "likelihood": "CONFIRMED",
+      "mitigation": "Document evidence boundary; continue data acquisition efforts",
+      "status": "OPEN"
+    }
+  ],
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

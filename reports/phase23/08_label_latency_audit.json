@@ -1,0 +1,20 @@
+{
+  "contract": "label_available_time >= decision_time for evaluation; label_available_time < future_decision_time for features",
+  "findings": [
+    {
+      "source": "IBM v2",
+      "latency": "INVALID (synthetic \u2014 no real-world latency)"
+    },
+    {
+      "source": "Kaggle fraudTrain",
+      "latency": "UNVERIFIED (no label timing metadata)"
+    },
+    {
+      "source": "ULB creditcard",
+      "latency": "UNVERIFIED (no label timing metadata)"
+    }
+  ],
+  "conclusion": "LABEL_LATENCY=UNVERIFIED for all candidates",
+  "label_latency_status": "BLOCKED",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

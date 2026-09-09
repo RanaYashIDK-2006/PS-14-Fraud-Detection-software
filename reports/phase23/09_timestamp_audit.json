@@ -1,0 +1,36 @@
+{
+  "findings": [
+    {
+      "source": "IBM v2",
+      "timestamp_quality": "CONDITIONAL",
+      "timezone": "UNKNOWN",
+      "precision": "HH:MM:SS",
+      "ordering": "VERIFIED (Year/Month/Day/Time)",
+      "missing_timestamps": 0,
+      "backdated": "POSSIBLE (demo seed ages rows after ingest)",
+      "future_timestamps": "NONE detected"
+    },
+    {
+      "source": "Kaggle fraudTrain",
+      "timestamp_quality": "CONDITIONAL",
+      "timezone": "UNKNOWN",
+      "precision": "YYYY-MM-DD HH:MM:SS",
+      "ordering": "VERIFIED",
+      "missing_timestamps": 0,
+      "backdated": "UNKNOWN",
+      "future_timestamps": "NONE detected",
+      "caveat": "unix_time column present \u2014 can cross-validate"
+    },
+    {
+      "source": "ULB creditcard",
+      "timestamp_quality": "FAIL",
+      "timezone": "N/A (PCA-transformed)",
+      "precision": "seconds since first transaction",
+      "ordering": "VERIFIED",
+      "missing_timestamps": 0,
+      "caveat": "Time column is seconds offset, not absolute timestamp"
+    }
+  ],
+  "timestamp_quality_status": "CONDITIONAL_FOR_KAGGLE",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

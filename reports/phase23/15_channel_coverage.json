@@ -1,0 +1,11 @@
+{
+  "kaggle_fraudTrain": {
+    "online": "NOT_AVAILABLE",
+    "chip": "NOT_AVAILABLE",
+    "swipe": "NOT_AVAILABLE",
+    "channel_column": "MISSING"
+  },
+  "channel_coverage_status": "NOT_AVAILABLE \u2014 no channel information in any candidate dataset",
+  "impact": "Cannot evaluate channel robustness",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

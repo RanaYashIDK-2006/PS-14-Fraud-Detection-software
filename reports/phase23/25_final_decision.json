@@ -1,0 +1,18 @@
+{
+  "phase": 23,
+  "classification": "CONDITIONALLY_AVAILABLE_WITH_CAVEATS",
+  "sources_evaluated": 114,
+  "real_world_verified": 0,
+  "best_candidate": "Kaggle fraudTrain/Test",
+  "candidate_status": "UNCLEAR_PROVENANCE",
+  "handoff_ready": false,
+  "handoff_conditions": [
+    "Create metadata.json with honest assessment",
+    "Acknowledge all caveats",
+    "Accept CONDITIONAL evaluation"
+  ],
+  "promotion_allowed": false,
+  "next_action": "DECIDE whether to proceed with conditional Kaggle evaluation OR continue external data acquisition",
+  "final_decision": "CONDITIONALLY_AVAILABLE",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

@@ -1,0 +1,18 @@
+{
+  "strategy": "Search existing sources first, then evaluate external candidates",
+  "priority_order": [
+    "1. Internal production data (finalized outcomes, chargebacks, investigations)",
+    "2. Authorized partner data (documented data-use authorization)",
+    "3. Public real-world data (provenance carefully evaluated)",
+    "4. Synthetic data (ONLY for testing, NOT validation evidence)"
+  ],
+  "principles": {
+    "validity_over_convenience": true,
+    "provenance_over_size": true,
+    "ground_truth_over_label_column": true,
+    "decision_time_over_retrospective": true
+  },
+  "search_scope": "All CSV files, database exports, approved connectors, transaction logs, feedback records, investigation records",
+  "status": "SEARCH_COMPLETED",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

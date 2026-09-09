@@ -1,0 +1,15 @@
+{
+  "status": "CONDITIONALLY_AVAILABLE_WITH_CAVEATS",
+  "best_candidate": "Kaggle fraudTrain + fraudTest",
+  "caveats": [
+    "Provenance unclear \u2014 may be real or simulated",
+    "No channel information (chip/swipe/online)",
+    "No label timing metadata",
+    "Label definition undisclosed",
+    "PII present (requires minimization in reports)"
+  ],
+  "acquisition_path": "data/kaggle_fraud/fraudTrain.csv + fraudTest.csv",
+  "metadata_path": "reports/phase23/kaggle_metadata.json (to be created)",
+  "handoff_ready": "CONDITIONAL \u2014 requires metadata creation and caveats acknowledgment",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

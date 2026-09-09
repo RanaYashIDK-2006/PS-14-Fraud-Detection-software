@@ -1,0 +1,112 @@
+{
+  "sources_evaluated": 114,
+  "sources": [
+    {
+      "source": "IBM v2 (credit_card_transactions-ibm_v2.csv)",
+      "provider": "IBM Altman / SDV",
+      "real_or_synthetic": "SYNTHETIC",
+      "rows": 24386901,
+      "provenance": "SDV-generated; Phase 17 verdict: SYNTHETIC_REGIME_ARTIFACT",
+      "authorization": "AVAILABLE (public)",
+      "label_definition": "Binary flag from simulator",
+      "label_latency": "INVALID (no real-world label latency)",
+      "schema_compatibility": "EXACT (PS-14 was trained on this)",
+      "p20_compatibility": "EXACT",
+      "e_hardneg_compatibility": "EXACT",
+      "decision": "REJECTED",
+      "reason": "SYNTHETIC \u2014 not real-world evidence"
+    },
+    {
+      "source": "Kaggle fraudTrain (fraudTrain.csv)",
+      "provider": "Kaggle / DV (2024)",
+      "real_or_synthetic": "UNCLEAR",
+      "rows": 1296676,
+      "provenance": "PARTIALLY_VERIFIED (Kaggle published, source unclear)",
+      "authorization": "AVAILABLE (CC license)",
+      "label_definition": "UNCLEAR (is_fraud column, definition undisclosed)",
+      "label_latency": "UNVERIFIED (no label timing metadata)",
+      "schema_compatibility": "PARTIAL (has timestamps, amounts, merchants, but NO channel info)",
+      "p20_compatibility": "PARTIAL (missing channel, some features need derivation)",
+      "e_hardneg_compatibility": "INVALID (no label history for fraud-rate features)",
+      "decision": "CONDITIONALLY_ELIGIBLE_WITH_CAVEATS",
+      "reason": "Most promising candidate but provenance unclear, no channel info, no label timing"
+    },
+    {
+      "source": "Kaggle fraudTest (fraudTest.csv)",
+      "provider": "Kaggle / DV (2024)",
+      "real_or_synthetic": "UNCLEAR",
+      "rows": 555720,
+      "provenance": "PARTIALLY_VERIFIED",
+      "authorization": "AVAILABLE (CC license)",
+      "label_definition": "UNCLEAR",
+      "label_latency": "UNVERIFIED",
+      "schema_compatibility": "PARTIAL",
+      "decision": "CONDITIONALLY_ELIGIBLE_WITH_CAVEATS",
+      "reason": "Same as fraudTrain \u2014 test split of same dataset"
+    },
+    {
+      "source": "ULB creditcard (creditcard.csv)",
+      "provider": "ULB Machine Learning Group",
+      "real_or_synthetic": "REAL",
+      "rows": 284808,
+      "provenance": "VERIFIED (academic dataset, 2013)",
+      "authorization": "AVAILABLE (research use)",
+      "label_definition": "UNCLEAR (Class column, exact definition undisclosed)",
+      "label_latency": "UNVERIFIED",
+      "schema_compatibility": "IMPOSSIBLE (PCA-transformed, no original fields)",
+      "decision": "REJECTED",
+      "reason": "PCA-transformed features cannot map to PS-14 schema; 284K rows insufficient"
+    },
+    {
+      "source": "PaySim (paysim_1m.csv)",
+      "provider": "PaySim simulator",
+      "real_or_synthetic": "SYNTHETIC",
+      "rows": 1200001,
+      "provenance": "VERIFIED_SYNTHETIC",
+      "decision": "REJECTED",
+      "reason": "SYNTHETIC mobile money simulator"
+    },
+    {
+      "source": "Elliptic Bitcoin (elliptic_txs_features.csv)",
+      "provider": "Elliptic Labs",
+      "real_or_synthetic": "REAL (but not credit card)",
+      "rows": 203769,
+      "provenance": "PARTIALLY_VERIFIED",
+      "decision": "REJECTED",
+      "reason": "Bitcoin transactions, not credit card; no schema match"
+    },
+    {
+      "source": "transactions_*.csv (PS-14 derived)",
+      "provider": "PS-14 pipeline",
+      "real_or_synthetic": "SYNTHETIC (derived from IBM)",
+      "rows": "various",
+      "provenance": "SYNTHETIC_DERIVED",
+      "decision": "REJECTED",
+      "reason": "Derived from IBM synthetic data"
+    },
+    {
+      "source": "fed/*.csv (federated shards)",
+      "provider": "PS-14 federated simulation",
+      "real_or_synthetic": "SYNTHETIC",
+      "decision": "REJECTED",
+      "reason": "Federated learning simulation data"
+    },
+    {
+      "source": "feedback_*.csv",
+      "provider": "PS-14 feedback loop",
+      "real_or_synthetic": "SYNTHETIC (demo seed)",
+      "rows": "6-503",
+      "decision": "REJECTED",
+      "reason": "Demo seed data, too small, synthetic origin"
+    }
+  ],
+  "summary": {
+    "real_world_verified": 0,
+    "real_world_pending": 0,
+    "synthetic": 5,
+    "unclear": 2,
+    "rejected": 9,
+    "eligible_for_phase22": 0
+  },
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

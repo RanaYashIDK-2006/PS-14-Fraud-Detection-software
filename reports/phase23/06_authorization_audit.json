@@ -1,0 +1,27 @@
+{
+  "findings": [
+    {
+      "source": "IBM v2",
+      "authorization": "AUTHORIZED",
+      "license": "Public/research"
+    },
+    {
+      "source": "Kaggle fraudTrain",
+      "authorization": "AUTHORIZED",
+      "license": "CC0 (public domain)"
+    },
+    {
+      "source": "ULB creditcard",
+      "authorization": "AUTHORIZED",
+      "license": "Research use"
+    },
+    {
+      "source": "PaySim",
+      "authorization": "AUTHORIZED",
+      "license": "Apache 2.0"
+    }
+  ],
+  "conclusion": "Authorization is NOT the blocking factor \u2014 provenance and label governance are",
+  "authorization_status": "NOT_BLOCKING",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

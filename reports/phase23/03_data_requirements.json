@@ -1,0 +1,18 @@
+{
+  "minimum_requirements": {
+    "real_transaction_data": "Must represent actual transactions",
+    "provenance_established": "Source and collection method documented",
+    "authorization_documented": "Data-use authorization exists",
+    "label_definition_defensible": "What constitutes fraud is\u660e\u786e",
+    "label_timing_established": "When labels become available relative to transactions",
+    "timestamps_reliable": "Timezone, precision, ordering verified",
+    "schema_compatible": "Can map to PS-14 canonical fields",
+    "sufficient_size": "Statistical power for intended claims",
+    "temporal_ordering_possible": "Chronological evaluation possible"
+  },
+  "minimum_row_count": 100000,
+  "minimum_fraud_count": 500,
+  "minimum_prevalence_pct": 0.1,
+  "status": "REQUIREMENTS_DEFINED",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

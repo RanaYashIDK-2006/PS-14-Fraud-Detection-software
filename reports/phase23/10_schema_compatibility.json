@@ -1,0 +1,25 @@
+{
+  "ps14_required_fields": [
+    "transaction_id",
+    "transaction_timestamp",
+    "amount",
+    "merchant_id",
+    "user_or_account_id",
+    "channel",
+    "MCC",
+    "fraud_label"
+  ],
+  "kaggle_mapping": {
+    "trans_num -> transaction_id": "EXACT",
+    "trans_date_trans_time -> transaction_timestamp": "EXACT",
+    "amt -> amount": "EXACT",
+    "merchant -> merchant_id": "CONDITIONAL (name, not hash)",
+    "cc_num -> user_or_account_id": "EXACT",
+    "channel -> MISSING": "UNAVAILABLE (no chip/swipe/online indicator)",
+    "MCC -> MISSING": "UNAVAILABLE (category is high-level, not MCC code)",
+    "is_fraud -> fraud_label": "EXACT"
+  },
+  "kaggle_compatibility": "PARTIAL (6/8 required fields mapped; channel and MCC missing)",
+  "schema_compatibility_status": "PARTIAL",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

@@ -1,0 +1,18 @@
+{
+  "model": "E_hardneg",
+  "total_features": 48,
+  "label_dependent_features": [
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate"
+  ],
+  "reconstruction_feasibility": "CONDITIONAL",
+  "conditions": [
+    "Requires confirmed historical fraud labels BEFORE each transaction",
+    "Kaggle dataset does not provide label timing",
+    "Cannot establish whether labels were available at decision time"
+  ],
+  "verdict": "E_HARDNEG_RECONSTRUCTION=CONDITIONAL",
+  "e_hardneg_real_world_evaluation": "CONDITIONAL \u2014 requires label timing metadata",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

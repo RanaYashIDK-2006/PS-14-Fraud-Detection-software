@@ -1,0 +1,37 @@
+{
+  "findings": [
+    {
+      "source": "IBM v2",
+      "label_name": "Is Fraud?",
+      "label_definition": "Binary flag from SDV simulator",
+      "label_source": "Synthetic generator",
+      "label_creation_process": "Generated alongside transactions",
+      "label_first_available_time": "IMMEDIATE (synthetic)",
+      "label_finalization_time": "IMMEDIATE (synthetic)",
+      "verdict": "INVALID_FOR_PRODUCTION"
+    },
+    {
+      "source": "Kaggle fraudTrain",
+      "label_name": "is_fraud",
+      "label_definition": "UNCLEAR \u2014 exact definition not documented",
+      "label_source": "Unknown \u2014 dataset author (DV) not the data originator",
+      "label_creation_process": "UNKNOWN",
+      "label_first_available_time": "UNKNOWN",
+      "label_finalization_time": "UNKNOWN",
+      "verdict": "UNVERIFIED"
+    },
+    {
+      "source": "ULB creditcard",
+      "label_name": "Class",
+      "label_definition": "Binary fraud flag; exact ground-truth definition undisclosed",
+      "label_source": "European cardholders, 2 days in Sept 2013",
+      "label_creation_process": "UNKNOWN",
+      "label_first_available_time": "UNKNOWN",
+      "label_finalization_time": "UNKNOWN",
+      "verdict": "UNVERIFIED"
+    }
+  ],
+  "conclusion": "No source has VERIFIED label governance suitable for production validation",
+  "label_governance_status": "UNVERIFIED_FOR_ALL_SOURCES",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

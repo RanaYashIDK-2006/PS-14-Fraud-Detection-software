@@ -1,0 +1,12 @@
+{
+  "kaggle_fraudTrain": {
+    "earliest_date": "2019-01-01",
+    "latest_date": "2020-12-31",
+    "period": "2 years",
+    "transactions_per_year": "~650K",
+    "fraud_per_year": "~3050",
+    "temporal_robustness": "LIMITED \u2014 only 2 years, no pre-2019 data"
+  },
+  "temporal_coverage_status": "LIMITED",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

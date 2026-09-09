@@ -1,0 +1,27 @@
+{
+  "audit_scope": "All 114 CSV files in repository",
+  "methodology": "SHA-256 hash + metadata inspection + schema analysis",
+  "findings": [
+    {
+      "source": "IBM v2",
+      "provenance_verdict": "CONTRADICTED",
+      "evidence": "Phase 17 DGP audit: SYNTHETIC_REGIME_ARTIFACT; abrupt 2017 regime shift",
+      "confidence": "STRONGLY_SUPPORTED"
+    },
+    {
+      "source": "Kaggle fraudTrain",
+      "provenance_verdict": "PARTIALLY_VERIFIED",
+      "evidence": "Published on Kaggle; DV author; source transactions unclear; could be real or simulated",
+      "confidence": "UNCERTAIN"
+    },
+    {
+      "source": "ULB creditcard",
+      "provenance_verdict": "VERIFIED",
+      "evidence": "Academic dataset from ULB MLG; 2013; European cardholders; 2 days of transactions",
+      "confidence": "SUPPORTED"
+    }
+  ],
+  "conclusion": "No source has VERIFIED real-world provenance with complete metadata for PS-14 validation",
+  "provenance_status": "INSUFFICIENT",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

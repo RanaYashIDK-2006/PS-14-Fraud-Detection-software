@@ -1,0 +1,15 @@
+{
+  "kaggle_fraudTrain": {
+    "geography": "US (city/state/zip present)",
+    "payment_environment": "UNKNOWN",
+    "time_period": "2019-2020",
+    "merchant_mix": "PRESENT (merchant column)",
+    "user_mix": "PRESENT (cc_num column)",
+    "transaction_volume": "650K/year",
+    "fraud_prevalence": "0.47%",
+    "channel_mix": "NOT_AVAILABLE"
+  },
+  "representativeness": "UNCERTAIN \u2014 real-world-looking data but provenance unclear; may not represent any specific payment network",
+  "representativeness_status": "UNCERTAIN",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

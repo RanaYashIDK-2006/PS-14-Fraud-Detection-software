@@ -1,0 +1,13 @@
+{
+  "kaggle_fraudTrain": {
+    "duplicates": "NOT_CHECKED_ON_SAMPLE",
+    "missing_timestamps": 0,
+    "timestamp_ordering": "VERIFIED",
+    "missing_labels": 0,
+    "label_consistency": "VERIFIED (binary 0/1)",
+    "impossible_values": "NOT_DETECTED_ON_SAMPLE",
+    "missing_identifiers": 0
+  },
+  "data_quality_status": "ACCEPTABLE_ON_SAMPLE \u2014 full audit required on complete dataset",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}

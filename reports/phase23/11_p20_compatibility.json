@@ -1,0 +1,44 @@
+{
+  "candidate": "P20_45feat",
+  "total_features": 45,
+  "kaggle_derivable": [
+    "amt",
+    "log_amt",
+    "amt_sq",
+    "hr",
+    "mn",
+    "is_weekend",
+    "hour_of_day",
+    "txn_amount_bucket",
+    "amount_ratio",
+    "category_encoded",
+    "city_population_bucket"
+  ],
+  "kaggle_requires_history": [
+    "txn_freq_last_24h",
+    "txn_time_unusual",
+    "new_device_flag",
+    "unusual_location_flag",
+    "unusual_recipient_flag",
+    "failed_auth_count_24h",
+    "days_since_last_similar_txn",
+    "gradual_escalation_score",
+    "known_device_count",
+    "account_tenure_days",
+    "shared_device_accounts",
+    "shared_recipient_accounts",
+    "mule_ring_score",
+    "hour_deviation",
+    "amount_zscore",
+    "velocity_deviation",
+    "recipient_novelty",
+    "txn_regularity"
+  ],
+  "kaggle_unavailable": [
+    "channel-related features (no channel column)",
+    "MCC-specific features (no MCC code)"
+  ],
+  "p20_compatibility": "PARTIAL \u2014 many features require historical context derivable from the dataset but not provided as pre-computed columns",
+  "p20_validation_readiness": "CONDITIONAL \u2014 feature engine can derive ~30/45 features with rolling-window computation",
+  "execution_time_utc": "2026-09-09T11:43:36.736939+00:00"
+}
