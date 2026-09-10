@@ -96,7 +96,7 @@ overhead beyond pure model inference.
 **Industry comparisons** in `scripts/benchmark_comparison.py` are approximate
 and use different datasets/protocols — not directly comparable.
 
-## Validation Phases (Phases 14–23B)
+## Validation Phases (Phases 14–24)
 
 A rigorous, adversarial audit of the system's real-world readiness.
 Every conclusion is evidence-classified; firewalls are verified.
@@ -114,6 +114,7 @@ Every conclusion is evidence-classified; firewalls are verified.
 | **22** | Executable validation harness | `DATA_ACQUISITION_BLOCKED` | Complete CLI runner built (`phase22.run_real_world_validation`); READY but blocked by data absence |
 | **23** | Data acquisition gate | `CONDITIONALLY_AVAILABLE` | 114 sources evaluated; best candidate Kaggle fraudTrain (1.85M rows); provenance unclear, no channel info, no label timing |
 | **23B** | Frozen Kaggle external eval | `CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE` | P20_45feat on Kaggle (1.85M rows, 0.58% fraud): ROC-AUC 0.47 (degraded features); E_hardneg unlabeled; production promotion BLOCKED |
+| **24** | Conditional external eval | `CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE` | E_hardneg on Kaggle (555K test rows): ROC-AUC 0.435, recall 26.8%, FPR 44.9%; 5 of 12 promotion gates failed; production promotion BLOCKED |
 
 ### Current Model Status
 
@@ -128,6 +129,7 @@ Every conclusion is evidence-classified; firewalls are verified.
 PHASE22_RUNNER = READY
 PHASE23_ACQUISITION = CONDITIONALLY_AVAILABLE_WITH_CAVEATS
 PHASE23B_EVAL = CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE
+PHASE24_EVAL = CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE (E_hardneg: ROC-AUC 0.435)
 REAL_WORLD_VALIDATION = BLOCKED (provenance unclear)
 PROMOTION = BLOCKED
 NEXT_ACTION = Continue authorized real-world data acquisition
@@ -153,9 +155,23 @@ Phase 23B executed a frozen conditional evaluation of P20_45feat on the
 Kaggle dataset (1.85M rows, 0.58% fraud). With degraded features (33/45
 required historical context unavailable), P20 scored ROC-AUC 0.47 with
 all alerts firing. E_hardneg could not be evaluated because its
-label-dependent features require verified label timing. Production
-promotion remains BLOCKED — the next milestone is acquiring legitimate
-real-world data with verified provenance and label governance.
+label-dependent features require verified label timing.
+
+Phase 24 executed a full conditional external evaluation of E_hardneg
+on the Kaggle test set (555K rows, 2,145 fraud). With 20/48 features
+reconstructed exactly and 3 fraud-rate features computed causally from
+training data, E_hardneg scored ROC-AUC 0.435, recall 26.8%, FPR 44.9%.
+This confirms the model does not generalize beyond synthetic IBM data.
+5 of 12 promotion gates failed (provenance, governance, latency,
+feature availability, feature parity). Production promotion remains
+BLOCKED — the next milestone is acquiring legitimate real-world data
+with verified provenance and label governance.
+
+Phase 24 evaluation is fully executable:
+```bash
+python experiments/phase24_conditional_external_eval/run_evaluation.py
+python experiments/phase24_conditional_external_eval/run_evaluation.py --dry-run
+```
 
 ## Setup
 

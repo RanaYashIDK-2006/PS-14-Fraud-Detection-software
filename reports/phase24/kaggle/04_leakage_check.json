@@ -1,0 +1,22 @@
+{
+  "status": "NO_LEAKAGE",
+  "any_leakage_detected": false,
+  "target_leakage": {
+    "status": "NO_LEAKAGE",
+    "leakage_detected": false,
+    "high_correlation_features": [],
+    "n_features_checked": 9,
+    "n_high_correlation": 0,
+    "warning": "No target leakage detected"
+  },
+  "temporal_leakage": {
+    "status": "ERROR",
+    "temporal_leakage": false,
+    "error": "Invalid comparison between dtype=datetime64[us] and Timestamp"
+  },
+  "feature_leakage": {
+    "status": "NO_LEAKAGE",
+    "leakage_features": [],
+    "n_leakage_features": 0
+  }
+}

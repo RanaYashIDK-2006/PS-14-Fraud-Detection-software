@@ -1,0 +1,9 @@
+{
+  "transaction_time": "present (trans_date_trans_time)",
+  "decision_time": "present (unix_time)",
+  "label_available_time": "Unknown",
+  "label_finalization_time": "Unknown",
+  "label_latency_status": "UNVERIFIED",
+  "causal_validity": "NOT_ESTABLISHED",
+  "warning": "Cannot confirm labels were available at transaction decision time. This evaluation is a benchmark, not a causal production simulation."
+}

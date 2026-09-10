@@ -1,0 +1,65 @@
+{
+  "gates": {
+    "REAL_WORLD_DATA": {
+      "status": "FAIL",
+      "reason": "Provenance: UNVERIFIED"
+    },
+    "LABEL_GOVERNANCE": {
+      "status": "FAIL",
+      "reason": "Governance: UNVERIFIED"
+    },
+    "LABEL_LATENCY": {
+      "status": "FAIL",
+      "reason": "Label latency: UNVERIFIED"
+    },
+    "FEATURE_AVAILABILITY": {
+      "status": "FAIL",
+      "reason": "Feature reconstruction requires verified historical context"
+    },
+    "FEATURE_PARITY": {
+      "status": "FAIL",
+      "reason": "Feature distributions not validated against training support"
+    },
+    "MODEL_INTEGRITY": {
+      "status": "PASS",
+      "reason": "Artifact hashes verified"
+    },
+    "THRESHOLD_INTEGRITY": {
+      "status": "PASS",
+      "reason": "Threshold frozen at 0.018758"
+    },
+    "TEMPORAL_EVALUATION": {
+      "status": "PASS",
+      "reason": "Chronological train/test split used"
+    },
+    "STATISTICAL_EVIDENCE": {
+      "status": "PASS",
+      "reason": "555719 rows, 2145 fraud"
+    },
+    "OPERATIONAL_CAPACITY": {
+      "status": "UNVERIFIED",
+      "reason": "No operational capacity data available"
+    },
+    "SECURITY": {
+      "status": "PASS",
+      "reason": "No sensitive data in evaluation outputs"
+    },
+    "PRIVACY": {
+      "status": "PASS",
+      "reason": "PII excluded from all outputs"
+    }
+  },
+  "all_pass": false,
+  "n_pass": 6,
+  "n_fail": 5,
+  "n_unverified": 1,
+  "failed_gates": [
+    "REAL_WORLD_DATA",
+    "LABEL_GOVERNANCE",
+    "LABEL_LATENCY",
+    "FEATURE_AVAILABILITY",
+    "FEATURE_PARITY"
+  ],
+  "promotion_allowed": false,
+  "promotion_blocked_reason": "Conditional external evaluation \u2014 NOT production validation. Failed gates: REAL_WORLD_DATA, LABEL_GOVERNANCE, LABEL_LATENCY, FEATURE_AVAILABILITY, FEATURE_PARITY"
+}

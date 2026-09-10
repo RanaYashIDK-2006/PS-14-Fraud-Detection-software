@@ -1,0 +1,26 @@
+{
+  "status": "VERIFIED_KNOWN_SOURCE",
+  "dataset_name": "kaggle_fraud",
+  "source_name": "Kaggle Credit Card Fraud Detection",
+  "provider": "DV (Kaggle, 2024)",
+  "owner": "Unknown \u2014 published on Kaggle",
+  "collection_method": "Unclear \u2014 may be real or simulated",
+  "real_or_synthetic": "UNCERTAIN",
+  "geographic_scope": "US",
+  "collection_period": "2019-01-01 to 2020-06-21",
+  "license_or_authorization": "CC0 (public domain)",
+  "privacy_constraints": "PII present (names, addresses, DOB)",
+  "provenance_verdict": "UNVERIFIED",
+  "label_definition": "is_fraud \u2014 definition undisclosed",
+  "label_source": "Unknown \u2014 column present in dataset",
+  "label_creation_process": "Unknown",
+  "label_first_available_time": "Unknown",
+  "label_finalization_time": "Unknown",
+  "label_revision_process": "Unknown",
+  "file_hashes": {
+    "fraudTest.csv": "12d553ab19440c752d2531ee1af44bb64f12cc3d3839f1649f19e81c230545f0",
+    "fraudTrain.csv": "fd7139200dbfcbed0b6742bbe05a4f1abce532c4fef20918228a651647a3e75d"
+  },
+  "proceed": false,
+  "proceed_reason": "Provenance UNVERIFIED \u2014 proceeding with explicit caveats"
+}

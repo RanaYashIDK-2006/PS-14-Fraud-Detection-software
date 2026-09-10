@@ -1840,6 +1840,7 @@ def monitor_phases() -> JSONResponse:
         (22, "Executable validation harness", "Is the validation harness ready?"),
         (23, "Data acquisition gate", "Can real-world data be acquired?"),
         ("23B", "Frozen Kaggle eval", "How do frozen models behave on external data?"),
+        (24, "Conditional external eval", "Executable evaluation with governance checks"),
     ]
     # File path patterns differ across phases (numbered prefixes, subdirs)
     _DECISION_PATTERNS = [
@@ -1849,6 +1850,7 @@ def monitor_phases() -> JSONResponse:
         lambda n: root / "reports" / f"phase{n}" / "25_final_decision.json" if n == 23 else None,
         lambda n: root / "reports" / f"phase{n}" / "26_final_decision.json" if n == 22 else None,
         lambda n: root / "reports" / f"phase{n}" / "kaggle" / "20_final_decision.json" if str(n) == "23B" else None,
+        lambda n: root / "reports" / f"phase{n}" / "kaggle" / "20_final_decision.json" if n == 24 else None,
     ]
     phases = []
     for num, title, question in phases_meta:

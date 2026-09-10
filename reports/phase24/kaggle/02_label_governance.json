@@ -1,0 +1,12 @@
+{
+  "label_name": "is_fraud",
+  "label_definition": "is_fraud \u2014 definition undisclosed",
+  "label_source": "Unknown \u2014 column present in dataset",
+  "label_creation_process": "Unknown",
+  "label_first_available_time": "Unknown",
+  "label_finalization_time": "Unknown",
+  "label_revision_process": "Unknown",
+  "governance_status": "UNVERIFIED",
+  "can_use_as_ground_truth": false,
+  "warning": "Labels are from an unverified source. Do NOT claim these represent real-world fraud confirmation."
+}
