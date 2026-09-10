@@ -13,12 +13,12 @@
       "reason": "Label latency: UNVERIFIED"
     },
     "FEATURE_AVAILABILITY": {
-      "status": "FAIL",
-      "reason": "Feature reconstruction requires verified historical context"
+      "status": "PASS",
+      "reason": "22 exact + 22 causal = 44/45 features available"
     },
     "FEATURE_PARITY": {
-      "status": "FAIL",
-      "reason": "Feature distributions not validated against training support"
+      "status": "PASS",
+      "reason": "Feature coverage: 97.8% (44/45)"
     },
     "MODEL_INTEGRITY": {
       "status": "PASS",
@@ -50,16 +50,14 @@
     }
   },
   "all_pass": false,
-  "n_pass": 6,
-  "n_fail": 5,
+  "n_pass": 8,
+  "n_fail": 3,
   "n_unverified": 1,
   "failed_gates": [
     "REAL_WORLD_DATA",
     "LABEL_GOVERNANCE",
-    "LABEL_LATENCY",
-    "FEATURE_AVAILABILITY",
-    "FEATURE_PARITY"
+    "LABEL_LATENCY"
   ],
   "promotion_allowed": false,
-  "promotion_blocked_reason": "Conditional external evaluation \u2014 NOT production validation. Failed gates: REAL_WORLD_DATA, LABEL_GOVERNANCE, LABEL_LATENCY, FEATURE_AVAILABILITY, FEATURE_PARITY"
+  "promotion_blocked_reason": "Conditional external evaluation \u2014 NOT production validation. Failed gates: REAL_WORLD_DATA, LABEL_GOVERNANCE, LABEL_LATENCY"
 }

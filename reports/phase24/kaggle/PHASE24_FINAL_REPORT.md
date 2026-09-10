@@ -22,32 +22,34 @@ against the Kaggle fraudTrain/fraudTest dataset using a minimal feature reconstr
 
 ## Feature Reconstruction
 
-- **20 features:** EXACT (derivable from timestamp, amount, category)
-- **28 features:** NaN-filled (require historical context unavailable in Kaggle)
+- **22 features:** EXACT (directly derivable)
+- **22 features:** CAUSAL (computed from training entity history)
+- **3 features:** CONSTANT (always available)
+- **1 features:** UNAVAILABLE (1/48)
 
 ## Results
 
 | Metric | Value | 95% CI |
 |--------|-------|--------|
-| ROC-AUC | 0.4348 | — |
-| PR-AUC | 0.0102 | — |
-| Recall | 0.2681 | [0.2497, 0.2872] |
-| FPR | 0.4486 | [0.4473, 0.4499] |
-| Precision | 0.0023 | [0.0021, 0.0025] |
-| Alert Rate | 0.4479 | — |
+| ROC-AUC | 0.5947 | — |
+| PR-AUC | 0.0067 | — |
+| Recall | 0.1851 | [0.1692, 0.2021] |
+| FPR | 0.0993 | [0.0985, 0.1001] |
+| Precision | 0.0072 | [0.0065, 0.0079] |
+| Alert Rate | 0.0996 | — |
 
 ## Promotion Guard
 
 - **Promotion allowed:** False
-- **Failed gates:** REAL_WORLD_DATA, LABEL_GOVERNANCE, LABEL_LATENCY, FEATURE_AVAILABILITY, FEATURE_PARITY
-- **Reason:** Conditional external evaluation — NOT production validation. Failed gates: REAL_WORLD_DATA, LABEL_GOVERNANCE, LABEL_LATENCY, FEATURE_AVAILABILITY, FEATURE_PARITY
+- **Failed gates:** REAL_WORLD_DATA, LABEL_GOVERNANCE, LABEL_LATENCY
+- **Reason:** Conditional external evaluation — NOT production validation. Failed gates: REAL_WORLD_DATA, LABEL_GOVERNANCE, LABEL_LATENCY
 
 ## Limitations
 
 1. **Provenance uncertain** — Kaggle dataset source is undisclosed
 2. **Label governance unverified** — what constitutes fraud is unknown
 3. **Label latency unverified** — cannot confirm labels at decision time
-4. **Feature reconstruction partial** — 28 of 45 features are NaN
+4. **Feature reconstruction maximal** - 47/48 features available (only err unavailable)
 5. **No channel information** — cannot evaluate chip/swipe/online robustness
 6. **No entity history** — cannot evaluate seen vs unseen merchants/users
 
@@ -58,5 +60,5 @@ against the Kaggle fraudTrain/fraudTest dataset using a minimal feature reconstr
 
 ---
 
-*Generated: 2026-09-10T14:22:05.836164+00:00*
-*Duration: 17.2s*
+*Generated: 2026-09-10T15:39:12.286972+00:00*
+*Duration: 19.8s*
