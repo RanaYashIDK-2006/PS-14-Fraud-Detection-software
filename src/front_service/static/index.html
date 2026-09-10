@@ -4,181 +4,105 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PS-14 — Fraud Detection System</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self';">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0b0f1a;
-  --surface: #111827;
-  --surface-2: #1a2035;
-  --surface-3: #1e293b;
-  --border: #1e293b;
-  --border-light: #2d3a52;
-  --text: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --accent: #3b82f6;
-  --accent-glow: rgba(59,130,246,0.15);
-  --green: #10b981;
-  --green-glow: rgba(16,185,129,0.15);
-  --red: #ef4444;
-  --red-glow: rgba(239,68,68,0.15);
-  --yellow: #f59e0b;
-  --yellow-glow: rgba(245,158,11,0.15);
-  --purple: #8b5cf6;
-  --purple-glow: rgba(139,92,246,0.15);
-  --cyan: #06b6d4;
-  --pink: #f43f5e;
-  --sidebar-w: 260px;
+  --bg: #0b0f1a; --surface: #111827; --surface-2: #1a2035; --surface-3: #1e293b;
+  --border: #1e293b; --border-light: #2d3a52;
+  --text: #f1f5f9; --text-secondary: #94a3b8; --text-muted: #64748b;
+  --accent: #3b82f6; --accent-glow: rgba(59,130,246,0.15);
+  --green: #10b981; --green-glow: rgba(16,185,129,0.15);
+  --red: #ef4444; --red-glow: rgba(239,68,68,0.15);
+  --yellow: #f59e0b; --yellow-glow: rgba(245,158,11,0.15);
+  --purple: #8b5cf6; --purple-glow: rgba(139,92,246,0.15);
+  --cyan: #06b6d4; --sidebar-w: 240px;
   --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior: smooth; }
-body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; }
 a { color: var(--accent); text-decoration: none; }
 
-/* ═══════ SIDEBAR ═══════ */
+/* SIDEBAR */
 .sidebar {
   position: fixed; left: 0; top: 0; bottom: 0; width: var(--sidebar-w);
   background: var(--surface); border-right: 1px solid var(--border);
-  display: flex; flex-direction: column; z-index: 100;
-  padding: 24px 0; transition: transform 0.3s ease;
+  display: flex; flex-direction: column; z-index: 100; padding: 20px 0;
+  transition: transform 0.3s ease;
 }
 .sidebar-logo {
   display: flex; align-items: center; gap: 12px;
-  padding: 0 24px 24px; border-bottom: 1px solid var(--border);
-  margin-bottom: 16px;
+  padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 12px;
 }
 .sidebar-logo .icon {
-  width: 40px; height: 40px; border-radius: 12px;
+  width: 36px; height: 36px; border-radius: 10px;
   background: linear-gradient(135deg, var(--accent), var(--purple));
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px; font-weight: 800; color: white;
+  font-size: 16px; font-weight: 800; color: white;
 }
-.sidebar-logo h2 { font-size: 16px; font-weight: 700; }
+.sidebar-logo h2 { font-size: 15px; font-weight: 700; }
 .sidebar-logo .tag { font-size: 10px; color: var(--text-muted); }
-
-.sidebar-section { padding: 0 16px; margin-bottom: 8px; }
+.sidebar-section { padding: 0 12px; margin-bottom: 8px; }
 .sidebar-label {
   font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
-  color: var(--text-muted); padding: 8px; font-weight: 600;
+  color: var(--text-muted); padding: 6px 8px; font-weight: 600;
 }
 .sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
 .nav-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 16px; border-radius: 10px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-radius: 8px;
   font-size: 13px; color: var(--text-secondary);
   cursor: pointer; transition: all 0.2s;
 }
 .nav-item:hover { background: var(--surface-2); color: var(--text); }
 .nav-item.active { background: var(--accent-glow); color: var(--accent); font-weight: 600; }
-.nav-item .dot { width: 8px; height: 8px; border-radius: 50%; }
-.nav-item .dot.green { background: var(--green); }
-.nav-item .dot.red { background: var(--red); }
-.nav-item .dot.yellow { background: var(--yellow); }
-.nav-item .badge-count {
-  margin-left: auto; background: var(--surface-3); padding: 2px 8px;
-  border-radius: 10px; font-size: 11px; font-weight: 600;
-}
+.nav-item .dot { width: 7px; height: 7px; border-radius: 50%; }
+.dot.green { background: var(--green); }
+.dot.red { background: var(--red); }
+.dot.yellow { background: var(--yellow); }
 .sidebar-footer {
-  margin-top: auto; padding: 16px 24px;
-  border-top: 1px solid var(--border);
-  font-size: 11px; color: var(--text-muted);
+  margin-top: auto; padding: 14px 20px;
+  border-top: 1px solid var(--border); font-size: 11px; color: var(--text-muted);
 }
 
-/* ═══════ MAIN ═══════ */
+/* MAIN */
 .main { margin-left: var(--sidebar-w); min-height: 100vh; }
 .topbar {
   position: sticky; top: 0; z-index: 50;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 24px; background: rgba(11,15,26,0.85);
+  padding: 10px 24px; background: rgba(11,15,26,0.85);
   backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
 }
-.topbar-left { display: flex; align-items: center; gap: 16px; }
-.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
 .menu-toggle {
   display: none; background: var(--surface-2); border: 1px solid var(--border);
-  border-radius: 8px; padding: 8px 12px; color: var(--text); cursor: pointer;
-  font-size: 16px; transition: all 0.2s;
+  border-radius: 8px; padding: 6px 10px; color: var(--text); cursor: pointer; font-size: 16px;
 }
-.menu-toggle:hover { background: var(--surface-3); }
-.search-bar {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 8px 16px; min-width: 280px;
-  transition: all 0.3s;
-}
-.search-bar:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
-.search-icon { color: var(--text-muted); font-size: 14px; }
-.search-bar input {
-  background: none; border: none; color: var(--text); font-size: 13px;
-  font-family: var(--font); outline: none; flex: 1;
-}
-.search-bar input::placeholder { color: var(--text-muted); }
-.shortcut {
-  background: var(--surface-3); padding: 2px 8px; border-radius: 4px;
-  font-size: 11px; color: var(--text-muted); font-weight: 500;
-}
-.notification-btn {
-  position: relative; background: var(--surface-2); border: 1px solid var(--border);
-  border-radius: 8px; padding: 8px 12px; cursor: pointer; font-size: 14px;
-  transition: all 0.2s;
-}
-.notification-btn:hover { background: var(--surface-3); }
-.notif-badge {
-  position: absolute; top: -4px; right: -4px;
-  background: var(--red); color: white; font-size: 10px; font-weight: 700;
-  padding: 2px 6px; border-radius: 10px; min-width: 16px; text-align: center;
-}
-.profile {
-  display: flex; align-items: center; gap: 8px;
-  padding: 4px 12px 4px 4px; border-radius: 10px;
-  cursor: pointer; transition: all 0.2s;
-}
-.profile:hover { background: var(--surface-2); }
-.avatar {
-  width: 32px; height: 32px; border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent), var(--purple));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 700; color: white;
-}
-.profile span { font-size: 13px; font-weight: 500; }
 .btn {
-  padding: 8px 18px; border-radius: 10px; font-size: 13px;
-  font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
-  font-family: var(--font);
+  padding: 6px 14px; border-radius: 8px; font-size: 12px;
+  font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; font-family: var(--font);
 }
 .btn-ghost { background: var(--surface-2); color: var(--text-secondary); border: 1px solid var(--border); }
 .btn-ghost:hover { background: var(--surface-3); color: var(--text); }
 .btn-primary { background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; }
 .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(59,130,246,0.3); }
 
-.content { padding: 24px 32px; }
+.content { padding: 20px 28px; }
 
-/* ═══════ STAT CARDS ═══════ */
-.stats-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 16px; margin-bottom: 24px;
-}
+/* STAT CARDS */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
 .stat-card {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 16px; padding: 24px; position: relative;
-  overflow: hidden; transition: all 0.3s ease;
-}
-.stat-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, var(--accent), var(--purple));
-  opacity: 0; transition: opacity 0.3s;
+  border-radius: 14px; padding: 20px; position: relative; overflow: hidden; transition: all 0.3s;
 }
 .stat-card:hover { transform: translateY(-2px); border-color: var(--border-light); }
-.stat-card:hover::before { opacity: 1; }
-.stat-card .label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
-.stat-card .value { font-size: 32px; font-weight: 800; margin: 8px 0 4px; line-height: 1; }
-.stat-card .change { font-size: 12px; display: flex; align-items: center; gap: 4px; }
-.stat-card .change.up { color: var(--green); }
-.stat-card .change.down { color: var(--red); }
+.stat-card .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+.stat-card .value { font-size: 28px; font-weight: 800; margin: 6px 0 4px; line-height: 1; }
+.stat-card .change { font-size: 11px; color: var(--text-secondary); }
 .stat-card.green .value { color: var(--green); }
 .stat-card.blue .value { color: var(--accent); }
 .stat-card.red .value { color: var(--red); }
@@ -186,10 +110,9 @@ a { color: var(--accent); text-decoration: none; }
 .stat-card.purple .value { color: var(--purple); }
 .stat-card.cyan .value { color: var(--cyan); }
 .stat-card .icon-bg {
-  position: absolute; top: 16px; right: 16px;
-  width: 40px; height: 40px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
+  position: absolute; top: 14px; right: 14px;
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
 }
 .stat-card.green .icon-bg { background: var(--green-glow); }
 .stat-card.blue .icon-bg { background: var(--accent-glow); }
@@ -198,128 +121,56 @@ a { color: var(--accent); text-decoration: none; }
 .stat-card.purple .icon-bg { background: var(--purple-glow); }
 .stat-card.cyan .icon-bg { background: rgba(6,182,212,0.15); }
 
-/* ═══════ GRID LAYOUT ═══════ */
-.grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 24px; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-.grid-equal { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-
-/* ═══════ CARDS ═══════ */
+/* CARDS */
 .card {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 16px; padding: 24px; transition: all 0.3s;
+  border-radius: 14px; padding: 20px; margin-bottom: 20px; transition: all 0.3s;
 }
 .card:hover { border-color: var(--border-light); }
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
 .card-title { font-size: 14px; font-weight: 600; }
-.card-subtitle { font-size: 12px; color: var(--text-muted); }
-.card canvas { width: 100% !important; height: 220px !important; }
+.card-subtitle { font-size: 11px; color: var(--text-muted); }
 
-/* ═══════ FEATURE CARDS ═══════ */
-.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-.feature-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 16px; padding: 24px; text-align: center;
-  transition: all 0.3s; position: relative; overflow: hidden;
-}
-.feature-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
-.feature-card .ic {
-  width: 56px; height: 56px; margin: 0 auto 16px;
-  border-radius: 16px; display: flex; align-items: center;
-  justify-content: center; font-size: 24px;
-}
-.feature-card .ic.blue { background: var(--accent-glow); }
-.feature-card .ic.green { background: var(--green-glow); }
-.feature-card .ic.purple { background: var(--purple-glow); }
-.feature-card .ic.red { background: var(--red-glow); }
-.feature-card .ic.yellow { background: var(--yellow-glow); }
-.feature-card .ic.cyan { background: rgba(6,182,212,0.15); }
-.feature-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
-.feature-card p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-
-/* ═══════ TABLE ═══════ */
+/* TABLE */
 .table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-th { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: color 0.2s; white-space: nowrap; }
-th:hover { color: var(--accent); }
-td { padding: 10px 14px; border-bottom: 1px solid rgba(30,41,59,0.5); }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th {
+  text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border);
+  color: var(--text-muted); font-weight: 600; font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
+}
+td { padding: 8px 12px; border-bottom: 1px solid rgba(30,41,59,0.5); }
 tr:hover td { background: rgba(59,130,246,0.03); }
-.badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: 600; }
 .badge.green { background: var(--green-glow); color: var(--green); }
 .badge.red { background: var(--red-glow); color: var(--red); }
 .badge.yellow { background: var(--yellow-glow); color: var(--yellow); }
 .badge.blue { background: var(--accent-glow); color: var(--accent); }
 
-/* ═══════ FILTER CHIPS ═══════ */
-.filters { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.filter-chips { display: flex; gap: 8px; flex-wrap: wrap; }
-.chip {
-  padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;
-  background: var(--surface-2); border: 1px solid var(--border); color: var(--text-secondary);
-  cursor: pointer; transition: all 0.2s; user-select: none;
-}
-.chip:hover { border-color: var(--accent); color: var(--accent); }
-.chip.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); font-weight: 600; }
-
-/* ═══════ ARCHITECTURE DIAGRAM ═══════ */
+/* DIAGRAM */
 .diagram {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 16px; padding: 24px; margin-bottom: 24px;
+  border-radius: 14px; padding: 20px; margin-bottom: 20px;
 }
 .diagram svg { width: 100%; height: auto; }
 
-/* ═══════ LIVE DEMO ═══════ */
-.live-wrap {
-  position: relative; background: var(--surface);
-  border: 1px solid var(--border); border-radius: 16px;
-  overflow: hidden; margin-bottom: 24px;
-}
-.live-wrap canvas { width: 100%; height: 320px; display: block; }
-.live-badge {
-  position: absolute; top: 16px; left: 16px; z-index: 2;
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 14px; background: rgba(239,68,68,0.9);
-  border-radius: 100px; font-size: 12px; font-weight: 700;
-  color: white; letter-spacing: 1px;
-}
-.live-badge::before { content: ''; width: 8px; height: 8px; background: white; border-radius: 50%; animation: pulse 1.5s ease-in-out infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-/* ═══════ RISK LEVELS ═══════ */
-.risk-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-.risk-box {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 16px; padding: 24px; text-align: center;
-  transition: all 0.3s;
-}
-.risk-box:hover { transform: translateY(-2px); }
-.risk-box .ic { font-size: 32px; margin-bottom: 12px; }
-.risk-box h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
-.risk-box p { font-size: 12px; color: var(--text-muted); }
-.risk-box.low { border-color: rgba(16,185,129,0.3); }
-.risk-box.low h4 { color: var(--green); }
-.risk-box.mid { border-color: rgba(245,158,11,0.3); }
-.risk-box.mid h4 { color: var(--yellow); }
-.risk-box.high { border-color: rgba(239,68,68,0.3); }
-.risk-box.high h4 { color: var(--red); }
-
-/* ═══════ INFO BOX ═══════ */
+/* INFO BOX */
 .info {
   background: var(--surface); border-left: 3px solid var(--accent);
-  border-radius: 0 12px 12px 0; padding: 16px 20px;
-  margin-bottom: 24px; font-size: 13px; line-height: 1.7;
+  border-radius: 0 10px 10px 0; padding: 14px 18px;
+  margin-bottom: 20px; font-size: 12px; line-height: 1.7;
 }
 .info strong { color: var(--accent); }
-.info ul { margin: 8px 0 0 16px; }
-.info li { margin-bottom: 4px; color: var(--text-secondary); }
+.info ul { margin: 6px 0 0 16px; }
+.info li { margin-bottom: 3px; color: var(--text-secondary); }
 
-/* ═══════ FOOTER ═══════ */
+/* FOOTER */
 .footer {
-  text-align: center; color: var(--text-muted); font-size: 12px;
-  padding: 32px; border-top: 1px solid var(--border);
-  margin-top: 24px;
+  text-align: center; color: var(--text-muted); font-size: 11px;
+  padding: 24px; border-top: 1px solid var(--border); margin-top: 20px;
 }
 
-/* ═══════ SCROLL PROGRESS ═══════ */
+/* SCROLL BAR */
 #scroll-bar {
   position: fixed; top: 0; left: var(--sidebar-w); right: 0;
   height: 3px; background: linear-gradient(90deg, var(--accent), var(--purple), var(--green));
@@ -327,11 +178,11 @@ tr:hover td { background: rgba(59,130,246,0.03); }
   box-shadow: 0 0 10px rgba(59,130,246,0.5);
 }
 
-/* ═══════ ANIMATIONS ═══════ */
-.anim { opacity: 0; transform: translateY(20px); transition: all 0.6s cubic-bezier(0.22,1,0.36,1); }
+/* ANIMATIONS */
+.anim { opacity: 0; transform: translateY(16px); transition: all 0.5s cubic-bezier(0.22,1,0.36,1); }
 .anim.vis { opacity: 1; transform: translateY(0); }
 
-/* ═══════ RESPONSIVE ═══════ */
+/* RESPONSIVE */
 @media(max-width: 1024px) {
   .sidebar { transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); }
@@ -339,27 +190,16 @@ tr:hover td { background: rgba(59,130,246,0.03); }
   #scroll-bar { left: 0; }
   .menu-toggle { display: block; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .grid-2, .grid-equal { grid-template-columns: 1fr; }
-  .grid-3, .feature-grid { grid-template-columns: 1fr; }
-  .risk-row { grid-template-columns: 1fr; }
-  .search-bar { min-width: 200px; }
-  .profile span { display: none; }
 }
 @media(max-width: 600px) {
   .stats-grid { grid-template-columns: 1fr; }
-  .content { padding: 16px; }
-  .topbar { padding: 10px 12px; }
-  .search-bar { min-width: 150px; }
-  .shortcut { display: none; }
-  .topbar-right .btn { display: none; }
+  .content { padding: 14px; }
 }
-
-/* ═══════ PRINT ═══════ */
 @media print {
-  .sidebar, #scroll-bar, .live-badge { display: none !important; }
+  .sidebar, #scroll-bar { display: none !important; }
   .main { margin-left: 0; }
   body { background: white; color: #111; }
-  .card, .stat-card, .feature-card, .risk-box, .diagram { background: #f9f9f9; border-color: #ddd; }
+  .card, .stat-card, .diagram { background: #f9f9f9; border-color: #ddd; }
   .anim { opacity: 1; transform: none; }
 }
 </style>
@@ -368,28 +208,21 @@ tr:hover td { background: rgba(59,130,246,0.03); }
 
 <div id="scroll-bar"></div>
 
-<!-- ═══════ SIDEBAR ═══════ -->
+<!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="icon">14</div>
-    <div><h2>PS-14</h2><div class="tag">Fraud Detection System</div></div>
+    <div><h2>PS-14</h2><div class="tag">Fraud Detection</div></div>
   </div>
   <div class="sidebar-section">
-    <div class="sidebar-label">Overview</div>
+    <div class="sidebar-label">Navigation</div>
     <nav class="sidebar-nav">
-      <a href="#performance" class="nav-item active"><span>📊</span> Performance <span class="badge-count">Live</span></a>
-      <a href="#detection" class="nav-item"><span>🔍</span> Detection</a>
-      <a href="#live" class="nav-item"><span>⚡</span> Live Monitor</a>
-      <a href="#decisions" class="nav-item"><span>🎯</span> Decisions</a>
-    </nav>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-label">System</div>
-    <nav class="sidebar-nav">
+      <a href="#performance" class="nav-item active"><span>📊</span> Performance</a>
+      <a href="#architecture" class="nav-item"><span>🏗️</span> Architecture</a>
       <a href="#phases" class="nav-item"><span>🧭</span> Phase Ledger</a>
       <a href="#privacy" class="nav-item"><span>🔒</span> Privacy</a>
+      <a href="/monitor-page" class="nav-item"><span>📡</span> Live Monitor</a>
       <a href="/fraud-report-page" class="nav-item"><span>📋</span> Full Report</a>
-      <a href="#security" class="nav-item"><span>🛡️</span> Security</a>
     </nav>
   </div>
   <div class="sidebar-section">
@@ -407,315 +240,215 @@ tr:hover td { background: rgba(59,130,246,0.03); }
   </div>
 </aside>
 
-<!-- ═══════ MAIN CONTENT ═══════ -->
+<!-- MAIN -->
 <div class="main">
-  <!-- Top Bar -->
   <div class="topbar">
     <div class="topbar-left">
       <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
-      <div class="search-bar">
-        <span class="search-icon">🔍</span>
-        <input type="text" placeholder="Search transactions, datasets..." id="globalSearch">
-        <span class="shortcut">⌘K</span>
-      </div>
+      <span style="font-size:13px;font-weight:600">PS-14 Fraud Detection System</span>
     </div>
     <div class="topbar-right">
-      <button class="notification-btn">🔔 <span class="notif-badge">3</span></button>
-      <div class="profile">
-        <div class="avatar">AD</div>
-        <span>Admin</span>
-      </div>
       <a href="/fraud-report-page" class="btn btn-ghost">📋 Report</a>
-      <a href="/monitor-page" class="btn btn-primary">⚡ Monitor</a>
+      <a href="/monitor-page" class="btn btn-primary">📡 Monitor</a>
     </div>
   </div>
 
   <div class="content">
-    <!-- ═══════ STAT CARDS ═══════ -->
+    <!-- STAT CARDS -->
     <div class="stats-grid anim" id="performance">
       <div class="stat-card green">
         <div class="icon-bg">📈</div>
         <div class="label">ROC-AUC</div>
         <div class="value counter" data-target="98.7" data-suffix="%" data-dec="1">0%</div>
-        <div class="change up">↑ Independently certified — deployed Altman-NATIVE E_hardneg, untouched 2018–2020 test</div>
+        <div class="change">Certified · E_hardneg · untouched 2018–2020 test</div>
       </div>
       <div class="stat-card blue">
         <div class="icon-bg">🎯</div>
         <div class="label">Recall @ Locked Threshold</div>
         <div class="value counter" data-target="99.7" data-suffix="%" data-dec="1">0%</div>
-        <div class="change up">↑ 4,563/4,578 fraud caught on REAL data · FPR 10.99%</div>
+        <div class="change">4,563/4,578 fraud caught · FPR 10.99%</div>
       </div>
       <div class="stat-card cyan">
         <div class="icon-bg">💳</div>
         <div class="label">Transactions Tested</div>
         <div class="value counter" data-target="192.4" data-suffix="K" data-dec="1">0</div>
-        <div class="change up">↑ Final temporal test rows (4,578 fraud, 2.4%) · of 24.39M scanned</div>
+        <div class="change">Final temporal test · 2.4% fraud prevalence</div>
       </div>
       <div class="stat-card yellow">
         <div class="icon-bg">⚡</div>
-        <div class="label">p95 Latency @ 8 concurrent</div>
+        <div class="label">p95 Latency</div>
         <div class="value counter" data-target="162" data-suffix="ms" data-dec="0">0ms</div>
-        <div class="change up">↑ Measured live · 95.5 req/s · 0% errors</div>
+        <div class="change">Measured live · ~95 req/s · 0% errors</div>
       </div>
     </div>
 
-    <!-- ═══════ SECOND ROW STATS ═══════ -->
-    <div class="stats-grid anim">
-      <div class="stat-card green">
-        <div class="label">PR-AUC (certified)</div>
-        <div class="value counter" data-target="63.8" data-suffix="%" data-dec="1">0%</div>
-        <div class="change up">↑ Deployed E_hardneg model, untouched final test</div>
+    <!-- MODEL STATUS -->
+    <div class="card anim">
+      <div class="card-header">
+        <div><div class="card-title">Model Status</div><div class="card-subtitle">Current deployed model and clean candidate</div></div>
       </div>
-      <div class="stat-card purple">
-        <div class="label">Test Suites</div>
-        <div class="value">22/22</div>
-        <div class="change up">✓ All regression suites + validation gates pass</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Model</th><th>Features</th><th>ROC-AUC</th><th>Recall</th><th>FPR</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>E_hardneg</b> <span style="color:var(--text-muted);font-size:10px">(incumbent)</span></td>
+              <td>48</td>
+              <td style="color:var(--green)">98.7%</td>
+              <td>99.67%</td>
+              <td>10.99%</td>
+              <td><span class="badge green">DEPLOYED</span></td>
+            </tr>
+            <tr>
+              <td><b>P20_45feat</b> <span style="color:var(--text-muted);font-size:10px">(candidate)</span></td>
+              <td>45</td>
+              <td style="color:var(--text-muted)">—</td>
+              <td>—</td>
+              <td>—</td>
+              <td><span class="badge blue">REAL-WORLD VALIDATION BLOCKED</span></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="stat-card red">
-        <div class="label">Fraud Cases Trained On</div>
-        <div class="value counter" data-target="21345" data-suffix="" data-dec="0">0</div>
-        <div class="change up">↑ Real IBM corpus: 879,196 train rows (all fraud + 5% legit, seed 42)</div>
-      </div>
-      <div class="stat-card blue">
-        <div class="label">ML Models</div>
-        <div class="value">3</div>
-        <div class="change up">↑ XGB + LightGBM + CatBoost (weights .34/.33/.33)</div>
-      </div>
-    </div>
-
-    <!-- ═══════ CHARTS ROW ═══════ -->
-    <div class="grid-equal anim">
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">ROC-AUC — Real-Data Segments</div><div class="card-subtitle">Certified on the deployed Altman-NATIVE model, untouched 2018–2020 test</div></div>
-        </div>
-        <canvas id="rocChart"></canvas>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">Recall & Precision @ Locked Threshold</div><div class="card-subtitle">Certified real-data rates vs the 1% FPR reference point</div></div>
-        </div>
-        <canvas id="recallChart"></canvas>
+      <div class="info" style="margin-top:12px;margin-bottom:0;border-left-color:var(--yellow)">
+        <strong>E_hardneg</strong> contains 3 fraud-rate features with unverified decision-time label availability.
+        <strong>P20_45feat</strong> removes those features — all 45 are decision-time valid.
+        Production promotion is <b>blocked pending real-world data</b>.
       </div>
     </div>
 
-    <!-- ═══════ INFO BOX ═══════ -->
-    <div class="info anim">
-      <strong>What these numbers mean:</strong>
-      <ul>          <li><strong>Certified deployed model (Altman-NATIVE E_hardneg)</strong> — 48-feature XGB+LGB+CatBoost ensemble trained on the real 24.39M-row IBM credit-card corpus through the SHARED derivation (src/privacy_layer/native_features.py — train == production by construction); independently certified ROC-AUC 0.987 on the untouched 2018–2020 test window</li>
-        <li><strong>Certified operating point</strong> — recall 99.67% (4,563/4,578 fraud caught) at the validation-locked threshold 0.018758, FPR 10.99%, precision 18.1% on the enriched test; recall@1% FPR 62.1%. The high-recall operating point trades FPR for recall — reported, not optimized away</li>
-        <li><strong>Chronological split enforced</strong> — train &lt; 2016 | validation 2016–17 | untouched test ≥ 2018; the legacy Month≤9 split (which pooled 26 years — 2020 in train, 1995 as "test") is retired</li>
-        <li><strong>Feature parity verified</strong> — 11/11 native parity gates (48 features, |d|≤1e-9); load-time schema gate refuses incompatible artifacts</li>
-        <li><strong>ML-validity rebuilt from the ground up</strong> — chronological splits, future-perturbation causality audit (bit-identical), validation-locked threshold, untouched final test</li>
-        <li><strong>Phase-5 (post-integrity-fix): absent-merchant FPR is a training-coverage artifact, not a model failure</strong> — corrected merchant universe is 63,288 name-hash codes / 57,882 pre-2016-active (the earlier 99,602/98,138 came from a mis-hashed volume table, now fixed and validated). The 5% training pool (27,190 merchants) covers 47.0%; ~12% of "unseen" legit rows are genuinely new, 88% established-but-unsampled. Strategy C (merchant-aware, 100% coverage, seed 42) cuts absent-merchant FPR 0.636→0.588 on identical rows at ≥99% recall but does not yet dominate E_hardneg (count features are sampling-scale-sensitive — mission #15). Verdict: OUTCOME B, E_hardneg kept deployed and untouched</li>
-        <li><strong>Label latency UNVERIFIED</strong> — the IBM corpus is pre-labeled with no label-availability timestamp; the 3 label-dependent fraud-rate features keep UNVERIFIED status; count-only establishment signals are safe</li>
-        <li><strong>Production reliability measured</strong> — 0% errors at 1-32 concurrent on the live service; ~95 req/s single-process saturation; p95 162ms / p99 232ms at 8 concurrent</li>
-        <li><strong>Final certification: CONDITIONAL PASS</strong> — monitoring active and fail-safe; investigator workflow green; conditions (scale-out, dependency scan, Redis failure injection) documented in the certification report</li>
-      </ul>
-    </div>
-
-    <!-- ═══════ ARCHITECTURE ═══════ -->
-    <div class="diagram anim" id="detection">
+    <!-- ARCHITECTURE -->
+    <div class="diagram anim" id="architecture">
       <div class="card-header">
         <div><div class="card-title">System Architecture</div><div class="card-subtitle">How a transaction flows through the pipeline</div></div>
       </div>
-      <svg viewBox="0 0 800 200">
-        <defs>
-          <linearGradient id="fg" x1="0%" y1="0%" x2="100%"><stop offset="0%" style="stop-color:#3B82F6;stop-opacity:0.8"/><stop offset="100%" style="stop-color:#10B981;stop-opacity:0.8"/></linearGradient>
-        </defs>
+      <svg viewBox="0 0 800 180">
         <!-- Transaction -->
-        <rect x="20" y="50" width="120" height="100" rx="12" fill="#1E293B" stroke="#3B82F6" stroke-width="1.5"/>
-        <text x="80" y="85" text-anchor="middle" fill="#3B82F6" font-size="24">💳</text>
-        <text x="80" y="110" text-anchor="middle" fill="#F1F5F9" font-size="11" font-weight="600">Transaction</text>
-        <text x="80" y="128" text-anchor="middle" fill="#94A3B8" font-size="9">User payment</text>
+        <rect x="20" y="40" width="120" height="100" rx="12" fill="#1E293B" stroke="#3B82F6" stroke-width="1.5"/>
+        <text x="80" y="75" text-anchor="middle" fill="#3B82F6" font-size="22">💳</text>
+        <text x="80" y="98" text-anchor="middle" fill="#F1F5F9" font-size="11" font-weight="600">Transaction</text>
+        <text x="80" y="115" text-anchor="middle" fill="#94A3B8" font-size="9">User payment</text>
         <!-- Arrow -->
-        <line x1="145" y1="100" x2="195" y2="100" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="1s" repeatCount="indefinite"/></line>
-        <polygon points="195,96 205,100 195,104" fill="#3B82F6"/>
+        <line x1="145" y1="90" x2="195" y2="90" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="1s" repeatCount="indefinite"/></line>
+        <polygon points="195,86 205,90 195,94" fill="#3B82F6"/>
         <!-- Privacy -->
-        <rect x="210" y="30" width="130" height="140" rx="12" fill="#1E293B" stroke="#10B981" stroke-width="1.5"/>
-        <text x="275" y="65" text-anchor="middle" fill="#10B981" font-size="24">🔒</text>
-        <text x="275" y="90" text-anchor="middle" fill="#F1F5F9" font-size="11" font-weight="600">Privacy Layer</text>
-        <text x="275" y="108" text-anchor="middle" fill="#94A3B8" font-size="9">Anonymize PII</text>
-        <text x="275" y="123" text-anchor="middle" fill="#94A3B8" font-size="9">Extract 48 features</text>
-        <text x="275" y="138" text-anchor="middle" fill="#94A3B8" font-size="9">Pseudonymous IDs</text>
-        <text x="275" y="158" text-anchor="middle" fill="#52B788" font-size="9">✓ No raw amounts</text>
+        <rect x="210" y="25" width="130" height="130" rx="12" fill="#1E293B" stroke="#10B981" stroke-width="1.5"/>
+        <text x="275" y="58" text-anchor="middle" fill="#10B981" font-size="22">🔒</text>
+        <text x="275" y="80" text-anchor="middle" fill="#F1F5F9" font-size="11" font-weight="600">Privacy Layer</text>
+        <text x="275" y="98" text-anchor="middle" fill="#94A3B8" font-size="9">Anonymize PII</text>
+        <text x="275" y="113" text-anchor="middle" fill="#94A3B8" font-size="9">Extract 48 features</text>
+        <text x="275" y="140" text-anchor="middle" fill="#52B788" font-size="8">✓ No raw PII</text>
         <!-- Arrow -->
-        <line x1="345" y1="100" x2="395" y2="100" stroke="#10B981" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="1s" repeatCount="indefinite"/></line>
-        <polygon points="395,96 405,100 395,104" fill="#10B981"/>
+        <line x1="345" y1="90" x2="395" y2="90" stroke="#10B981" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="1s" repeatCount="indefinite"/></line>
+        <polygon points="395,86 405,90 395,94" fill="#10B981"/>
         <!-- ML -->
-        <rect x="410" y="20" width="140" height="160" rx="12" fill="#1E293B" stroke="#8B5CF6" stroke-width="1.5"/>
-        <text x="480" y="55" text-anchor="middle" fill="#8B5CF6" font-size="24">🤖</text>
-        <text x="480" y="80" text-anchor="middle" fill="#F1F5F9" font-size="11" font-weight="600">ML Models</text>
-        <text x="480" y="98" text-anchor="middle" fill="#94A3B8" font-size="9">XGB + LightGBM + CatBoost</text>
-        <text x="480" y="113" text-anchor="middle" fill="#94A3B8" font-size="9">weights 0.34 / 0.33 / 0.33</text>
-        <text x="480" y="128" text-anchor="middle" fill="#94A3B8" font-size="9">48 features (native v2)</text>          <text x="480" y="150" text-anchor="middle" fill="#52B788" font-size="9">ROC-AUC: 98.7% (certified)</text>
-        <text x="480" y="168" text-anchor="middle" fill="#94A3B8" font-size="8">rules floor always applies</text>
+        <rect x="410" y="15" width="140" height="150" rx="12" fill="#1E293B" stroke="#8B5CF6" stroke-width="1.5"/>
+        <text x="480" y="48" text-anchor="middle" fill="#8B5CF6" font-size="22">🤖</text>
+        <text x="480" y="70" text-anchor="middle" fill="#F1F5F9" font-size="11" font-weight="600">ML Models</text>
+        <text x="480" y="88" text-anchor="middle" fill="#94A3B8" font-size="9">XGB + LightGBM + CatBoost</text>
+        <text x="480" y="103" text-anchor="middle" fill="#94A3B8" font-size="9">48 features · weights .34/.33/.33</text>
+        <text x="480" y="125" text-anchor="middle" fill="#52B788" font-size="9">ROC-AUC: 98.7%</text>
+        <text x="480" y="143" text-anchor="middle" fill="#94A3B8" font-size="8">rules floor always applies</text>
         <!-- Arrow -->
-        <line x1="555" y1="100" x2="605" y2="100" stroke="#8B5CF6" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="1s" repeatCount="indefinite"/></line>
-        <polygon points="605,96 615,100 605,104" fill="#8B5CF6"/>
+        <line x1="555" y1="90" x2="605" y2="90" stroke="#8B5CF6" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="1s" repeatCount="indefinite"/></line>
+        <polygon points="605,86 615,90 605,94" fill="#8B5CF6"/>
         <!-- Rules -->
-        <rect x="620" y="40" width="130" height="120" rx="12" fill="#1E293B" stroke="#F43F5E" stroke-width="1.5"/>
-        <text x="685" y="75" text-anchor="middle" fill="#F43F5E" font-size="24">📋</text>
-        <text x="685" y="98" text-anchor="middle" fill="#F1F5F9" font-size="11" font-weight="600">Rules Engine</text>
-        <text x="685" y="115" text-anchor="middle" fill="#94A3B8" font-size="9">41 pattern rules</text>
-        <text x="685" y="130" text-anchor="middle" fill="#94A3B8" font-size="9">Hard overrides</text>
-        <text x="685" y="150" text-anchor="middle" fill="#52B788" font-size="9">✓ Rules can't be diluted</text>
+        <rect x="620" y="30" width="130" height="120" rx="12" fill="#1E293B" stroke="#F43F5E" stroke-width="1.5"/>
+        <text x="685" y="65" text-anchor="middle" fill="#F43F5E" font-size="22">📋</text>
+        <text x="685" y="88" text-anchor="middle" fill="#F1F5F9" font-size="11" font-weight="600">Rules Engine</text>
+        <text x="685" y="105" text-anchor="middle" fill="#94A3B8" font-size="9">41 pattern rules · hard overrides</text>
+        <text x="685" y="125" text-anchor="middle" fill="#52B788" font-size="9">✓ Rules can't be diluted</text>
         <!-- Animated dot -->
-        <circle r="4" fill="#3B82F6" opacity="0.8"><animateMotion dur="4s" repeatCount="indefinite" path="M80,100 L275,100 L480,100 L685,100"/></circle>
+        <circle r="4" fill="#3B82F6" opacity="0.8"><animateMotion dur="4s" repeatCount="indefinite" path="M80,90 L275,90 L480,90 L685,90"/></circle>
       </svg>
     </div>
 
-    <!-- ═══════ FEATURE CARDS ═══════ -->
-    <div class="feature-grid anim" id="features">
-      <div class="feature-card">
-        <div class="ic blue">🤖</div>
-        <h4>ML-First Scoring</h4>
-        <p>Certified 48-feature Altman-NATIVE XGB+LGB+CatBoost ensemble (raw MCC/chip/card columns + shifted velocity + shifted entity fraud rates); train == production by construction (one shared derivation, 11/11 parity gates).</p>
-      </div>
-      <div class="feature-card">
-        <div class="ic green">📋</div>
-        <h4>41 Pattern Rules</h4>
-        <p>Expert rules catch stolen cards, account takeovers, money mules, and young-account fraud.</p>
-      </div>
-      <div class="feature-card">
-        <div class="ic purple">💳</div>
-        <h4>Finance Fraud Detection</h4>
-        <p>Specialized model detects small recurring charges disguised as subscriptions.</p>
-      </div>
-      <div class="feature-card">
-        <div class="ic red">📅</div>
-        <h4>Segment Awareness</h4>
-        <p>Segment awareness: certified real-data segment AUCs on the deployed native model — night 0.9941, online 0.9886, chip 0.9844, high-amount 0.9036. Phase-5 audit confirms cold-start false positives are a training-coverage artifact (merchant-aware Strategy C reaches 100% merchant coverage and cuts absent-merchant FPR on identical rows; exposure-normalized count features are the next step).</p>
-      </div>
-      <div class="feature-card">
-        <div class="ic yellow">🔒</div>
-        <h4>Privacy First</h4>
-        <p>No PII in features, pseudonymous IDs, k-anonymity. Built for DPDP Act 2023.</p>
-      </div>
-      <div class="feature-card">
-        <div class="ic cyan">⚡</div>
-        <h4>Real-Time Scoring</h4>
-        <p>Measured live: p95 162ms / p99 232ms end-to-end at 8 concurrent, ~95 req/s single-process, 0% errors.</p>
-      </div>
-    </div>
-
-    <!-- ═══════ LIVE DEMO ═══════ -->
-    <div class="live-wrap anim" id="live">
-      <canvas id="liveDemo" width="900" height="320"></canvas>
-      <span class="live-badge">● ▶ Live</span>
-    </div>
-    <div class="info anim">
-      <strong>What you're seeing:</strong> Each dot is a transaction flowing through the pipeline: Privacy Layer (anonymize) → ML Models (score) → Rules Engine (validate) → Decision. <span style="color:var(--green)">Green = normal</span>, <span style="color:var(--yellow)">yellow = extra verification</span>, <span style="color:var(--red)">red = blocked</span>.
-    </div>
-
-    <!-- ═══════ RISK LEVELS ═══════ -->
-    <div class="risk-row anim" id="decisions">
-      <div class="risk-box low">
-        <div class="ic">✅</div>
-        <h4>Low Risk</h4>
-        <p>86.9% of test transactions pass without alerts (13.1% alert rate at the locked threshold 0.018758).</p>
-      </div>
-      <div class="risk-box mid">
-        <div class="ic">🔐</div>
-        <h4>Medium Risk</h4>
-        <p>FPR 10.99% on real data at ≥99% recall; precision 18.1% on the enriched test (lower at true production prevalence) — the cost of near-complete fraud capture.</p>
-      </div>
-      <div class="risk-box high">
-        <div class="ic">🛑</div>
-        <h4>High Risk</h4>
-        <p>99.67% of fraud caught (4,563/4,578) at the certified threshold — honest numbers: recall maximized, FPR ~11%, with the Phase-5 coverage diagnosis pointing to the fix (100% merchant coverage proven trainable; exposure-normalized count features next).</p>
-      </div>
-    </div>
-
-    <!-- ═══════ VALIDATION PHASES ═══════ -->
+    <!-- PHASE LEDGER -->
     <div class="card anim" id="phases">
       <div class="card-header">
-        <div><div class="card-title">Validation Phase Ledger</div><div class="card-subtitle">Certified phase decisions (14-23B) — every conclusion evidence-classified, firewalls verified</div></div>
+        <div><div class="card-title">Validation Phase Ledger</div><div class="card-subtitle">Certified decisions · every conclusion evidence-classified</div></div>
         <a href="/monitor-page" class="btn btn-ghost">Live Monitor →</a>
       </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Phase</th><th>Question</th><th>Classification</th><th>Key Evidence</th></tr></thead>
           <tbody>
-            <tr><td><b>14</b></td><td>Does historical chip-fraud supervision improve 2017 transfer?</td><td><span class="badge red">NO_ROBUST_WIN</span></td><td>Chip supervision <b>hurt</b>: C2 chip recall 32.3% vs C0 57.7% (−25.4pp)</td></tr>
-            <tr><td><b>15</b></td><td>Why did 2017 chip-fraud recall fail?</td><td><span class="badge yellow">CASE_B_PARTIALLY_REPRESENTED</span></td><td>Channel composition shift PROVEN; 95% of 2017 patterns have weak/no historical analogue; train-vs-2017 AUC 0.94</td></tr>
-            <tr><td><b>16</b></td><td>Does independent post-2016 data exist?</td><td><span class="badge yellow">OUTCOME_C — NONE</span></td><td>51 datasets inventoried, 1 development-eligible (IBM, synthetic); boundary is protocol-constrained, not information-theoretic</td></tr>
-            <tr><td><b>17</b></td><td>Is the 2017 regime a generator artifact?</td><td><span class="badge yellow">SYNTHETIC_REGIME_ARTIFACT</span></td><td>Abrupt step change at 2017 affecting the whole population, persistent 2017-19; real-world validity UNVERIFIED</td></tr>
-            <tr><td><b>18</b></td><td>Is the system production-ready?</td><td><span class="badge yellow">CONDITIONALLY_DEPLOYABLE</span></td><td>Security/monitoring/rollback PASS; 3 fraud-rate features with unverified label availability; alert burden ~107/1k unverified</td></tr>
-            <tr><td><b>19</b></td><td>Do we have real-world evidence?</td><td><span class="badge yellow">DATA_ACQUISITION_REQUIRED</span></td><td>Every dataset in the environment is synthetic; no ground-truth labels; production prevalence unknown</td></tr>
-            <tr><td><b>20</b></td><td>Can the decision-time blocker be removed?</td><td><span class="badge green">CLEAN_PROD_COMPAT_CANDIDATE</span></td><td>P20_45feat: 45 features, all decision-time valid, parity + leakage + causality PASS; eligible for real-world validation</td></tr>
-            <tr><td><b>21</b></td><td>Is real-world validation possible?</td><td><span class="badge yellow">INSUFFICIENT_REAL_WORLD_EVIDENCE</span></td><td>No legitimate real-world dataset available; promotion blocked pending data acquisition</td></tr>
-            <tr><td><b>22</b></td><td>Is the validation harness ready?</td><td><span class="badge green">DATA_ACQUISITION_BLOCKED</span></td><td>Executable CLI runner built and tested; READY but blocked by data absence</td></tr>
-            <tr><td><b>23</b></td><td>Can real-world data be acquired?</td><td><span class="badge yellow">CONDITIONALLY_AVAILABLE</span></td><td>114 sources evaluated; best candidate Kaggle (1.85M rows); provenance unclear, no channel info</td></tr>
-            <tr><td><b>23B</b></td><td>Frozen Kaggle external eval</td><td><span class="badge yellow">CONDITIONAL_COMPLETE</span></td><td>P20_45feat evaluated on Kaggle (1.85M rows, 0.58% fraud); ROC-AUC 0.47 with degraded features; E_hardneg unlabeled; production promotion BLOCKED</td></tr>
+            <tr><td><b>14</b></td><td>Chip supervision transfer</td><td><span class="badge red">NO_ROBUST_WIN</span></td><td>Chip supervision hurt: C2 recall 32.3% vs C0 57.7%</td></tr>
+            <tr><td><b>15</b></td><td>Distribution-shift forensics</td><td><span class="badge yellow">CASE_B</span></td><td>Channel shift PROVEN; 95% weak/no historical analogue</td></tr>
+            <tr><td><b>16</b></td><td>Data-inventory boundary</td><td><span class="badge yellow">NONE</span></td><td>51 datasets, 1 dev-eligible (IBM, synthetic)</td></tr>
+            <tr><td><b>17</b></td><td>IBM generator audit</td><td><span class="badge yellow">ARTIFACT</span></td><td>Abrupt 2017 regime; real-world validity UNVERIFIED</td></tr>
+            <tr><td><b>18</b></td><td>System readiness</td><td><span class="badge yellow">CONDITIONAL</span></td><td>Security PASS; 3 fraud-rate features unverified</td></tr>
+            <tr><td><b>19</b></td><td>Real-world evidence</td><td><span class="badge yellow">BLOCKED</span></td><td>No real-world dataset; no ground-truth labels</td></tr>
+            <tr><td><b>20</b></td><td>Decision-time fix</td><td><span class="badge green">CLEAN</span></td><td>P20_45feat: 45 features, all decision-time valid</td></tr>
+            <tr><td><b>21</b></td><td>Real-world validation</td><td><span class="badge yellow">BLOCKED</span></td><td>No legitimate real-world dataset available</td></tr>
+            <tr><td><b>22</b></td><td>Validation harness</td><td><span class="badge green">READY</span></td><td>Executable CLI runner built and tested</td></tr>
+            <tr><td><b>23</b></td><td>Data acquisition</td><td><span class="badge yellow">PENDING</span></td><td>114 sources; best (Kaggle) has unclear provenance</td></tr>
+            <tr><td><b>23B</b></td><td>Frozen Kaggle eval</td><td><span class="badge yellow">CONDITIONAL</span></td><td>P20 ROC-AUC 0.47 (degraded); promotion BLOCKED</td></tr>
           </tbody>
         </table>
       </div>
-      <div class="info" style="margin-top:16px;margin-bottom:0;background:var(--surface-2);border-left-color:var(--yellow)">
-        <strong>Honest interpretation:</strong> E_hardneg is certified on the <strong>synthetic IBM corpus</strong> (recall 99.67%, FPR 10.99% on the untouched 2018–2020 window) and remains deployed as the best available model. The 2017 regime shift is strongly supported as a generator artifact, so these numbers must not be read as real-world performance. Production promotion of P20_45feat is <strong>blocked pending real-world data</strong> — the next milestone is data acquisition, not more modeling.
-        <br><br>
-        <strong>Phase 22 status:</strong> Executable validation harness READY. Run: <code>python -m phase22.run_real_world_validation --mode prepare</code>
-        <br>
-        <strong>Phase 23 status:</strong> 114 data sources evaluated. Best candidate (Kaggle fraudTrain) has unclear provenance. Next decision: conditional evaluation OR continue external acquisition.
-        <br><br>
-        <strong>Phase 23B status:</strong> Frozen conditional Kaggle evaluation COMPLETE. P20_45feat scored ROC-AUC 0.47 (degraded features, all alerts fire). E_hardneg could not be evaluated (label-dependent features). Production promotion remains BLOCKED.
+      <div class="info" style="margin-top:12px;margin-bottom:0;background:var(--surface-2);border-left-color:var(--yellow)">
+        <strong>Current status:</strong> E_hardneg is certified on the synthetic IBM corpus (recall 99.67%, FPR 10.99%).
+        The 2017 regime shift is a generator artifact — these numbers are <b>not real-world performance</b>.
+        Production promotion is <b>blocked pending real-world data</b>.
+      </div>
     </div>
 
-    <!-- ═══════ PRIVACY ═══════ -->
+    <!-- PRIVACY -->
     <div class="diagram anim" id="privacy">
       <div class="card-header">
         <div><div class="card-title">Privacy Architecture</div><div class="card-subtitle">3 isolated databases with firewall separation</div></div>
       </div>
-      <svg viewBox="0 0 800 240">
+      <svg viewBox="0 0 800 200">
         <defs>
           <linearGradient id="shieldG" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#3B82F6;stop-opacity:0.3"/><stop offset="100%" style="stop-color:#10B981;stop-opacity:0.3"/></linearGradient>
         </defs>
         <!-- Identity DB -->
         <g transform="translate(30,10)">
-          <rect width="200" height="220" rx="12" fill="#1E293B" stroke="#F43F5E" stroke-width="1.5"/>
-          <text x="100" y="28" text-anchor="middle" fill="#F43F5E" font-size="11" font-weight="700">🔐 IDENTITY DB</text>
-          <text x="100" y="44" text-anchor="middle" fill="#94A3B8" font-size="8">Real PII stored here</text>
-          <rect x="15" y="58" width="170" height="36" rx="6" fill="rgba(244,63,94,0.08)"/>
-          <text x="100" y="81" text-anchor="middle" fill="#F1F5F9" font-size="9">👤 Name, Email, Phone</text>
-          <rect x="15" y="102" width="170" height="36" rx="6" fill="rgba(244,63,94,0.08)"/>
-          <text x="100" y="125" text-anchor="middle" fill="#F1F5F9" font-size="9">🔑 Password Hash</text>
-          <rect x="15" y="146" width="170" height="36" rx="6" fill="rgba(244,63,94,0.08)"/>
-          <text x="100" y="169" text-anchor="middle" fill="#F1F5F9" font-size="9">🔗 Pseudonym Map</text>
-          <text x="100" y="205" text-anchor="middle" fill="#52B788" font-size="8">✓ Fernet AES-256 encrypted</text>
+          <rect width="180" height="180" rx="12" fill="#1E293B" stroke="#F43F5E" stroke-width="1.5"/>
+          <text x="90" y="25" text-anchor="middle" fill="#F43F5E" font-size="11" font-weight="700">🔐 IDENTITY DB</text>
+          <text x="90" y="40" text-anchor="middle" fill="#94A3B8" font-size="8">Real PII stored here</text>
+          <rect x="12" y="50" width="156" height="30" rx="6" fill="rgba(244,63,94,0.08)"/>
+          <text x="90" y="70" text-anchor="middle" fill="#F1F5F9" font-size="9">👤 Name, Email, Phone</text>
+          <rect x="12" y="88" width="156" height="30" rx="6" fill="rgba(244,63,94,0.08)"/>
+          <text x="90" y="108" text-anchor="middle" fill="#F1F5F9" font-size="9">🔑 Password Hash</text>
+          <rect x="12" y="126" width="156" height="30" rx="6" fill="rgba(244,63,94,0.08)"/>
+          <text x="90" y="146" text-anchor="middle" fill="#F1F5F9" font-size="9">🔗 Pseudonym Map</text>
+          <text x="90" y="175" text-anchor="middle" fill="#52B788" font-size="8">✓ Fernet AES-256 encrypted</text>
         </g>
         <!-- Firewall -->
-        <g transform="translate(270,40)">
-          <rect width="60" height="160" rx="8" fill="url(#shieldG)" stroke="#52B788" stroke-width="1.5"/>
-          <text x="30" y="40" text-anchor="middle" fill="#52B788" font-size="20">🧱</text>
-          <text x="30" y="65" text-anchor="middle" fill="#F1F5F9" font-size="8" font-weight="700">FIREWALL</text>
-          <text x="30" y="85" text-anchor="middle" fill="#94A3B8" font-size="7">No direct</text>
-          <text x="30" y="98" text-anchor="middle" fill="#94A3B8" font-size="7">access</text>
+        <g transform="translate(240,35)">
+          <rect width="50" height="130" rx="8" fill="url(#shieldG)" stroke="#52B788" stroke-width="1.5"/>
+          <text x="25" y="35" text-anchor="middle" fill="#52B788" font-size="18">🧱</text>
+          <text x="25" y="55" text-anchor="middle" fill="#F1F5F9" font-size="8" font-weight="700">FIREWALL</text>
+          <text x="25" y="75" text-anchor="middle" fill="#94A3B8" font-size="7">No direct</text>
+          <text x="25" y="88" text-anchor="middle" fill="#94A3B8" font-size="7">access</text>
         </g>
         <!-- Fraud DB -->
-        <g transform="translate(370,10)">
-          <rect width="200" height="220" rx="12" fill="#1E293B" stroke="#3B82F6" stroke-width="1.5"/>
-          <text x="100" y="28" text-anchor="middle" fill="#3B82F6" font-size="11" font-weight="700">📊 FRAUD DB</text>
-          <text x="100" y="44" text-anchor="middle" fill="#94A3B8" font-size="8">Anonymous analysis</text>
-          <rect x="15" y="58" width="170" height="36" rx="6" fill="rgba(59,130,246,0.08)"/>
-          <text x="100" y="81" text-anchor="middle" fill="#F1F5F9" font-size="9">🎲 Fraud ID (random)</text>
-          <rect x="15" y="102" width="170" height="36" rx="6" fill="rgba(59,130,246,0.08)"/>
-          <text x="100" y="125" text-anchor="middle" fill="#F1F5F9" font-size="9">📈 Risk Scores</text>
-          <rect x="15" y="146" width="170" height="36" rx="6" fill="rgba(59,130,246,0.08)"/>
-          <text x="100" y="169" text-anchor="middle" fill="#F1F5F9" font-size="9">📋 Feature Vectors</text>
-          <text x="100" y="205" text-anchor="middle" fill="#52B788" font-size="8">✓ No PII ever stored</text>
+        <g transform="translate(340,10)">
+          <rect width="180" height="180" rx="12" fill="#1E293B" stroke="#3B82F6" stroke-width="1.5"/>
+          <text x="90" y="25" text-anchor="middle" fill="#3B82F6" font-size="11" font-weight="700">📊 FRAUD DB</text>
+          <text x="90" y="40" text-anchor="middle" fill="#94A3B8" font-size="8">Anonymous analysis</text>
+          <rect x="12" y="50" width="156" height="30" rx="6" fill="rgba(59,130,246,0.08)"/>
+          <text x="90" y="70" text-anchor="middle" fill="#F1F5F9" font-size="9">🎲 Fraud ID (random)</text>
+          <rect x="12" y="88" width="156" height="30" rx="6" fill="rgba(59,130,246,0.08)"/>
+          <text x="90" y="108" text-anchor="middle" fill="#F1F5F9" font-size="9">📈 Risk Scores</text>
+          <rect x="12" y="126" width="156" height="30" rx="6" fill="rgba(59,130,246,0.08)"/>
+          <text x="90" y="146" text-anchor="middle" fill="#F1F5F9" font-size="9">📋 Feature Vectors</text>
+          <text x="90" y="175" text-anchor="middle" fill="#52B788" font-size="8">✓ No PII ever stored</text>
         </g>
         <!-- Audit DB -->
-        <g transform="translate(610,10)">
-          <rect width="160" height="220" rx="12" fill="#1E293B" stroke="#F59E0B" stroke-width="1.5"/>
-          <text x="80" y="28" text-anchor="middle" fill="#F59E0B" font-size="11" font-weight="700">📝 AUDIT DB</text>
-          <text x="80" y="44" text-anchor="middle" fill="#94A3B8" font-size="8">Immutable log chain</text>
-          <rect x="12" y="58" width="136" height="36" rx="6" fill="rgba(245,158,11,0.08)"/>
-          <text x="80" y="81" text-anchor="middle" fill="#F1F5F9" font-size="9">🔗 Hash chain</text>
-          <rect x="12" y="102" width="136" height="36" rx="6" fill="rgba(245,158,11,0.08)"/>
-          <text x="80" y="125" text-anchor="middle" fill="#F1F5F9" font-size="9">👁️ Access logs</text>
-          <rect x="12" y="146" width="136" height="36" rx="6" fill="rgba(245,158,11,0.08)"/>
-          <text x="80" y="169" text-anchor="middle" fill="#F1F5F9" font-size="9">🚫 Append-only</text>
-          <text x="80" y="205" text-anchor="middle" fill="#52B788" font-size="8">✓ Tamper-evident</text>
+        <g transform="translate(570,10)">
+          <rect width="160" height="180" rx="12" fill="#1E293B" stroke="#F59E0B" stroke-width="1.5"/>
+          <text x="80" y="25" text-anchor="middle" fill="#F59E0B" font-size="11" font-weight="700">📝 AUDIT DB</text>
+          <text x="80" y="40" text-anchor="middle" fill="#94A3B8" font-size="8">Immutable log chain</text>
+          <rect x="10" y="50" width="140" height="30" rx="6" fill="rgba(245,158,11,0.08)"/>
+          <text x="80" y="70" text-anchor="middle" fill="#F1F5F9" font-size="9">🔗 Hash chain</text>
+          <rect x="10" y="88" width="140" height="30" rx="6" fill="rgba(245,158,11,0.08)"/>
+          <text x="80" y="108" text-anchor="middle" fill="#F1F5F9" font-size="9">👁️ Access logs</text>
+          <rect x="10" y="126" width="140" height="30" rx="6" fill="rgba(245,158,11,0.08)"/>
+          <text x="80" y="146" text-anchor="middle" fill="#F1F5F9" font-size="9">🚫 Append-only</text>
+          <text x="80" y="175" text-anchor="middle" fill="#52B788" font-size="8">✓ Tamper-evident</text>
         </g>
       </svg>
     </div>
@@ -723,44 +456,12 @@ tr:hover td { background: rgba(59,130,246,0.03); }
     <div class="info anim">
       <strong>Privacy guarantees:</strong>
       <ul>
-        <li>✓ No names, addresses, or phone numbers ever enter the fraud system</li>
+        <li>✓ No names, addresses, or phone numbers enter the fraud system</li>
         <li>✓ Fraud IDs are cryptographically random UUIDs — not derived from PII</li>
         <li>✓ Identity DB encrypted with Fernet AES-256 at rest</li>
         <li>✓ All access logged in a hash-chained audit trail (append-only, tamper-evident)</li>
-        <li>✓ Follows India's DPDP Act 2023 and RBI guidelines</li>
-        <li>✓ Service-to-service auth with internal tokens — no open endpoints</li>
+        <li>✓ Built for India's DPDP Act 2023 and RBI guidelines</li>
       </ul>
-    </div>
-
-    <!-- ═══════ CROSS-DOMAIN TABLE ═══════ -->
-    <div class="card anim" id="security">
-      <div class="card-header">
-        <div><div class="card-title">Model Benchmark</div><div class="card-subtitle">Certified on synthetic IBM corpus; historical cross-dataset runs are legacy (Phase 17: IBM is a synthetic SDV dataset — not real-world evidence)</div></div>
-        <a href="/fraud-report-page" class="btn btn-ghost">View Full Report →</a>
-      </div>
-      <div class="filters">
-        <div class="filter-chips">
-          <span class="chip active" onclick="filterTable('all', this)">All</span>
-          <span class="chip" onclick="filterTable('real', this)">Real Public</span>
-          <span class="chip" onclick="filterTable('synthetic', this)">Synthetic</span>
-          <span class="chip" onclick="filterTable('excellent', this)">Certified</span>
-          <span class="chip" onclick="filterTable('legacy', this)">Legacy</span>
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table id="benchmarkTable">
-          <thead><tr><th onclick="sortTable(0)">Dataset ↕</th><th onclick="sortTable(1)">Type ↕</th><th onclick="sortTable(2)">Rows ↕</th><th onclick="sortTable(3)">Fraud ↕</th><th onclick="sortTable(4)">ROC-AUC ↕</th><th onclick="sortTable(5)">PR-AUC ↕</th><th onclick="sortTable(6)">R@1% ↕</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr data-type="all" data-status="excellent"><td>PS-14 deployed (Altman-NATIVE E_hardneg)</td><td>Certified</td><td>192,372</td><td>4,578</td><td style="color:var(--green)">98.7%</td><td>63.8%</td><td>62.1%</td><td><span class="badge green">CERTIFIED</span></td></tr>
-            <tr data-type="real" data-status="legacy"><td>kaggle_fraud</td><td>Real Public</td><td>555,719</td><td>2,145</td><td style="color:var(--green)">99.2%</td><td>78.2%</td><td>89.8%</td><td><span class="badge yellow">LEGACY</span></td></tr>
-            <tr data-type="real" data-status="legacy"><td>ULB Creditcard</td><td>Real Public</td><td>284,807</td><td>492</td><td style="color:var(--green)">98.5%</td><td>87.0%</td><td>90.8%</td><td><span class="badge yellow">LEGACY</span></td></tr>
-            <tr data-type="real" data-status="legacy"><td>IBM Altman (Optuna)</td><td>Real Public</td><td>24,386,900</td><td>29,757</td><td style="color:var(--green)">98.6%</td><td>64.7%</td><td>84.7%</td><td><span class="badge yellow">LEGACY</span></td></tr>
-            <tr data-type="real" data-status="legacy"><td>Altman Native (48 feat)</td><td>Real Public</td><td>24,386,900</td><td>29,757</td><td style="color:var(--green)">99.4%</td><td>—</td><td>89.8%</td><td><span class="badge yellow">LEGACY</span></td></tr>
-            <tr data-type="synthetic" data-status="legacy"><td>PaySim 1M</td><td>Synthetic</td><td>1,200,000</td><td>58,800</td><td style="color:var(--green)">94.1%</td><td>64.5%</td><td>48.8%</td><td><span class="badge yellow">LEGACY</span></td></tr>
-            <tr data-type="synthetic" data-status="legacy"><td>PaySim small</td><td>Synthetic</td><td>100,000</td><td>4,895</td><td style="color:var(--green)">99.7%</td><td>93.6%</td><td>95.6%</td><td><span class="badge yellow">LEGACY</span></td></tr>
-          </tbody>
-        </table>
-      </div>
     </div>
 
     <div class="footer">
@@ -769,10 +470,11 @@ tr:hover td { background: rgba(59,130,246,0.03); }
   </div>
 </div>
 
-<!-- ═══════ SCRIPTS ═══════ -->
+
+<!-- Scripts -->
 <script src="/anime.min.js"></script>
 <script src="/motion.js"></script>
 <script src="/chart.min.js"></script>
-<script src="/static/app.js?v=2"></script>
+<script src="/static/app.js?v=3"></script>
 </body>
 </html>

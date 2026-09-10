@@ -6,11 +6,11 @@
 <title>PS-14 Live Monitor</title>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com;">
 <style>
-:root{--bg:#0a0e17;--card:#111827;--border:#1e293b;--text:#e2e8f0;--dim:#64748b;--accent:#3b82f6;--red:#ef4444;--green:#22c55e;--yellow:#eab308;--orange:#f97316;--purple:#a855f7}
+:root{--bg:#0a0e17;--card:#111827;--border:#1e293b;--text:#e2e8f0;--dim:#64748b;--accent:#3b82f6;--red:#ef4444;--green:#22c55e;--yellow:#eab308;--purple:#a855f7}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:20px;margin:0}
 a{color:var(--accent);text-decoration:none}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
-.header h1{font-size:24px;font-weight:700}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.header h1{font-size:22px;font-weight:700}
 .header h1 span{color:var(--accent)}
 .back{padding:6px 14px;border:1px solid var(--border);border-radius:6px;font-size:13px}
 .back:hover{background:var(--card)}
@@ -20,78 +20,58 @@ a{color:var(--accent);text-decoration:none}
 .btn:hover{background:rgba(59,130,246,0.1)}
 .btn:disabled{opacity:0.5;cursor:not-allowed}
 .btn.running{border-color:var(--yellow);color:var(--yellow)}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
 .stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
-.stat .num{font-size:28px;font-weight:700}
-.stat .label{font-size:12px;color:var(--dim);margin-top:4px}
+.stat .num{font-size:26px;font-weight:700}
+.stat .label{font-size:11px;color:var(--dim);margin-top:4px}
 .stat.green .num{color:var(--green)}
 .stat.red .num{color:var(--red)}
 .stat.blue .num{color:var(--accent)}
 .stat.purple .num{color:var(--purple)}
 .stat.yellow .num{color:var(--yellow)}
-.stat.wide .num{font-size:15px;white-space:normal;line-height:1.4}
-.section-title{font-size:18px;font-weight:700;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);color:var(--accent)}
-.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:16px;margin-bottom:24px}
-.chart-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}
-.chart-card h3{font-size:13px;margin-bottom:12px;color:var(--dim)}
-.chart-card canvas{width:100%!important;height:220px!important}
-.service-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px}
-.service-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px}
-.service-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.section-title{font-size:16px;font-weight:700;margin:28px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border);color:var(--accent)}
+.service-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:20px}
+.service-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px}
+.service-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .service-dot.up{background:var(--green)}
 .service-dot.down{background:var(--red)}
 .service-dot.unknown{background:var(--yellow)}
-.service-name{font-weight:600;font-size:14px}
-.service-info{font-size:12px;color:var(--dim)}
-.events-table{width:100%;border-collapse:collapse;font-size:12px}
-.events-table th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--dim);font-weight:600}
-.events-table td{padding:6px 8px;border-bottom:1px solid #1a1f2e}
-.events-table tr:hover td{background:rgba(59,130,246,0.05)}
+.service-name{font-weight:600;font-size:13px}
+.service-info{font-size:11px;color:var(--dim)}
+.phase-table{width:100%;border-collapse:collapse;font-size:12px}
+.phase-table th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.5px}
+.phase-table td{padding:6px 8px;border-bottom:1px solid #1a1f2e;vertical-align:top}
+.phase-table tr:hover td{background:rgba(59,130,246,0.05)}
 .badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600}
-.badge.fraud{background:rgba(239,68,68,0.15);color:var(--red)}
-.badge.legit{background:rgba(34,197,94,0.15);color:var(--green)}
 .badge.pass{background:rgba(34,197,94,0.12);color:var(--green)}
 .badge.warn{background:rgba(234,179,8,0.12);color:var(--yellow)}
 .badge.fail{background:rgba(239,68,68,0.12);color:var(--red)}
 .badge.info{background:rgba(59,130,246,0.12);color:var(--accent)}
-.footer{text-align:center;color:var(--dim);font-size:12px;margin-top:32px;padding-top:16px;border-top:1px solid var(--border)}
-
-/* Phase governance table */
-.phase-table{width:100%;border-collapse:collapse;font-size:12px}
-.phase-table th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);color:var(--dim);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px}
-.phase-table td{padding:8px 10px;border-bottom:1px solid #1a1f2e;vertical-align:top}
-.phase-table tr:hover td{background:rgba(59,130,246,0.05)}
-.phase-num{font-weight:700;color:var(--accent)}
-.phase-q{color:var(--dim);font-size:11px;display:block;margin-top:2px}
-.firewall-mini{font-size:10px;color:var(--dim)}
-.firewall-mini .ok{color:var(--green)}
-
-/* Test results section */
-.test-banner{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:24px}
-.test-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.events-table{width:100%;border-collapse:collapse;font-size:12px}
+.events-table th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--dim);font-weight:600}
+.events-table td{padding:6px 8px;border-bottom:1px solid #1a1f2e}
+.events-table tr:hover td{background:rgba(59,130,246,0.05)}
+.test-banner{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
+.test-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
 .test-status{display:flex;align-items:center;gap:8px}
 .test-status .dot{width:12px;height:12px;border-radius:50%}
-.test-status .text{font-weight:700;font-size:15px}
-.test-meta{color:var(--dim);font-size:12px;margin-left:auto}
-.test-counts{display:flex;gap:16px;font-size:13px;margin-bottom:12px}
+.test-status .text{font-weight:700;font-size:14px}
+.test-counts{display:flex;gap:14px;font-size:12px}
 .test-counts .p{color:var(--green)}
 .test-counts .f{color:var(--red)}
-.test-counts .t{color:var(--dim)}
 .test-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .test-badge{font-size:11px;padding:3px 10px;border-radius:4px;font-weight:600}
 .test-badge.pass{background:rgba(34,197,94,0.12);color:var(--green)}
 .test-badge.fail{background:rgba(239,68,68,0.12);color:var(--red)}
-.test-err{color:var(--red);font-size:12px;margin-top:8px}
-
-/* Model comparison banner */
-.compare-banner{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
-.cand{border:1px solid var(--border);border-radius:8px;padding:14px}
-.cand h4{font-size:14px;font-weight:700;margin-bottom:6px}
-.cand .sub{font-size:11px;color:var(--dim);margin-bottom:8px}
-.cand .kv{font-size:12px;margin-bottom:3px}
+.compare-banner{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.cand{border:1px solid var(--border);border-radius:8px;padding:12px}
+.cand h4{font-size:13px;font-weight:700;margin-bottom:4px}
+.cand .sub{font-size:10px;color:var(--dim);margin-bottom:6px}
+.cand .kv{font-size:11px;margin-bottom:2px}
 .cand .kv b{color:var(--text)}
 .incumbent{border-color:rgba(34,197,94,0.4)}
 .candidate{border-color:rgba(168,85,247,0.4)}
+.footer{text-align:center;color:var(--dim);font-size:11px;margin-top:24px;padding-top:12px;border-top:1px solid var(--border)}
 </style>
 </head>
 <body>
@@ -99,170 +79,75 @@ a{color:var(--accent);text-decoration:none}
   <h1><span class="live-dot"></span><span>PS-14</span> Live Monitor</h1>
   <div style="display:flex;gap:8px;align-items:center">
     <a href="/" class="back">&larr; Dashboard</a>
-    <a href="/fraud-report-page" class="back">Fraud Report</a>
-    <button id="runBtn" class="btn">▶ Run Tests Now</button>
+    <a href="/fraud-report-page" class="back">Report</a>
+    <button id="runBtn" class="btn">▶ Run Tests</button>
   </div>
 </div>
 
 <!-- Live Metrics -->
-<div id="liveMetrics">
-  <div class="stats">
-    <div class="stat blue"><div class="num" id="mEval">—</div><div class="label">Total Evaluations</div></div>
-    <div class="stat blue"><div class="num" id="mFraud">—</div><div class="label">Fraud Detected</div></div>
-    <div class="stat yellow"><div class="num" id="mFP">—</div><div class="label">False Positives</div></div>
-    <div class="stat purple"><div class="num" id="mDet">—</div><div class="label">Detection Rate</div></div>
-    <div class="stat red"><div class="num" id="mFPR">—</div><div class="label">FPR</div></div>
-    <div class="stat"><div class="num" id="mUp">—</div><div class="label">Uptime</div></div>
-  </div>
+<div class="stats">
+  <div class="stat blue"><div class="num" id="mEval">—</div><div class="label">Total Evaluations</div></div>
+  <div class="stat red"><div class="num" id="mFraud">—</div><div class="label">Fraud Detected</div></div>
+  <div class="stat yellow"><div class="num" id="mFP">—</div><div class="label">False Positives</div></div>
+  <div class="stat purple"><div class="num" id="mDet">—</div><div class="label">Detection Rate</div></div>
+  <div class="stat red"><div class="num" id="mFPR">—</div><div class="label">FPR</div></div>
+  <div class="stat"><div class="num" id="mUp">—</div><div class="label">Uptime</div></div>
 </div>
 
-<!-- Model & Candidate Status -->
-<div class="section-title">🤖 Model Status &amp; Candidates</div>
-<div class="compare-banner" id="modelBanner">
+<!-- Model Status -->
+<div class="section-title">🤖 Model Status</div>
+<div class="compare-banner">
   <div class="cand incumbent">
     <h4 style="color:var(--green)">E_hardneg — INCUMBENT</h4>
-    <div class="sub">Production model · 48 features · 3 fraud-rate features with UNVERIFIED decision-time label availability (Phases 18-19)</div>
+    <div class="sub">48 features · 3 fraud-rate features with unverified label availability</div>
     <div class="kv">Final test: recall <b>99.67%</b> · FPR <b>10.99%</b> · precision <b>18.1%</b></div>
     <div class="kv">Status: <span class="badge pass">UNTOUCHED · DEPLOYED</span></div>
   </div>
   <div class="cand candidate">
     <h4 style="color:var(--purple)">P20_45feat — CANDIDATE</h4>
-    <div class="sub">Clean 45-feature candidate · all features decision-time valid · no label-dependent features</div>
-    <div class="kv">IBM validation: recall <b>99.53%</b> · FPR <b>23.69%</b> · precision <b>47.2%</b></div>
-    <div class="kv">Status: <span class="badge info">ELIGIBLE FOR REAL-WORLD VALIDATION</span></div>
+    <div class="sub">45 features · all decision-time valid · no label-dependent features</div>
+    <div class="kv">Status: <span class="badge info">REAL-WORLD VALIDATION BLOCKED</span></div>
   </div>
   <div class="cand">
-    <h4>Real-World Validation</h4>
-    <div class="sub">Phase 19-21 verdict on legitimate real-world evidence</div>
+    <h4>Real-World Data</h4>
+    <div class="sub">Phase 19-23 status on legitimate evidence</div>
     <div class="kv">Data: <span class="badge warn">NONE AVAILABLE</span></div>
-    <div class="kv">Classification: <span class="badge warn">DATA_ACQUISITION_REQUIRED</span></div>
     <div class="kv">Final test: <span class="badge pass">LOCKED · NOT ACCESSED</span></div>
   </div>
-</div>
-
-<!-- Active Model Info -->
-<div class="stats" id="modelStats" style="margin-top:12px">
-  <div class="stat green"><div class="num" id="mActiveModel">—</div><div class="label">Active Model</div></div>
-  <div class="stat blue"><div class="num" id="mModelType">—</div><div class="label">Model Type</div></div>
-  <div class="stat"><div class="num" id="mFeatures">—</div><div class="label">Features</div></div>
-  <div class="stat"><div class="num" id="mDataset">—</div><div class="label">Dataset Size</div></div>
-  <div class="stat green"><div class="num" id="mCvAuc">—</div><div class="label">CV AUC</div></div>
-  <div class="stat green"><div class="num" id="mTempAuc">—</div><div class="label">Temporal AUC</div></div>
-  <div class="stat green"><div class="num" id="mTempR1">—</div><div class="label">Temporal R@1%FPR</div></div>
-  <div class="stat"><div class="num" id="mLeakage">—</div><div class="label">Target Leakage</div></div>
-</div>
-<div class="stats" id="nativeStats" style="margin-top:12px;display:none">
-  <div class="stat purple" style="grid-column:1/-1"><div class="num" style="font-size:16px;color:var(--purple)">⬆️ Native Model Available</div><div class="label">Altman-native with 48 features (MCC, entity IDs, diversity)</div></div>
-  <div class="stat"><div class="num" id="mNativeVer">—</div><div class="label">Native Version</div></div>
-  <div class="stat green"><div class="num" id="mNativeAuc">—</div><div class="label">Native CV AUC</div></div>
-  <div class="stat green"><div class="num" id="mNativeTempAuc">—</div><div class="label">Native Temporal AUC</div></div>
-  <div class="stat green"><div class="num" id="mNativeTempR1">—</div><div class="label">Native R@1%FPR</div></div>
-  <div class="stat"><div class="num" id="mNativeFeat">—</div><div class="label">Native Features</div></div>
-</div>
-
-<!-- Phase Governance -->
-<div class="section-title">🧭 Validation Phase Ledger <span style="font-size:12px;color:var(--dim);font-weight:400">(certified decisions, Phases 14-23B)</span></div>
-<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;overflow-x:auto">
-  <table class="phase-table">
-    <thead><tr><th>Phase</th><th>Title</th><th>Classification</th><th>Firewall</th></tr></thead>
-    <tbody id="phaseBody"><tr><td colspan="4" style="color:var(--dim)">Loading phase ledger…</td></tr></tbody>
-  </table>
-</div>
-<div class="info" style="margin-top:12px;background:var(--card);border-left:3px solid var(--yellow);border-radius:0 8px 8px 0;padding:12px 16px;font-size:12px;color:var(--dim)">
-  The 2017 chip-fraud regime shift is <b style="color:var(--yellow)">STRONGLY SUPPORTED as a synthetic generator artifact</b> (Phase 17) — IBM metrics must not be read as real-world performance. E_hardneg remains deployed as the best available model; promotion is <b style="color:var(--yellow)">BLOCKED pending real-world data</b>.
 </div>
 
 <!-- Service Health -->
 <div class="section-title">Service Health</div>
 <div class="service-grid" id="svcGrid"></div>
 
-<!-- Inference Service -->
-<div class="section-title">⚡ Real-Time Inference</div>
-<div class="stats">
-  <div class="stat green"><div class="num" id="iActive">—</div><div class="label">Active Users</div></div>
-  <div class="stat blue"><div class="num" id="iModels">—</div><div class="label">Registered Models</div></div>
-  <div class="stat purple"><div class="num" id="iAB">—</div><div class="label">A/B Experiments</div></div>
-  <div class="stat"><div class="num" id="iBackend">—</div><div class="label">State Backend</div></div>
-  <div class="stat"><div class="num" id="iRedis">—</div><div class="label">Redis Memory</div></div>
-  <div class="stat"><div class="num" id="iInfUp">—</div><div class="label">Inference Uptime</div></div>
-  <div class="stat"><div class="num" id="iModel">—</div><div class="label">Active Model</div></div>
-  <div class="stat"><div class="num" id="iRedisStatus">—</div><div class="label">Redis Status</div></div>
-</div>
-
-<!-- Unified Detection System -->
-<div class="section-title">🛡️ Unified Detection Pipeline</div>
-<div class="stats">
-  <div class="stat green"><div class="num" id="uML">—</div><div class="label">ML Fusion</div></div>
-  <div class="stat blue"><div class="num" id="uRules">—</div><div class="label">Rules Engine</div></div>
-  <div class="stat purple"><div class="num" id="uVelocity">—</div><div class="label">Velocity Limits</div></div>
-  <div class="stat yellow"><div class="num" id="uAB">—</div><div class="label">A/B Testing</div></div>
-  <div class="stat"><div class="num" id="uDrift">—</div><div class="label">Drift Detection</div></div>
-  <div class="stat"><div class="num" id="uLoadTime">—</div><div class="label">Load Time (ms)</div></div>
-</div>
-
-<!-- Drift Monitoring -->
-<div class="section-title">📈 Feature Drift Monitoring (PSI)</div>
-<div class="stats">
-  <div class="stat" id="dStatusStat"><div class="num" id="dStatus">—</div><div class="label">Drift Status</div></div>
-  <div class="stat blue"><div class="num" id="dPSI">—</div><div class="label">Aggregate PSI</div></div>
-  <div class="stat"><div class="num" id="dMaxPSI">—</div><div class="label">Max PSI</div></div>
-  <div class="stat"><div class="num" id="dMaxFeat">—</div><div class="label">Worst Feature</div></div>
-  <div class="stat green"><div class="num" id="dStable">—</div><div class="label">Stable Features</div></div>
-  <div class="stat yellow"><div class="num" id="dWarning">—</div><div class="label">Warning</div></div>
-  <div class="stat red"><div class="num" id="dCritical">—</div><div class="label">Critical</div></div>
-  <div class="stat"><div class="num" id="dNScored">—</div><div class="label">Transactions Scored</div></div>
-  <div class="stat"><div class="num" id="dRefSamples">—</div><div class="label">Reference Samples</div></div>
-  <div class="stat"><div class="num" id="dAlertCount">—</div><div class="label">Total Alerts</div></div>
-</div>
-<div id="driftAlerts" style="margin-bottom:16px"></div>
-<div class="charts">
-  <div class="chart-card" style="grid-column:1/-1"><h3>PSI Trend Over Time</h3><div style="height:220px"><canvas id="psiChart"></canvas></div></div>
-</div>
-
-<!-- Test Results — PROMINENT -->
-<div class="section-title">🧪 Automated Test Results <span style="font-size:12px;color:var(--dim);font-weight:400">(runs every 10 min)</span></div>
-<div class="test-banner" id="testResults">
-  <div style="color:var(--dim);font-size:13px">Loading test results...</div>
-</div>
-
-<!-- Fraud Report Summary -->
-<div class="section-title">📊 Fraud Detection Report <span style="font-size:12px;color:var(--dim);font-weight:400">(from latest analysis)</span></div>
-<div class="stats" id="reportStats">
-  <div class="stat"><div class="num" id="rTotal">—</div><div class="label">Total Transactions</div></div>
-  <div class="stat red"><div class="num" id="rFraud">—</div><div class="label">Confirmed Fraud</div></div>
-  <div class="stat green"><div class="num" id="rAuc">—</div><div class="label">ROC-AUC</div></div>
-  <div class="stat green"><div class="num" id="rRecall">—</div><div class="label">Recall @1% FPR</div></div>
-  <div class="stat blue"><div class="num" id="rPr">—</div><div class="label">PR-AUC</div></div>
-  <div class="stat yellow"><div class="num" id="rMissed">—</div><div class="label">Missed by ML</div></div>
-</div>
-<div class="charts">
-  <div class="chart-card"><h3>Fraud vs Legit Score Distribution</h3><div style="height:220px"><canvas id="reportScoreChart"></canvas></div></div>
-  <div class="chart-card"><h3>Fraud by Hour of Day</h3><div style="height:220px"><canvas id="reportHourChart"></canvas></div></div>
-  <div class="chart-card"><h3>Top Feature Importance</h3><div style="height:220px"><canvas id="reportFeatChart"></canvas></div></div>
-  <div class="chart-card"><h3>Category Breakdown</h3><div style="height:220px"><canvas id="reportCatChart"></canvas></div></div>
+<!-- Phase Governance -->
+<div class="section-title">🧭 Validation Phases <span style="font-size:11px;color:var(--dim);font-weight:400">(14-23B)</span></div>
+<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;overflow-x:auto">
+  <table class="phase-table">
+    <thead><tr><th>Phase</th><th>Title</th><th>Classification</th><th>Firewall</th></tr></thead>
+    <tbody id="phaseBody"><tr><td colspan="4" style="color:var(--dim)">Loading…</td></tr></tbody>
+  </table>
 </div>
 
 <!-- Latency -->
 <div class="section-title">Latency Distribution</div>
 <div class="stats">
-  <div class="stat"><div class="num" id="lAvg">—</div><div class="label">Avg Latency (ms)</div></div>
+  <div class="stat"><div class="num" id="lAvg">—</div><div class="label">Avg (ms)</div></div>
   <div class="stat green"><div class="num" id="lP50">—</div><div class="label">P50</div></div>
   <div class="stat yellow"><div class="num" id="lP95">—</div><div class="label">P95</div></div>
   <div class="stat red"><div class="num" id="lP99">—</div><div class="label">P99</div></div>
   <div class="stat"><div class="num" id="lSamp">—</div><div class="label">Samples</div></div>
 </div>
 
-<!-- Charts -->
-<div class="section-title">Live Charts</div>
-<div class="charts">
-  <div class="chart-card"><h3>Detection Rate Over Time</h3><div style="height:220px"><canvas id="detectionChart"></canvas></div></div>
-  <div class="chart-card"><h3>Latency Over Time</h3><div style="height:220px"><canvas id="latencyChart"></canvas></div></div>
-  <div class="chart-card" style="grid-column:1/-1"><h3>Recent Evaluation Events (last 10)</h3><div style="height:220px"><canvas id="eventChart"></canvas></div></div>
+<!-- Test Results -->
+<div class="section-title">🧪 Test Results <span style="font-size:11px;color:var(--dim);font-weight:400">(auto-refresh)</span></div>
+<div class="test-banner" id="testResults">
+  <div style="color:var(--dim);font-size:12px">Loading test results…</div>
 </div>
 
-<!-- Events Table -->
+<!-- Recent Events -->
 <div class="section-title">Recent Events</div>
-<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;overflow-x:auto;max-height:400px;overflow-y:auto">
+<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;overflow-x:auto;max-height:300px;overflow-y:auto">
   <table class="events-table">
     <thead><tr><th>Time</th><th>Score</th><th>Status</th><th>Latency</th></tr></thead>
     <tbody id="eventsBody"></tbody>
@@ -272,6 +157,6 @@ a{color:var(--accent);text-decoration:none}
 <div class="footer">PS-14 Privacy-First AI Fraud Detection · Live Monitor · Auto-refreshes every 5s</div>
 
 <script src="/chart.min.js"></script>
-<script src="/static/monitor-app.js?v=2"></script>
+<script src="/static/monitor-app.js?v=3"></script>
 </body>
 </html>
