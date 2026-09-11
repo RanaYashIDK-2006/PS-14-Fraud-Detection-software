@@ -69,7 +69,7 @@ class Settings(BaseSettings):
     # Dev defaults are randomly generated per-process (no hardcoded secrets).
     jwt_secret: str = ""
     pii_encryption_key: str = ""
-    export_signing_key_str: str = ""
+    export_signing_key_str: str = os.environ.get("EXPORT_SIGNING_KEY", "")
     jwt_expiry_minutes: int = 15
     internal_token: str = ""
 
@@ -197,11 +197,19 @@ def load_dotenv_and_patch() -> None:
     # already generated a random default, but .env is the source of truth
     # for multi-service coordination (e.g. INTERNAL_TOKEN shared across
     # identity, audit, front, etc.).
-    for key in ("internal_token", "compliance_token", "jwt_secret",
-                "pii_encryption_key", "export_signing_key_str"):
-        env_val = _os.environ.get(key)
+    # Env-var names, not field names: os.environ is case-sensitive on Linux,
+    # and export_signing_key_str's env name (EXPORT_SIGNING_KEY) differs from
+    # the field name anyway.
+    for field, env_name in (
+        ("internal_token", "INTERNAL_TOKEN"),
+        ("compliance_token", "COMPLIANCE_TOKEN"),
+        ("jwt_secret", "JWT_SECRET"),
+        ("pii_encryption_key", "PII_ENCRYPTION_KEY"),
+        ("export_signing_key_str", "EXPORT_SIGNING_KEY"),
+    ):
+        env_val = _os.environ.get(env_name)
         if env_val:
-            object.__setattr__(settings, key, env_val)
+            object.__setattr__(settings, field, env_val)
 
 
 # --- Production security gate ----------------------------------------------

@@ -41,7 +41,12 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from src.audit_service.export import verify_export_chain, verify_export_signature  # noqa: E402
-from src.settings import get_settings  # noqa: E402
+from src.settings import get_settings, load_dotenv_and_patch  # noqa: E402
+
+# Same key derivation as the signing Audit Service: it patches settings from
+# .env at startup, so the verifier must too (the docstring's "same derivation
+# the dev Audit Service uses"). No-op when .env is absent (CI).
+load_dotenv_and_patch()
 
 
 def load_export(args) -> dict:

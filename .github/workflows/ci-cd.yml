@@ -114,6 +114,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Bake trained artifacts into the image: models/artifacts/ is
+      # gitignored (joblib files), so a fresh checkout ships none and the
+      # risk engine fails at startup reading metadata.json.
+      - name: Generate synthetic data
+        run: python src/generate_synthetic_data.py
+
+      - name: Train models
+        run: python src/train_compare.py
+
       - name: Build Docker image
         run: docker build -t ps14:${{ github.sha }} .
 
@@ -133,6 +151,7 @@ jobs:
             -e COMPLIANCE_TOKEN=test-compliance \
             -e ADMIN_PASS=test-admin \
             -e DB_DIR=/tmp/db \
+            -e PS14_MODE=development \
             ps14:${{ github.sha }}
           sleep 10
           docker exec ps14-test python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"
@@ -157,6 +176,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # The live walkthrough boots its own five services (ports 8001-8005)
+      # and needs trained model artifacts on the runner.
+      - name: Generate synthetic data
+        run: python src/generate_synthetic_data.py
+
+      - name: Train models
+        run: python src/train_compare.py
+
       - name: Download Docker image
         uses: actions/download-artifact@v4
         with:
@@ -164,6 +200,13 @@ jobs:
 
       - name: Load Docker image
         run: docker load < ps14-image.tar.gz
+
+      # Walkthrough FIRST: it needs ports 8001-8005 free, which compose
+      # would hold. It self-verifies the audit chain and cleans up on exit.
+      - name: Run live walkthrough
+        run: bash scripts/live_walkthrough.sh
+        env:
+          PYTHONIOENCODING: utf-8
 
       - name: Generate test secrets
         run: |
@@ -196,9 +239,6 @@ jobs:
             echo "Waiting... ($i/30)"
             sleep 5
           done
-
-      - name: Run live walkthrough
-        run: bash scripts/live_walkthrough.sh
 
       - name: Verify audit chain
         run: |

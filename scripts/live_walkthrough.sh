@@ -39,6 +39,14 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
+# Token the SERVICES accept: they auto-load .env, so prefer its
+# INTERNAL_TOKEN; PS14_INTERNAL_TOKEN (explicit override) wins, and the dev
+# constant is the last fallback (CI, no .env).
+if [ -z "${PS14_INTERNAL_TOKEN:-}" ] && [ -f "$ROOT/.env" ]; then
+  _env_tok="$(grep -E '^INTERNAL_TOKEN=' "$ROOT/.env" | head -1 | cut -d= -f2- | tr -d '"' | tr -d "'")"
+  [ -n "$_env_tok" ] && PS14_INTERNAL_TOKEN="$_env_tok"
+fi
+
 TOKEN="${PS14_INTERNAL_TOKEN:-ps14-dev-internal-token-change-me}"
 AUTH="X-Internal-Token: $TOKEN"
 WT_DIR="db/walkthrough"
@@ -52,8 +60,10 @@ PORTS=("$P_IDENTITY" "$P_PRIVACY" "$P_RISK" "$P_VERIFY" "$P_AUDIT")
 
 if [ -x "$ROOT/.venv/Scripts/python.exe" ]; then
   PY="$ROOT/.venv/Scripts/python.exe"
-else
+elif [ -x "$ROOT/.venv/bin/python" ]; then
   PY="$ROOT/.venv/bin/python"
+else
+  PY="$(command -v python3 || command -v python)"
 fi
 
 # ---------------------------------------------------------------------------
@@ -140,6 +150,23 @@ for p in "${PORTS[@]}"; do
 done
 
 export DB_DIR="$WT_DIR"
+# The walkthrough is a dev harness: its children must not run the production
+# startup gate (on CI there is no .env, so services would default to
+# production mode and sys.exit(1) on the default CORS config before serving).
+# Callers who DO want the gate can set PS14_MODE explicitly.
+export PS14_MODE="${PS14_MODE:-development}"
+
+# Shared secrets for the children (CI has no .env to coordinate them).
+# Random per-process secrets would make every internal call 403 and the
+# export signature unverifiable. Missing values are generated once here.
+GEN="$(env -u INTERNAL_TOKEN "$PY" -c "import secrets; print(secrets.token_hex(32))")"
+export INTERNAL_TOKEN="${PS14_INTERNAL_TOKEN:-$(grep -E '^INTERNAL_TOKEN=' "$ROOT/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d '"' | tr -d '"' || echo "$GEN")}"
+[ -n "${PS14_INTERNAL_TOKEN:-}" ] && export INTERNAL_TOKEN="$PS14_INTERNAL_TOKEN"
+export EXPORT_SIGNING_KEY="${EXPORT_SIGNING_KEY:-$(grep -E '^EXPORT_SIGNING_KEY=' "$ROOT/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d '"' | tr -d '"' || echo "$GEN")}"
+export COMPLIANCE_TOKEN="${COMPLIANCE_TOKEN:-$(grep -E '^COMPLIANCE_TOKEN=' "$ROOT/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d '"' | tr -d '"' || echo "$GEN")}"
+export JWT_SECRET="${JWT_SECRET:-$(grep -E '^JWT_SECRET=' "$ROOT/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d '"' | tr -d '"' || echo "$GEN")}"
+export PII_ENCRYPTION_KEY="${PII_ENCRYPTION_KEY:-$(grep -E '^PII_ENCRYPTION_KEY=' "$ROOT/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d '"' | tr -d '"' || echo "$GEN")}"
+
 rm -rf "$WT_DIR"
 mkdir -p "$WT_DIR"
 

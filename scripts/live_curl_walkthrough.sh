@@ -30,6 +30,14 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
+# Token the SERVICES accept: they auto-load .env, so prefer its
+# INTERNAL_TOKEN; PS14_INTERNAL_TOKEN (explicit override) wins, and the dev
+# constant is the last fallback (CI, no .env).
+if [ -z "${PS14_INTERNAL_TOKEN:-}" ] && [ -f "$ROOT/.env" ]; then
+  _env_tok="$(grep -E '^INTERNAL_TOKEN=' "$ROOT/.env" | head -1 | cut -d= -f2- | tr -d '"' | tr -d "'")"
+  [ -n "$_env_tok" ] && PS14_INTERNAL_TOKEN="$_env_tok"
+fi
+
 TOKEN="${PS14_INTERNAL_TOKEN:-ps14-dev-internal-token-change-me}"
 AUTH="X-Internal-Token: $TOKEN"
 WT_DIR="db/walkthrough"
