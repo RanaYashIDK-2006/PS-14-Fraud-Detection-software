@@ -174,8 +174,11 @@ def main() -> None:
                      r_admin.status_code in (401, 403),
                      f"status={r_admin.status_code}")
 
+                # Well-formed body (matches ResolveRequest schema) so the
+                # request reaches the token check; a malformed body would
+                # 422 in validation before auth and mask the assertion.
                 r_resolve = client.post(url("identity", "/internal/resolve-fraud-id"),
-                    json={"fraud_id": "fake", "actor": "test", "reason": "test"},
+                    json={"fraud_id": "FAKE000000000000", "case_id": "pentest", "reason": "test"},
                     headers={"X-Internal-Token": "fake-token"})
                 test("Elevated user blocked from /internal/resolve-fraud-id",
                      r_resolve.status_code in (401, 403),

@@ -76,7 +76,10 @@ jobs:
           pip install bandit pip-audit
 
       - name: Run Bandit static analysis
-        run: bandit -r src/ -f json -o bandit-results.json
+        # Same severity floor as security-scan.yml: LOW findings (documented
+        # try/except resilience patterns, local tooling subprocess use) are
+        # triaged and accepted; medium+ fails the build.
+        run: bandit -r src/ -f json -o bandit-results.json --severity-level medium
 
       - name: Run pip-audit dependency scan
         run: pip-audit --format=json --output=pip-audit-results.json

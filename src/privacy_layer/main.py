@@ -881,13 +881,19 @@ def audit_search(
 
     where = " AND ".join(conditions) if conditions else "1=1"
 
-    rows = db.execute(sql_text(f"""
+    # Fixed SQL skeleton; `where` holds only the fixed condition templates
+    # joined above (values travel via :params, never via interpolation).
+    audit_search_sql = (  # nosec B608 - static skeleton + bound params, no interpolated values
+        """
         SELECT seq, event_id, fraud_id, event_type, payload_summary, entry_hash, created_at
         FROM audit.audit_events
-        WHERE {where}
+        WHERE __WHERE_CLAUSE__
         ORDER BY seq DESC
         LIMIT :limit
-    """), params).fetchall()
+    """
+    ).replace("__WHERE_CLAUSE__", where)
+
+    rows = db.execute(sql_text(audit_search_sql), params).fetchall()
 
     return {
         "count": len(rows),

@@ -87,8 +87,8 @@ def run_test(name: str, script: str, env_overrides: dict) -> tuple[bool, float, 
     # Authoritative: exit code 0 = PASS, non-zero = FAIL
     # Output strings are informational only.
     passed = result.returncode == 0
-    tail = [line for line in output.strip().split("\n") if line.strip()][-3:]
-    return passed, duration, "\n".join(tail)
+    lines = [line for line in output.strip().split("\n") if line.strip()]
+    return passed, duration, "\n".join(lines[-3:]), lines
 
 
 def main():
@@ -114,7 +114,7 @@ def main():
     for name, script, env in tests:
         print(f"  Running {name}...", end=" ", flush=True)
         try:
-            passed, duration, tail = run_test(name, script, env)
+            passed, duration, tail, lines = run_test(name, script, env)
             status = "PASS" if passed else "FAIL"
             print(f"{status} ({duration:.1f}s)")
             results.append((name, passed, duration, tail))
@@ -122,9 +122,8 @@ def main():
                 print(f"    Last lines: {tail}")
                 # Show more of a failed suite's output so the specific
                 # failing check is identifiable from the runner log.
-                fail_lines = [ln for ln in output.strip().split("\n") if ln.strip()]
                 print("    --- failure detail ---")
-                for ln in fail_lines[-25:]:
+                for ln in lines[-25:]:
                     print(f"      {ln}")
         except subprocess.TimeoutExpired:
             print("TIMEOUT (120s)")

@@ -445,7 +445,7 @@ class WorkerPoolManager:
                     f"http://127.0.0.1:{port}/health",
                     headers={"Accept": "application/json"},
                 )
-                resp = urllib.request.urlopen(req, timeout=3)
+                resp = urllib.request.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
                 worker.healthy = True
                 worker.last_health_check = time.time()
             except Exception:
@@ -509,7 +509,7 @@ class WorkerPoolManager:
                     str(ROOT / ".venv" / "Scripts" / "python.exe"),
                     "-m", "uvicorn",
                     "src.inference.service:app",
-                    "--host", "0.0.0.0",
+                    "--host", "0.0.0.0",  # nosec B104 - local worker bind, LAN inference service
                     "--port", str(port),
                 ],
                 stdout=open(log_out, "w"),

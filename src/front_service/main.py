@@ -1178,7 +1178,7 @@ def monitor_metrics(response: Response) -> JSONResponse:
     try:
         import urllib.request as _urllib_req
         req = _urllib_req.Request("http://127.0.0.1:8006/health", headers={"Accept": "application/json"})
-        resp = _urllib_req.urlopen(req, timeout=3)
+        resp = _urllib_req.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
         inf_data = json.loads(resp.read())
         inference = {
             "status": inf_data.get("status", "unknown"),
@@ -1199,7 +1199,7 @@ def monitor_metrics(response: Response) -> JSONResponse:
     try:
         import urllib.request as _urllib_req
         req = _urllib_req.Request("http://127.0.0.1:8003/health", headers={"Accept": "application/json"})
-        resp = _urllib_req.urlopen(req, timeout=3)
+        resp = _urllib_req.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
         risk_data = json.loads(resp.read())
         model_info["risk_engine_status"] = risk_data.get("status", "unknown")
         model_info["risk_engine_model"] = risk_data.get("model", "unknown")
@@ -1279,7 +1279,7 @@ def monitor_unified() -> JSONResponse:
             "http://127.0.0.1:8006/unified-status",
             headers={"Accept": "application/json"},
         )
-        resp = _urllib_req.urlopen(req, timeout=3)
+        resp = _urllib_req.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
         data = json.loads(resp.read())
         result["unified_scorer"] = {
             "loaded": data.get("loaded", False),
@@ -1299,7 +1299,7 @@ def monitor_unified() -> JSONResponse:
             "http://127.0.0.1:8006/drift/status",
             headers={"Accept": "application/json"},
         )
-        resp = _urllib_req.urlopen(req, timeout=3)
+        resp = _urllib_req.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
         drift_data = json.loads(resp.read())
         result["drift"] = drift_data
     except Exception:
@@ -1312,7 +1312,7 @@ def monitor_unified() -> JSONResponse:
             "http://127.0.0.1:8006/drift/alerts",
             headers={"Accept": "application/json"},
         )
-        resp = _urllib_req.urlopen(req, timeout=3)
+        resp = _urllib_req.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
         alert_data = json.loads(resp.read())
         result["drift_alerts"] = alert_data.get("alerts", [])
         result["drift_alert_count"] = alert_data.get("n_alerts", 0)

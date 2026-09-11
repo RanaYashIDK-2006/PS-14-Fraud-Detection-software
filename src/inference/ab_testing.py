@@ -151,7 +151,7 @@ class TrafficSplitter:
 
     def _percentage_version(self, exp: ABExperiment, key: str) -> str:
         """Random percentage-based routing using consistent hash."""
-        h = int(hashlib.md5(key.encode()).hexdigest()[:8], 16) % 10000
+        h = int(hashlib.md5(key.encode(), usedforsecurity=False).hexdigest()[:8], 16) % 10000
         bucket = h / 10000.0  # 0.0–0.9999
 
         cumulative = 0.0
@@ -165,7 +165,7 @@ class TrafficSplitter:
 
     def _user_hash_version(self, exp: ABExperiment, user_id: str) -> str:
         """Deterministic: same user always gets same version."""
-        h = int(hashlib.md5(f"ab_{user_id}_{exp.name}".encode()).hexdigest()[:8], 16) % 10000
+        h = int(hashlib.md5(f"ab_{user_id}_{exp.name}".encode(), usedforsecurity=False).hexdigest()[:8], 16) % 10000
         bucket = h / 10000.0
 
         cumulative = 0.0
