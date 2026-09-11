@@ -47,8 +47,6 @@ if [ -z "${PS14_INTERNAL_TOKEN:-}" ] && [ -f "$ROOT/.env" ]; then
   [ -n "$_env_tok" ] && PS14_INTERNAL_TOKEN="$_env_tok"
 fi
 
-TOKEN="${PS14_INTERNAL_TOKEN:-ps14-dev-internal-token-change-me}"
-AUTH="X-Internal-Token: $TOKEN"
 WT_DIR="db/walkthrough"
 
 P_IDENTITY="${PS14_IDENTITY_PORT:-8001}"
@@ -166,6 +164,13 @@ export EXPORT_SIGNING_KEY="${EXPORT_SIGNING_KEY:-$(grep -E '^EXPORT_SIGNING_KEY=
 export COMPLIANCE_TOKEN="${COMPLIANCE_TOKEN:-$(grep -E '^COMPLIANCE_TOKEN=' "$ROOT/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d '"' | tr -d '"' || echo "$GEN")}"
 export JWT_SECRET="${JWT_SECRET:-$(grep -E '^JWT_SECRET=' "$ROOT/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d '"' | tr -d '"' || echo "$GEN")}"
 export PII_ENCRYPTION_KEY="${PII_ENCRYPTION_KEY:-$(grep -E '^PII_ENCRYPTION_KEY=' "$ROOT/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d '"' | tr -d '"' || echo "$GEN")}"
+
+# The children verify against the INTERNAL_TOKEN exported above (inherited
+# env wins over .env/random defaults in load_dotenv_and_patch), so the
+# script's own calls must use exactly that value — on CI there is no .env
+# and the value is freshly generated, never the dev constant.
+TOKEN="$INTERNAL_TOKEN"
+AUTH="X-Internal-Token: $TOKEN"
 
 rm -rf "$WT_DIR"
 mkdir -p "$WT_DIR"
