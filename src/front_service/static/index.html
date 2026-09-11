@@ -220,6 +220,7 @@ tr:hover td { background: rgba(59,130,246,0.03); }
       <a href="#performance" class="nav-item active"><span>📊</span> Performance</a>
       <a href="#architecture" class="nav-item"><span>🏗️</span> Architecture</a>
       <a href="#phases" class="nav-item"><span>🧭</span> Phase Ledger</a>
+      <a href="#cicd" class="nav-item"><span>⚙️</span> CI/CD</a>
       <a href="#privacy" class="nav-item"><span>🔒</span> Privacy</a>
       <a href="/monitor-page" class="nav-item"><span>📡</span> Live Monitor</a>
       <a href="/fraud-report-page" class="nav-item"><span>📋</span> Full Report</a>
@@ -366,7 +367,7 @@ tr:hover td { background: rgba(59,130,246,0.03); }
     <!-- PHASE LEDGER -->
     <div class="card anim" id="phases">
       <div class="card-header">
-        <div><div class="card-title">Validation Phase Ledger</div><div class="card-subtitle">Certified decisions · every conclusion evidence-classified</div></div>
+        <div><div class="card-title">Validation Phase Ledger</div><div class="card-subtitle">Phases 14–25 · every conclusion evidence-classified</div></div>
         <a href="/monitor-page" class="btn btn-ghost">Live Monitor →</a>
       </div>
       <div class="table-wrap">
@@ -393,6 +394,33 @@ tr:hover td { background: rgba(59,130,246,0.03); }
         <strong>Current status:</strong> E_hardneg is certified on the synthetic IBM corpus (recall 99.67%, FPR 10.99%).
         The 2017 regime shift is a generator artifact — these numbers are <b>not real-world performance</b>.
         Production promotion is <b>blocked pending real-world data</b>.
+      </div>
+    </div>
+
+    <!-- CI/CD PIPELINE -->
+    <div class="card anim" id="cicd">
+      <div class="card-header">
+        <div><div class="card-title">CI/CD Pipeline</div><div class="card-subtitle">GitHub Actions · both workflows run on every push to main</div></div>
+        <a href="https://github.com/RanaYashIDK-2006/PS-14-Fraud-Detection-software/actions" class="btn btn-ghost" target="_blank" rel="noopener">View runs →</a>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Stage</th><th>What it proves</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><b>Test Suite</b></td><td>22/22 regression checks on a clean checkout (data gen → train → suite)</td><td><span class="badge green">PASSING</span></td></tr>
+            <tr><td><b>Security Scan</b></td><td>bandit medium+ clean · dependency audit · penetration test (0 FAIL)</td><td><span class="badge green">PASSING</span></td></tr>
+            <tr><td><b>Docker Build</b></td><td>Image builds with trained artifacts, runs as non-root, /health answers</td><td><span class="badge green">PASSING</span></td></tr>
+            <tr><td><b>Integration Test</b></td><td>Live register-to-audit walkthrough over HTTP + compose stack + chain verify</td><td><span class="badge green">PASSING</span></td></tr>
+            <tr><td><b>Deploy</b></td><td>Tag-gated (v*) production promotion</td><td><span class="badge blue">ON TAG</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="info" style="margin-top:12px;margin-bottom:0;background:var(--surface-2);border-left-color:var(--green)">
+        <strong>First fully green pipeline (Sept 11, 2026):</strong> fixing it surfaced real defects —
+        a regression-runner NameError that swallowed failure details, an export-signing key that was
+        random per process (signatures unverifiable by design), fresh-checkout test fragility,
+        penetration-test gate semantics, and Docker startup gaps. Details in the README's
+        CI/CD pipeline status section.
       </div>
     </div>
 

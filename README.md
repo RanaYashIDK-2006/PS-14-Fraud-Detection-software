@@ -96,7 +96,7 @@ overhead beyond pure model inference.
 **Industry comparisons** in `scripts/benchmark_comparison.py` are approximate
 and use different datasets/protocols — not directly comparable.
 
-## Validation Phases (Phases 14–24)
+## Validation Phases (Phases 14–25)
 
 A rigorous, adversarial audit of the system's real-world readiness.
 Every conclusion is evidence-classified; firewalls are verified.
@@ -115,6 +115,7 @@ Every conclusion is evidence-classified; firewalls are verified.
 | **23** | Data acquisition gate | `CONDITIONALLY_AVAILABLE` | 114 sources evaluated; best candidate Kaggle fraudTrain (1.85M rows); provenance unclear, no channel info, no label timing |
 | **23B** | Frozen Kaggle external eval | `CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE` | P20_45feat on Kaggle (1.85M rows, 0.58% fraud): ROC-AUC 0.47 (degraded features); E_hardneg unlabeled; production promotion BLOCKED |
 | **24** | Conditional external eval | `CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE` | E_hardneg on Kaggle (555K test rows): ROC-AUC 0.435, recall 26.8%, FPR 44.9%; 5 of 12 promotion gates failed; production promotion BLOCKED |
+| **25** | Leakage audit & corrections | `NO_LEAKAGE — TOOLING VERIFIED` | Fixed Phase 24's import-path + tz-comparison + index-order bugs; maximal causal reconstruction (47/48 features); no target/temporal/feature leakage; promotion BLOCKED |
 
 ### Current Model Status
 
@@ -130,9 +131,12 @@ PHASE22_RUNNER = READY
 PHASE23_ACQUISITION = CONDITIONALLY_AVAILABLE_WITH_CAVEATS
 PHASE23B_EVAL = CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE
 PHASE24_EVAL = CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE (E_hardneg: ROC-AUC 0.435)
+PHASE25_AUDIT = NO_LEAKAGE (post-reconstruction re-eval: ROC-AUC 0.595, recall 18.5%, FPR 9.9%)
 REAL_WORLD_VALIDATION = BLOCKED (provenance unclear)
 PROMOTION = BLOCKED
-NEXT_ACTION = Continue authorized real-world data acquisition
+NEXT_ACTION = Continue authorized real-world data acquisition; wire Phase 25's
+              reconstruction-diagnostics + leakage-audit outputs into promotion_guard.py's
+              FEATURE_AVAILABILITY/FEATURE_PARITY gates (still Phase 24's hardcoded FAIL stubs)
 ```
 
 **Honest interpretation:** E_hardneg is certified on the synthetic IBM corpus
@@ -944,6 +948,48 @@ Production features:
 - **Automated data retention** (`scripts/retention-cron.sh` + systemd timers)
 - **Hourly audit chain verification** (`scripts/ps14-audit-chain.timer`)
 - **CI/CD gates** (`.github/workflows/ci-cd.yml`) block deployment on failures
+
+### CI/CD pipeline status
+
+Both workflows (`.github/workflows/ci-cd.yml`, `.github/workflows/security-scan.yml`) run on
+every push to `main`. As of September 11, 2026 the pipeline is **fully green end-to-end** for
+the first time — all five CI/CD stages pass: Test Suite (22/22 fast regression checks on a
+clean checkout), Security Scan (bandit medium+ clean, dependency audit, penetration test),
+Docker Build (image builds, runs as non-root, `/health` answers), Integration Test (the live
+register-to-audit walkthrough boots all five services over real HTTP, then the compose stack
+health-checks and the audit chain verifies), and Deploy (tag-gated).
+
+Getting here surfaced and fixed real defects, not CI-only quirks:
+
+- **Regression runner `NameError`** — the failing-check detail block referenced an undefined
+  variable, so the first failing check crashed the runner instead of reporting which check
+  failed. All failure detail was being silently swallowed.
+- **Export-signing key was random per process** — `export_signing_key_str` never read the
+  `EXPORT_SIGNING_KEY` env var, so any service started detached (Docker, CI, no-`.env`) signed
+  compliance exports with an unrepeatable key; signatures were unverifiable by design.
+  `load_dotenv_and_patch` also looked up lowercase field names in `os.environ`, which only ever
+  worked on Windows (case-insensitive environ) — Linux containers silently missed every patch.
+- **Fresh-checkout fragility** — several test suites assumed local artifacts a clone doesn't
+  have (`db/*.db`, `data/creditcard.csv`, the production manifest); they now SKIP with a clear
+  message when their inputs are absent and still run fully where the artifacts exist.
+- **Penetration-test gate semantics** — "service unreachable" was counted as FAIL, so the
+  security job could never pass without a live stack; unreachable is now BLOCKED (reported,
+  non-gating) and only a demonstrated vulnerability fails the gate. The elevated-user test
+  also sent a payload that FastAPI body-validation rejected (422) before the auth check —
+  the attack was never reaching the code it claimed to test.
+- **Docker health-check startup** — the CI smoke container runs the front service with
+  `DB_DIR=/tmp/db`, which nothing created; `SessionStore` now creates its parent directory.
+  The integration walkthrough also needed shared secrets exported to its children (on CI each
+  child generated random tokens and every internal call 403'd) and free ports, so it runs
+  before compose starts.
+
+Run the same checks locally:
+```bash
+python scripts/regression_suite.py --fast   # 22 checks, ~60s
+bandit -r src/ --severity-level medium      # gate: zero medium+ findings
+python scripts/penetration_test.py          # 0 FAIL required (BLOCKED = service down)
+bash scripts/live_walkthrough.sh            # full register-to-audit over HTTP
+```
 
 ### Security hardening
 
