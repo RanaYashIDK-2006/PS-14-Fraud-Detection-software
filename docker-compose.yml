@@ -12,6 +12,10 @@ services:
     command: sh -c "uvicorn src.front_service.main:app --host 0.0.0.0 --port 8000"
     environment: &shared-env
       DB_DIR: /app/db
+      # Dev compose: skip the production fail-closed gate (default CORS would
+      # abort boot). Production deployments use docker-compose.prod.yml,
+      # which sets PS14_MODE=production.
+      PS14_MODE: development
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
       PII_ENCRYPTION_KEY: ${PII_ENCRYPTION_KEY:?Set PII_ENCRYPTION_KEY in .env}
       EXPORT_SIGNING_KEY: ${EXPORT_SIGNING_KEY:?Set EXPORT_SIGNING_KEY in .env}
