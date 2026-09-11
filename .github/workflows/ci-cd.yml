@@ -201,6 +201,12 @@ jobs:
       - name: Load Docker image
         run: docker load < ps14-image.tar.gz
 
+      - name: Tag pre-built image for compose
+        run: |
+          for svc in front identity privacy risk verify audit; do
+            docker tag ps14:${{ github.sha }} ps14-$svc
+          done
+
       # Walkthrough FIRST: it needs ports 8001-8005 free, which compose
       # would hold. It self-verifies the audit chain and cleans up on exit.
       - name: Run live walkthrough
@@ -219,7 +225,7 @@ jobs:
           echo "CORS_ORIGINS=http://localhost:8000,http://localhost:8004" >> $GITHUB_ENV
 
       - name: Start stack
-        run: docker compose up -d
+        run: docker compose up -d --no-build
         env:
           JWT_SECRET: ${{ env.JWT_SECRET }}
           PII_ENCRYPTION_KEY: ${{ env.PII_ENCRYPTION_KEY }}

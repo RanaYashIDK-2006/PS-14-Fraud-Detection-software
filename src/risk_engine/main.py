@@ -189,10 +189,14 @@ async def lifespan(_app: FastAPI):
     velocity_limits_cfg = cfg.get("velocity_limits")
     severity_floor = int(cfg.get("severity_floor", 80))
     global RULE_VERSION
-    meta = json.loads((ARTIFACTS_DIR / "metadata.json").read_text(encoding="utf-8"))
-    model_version = f"seed{meta['seed']}-{Path(meta['data']).name}"
-    if meta.get("feedback"):
-        model_version += f"+{meta['feedback']}fb"
+    meta_path = ARTIFACTS_DIR / "metadata.json"
+    if meta_path.exists():
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        model_version = f"seed{meta['seed']}-{Path(meta['data']).name}"
+        if meta.get("feedback"):
+            model_version += f"+{meta['feedback']}fb"
+    else:
+        print("[risk_engine] WARNING: metadata.json MISSING - model_version unknown", file=sys.stderr)
     RULE_VERSION = hashlib.sha256(RULES_PATH.read_bytes()).hexdigest()[:12]
     # Runtime drift detection: PSI-based monitoring of incoming feature distributions.
     # Compares sliding window of recent features against training baseline.

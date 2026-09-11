@@ -18,6 +18,11 @@ COPY models ./models
 COPY data ./data
 COPY config ./config
 
+# Create db/ dir so the named-volume mount inherits ps14 ownership.
+# Without this, Docker creates the mount point as root and the
+# non-root user can't write session/audit DBs.
+RUN mkdir -p /app/db
+
 # ── Security hardening ──────────────────────────────────────────────────────
 # Create non-root user (Docker best practice)
 RUN groupadd -r ps14 && useradd -r -g ps14 -d /app -s /sbin/nologin ps14 \
