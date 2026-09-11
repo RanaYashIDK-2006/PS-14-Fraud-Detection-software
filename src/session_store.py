@@ -58,7 +58,10 @@ class SessionStore:
     """
 
     def __init__(self, db_path: Path, session_type: str = "admin"):
-        self.db_path = db_path
+        self.db_path = Path(db_path)
+        # sqlite3.connect cannot create the file if its directory is missing
+        # (e.g. a fresh DB_DIR volume in Docker) — make it first.
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self.session_type = session_type
         self._ensure_table()
         # Lazy-init Redis via centralized connection manager
