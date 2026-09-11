@@ -1,0 +1,13 @@
+{
+  "label_dependent_features": [
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate"
+  ],
+  "reconstruction_feasibility": "UNVERIFIED",
+  "reason": "Label availability timing unknown \u2014 cannot establish causal ordering",
+  "e_hardneg_evaluation": "UNAVAILABLE",
+  "e_hardneg_feature_validity": "UNVERIFIED",
+  "note": "E_hardneg cannot be evaluated on Kaggle without verified label timing",
+  "execution_time_utc": "2026-09-09T12:07:22.092704+00:00"
+}

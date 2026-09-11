@@ -1,0 +1,10 @@
+{
+  "missing_values": "HANDLED \u2014 NaN filled with 0 (cold start behavior)",
+  "unknown_categories": "HANDLED \u2014 encoded as integers",
+  "unseen_merchants": "NOT_APPLICABLE \u2014 all merchants in test are in train",
+  "unseen_users": "NOT_APPLICABLE \u2014 all cards in test are in train",
+  "low_history_entities": "POSSIBLE \u2014 some cards may have few transactions",
+  "amount_edge_cases": "Max amount: $7506",
+  "channel_availability": "UNAVAILABLE",
+  "execution_time_utc": "2026-09-09T12:07:22.092704+00:00"
+}

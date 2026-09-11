@@ -1,0 +1,13 @@
+{
+  "provenance_uncertainty": "Dataset source unclear \u2014 may be real or simulated",
+  "label_definition_uncertainty": "is_fraud exact definition undisclosed",
+  "label_latency_uncertainty": "No metadata about when labels became available",
+  "channel_information_missing": "No chip/swipe/online indicator",
+  "mcc_information_missing": "No MCC code \u2014 only high-level category",
+  "feature_reconstruction_limitations": "33/45 P20 features require historical context (filled with NaN)",
+  "pii_handling": "PII present in source, excluded from all outputs",
+  "representativeness": "Geography: US; Time: 2019-2020; Population: unclear",
+  "e_hardneg_unavailable": "Label-dependent features cannot be reconstructed without verified label timing",
+  "production_validation_not_established": "This is a conditional external benchmark, not production validation",
+  "execution_time_utc": "2026-09-09T12:07:22.092704+00:00"
+}

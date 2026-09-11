@@ -1,0 +1,7 @@
+{
+  "method": "Wilson score confidence intervals",
+  "confidence_level": 0.95,
+  "p20_recall_ci": "[0.9982, 1.0000]",
+  "p20_fpr_ci": "[1.0000, 1.0000]",
+  "execution_time_utc": "2026-09-09T12:07:22.092704+00:00"
+}

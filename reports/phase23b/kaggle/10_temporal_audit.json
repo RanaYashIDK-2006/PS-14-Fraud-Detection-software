@@ -1,0 +1,7 @@
+{
+  "train_period": "2019-01-01 00:00:18 to 2020-06-21 12:13:37",
+  "test_period": "2020-06-21 12:14:25 to 2020-12-31 23:59:34",
+  "temporal_split": "PRESERVED \u2014 supplied train/test split used",
+  "chronological_ordering": "VERIFIED",
+  "execution_time_utc": "2026-09-09T12:07:22.092704+00:00"
+}

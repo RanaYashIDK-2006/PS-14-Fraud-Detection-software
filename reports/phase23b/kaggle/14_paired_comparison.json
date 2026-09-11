@@ -1,0 +1,32 @@
+{
+  "model_a": "P20_45feat",
+  "model_b": "E_hardneg",
+  "comparison_status": "INCOMPARABLE",
+  "reason": "E_hardneg cannot be evaluated on Kaggle \u2014 label-dependent features require verified label timing",
+  "p20_metrics": {
+    "model": "P20_45feat",
+    "threshold": 0.018758,
+    "n_total": 555719,
+    "n_fraud": 2145,
+    "n_legit": 553574,
+    "prevalence": 0.0038598644278853163,
+    "roc_auc": 0.46583159344217484,
+    "pr_auc": 0.008317343848041472,
+    "recall": 1.0,
+    "fpr": 1.0,
+    "precision": 0.0038598644278853163,
+    "alert_rate": 1.0,
+    "tp": 2145,
+    "fp": 553574,
+    "fn": 0,
+    "tn": 0,
+    "alerts_per_1k": 1000.0,
+    "recall_ci_lower": 0.998212311659883,
+    "recall_ci_upper": 1,
+    "fpr_ci_lower": 0.9999930606709067,
+    "fpr_ci_upper": 1
+  },
+  "e_hardneg_metrics": null,
+  "note": "Only P20 could be evaluated; E_hardneg feature reconstruction blocked",
+  "execution_time_utc": "2026-09-09T12:07:22.092704+00:00"
+}

@@ -1,0 +1,17 @@
+{
+  "pii_columns_detected": [
+    "first",
+    "last",
+    "street",
+    "city",
+    "state",
+    "zip",
+    "dob",
+    "job"
+  ],
+  "pii_excluded_from_reports": true,
+  "raw_pii_persisted_by_evaluation": false,
+  "pseudonymous_identifiers_used": true,
+  "note": "PII columns present in source but excluded from all evaluation outputs",
+  "execution_time_utc": "2026-09-09T12:07:22.092704+00:00"
+}

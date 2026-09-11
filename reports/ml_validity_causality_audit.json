@@ -116,7 +116,7 @@
     "extra_volume"
   ],
   "method": "recompute target-row features from history up to t, append strictly-future perturbed events, recompute; causal max|diff| must be 0.0 (bit-identical)",
-  "built_at": "2026-09-08T10:07:05.733043+00:00",
+  "built_at": "2026-09-11T04:49:46.109350+00:00",
   "tolerance": 0.0,
   "label_and_quarantine": {
     "B_label_derived_feature_lines": [],

@@ -1,0 +1,8 @@
+{
+  "label_latency": "UNVERIFIED",
+  "transaction_time": "trans_date_trans_time (parseable, timezone unknown)",
+  "decision_time": "N/A \u2014 no production model was run against real transactions",
+  "label_available_time": "UNKNOWN",
+  "label_finalization_time": "UNKNOWN",
+  "execution_time_utc": "2026-09-09T12:07:22.092704+00:00"
+}

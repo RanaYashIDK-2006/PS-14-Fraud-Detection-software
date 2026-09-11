@@ -1,0 +1,96 @@
+{
+  "phase": "23B",
+  "objective": "Frozen conditional Kaggle external evaluation",
+  "firewall": {
+    "FINAL_TEST_ACCESSED": false,
+    "FINAL_TEST_MODIFIED": false,
+    "E_HARDNEG_MODIFIED": false,
+    "P20_MODIFIED": false,
+    "PRODUCTION_MODIFIED": false
+  },
+  "e_hardneg": {
+    "model_version": "altman_native_E_hardneg_cert_20260904",
+    "threshold": 0.018758,
+    "n_features": 48,
+    "hashes": {
+      "xgb_native.joblib": {
+        "expected": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+        "actual": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+        "match": true
+      },
+      "lgb_native.joblib": {
+        "expected": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+        "actual": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+        "match": true
+      },
+      "cb_native.joblib": {
+        "expected": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+        "actual": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+        "match": true
+      },
+      "scaler_native.joblib": {
+        "expected": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+        "actual": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+        "match": true
+      },
+      "feature_list.json": {
+        "expected": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+        "actual": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+        "match": true
+      }
+    },
+    "verification": "ALL_MATCH"
+  },
+  "p20": {
+    "n_features": 45,
+    "features": [
+      "amt",
+      "log_amt",
+      "amt_sq",
+      "hr",
+      "mn",
+      "dow",
+      "Month",
+      "Day",
+      "hour_sin",
+      "hour_cos",
+      "is_night",
+      "is_business_hours",
+      "chip",
+      "is_online",
+      "is_swipe",
+      "err",
+      "has_zip",
+      "has_state",
+      "is_online_or_no_state",
+      "mcc",
+      "mcc_high",
+      "mcc_restaurant",
+      "mcc_gas",
+      "mcc_grocery",
+      "mcc_travel",
+      "mcc_online",
+      "merchant_id",
+      "city_id",
+      "card_id",
+      "user_tx_count",
+      "card_tx_count",
+      "user_avg_amt",
+      "amt_vs_user_avg",
+      "amt_zscore",
+      "merch_tx_count",
+      "user_merchant_diversity",
+      "user_city_diversity",
+      "high_amt",
+      "very_high_amt",
+      "amt_x_hr",
+      "amt_x_mcc",
+      "amt_x_chip",
+      "amt_x_online",
+      "amt_x_night",
+      "user_merch_count"
+    ]
+  },
+  "status": "FIREWALL_VERIFIED",
+  "execution_time_utc": "2026-09-09T12:07:22.092704+00:00"
+}

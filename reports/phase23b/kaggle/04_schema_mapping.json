@@ -1,0 +1,101 @@
+{
+  "mappings": [
+    {
+      "source": "trans_num",
+      "target": "transaction_id",
+      "confidence": "EXACT",
+      "justification": "Unique transaction identifier"
+    },
+    {
+      "source": "trans_date_trans_time",
+      "target": "transaction_timestamp",
+      "confidence": "EXACT",
+      "justification": "Parseable datetime"
+    },
+    {
+      "source": "unix_time",
+      "target": "unix_timestamp",
+      "confidence": "EXACT",
+      "justification": "Unix epoch seconds"
+    },
+    {
+      "source": "amt",
+      "target": "amount",
+      "confidence": "EXACT",
+      "justification": "Transaction amount in dollars"
+    },
+    {
+      "source": "cc_num",
+      "target": "account_id",
+      "confidence": "EXACT",
+      "justification": "Card number (pseudonymous)"
+    },
+    {
+      "source": "merchant",
+      "target": "merchant_name",
+      "confidence": "SUPPORTED_MAPPING",
+      "justification": "Merchant name string, not hash"
+    },
+    {
+      "source": "category",
+      "target": "merchant_category",
+      "confidence": "APPROXIMATE_MAPPING",
+      "justification": "High-level category, not MCC code"
+    },
+    {
+      "source": "is_fraud",
+      "target": "fraud_label",
+      "confidence": "EXACT",
+      "justification": "Binary fraud label from dataset"
+    },
+    {
+      "source": "city",
+      "target": "city",
+      "confidence": "EXACT",
+      "justification": "City name"
+    },
+    {
+      "source": "state",
+      "target": "state",
+      "confidence": "EXACT",
+      "justification": "State abbreviation"
+    },
+    {
+      "source": "lat",
+      "target": "latitude",
+      "confidence": "EXACT",
+      "justification": "Cardholder latitude"
+    },
+    {
+      "source": "long",
+      "target": "longitude",
+      "confidence": "EXACT",
+      "justification": "Cardholder longitude"
+    },
+    {
+      "source": "merch_lat",
+      "target": "merchant_latitude",
+      "confidence": "EXACT",
+      "justification": "Merchant latitude"
+    },
+    {
+      "source": "merch_long",
+      "target": "merchant_longitude",
+      "confidence": "EXACT",
+      "justification": "Merchant longitude"
+    },
+    {
+      "source": "N/A",
+      "target": "channel",
+      "confidence": "UNAVAILABLE",
+      "justification": "No channel column in dataset"
+    },
+    {
+      "source": "N/A",
+      "target": "mcc",
+      "confidence": "UNAVAILABLE",
+      "justification": "No MCC column in dataset"
+    }
+  ],
+  "execution_time_utc": "2026-09-09T12:07:22.092704+00:00"
+}

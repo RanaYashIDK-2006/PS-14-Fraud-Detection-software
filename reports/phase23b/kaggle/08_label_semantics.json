@@ -1,0 +1,8 @@
+{
+  "target_source": "is_fraud",
+  "target_semantics": "UNVERIFIED",
+  "label_definition": "Binary fraud flag \u2014 exact definition undisclosed by dataset author",
+  "label_source": "Unknown \u2014 dataset published on Kaggle by DV (2024)",
+  "label_creation_process": "UNKNOWN",
+  "execution_time_utc": "2026-09-09T12:07:22.092704+00:00"
+}

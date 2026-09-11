@@ -1,0 +1,370 @@
+{
+  "total_features": 45,
+  "exact": 5,
+  "conditional": 0,
+  "unavailable": 40,
+  "p20_validation_feasibility": "PARTIAL",
+  "features": [
+    {
+      "feature": "amt",
+      "source_fields": "amount",
+      "reconstructable": true,
+      "decision_time_valid": true,
+      "semantic_valid": true,
+      "status": "EXACT"
+    },
+    {
+      "feature": "log_amt",
+      "source_fields": "amount",
+      "reconstructable": true,
+      "decision_time_valid": true,
+      "semantic_valid": true,
+      "status": "EXACT"
+    },
+    {
+      "feature": "amt_sq",
+      "source_fields": "amount",
+      "reconstructable": true,
+      "decision_time_valid": true,
+      "semantic_valid": true,
+      "status": "EXACT"
+    },
+    {
+      "feature": "hr",
+      "source_fields": "timestamp",
+      "reconstructable": true,
+      "decision_time_valid": true,
+      "semantic_valid": true,
+      "status": "EXACT"
+    },
+    {
+      "feature": "mn",
+      "source_fields": "timestamp",
+      "reconstructable": true,
+      "decision_time_valid": true,
+      "semantic_valid": true,
+      "status": "EXACT"
+    },
+    {
+      "feature": "dow",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "Month",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "Day",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "hour_sin",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "hour_cos",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "is_night",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "is_business_hours",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "chip",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "is_online",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "is_swipe",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "err",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "has_zip",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "has_state",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "is_online_or_no_state",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "mcc",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "mcc_high",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "mcc_restaurant",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "mcc_gas",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "mcc_grocery",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "mcc_travel",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "mcc_online",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "merchant_id",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "city_id",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "card_id",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "user_tx_count",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "card_tx_count",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "user_avg_amt",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "amt_vs_user_avg",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "amt_zscore",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "merch_tx_count",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "user_city_diversity",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "high_amt",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "very_high_amt",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "amt_x_hr",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "amt_x_mcc",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "amt_x_chip",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "amt_x_online",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "amt_x_night",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    },
+    {
+      "feature": "user_merch_count",
+      "source_fields": "not derivable from available fields",
+      "reconstructable": false,
+      "decision_time_valid": false,
+      "semantic_valid": false,
+      "status": "UNAVAILABLE"
+    }
+  ],
+  "execution_time_utc": "2026-09-09T12:07:22.092704+00:00"
+}
