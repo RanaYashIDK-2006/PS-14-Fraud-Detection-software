@@ -1821,7 +1821,7 @@ def monitor_test_results() -> JSONResponse:
 
 @app.get("/monitor/phases")
 def monitor_phases() -> JSONResponse:
-    """Return the validation-phase decision ledger (Phases 14-23B).
+    """Return the validation-phase decision ledger (Phases 14-25).
 
     Reads each phase's immutable decision.json from reports/ — the same
     artifacts pushed to GitHub — so the UI shows the certified verdicts
@@ -1841,6 +1841,7 @@ def monitor_phases() -> JSONResponse:
         (23, "Data acquisition gate", "Can real-world data be acquired?"),
         ("23B", "Frozen Kaggle eval", "How do frozen models behave on external data?"),
         (24, "Conditional external eval", "Executable evaluation with governance checks"),
+        (25, "Leakage audit & corrections", "Is the external eval leakage-free and correctly built?"),
     ]
     # File path patterns differ across phases (numbered prefixes, subdirs)
     _DECISION_PATTERNS = [
@@ -1851,6 +1852,7 @@ def monitor_phases() -> JSONResponse:
         lambda n: root / "reports" / f"phase{n}" / "26_final_decision.json" if n == 22 else None,
         lambda n: root / "reports" / f"phase{n}" / "kaggle" / "20_final_decision.json" if str(n) == "23B" else None,
         lambda n: root / "reports" / f"phase{n}" / "kaggle" / "20_final_decision.json" if n == 24 else None,
+        lambda n: root / "reports" / f"phase{n}" / "final_decision.json" if n == 25 else None,
     ]
     phases = []
     for num, title, question in phases_meta:

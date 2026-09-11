@@ -10,13 +10,42 @@
     "warning": "No target leakage detected"
   },
   "temporal_leakage": {
-    "status": "ERROR",
+    "status": "CHECKED",
     "temporal_leakage": false,
-    "error": "Invalid comparison between dtype=datetime64[us] and Timestamp"
+    "min_timestamp": "2020-06-21 12:14:25",
+    "max_timestamp": "2020-12-31 23:59:34",
+    "n_rows": 555719,
+    "n_unique_timestamps": 544760,
+    "future_timestamps": 0,
+    "temporal_ordering_ok": true
   },
   "feature_leakage": {
     "status": "NO_LEAKAGE",
     "leakage_features": [],
     "n_leakage_features": 0
+  },
+  "cold_start_audit": {
+    "status": "OK",
+    "n_features_audited": 3,
+    "n_cold_start_risk": 0,
+    "risk_threshold": 0.5,
+    "features": {
+      "user_fraud_rate": {
+        "status": "OK",
+        "degenerate_fraction": 0.2484,
+        "n_unique_values": 603
+      },
+      "merch_fraud_rate": {
+        "status": "OK",
+        "degenerate_fraction": 0.0133,
+        "n_unique_values": 650
+      },
+      "city_fraud_rate": {
+        "status": "OK",
+        "degenerate_fraction": 0.2163,
+        "n_unique_values": 583
+      }
+    },
+    "note": "No cold-start fragility detected"
   }
 }

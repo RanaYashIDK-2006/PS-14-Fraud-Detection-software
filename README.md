@@ -173,6 +173,19 @@ python experiments/phase24_conditional_external_eval/run_evaluation.py
 python experiments/phase24_conditional_external_eval/run_evaluation.py --dry-run
 ```
 
+Phase 25 corrected Phase 24's defects and closed the remaining audit gap:
+fixed the zip import-path bug (the runner now works from an extracted zip),
+rebuilt feature reconstruction maximally causally (47/48 features available;
+only `err` is unreconstructable — no error/decline code in Kaggle), and ran
+the leakage audit: no target, temporal, or feature leakage; temporal check
+(now bug-fixed) finds 0 future timestamps. The cold-start audit verified
+the rate features are healthy in the shipped train-aggregate design
+(user 24.8% / merchant 1.3% / city 21.6% degenerate; median 1,054 tx/card
+history) — the widely-cited "76% degenerate" figure applies only to a
+running-rate design that was NOT evaluated. Metrics were unchanged
+(ROC-AUC 0.595, recall 18.5%, FPR 9.9%); promotion remains BLOCKED and real-
+world data acquisition remains the next milestone.
+
 ## Setup
 
 Requires Python 3.10+.

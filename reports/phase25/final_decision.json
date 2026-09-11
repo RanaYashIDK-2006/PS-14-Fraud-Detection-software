@@ -1,0 +1,44 @@
+{
+  "phase": 25,
+  "classification": "LEAKAGE_AUDIT_COMPLETE",
+  "evaluation_type": "AUDIT_CORRECTIONS_AND_LEAKAGE_AUDIT",
+  "dataset": "kaggle_fraud",
+  "model_evaluated": "E_hardneg (frozen)",
+  "scope": [
+    "Import-path bug fix (zip extraction)",
+    "Maximal decision-time-causal feature reconstruction (47/48)",
+    "Leakage audit: target, temporal, feature",
+    "Cold-start fragility audit on rate features"
+  ],
+  "leakage": {
+    "overall": "NO_LEAKAGE",
+    "target_leakage": "NO_LEAKAGE",
+    "temporal_leakage": "NONE (CHECKED, 0 future timestamps)",
+    "feature_leakage": "NO_LEAKAGE",
+    "temporal_check_bug_fixed": "tz-aware/naive Timestamp comparison raised TypeError in the Phase 24 artifact; comparison is now naive-naive and reports CHECKED"
+  },
+  "cold_start_audit": {
+    "user_fraud_rate": {"degenerate_fraction": 0.2484, "n_unique": 603, "status": "OK"},
+    "merch_fraud_rate": {"degenerate_fraction": 0.0133, "n_unique": 650, "status": "OK"},
+    "city_fraud_rate": {"degenerate_fraction": 0.2163, "n_unique": 583, "status": "OK"},
+    "verdict": "Train-aggregate rate design is healthy on this dataset (deep history: median 1054 tx/card). A running-rate design would be degenerate (60.5% in train) - concern applies only to that alternative, not the shipped reconstruction."
+  },
+  "metrics_unchanged": {
+    "roc_auc": 0.594662,
+    "pr_auc": 0.006682,
+    "recall": 0.185082,
+    "fpr": 0.099313,
+    "precision": 0.007169
+  },
+  "production_validation": "NOT_ESTABLISHED",
+  "promotion_allowed": false,
+  "promotion_blocked_reason": "Conditional external evaluation - NOT production validation. Failed gates: REAL_WORLD_DATA, LABEL_GOVERNANCE, LABEL_LATENCY",
+  "firewall_status": {
+    "FINAL_TEST_ACCESSED": false,
+    "FINAL_TEST_MODIFIED": false,
+    "E_HARDNEG_MODIFIED": false,
+    "P20_MODIFIED": false,
+    "PRODUCTION_MODIFIED": false
+  },
+  "execution_time_utc": "2026-09-11T04:42:30.740776+00:00"
+}

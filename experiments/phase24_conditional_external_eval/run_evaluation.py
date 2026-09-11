@@ -31,6 +31,7 @@ from experiments.phase24_conditional_external_eval.provenance import (
 )
 from experiments.phase24_conditional_external_eval.leakage import (
     write_leakage_artifacts,
+    append_cold_start_audit,
 )
 from experiments.phase24_conditional_external_eval.metrics import (
     write_metrics_artifacts,
@@ -284,6 +285,17 @@ def run_evaluation(dry_run: bool = False) -> dict:
     n_const = len(recon_report["constant"])
     print(f"  Exact: {n_exact}, Causal: {n_causal}, Constant: {n_const}, Unavailable: {n_unavail}")
     print(f"  Total available: {n_exact + n_causal + n_const}/{n_exact + n_causal + n_const + n_unavail}")
+    print()
+
+    # -- Step 4b: Cold-start audit on reconstructed rate features --
+    print("Step 4b: Cold-start audit on rate features...")
+    cold_start = append_cold_start_audit(
+        OUTPUT_DIR,
+        test_features,
+        cols=["user_fraud_rate", "merch_fraud_rate", "city_fraud_rate"],
+    )
+    for col, info in cold_start["features"].items():
+        print(f"  {col}: {info['status']} (degenerate {info['degenerate_fraction']:.1%})")
     print()
 
     # ── Step 5: Manifest verification ──

@@ -75,8 +75,10 @@ def check_temporal_leakage(
         n_unique_ts = df["_ts"].nunique()
 
         # Check for timestamps that are suspiciously far in the future
-        now = pd.Timestamp.now(tz="UTC")
-        future_rows = (df["_ts"] > now).sum()
+        # Naive comparison — external-dataset timestamps carry no tz info,
+        # and comparing against tz-aware now() raises TypeError.
+        now = pd.Timestamp.now()
+        future_rows = int((df["_ts"] > now).sum())
 
         df.drop("_ts", axis=1, inplace=True, errors="ignore")
 
@@ -87,7 +89,7 @@ def check_temporal_leakage(
             "max_timestamp": str(max_ts),
             "n_rows": n_rows,
             "n_unique_timestamps": n_unique_ts,
-            "future_timestamps": int(future_rows),
+            "future_timestamps": future_rows,
             "temporal_ordering_ok": True,
         }
     except Exception as e:
@@ -157,6 +159,54 @@ def run_all_leakage_checks(
     }
 
 
+def check_cold_start(
+    features_df: pd.DataFrame,
+    cols: list[str] | None = None,
+    risk_threshold: float = 0.5,
+) -> dict[str, Any]:
+    """Flag rate features whose values are mostly degenerate 0/1.
+
+    A rate computed from thin entity history is either 0 (entity never
+    seen fraud) or 1 (every prior entity tx was fraud) — little real
+    signal, overconfidence on thin evidence. This is not leakage in the
+    correlation sense; it is a documented fragility.
+    """
+    if cols is None:
+        cols = [c for c in features_df.columns if "fraud_rate" in c]
+
+    audited: dict[str, Any] = {}
+    n_risk = 0
+    for col in cols:
+        if col not in features_df.columns:
+            continue
+        s = features_df[col].dropna()
+        if len(s) == 0:
+            continue
+        degenerate = float(((s == 0.0) | (s == 1.0)).mean())
+        status = "COLD_START_RISK" if degenerate > risk_threshold else "OK"
+        if status == "COLD_START_RISK":
+            n_risk += 1
+        audited[col] = {
+            "status": status,
+            "degenerate_fraction": round(degenerate, 4),
+            "n_unique_values": int(s.nunique()),
+        }
+
+    return {
+        "status": "COLD_START_RISK" if n_risk > 0 else "OK",
+        "n_features_audited": len(audited),
+        "n_cold_start_risk": n_risk,
+        "risk_threshold": risk_threshold,
+        "features": audited,
+        "note": (
+            "Degenerate 0/1 rate features contribute little signal on thin "
+            "entity history; a documented fragility, not correlation leakage"
+            if n_risk > 0
+            else "No cold-start fragility detected"
+        ),
+    }
+
+
 def write_leakage_artifacts(
     output_dir: Path,
     df: pd.DataFrame,
@@ -171,3 +221,28 @@ def write_leakage_artifacts(
     )
 
     return results
+
+
+def append_cold_start_audit(
+    output_dir: Path,
+    features_df: pd.DataFrame,
+    cols: list[str] | None = None,
+) -> dict[str, Any]:
+    """Audit reconstructed features for cold-start fragility and persist
+    the result inside the leakage artifact (04_leakage_check.json)."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    audit = check_cold_start(features_df, cols)
+
+    artifact_path = output_dir / "04_leakage_check.json"
+    results: dict[str, Any] = {}
+    if artifact_path.exists():
+        try:
+            results = json.loads(artifact_path.read_text(encoding="utf-8"))
+        except Exception:
+            results = {}
+    results["cold_start_audit"] = audit
+    artifact_path.write_text(
+        json.dumps(results, indent=2, default=str), encoding="utf-8"
+    )
+
+    return audit
