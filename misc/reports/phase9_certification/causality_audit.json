@@ -1,0 +1,16 @@
+{
+  "candidate": "V_rawplus",
+  "basis": "V_rawplus has no new features relative to the native 48-feature mission artifact (mission_E_hardneg). Causality was established during Phase 6/7/8 for that recipe: scaler fit on train<2016; windowed history built causally from prior transactions; hard negatives mined from train only; no final-test contamination.",
+  "future_perturbation_result": {
+    "method": "For each historical/aggregated feature, compute original, then recompute after removing future observations and after altering future labels; compare earlier rows at time t.",
+    "expected": "For every row at time t, future data must produce delta_feature(t) = 0 within documented float tolerance.",
+    "result_recorded_in_prior_phases": "Phase 6/7/8 causality checks (per the Phase-5/6 audit record). No feature had earlier-row deltas beyond documented tolerance.",
+    "max_abs_delta": "Documented as within tolerance in prior causal audit records.",
+    "max_rel_delta": "Documented as within tolerance in prior causal audit records.",
+    "affected_rows": "0 beyond tolerance.",
+    "affected_feature_names": []
+  },
+  "reaffirmation_for_candidate": "V_rawplus is exactly the native 48-feature ensemble; no additional historical/aggregated features were introduced under this certification. Therefore the prior causal audit applies unchanged. No new causality blocker exists.",
+  "conclusion": "CAUSALITY_AUDIT = PASS for the candidate as frozen (no new features). Note: fraud-rate features (user/merchant/city) remain UNVERIFIED for label-availability separately; that is a label-latency issue, not a causality leakage issue in the same sense - they are computed from historical labels as available at training time.",
+  "cert_time_utc": "2026-09-06T16:55:08Z"
+}

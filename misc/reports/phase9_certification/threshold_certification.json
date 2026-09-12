@@ -1,0 +1,31 @@
+{
+  "threshold_value": 0.0298937337,
+  "threshold_precision": "exact decimal as recorded in Phase-6b threshold_selection.json + Phase-8 controls.json at_floor",
+  "selection_basis": "minimum FPR at exact recall >= 0.995 on locked validation (174,530 rows / 3,834 fraud)",
+  "selection_context": "Phase-6b threshold_selection.json; reproduced in Phase-8 controls.json at_floor",
+  "do_not_round": true,
+  "rounded_proxy_used_in_phase8_fixed": 0.029894,
+  "rounded_proxy_result_note": "Phase-8 fixed_thr=0.029894 yields recall 0.994784 (below 0.995) and FPR 0.099235, confirming rounding below threshold drops recall \u2014 protocol used floor value 0.02989373 for the at-floor point",
+  "confusion_at_tvstar": {
+    "threshold": 0.0298937337,
+    "recall": 0.995044,
+    "fpr": 0.099235,
+    "precision": 0.18382,
+    "tp": 3815,
+    "fp": 16939,
+    "fn": 19,
+    "tn": 153757,
+    "alerts": 20754,
+    "alerts_per_1k": 118.914
+  },
+  "validation_population": {
+    "rows": 174530,
+    "fraud": 3834,
+    "legit": 170696
+  },
+  "source_records_sha256": {
+    "phase8_controls": "31276c97bae281ee390882f83d92e62f3d38704fb7f68f33364fe7a968493b69",
+    "phase6b_threshold_selection": "112a970323d302cba3b61e1459c996682560ae86505b3ffec5e4510834959acb"
+  },
+  "cert_time_utc": "2026-09-06T16:41:49Z"
+}

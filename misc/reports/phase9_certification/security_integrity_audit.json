@@ -1,0 +1,19 @@
+{
+  "candidate": "V_rawplus",
+  "artifact_hashes_verified": {
+    "model": "8875030e3636a1b59aa24ed7a68f96481d66c9e07e531127f721aae4ec6fdc7e",
+    "config": "0babb32e58f57a50e9fa9bb494cb89e659076ab12339aa3b8f273b6eed9c2cf3",
+    "scores": "cc2a9c79d8abae5a7613f9f6c1d3620bae6f16f7f5f5bf6437f94b91dde35545"
+  },
+  "model_loading_safety": "joblib deserialization from a read-only records directory; same library path as production training pipeline.",
+  "serialization_integrity": "SHA-256 of model/config/scores recorded; any mismatch would fail the guard.",
+  "dependency_versions": "Phase-8 controls record python_version and note library versions (xgboost/lightgbm/catboost/sklearn). Exact pinned versions should be verified against the production environment before promotion.",
+  "absence_of_unexpected_executable_artifacts": true,
+  "path_traversal_risks": "No path traversal; all paths within project tree and read-only guard asserted.",
+  "unsafe_deserialization_concerns": "joblib can execute arbitrary code if the serialized file is untrusted. Mitigation: model artifact hash verified against the frozen production records; file not fetched from an external source during certification.",
+  "configuration_integrity": "Production config (mission_E_hardneg/config.json) hash recorded and unchanged.",
+  "production_write_guards": "Production guard preflight asserts no production artifact was modified during certification.",
+  "experiment_directory_isolation": "Certification artifacts written to reports/phase9_certification only; no write to models/production.",
+  "conclusion": "No critical security issue found during certification. Residual risk: joblib deserialization from an untrusted source would be unsafe - mitigated here by hash verification and local artifact only. Production parity and online loading safety must still be verified before promotion.",
+  "cert_time_utc": "2026-09-06T16:56:54Z"
+}

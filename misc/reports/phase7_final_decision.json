@@ -1,0 +1,39 @@
+{
+  "outcome": "A",
+  "outcome_label": "ROBUST DEV WIN (freeze+independent certification; E_hardneg stays until approved)",
+  "evidence": {
+    "coverage_stress_absent_fpr_by_pct": {
+      "5": [
+        0.7861524978089395
+      ],
+      "10": [
+        0.7344434706397897,
+        0.7283085013146363
+      ],
+      "20": [
+        0.6818580192813322,
+        0.7142857142857143,
+        0.7037686240140227,
+        0.7147239263803681
+      ],
+      "40": [
+        0.7629272567922875
+      ]
+    },
+    "coverage_lever_fixes_absent_problem": false,
+    "rawplus_wins_ablation": true,
+    "ablation_fpr_comparison": {
+      "raw_only": 0.10506397337957539,
+      "norm_only": 0.10482963865585603,
+      "rawplus": 0.09923489712705628
+    },
+    "forward_validation_stable": true,
+    "fwd_mean_recall": 0.995207,
+    "fwd_mean_fpr": 0.089582,
+    "threshold_margin_pct": 3244.6032
+  },
+  "historical_test_note": "Phase-6 one-shot (consumed, Rule 2): E_hardneg 0.9967 rec / V_rawplus 0.9908 rec at frozen thresholds. Sole evidence of a val->test recall gap; NOT rescorable in Phase 7.",
+  "production_untouched": true,
+  "final_test_untouched": true,
+  "next_action": "V_rawplus dev-robust (fixed-val floor + all dev forward windows). Freeze in place; send to INDEPENDENT CERTIFICATION. Certification may re-authorize a single clean final-test one-shot at the true floor tV* (0.0298937337). E_hardneg remains deployed until certification completes."
+}

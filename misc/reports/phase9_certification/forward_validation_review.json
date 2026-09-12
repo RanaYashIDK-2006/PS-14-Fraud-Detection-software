@@ -1,0 +1,99 @@
+{
+  "candidate": "V_rawplus",
+  "clean_windows_only": true,
+  "windows": {
+    "FV-2014": {
+      "train_rows": 706211,
+      "ev_rows": 84487,
+      "ev_fraud": 1052,
+      "E_hardneg": {
+        "threshold": 0.12973101,
+        "recall": 0.9952471482889734,
+        "fpr": 0.042320369149637445,
+        "tp": 1047,
+        "fp": 3531,
+        "fn": 5,
+        "tn": 79904,
+        "auc": 0.999069,
+        "pr_auc": 0.965796
+      },
+      "V_rawplus": {
+        "threshold": 0.12210848,
+        "recall": 0.9952471482889734,
+        "fpr": 0.04230838377179841,
+        "tp": 1047,
+        "fp": 3530,
+        "fn": 5,
+        "tn": 79905,
+        "auc": 0.999074,
+        "pr_auc": 0.968434
+      }
+    },
+    "FV-2015": {
+      "train_rows": 790698,
+      "ev_rows": 88498,
+      "ev_fraud": 3281,
+      "E_hardneg": {
+        "threshold": 0.02755215,
+        "recall": 0.9951234379762267,
+        "fpr": 0.17352171515073284,
+        "tp": 3265,
+        "fp": 14787,
+        "fn": 16,
+        "tn": 70430,
+        "auc": 0.991089,
+        "pr_auc": 0.888984
+      },
+      "V_rawplus": {
+        "threshold": 0.03327461,
+        "recall": 0.9951234379762267,
+        "fpr": 0.15445275003813794,
+        "tp": 3265,
+        "fp": 13162,
+        "fn": 16,
+        "tn": 72055,
+        "auc": 0.991871,
+        "pr_auc": 0.899504
+      }
+    },
+    "FV-2016": {
+      "train_rows": 879196,
+      "ev_rows": 88165,
+      "ev_fraud": 3579,
+      "E_hardneg": {
+        "threshold": 0.04919017,
+        "recall": 0.9952500698519139,
+        "fpr": 0.08209396354006573,
+        "tp": 3562,
+        "fp": 6944,
+        "fn": 17,
+        "tn": 77642,
+        "auc": 0.996653,
+        "pr_auc": 0.954278
+      },
+      "V_rawplus": {
+        "threshold": 0.06549474,
+        "recall": 0.9952500698519139,
+        "fpr": 0.07198590783344762,
+        "tp": 3562,
+        "fp": 6089,
+        "fn": 17,
+        "tn": 78497,
+        "auc": 0.997143,
+        "pr_auc": 0.961037
+      }
+    }
+  },
+  "contaminated_window_marked_invalid": {
+    "window": "2018-2019 (used momentarily during an earlier Phase-7 draft; contained all 4,578 final-test fraud rows)",
+    "status": "INVALID - excluded from certification; documented in Phase-7 methodology-integrity note and fix log; no deliverable used it",
+    "final_test_rows_in_window": "4,578 (all final-test fraud)"
+  },
+  "forward_conclusion": "V_rawplus holds >=99.5% recall on all three clean dev windows with FPR equal or better than raw (E_hardneg proxy): 2014: 0.0423=0.0423, 2015: 0.1545 vs 0.1735 (-10.9%), 2016: 0.0720 vs 0.0821 (-12.3%). Forward evidence is acceptable.",
+  "C_cov_transfer_failure_preserved": {
+    "note": "Phase-8 C_cov failed transfer (FV-2015 FPR 0.252 vs V_rawplus 0.154). This negative evidence is preserved and supports rejection of C_cov, not V_rawplus.",
+    "C_cov_fv2015_fpr": 0.252027,
+    "V_rawplus_fv2015_fpr": 0.154453
+  },
+  "cert_time_utc": "2026-09-06T16:44:43Z"
+}

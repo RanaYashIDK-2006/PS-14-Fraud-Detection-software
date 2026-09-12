@@ -1,0 +1,69 @@
+{
+  "candidates_reproduced_in_phase8": {
+    "C_cov": {
+      "max_abs_dp": 0.0,
+      "metrics_identical_at_floor": true,
+      "run1": {
+        "threshold": 0.03107652,
+        "recall": 0.995044,
+        "fpr": 0.112112,
+        "precision": 0.166216,
+        "tp": 3815,
+        "fp": 19137,
+        "fn": 19,
+        "tn": 151559,
+        "alerts": 22952,
+        "alerts_per_1k": 131.507
+      },
+      "run2": {
+        "threshold": 0.03107652,
+        "recall": 0.995044,
+        "fpr": 0.112112,
+        "precision": 0.166216,
+        "tp": 3815,
+        "fp": 19137,
+        "fn": 19,
+        "tn": 151559,
+        "alerts": 22952,
+        "alerts_per_1k": 131.507
+      },
+      "pass": true
+    },
+    "D_safe": {
+      "max_abs_dp": 0.0,
+      "metrics_identical_at_floor": true,
+      "run1": {
+        "threshold": 0.0941377,
+        "recall": 0.995044,
+        "fpr": 0.134883,
+        "precision": 0.142144,
+        "tp": 3815,
+        "fp": 23024,
+        "fn": 19,
+        "tn": 147672,
+        "alerts": 26839,
+        "alerts_per_1k": 153.779
+      },
+      "run2": {
+        "threshold": 0.0941377,
+        "recall": 0.995044,
+        "fpr": 0.134883,
+        "precision": 0.142144,
+        "tp": 3815,
+        "fp": 23024,
+        "fn": 19,
+        "tn": 147672,
+        "alerts": 26839,
+        "alerts_per_1k": 153.779
+      },
+      "pass": true
+    }
+  },
+  "V_rawplus_reproduction": {
+    "status": "Already reproduced bit-identically in Phase-7 (max|\u0394p|=0.0) and re-verified by Phase-8 control reproduction (identical confusion at floor via phase8_controls.json + phase6b_threshold_selection.json)",
+    "notes": "V_rawplus is not retrained during Phase 9; its frozen artifact and at-floor confusion are re-verified by two independent source records."
+  },
+  "max_abs_delta_p": 0.0,
+  "metrics_identical_at_floor": true,
+  "cert_time_utc": "2026-09-06T16:42:11Z"
+}

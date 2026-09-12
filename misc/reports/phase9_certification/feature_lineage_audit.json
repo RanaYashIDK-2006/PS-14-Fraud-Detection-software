@@ -1,0 +1,413 @@
+{
+  "candidate": "V_rawplus",
+  "n_features": 48,
+  "feature_names": [
+    "amt",
+    "log_amt",
+    "amt_sq",
+    "hr",
+    "mn",
+    "dow",
+    "Month",
+    "Day",
+    "hour_sin",
+    "hour_cos",
+    "is_night",
+    "is_business_hours",
+    "chip",
+    "is_online",
+    "is_swipe",
+    "err",
+    "has_zip",
+    "has_state",
+    "is_online_or_no_state",
+    "mcc",
+    "mcc_high",
+    "mcc_restaurant",
+    "mcc_gas",
+    "mcc_grocery",
+    "mcc_travel",
+    "mcc_online",
+    "merchant_id",
+    "city_id",
+    "card_id",
+    "user_tx_count",
+    "card_tx_count",
+    "user_avg_amt",
+    "amt_vs_user_avg",
+    "amt_zscore",
+    "merch_tx_count",
+    "user_merchant_diversity",
+    "user_city_diversity",
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate",
+    "high_amt",
+    "very_high_amt",
+    "amt_x_hr",
+    "amt_x_mcc",
+    "amt_x_chip",
+    "amt_x_online",
+    "amt_x_night",
+    "user_merch_count"
+  ],
+  "audit_basis": "Phase-8 controls + mission_E_hardneg config.json + Phase-6b provenance (train<2016, val 2016-2017, test>=2018 frozen)",
+  "per_feature_classification": [
+    {
+      "feature": "amt",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "log_amt",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "amt_sq",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "hr",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "mn",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "dow",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "Month",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "Day",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "hour_sin",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "hour_cos",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "is_night",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "is_business_hours",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "chip",
+      "classification": "SAFE - transaction-level categorical/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "is_online",
+      "classification": "SAFE - transaction-level categorical/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "is_swipe",
+      "classification": "SAFE - transaction-level categorical/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "err",
+      "classification": "SAFE - transaction-level categorical/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "has_zip",
+      "classification": "SAFE - transaction-level categorical/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "has_state",
+      "classification": "SAFE - transaction-level categorical/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "is_online_or_no_state",
+      "classification": "SAFE - transaction-level categorical/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "mcc",
+      "classification": "SAFE - transaction-level categorical/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "mcc_high",
+      "classification": "SAFE - transaction-level categorical/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "mcc_restaurant",
+      "classification": "SAFE - transaction-level categorical/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "mcc_gas",
+      "classification": "SAFE - transaction-level categorical/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "mcc_grocery",
+      "classification": "SAFE - transaction-level categorical/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "mcc_travel",
+      "classification": "SAFE - transaction-level categorical/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "mcc_online",
+      "classification": "SAFE - transaction-level categorical/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "merchant_id",
+      "classification": "SAFE - entity hash code (keyed, truncated) present in raw transaction",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "city_id",
+      "classification": "SAFE - entity hash code (keyed, truncated) present in raw transaction",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "card_id",
+      "classification": "SAFE - entity hash code (keyed, truncated) present in raw transaction",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "user_tx_count",
+      "classification": "SAFE - causal historical aggregation over prior transactions (no label dependence)",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "card_tx_count",
+      "classification": "SAFE - causal historical aggregation over prior transactions (no label dependence)",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "user_avg_amt",
+      "classification": "SAFE - causal historical aggregation over prior transactions (no label dependence)",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "amt_vs_user_avg",
+      "classification": "SAFE - causal historical aggregation over prior transactions (no label dependence)",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "amt_zscore",
+      "classification": "SAFE - causal historical aggregation over prior transactions (no label dependence)",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "merch_tx_count",
+      "classification": "SAFE - causal historical aggregation over prior transactions (no label dependence)",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "classification": "SAFE - causal historical aggregation over prior transactions (no label dependence)",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "user_city_diversity",
+      "classification": "SAFE - causal historical aggregation over prior transactions (no label dependence)",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "user_fraud_rate",
+      "classification": "UNVERIFIED - label-dependent fraud-rate",
+      "label_dependency": true,
+      "available_at_production_decision_time": "UNVERIFIED",
+      "risk": "UNVERIFIED label availability"
+    },
+    {
+      "feature": "merch_fraud_rate",
+      "classification": "UNVERIFIED - label-dependent fraud-rate",
+      "label_dependency": true,
+      "available_at_production_decision_time": "UNVERIFIED",
+      "risk": "UNVERIFIED label availability"
+    },
+    {
+      "feature": "city_fraud_rate",
+      "classification": "UNVERIFIED - label-dependent fraud-rate",
+      "label_dependency": true,
+      "available_at_production_decision_time": "UNVERIFIED",
+      "risk": "UNVERIFIED label availability"
+    },
+    {
+      "feature": "high_amt",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "very_high_amt",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "amt_x_hr",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "amt_x_mcc",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "amt_x_chip",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "amt_x_online",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "amt_x_night",
+      "classification": "SAFE - transaction-level numeric/temporal/derived attribute",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    },
+    {
+      "feature": "user_merch_count",
+      "classification": "SAFE - causal historical aggregation over prior transactions (no label dependence)",
+      "label_dependency": false,
+      "available_at_production_decision_time": true,
+      "risk": "Low"
+    }
+  ],
+  "summary_counts": {
+    "safe": 45,
+    "unverified": 3,
+    "leaked": 0
+  },
+  "unverified_features": [
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate"
+  ],
+  "train_val_test_isolation": {
+    "train_window": "<2016",
+    "val_window": "2016-2017",
+    "test_window": ">=2018",
+    "final_test_rows": "NOT LOADED BY PHASE 9",
+    "final_test_labels": "NOT LOADED BY PHASE 9",
+    "final_test_influence_training": false,
+    "final_test_labels_influence_anything": false
+  },
+  "cert_time_utc": "2026-09-06T16:43:26Z"
+}

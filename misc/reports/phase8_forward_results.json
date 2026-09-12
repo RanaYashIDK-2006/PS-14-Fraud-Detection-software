@@ -1,0 +1,116 @@
+{
+  "FV-2014": {
+    "C_cov": {
+      "thr": 0.10958676,
+      "overall": {
+        "threshold": 0.10958676,
+        "recall": 0.995247,
+        "fpr": 0.060107,
+        "precision": 0.172715,
+        "tp": 1047,
+        "fp": 5015,
+        "fn": 5,
+        "tn": 78420,
+        "alerts": 6062,
+        "alerts_per_1k": 71.751
+      },
+      "auc": 0.99838,
+      "pr_auc": 0.945568,
+      "seconds": 63.0
+    },
+    "D_safe": {
+      "thr": 0.08837651,
+      "overall": {
+        "threshold": 0.08837651,
+        "recall": 0.995247,
+        "fpr": 0.115419,
+        "precision": 0.098061,
+        "tp": 1047,
+        "fp": 9630,
+        "fn": 5,
+        "tn": 73805,
+        "alerts": 10677,
+        "alerts_per_1k": 126.374
+      },
+      "auc": 0.994058,
+      "pr_auc": 0.855447,
+      "seconds": 59.9
+    }
+  },
+  "FV-2015": {
+    "C_cov": {
+      "thr": 0.01744265,
+      "overall": {
+        "threshold": 0.01744265,
+        "recall": 0.995123,
+        "fpr": 0.252027,
+        "precision": 0.131962,
+        "tp": 3265,
+        "fp": 21477,
+        "fn": 16,
+        "tn": 63740,
+        "alerts": 24742,
+        "alerts_per_1k": 279.577
+      },
+      "auc": 0.991221,
+      "pr_auc": 0.891263,
+      "seconds": 68.8
+    },
+    "D_safe": {
+      "thr": 0.03537393,
+      "overall": {
+        "threshold": 0.03537393,
+        "recall": 0.995123,
+        "fpr": 0.157668,
+        "precision": 0.195497,
+        "tp": 3265,
+        "fp": 13436,
+        "fn": 16,
+        "tn": 71781,
+        "alerts": 16701,
+        "alerts_per_1k": 188.716
+      },
+      "auc": 0.989395,
+      "pr_auc": 0.864778,
+      "seconds": 67.4
+    }
+  },
+  "FV-2016": {
+    "C_cov": {
+      "thr": 0.08147438,
+      "overall": {
+        "threshold": 0.08147438,
+        "recall": 0.99525,
+        "fpr": 0.077046,
+        "precision": 0.353408,
+        "tp": 3562,
+        "fp": 6517,
+        "fn": 17,
+        "tn": 78069,
+        "alerts": 10079,
+        "alerts_per_1k": 114.32
+      },
+      "auc": 0.994504,
+      "pr_auc": 0.92523,
+      "seconds": 74.9
+    },
+    "D_safe": {
+      "thr": 0.10422036,
+      "overall": {
+        "threshold": 0.10422036,
+        "recall": 0.99525,
+        "fpr": 0.112702,
+        "precision": 0.272012,
+        "tp": 3562,
+        "fp": 9533,
+        "fn": 17,
+        "tn": 75053,
+        "alerts": 13095,
+        "alerts_per_1k": 148.528
+      },
+      "auc": 0.992424,
+      "pr_auc": 0.908118,
+      "seconds": 74.0
+    }
+  }
+}

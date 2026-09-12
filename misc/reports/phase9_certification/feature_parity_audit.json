@@ -1,0 +1,18 @@
+{
+  "candidate": "V_rawplus",
+  "basis": "V_rawplus uses the same 48 native features and same preprocessing (StandardScaler fit on train<2016) as altman_native_E_hardneg_cert_20260904. The only difference in the candidate recipe is the hard-negative mining configuration (84,639 mined, weight 3.0) recorded in mission_E_hardneg config.",
+  "offline_implementation": "Native feature derivations from the training pipeline (Phase 5/6).",
+  "production_implementation": "Production parity must be verified against the live PS-14 feature pipeline that serves these 48 features online.",
+  "dtype_precision_note": "Native numeric features are continuous; scaler parameters (median+scale) stored in pipeline.",
+  "missing_value_handling": "Documented in native pipeline (zeros/defaults for missing counts; 0 for absent history).",
+  "categorical_encoding": "entity hashes (merchant_id/city_id/card_id) are keyed-truncated hashes; MCC/channel flags are binary/one-hot as defined in native feature set.",
+  "hashing": "entity hashing uses _hash_device-style keyed truncation with jwt_secret; production lookup must use the same keyed hash.",
+  "aggregation_window": "historical counts are over prior transactions up to transaction time.",
+  "timestamp_semantics": "transaction ts; history built causally (no future).",
+  "ordering": "feature_names order from mission_E_hardneg config.json (48 features in fixed order).",
+  "clipping_transformations": "native clipping of amt-derived features per pipeline.",
+  "parity_test_result": "PENDING PRODUCTION PARITY VERIFICATION - offline vs production parity has not been run as part of this certification and is required for FULL certification.",
+  "edge_case_test_status": "PENDING - zero amounts, NaN, missing strings, missing/unseen merchant/city/category, extreme numeric values, malformed optional fields must be exercised against the production feature path.",
+  "any_feature_with_divergent_offline_production_semantics": "UNVERIFIED - not yet demonstrated",
+  "cert_time_utc": "2026-09-06T16:55:55Z"
+}

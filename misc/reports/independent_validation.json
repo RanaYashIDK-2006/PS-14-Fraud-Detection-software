@@ -1,0 +1,900 @@
+{
+  "built_at": "2026-09-12T07:14:40.977894+00:00",
+  "validator": "scripts/independent_validator.py",
+  "checks": [
+    {
+      "check": "A: file hash matches protocol",
+      "pass": true,
+      "detail": "independent sha256"
+    },
+    {
+      "check": "A: rows match protocol",
+      "pass": true,
+      "detail": "197645 vs 197645"
+    },
+    {
+      "check": "A: fraud count matches protocol",
+      "pass": true,
+      "detail": "2354 vs 2354"
+    },
+    {
+      "check": "A: timestamps monotonic (no backwards ts)",
+      "pass": true,
+      "detail": "full-array scan"
+    },
+    {
+      "check": "A: ordering flag in protocol is true",
+      "pass": true,
+      "detail": "monotonic_non_decreasing"
+    },
+    {
+      "check": "B.train: rows",
+      "pass": true,
+      "detail": "138352 vs 138352"
+    },
+    {
+      "check": "B.train: fraud",
+      "pass": true,
+      "detail": "1158 vs 1158"
+    },
+    {
+      "check": "B.train: ts_start",
+      "pass": true,
+      "detail": "1748743289.29706 vs 1748743289.29706"
+    },
+    {
+      "check": "B.train: ts_end",
+      "pass": true,
+      "detail": "1756001152.1232467 vs 1756001152.1232467"
+    },
+    {
+      "check": "B.validation: rows",
+      "pass": true,
+      "detail": "29646 vs 29646"
+    },
+    {
+      "check": "B.validation: fraud",
+      "pass": true,
+      "detail": "219 vs 219"
+    },
+    {
+      "check": "B.validation: ts_start",
+      "pass": true,
+      "detail": "1756001215.7559688 vs 1756001215.7559688"
+    },
+    {
+      "check": "B.validation: ts_end",
+      "pass": true,
+      "detail": "1757578627.3150635 vs 1757578627.3150635"
+    },
+    {
+      "check": "B.final_test: rows",
+      "pass": true,
+      "detail": "29647 vs 29647"
+    },
+    {
+      "check": "B.final_test: fraud",
+      "pass": true,
+      "detail": "977 vs 977"
+    },
+    {
+      "check": "B.final_test: ts_start",
+      "pass": true,
+      "detail": "1757578650.2488208 vs 1757578650.2488208"
+    },
+    {
+      "check": "B.final_test: ts_end",
+      "pass": true,
+      "detail": "1766214335.6916182 vs 1766214335.6916182"
+    },
+    {
+      "check": "B: future-contamination-free",
+      "pass": true,
+      "detail": "independent monotonic boundary scan"
+    },
+    {
+      "check": "B: boundary tie disclosure matches data",
+      "pass": true,
+      "detail": "{\"train_val\": {\"boundary_epoch\": 1756001152.1232467, \"boundary_utc\": \"2025-08-24 02:05:52.123246670+00:00\", \"rows_same_ts_left_of_cut\": 1, \"rows_same_ts_right_of_cut\": 0}, \"val_test\": {\"boundary_epoch\": 1757578627.3150635, \"boundary_utc\": \"2025-09-11 08:17:07.315063477+00:00\", \"rows_same_ts_left_of_cut\": 1, \"rows_same_ts_right_of_cut\": 0}}"
+    },
+    {
+      "check": "C: locked threshold reproducible from VALIDATION",
+      "pass": true,
+      "detail": "recomputed 0.42760327458381653 vs recorded 0.42760327458381653"
+    },
+    {
+      "check": "C: locked threshold meets FPR<=1% on VALIDATION",
+      "pass": true,
+      "detail": "validation FPR at lock=0.009175247"
+    },
+    {
+      "check": "C: test metrics recorded at locked threshold",
+      "pass": true,
+      "detail": "test table threshold equals validation-locked value"
+    },
+    {
+      "check": "D: rank-sum AUC == recorded AUC",
+      "pass": true,
+      "detail": "rank-sum 0.9986083121 vs recorded 0.9986083121"
+    },
+    {
+      "check": "D: manual PR-AUC == recorded PR-AUC",
+      "pass": true,
+      "detail": "manual 0.9741992578 vs recorded 0.9741992578"
+    },
+    {
+      "check": "D: test tp matches",
+      "pass": true,
+      "detail": "independent 957 vs recorded 957"
+    },
+    {
+      "check": "D: test fp matches",
+      "pass": true,
+      "detail": "independent 287 vs recorded 287"
+    },
+    {
+      "check": "D: test tn matches",
+      "pass": true,
+      "detail": "independent 28383 vs recorded 28383"
+    },
+    {
+      "check": "D: test fn matches",
+      "pass": true,
+      "detail": "independent 20 vs recorded 20"
+    },
+    {
+      "check": "D: exact test FPR reported",
+      "pass": true,
+      "detail": "exact unrounded FPR=0.010010464 (validation-selected threshold 0.427603); difference vs 1% is disclosed, not tuned away"
+    },
+    {
+      "check": "C_protocol.validation: TP+FN=fraud",
+      "pass": true,
+      "detail": "tp+fn=219 fraud=219"
+    },
+    {
+      "check": "C_protocol.validation: TN+FP=legit",
+      "pass": true,
+      "detail": "tn+fp=29427 legit=29427"
+    },
+    {
+      "check": "C_protocol.validation: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=29646 rows=29646"
+    },
+    {
+      "check": "C_protocol.validation: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=488 tp+fp=488"
+    },
+    {
+      "check": "C_protocol.validation: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.009175247221939036 vs 0.009175247221939036"
+    },
+    {
+      "check": "C_protocol.validation: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.9954337899543378 vs 0.9954337899543378"
+    },
+    {
+      "check": "C_protocol.validation: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.44672131147540983 vs 0.44672131147540983"
+    },
+    {
+      "check": "C_protocol.validation: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9908247527780609 vs 0.9908247527780609"
+    },
+    {
+      "check": "C_protocol.final_test: TP+FN=fraud",
+      "pass": true,
+      "detail": "tp+fn=977 fraud=977"
+    },
+    {
+      "check": "C_protocol.final_test: TN+FP=legit",
+      "pass": true,
+      "detail": "tn+fp=28670 legit=28670"
+    },
+    {
+      "check": "C_protocol.final_test: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=29647 rows=29647"
+    },
+    {
+      "check": "C_protocol.final_test: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=1244 tp+fp=1244"
+    },
+    {
+      "check": "C_protocol.final_test: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.010010463899546565 vs 0.010010463899546565"
+    },
+    {
+      "check": "C_protocol.final_test: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.9795291709314228 vs 0.9795291709314228"
+    },
+    {
+      "check": "C_protocol.final_test: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.7692926045016077 vs 0.7692926045016077"
+    },
+    {
+      "check": "C_protocol.final_test: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9899895361004535 vs 0.9899895361004535"
+    },
+    {
+      "check": "D_ablation.full_causal_21: TP+FN=fraud",
+      "pass": true,
+      "detail": "tp+fn=977 fraud=977"
+    },
+    {
+      "check": "D_ablation.full_causal_21: TN+FP=legit",
+      "pass": true,
+      "detail": "tn+fp=28670 legit=28670"
+    },
+    {
+      "check": "D_ablation.full_causal_21: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=29647 rows=29647"
+    },
+    {
+      "check": "D_ablation.full_causal_21: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=1244 tp+fp=1244"
+    },
+    {
+      "check": "D_ablation.full_causal_21: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.010010463899546565 vs 0.010010463899546565"
+    },
+    {
+      "check": "D_ablation.full_causal_21: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.9795291709314228 vs 0.9795291709314228"
+    },
+    {
+      "check": "D_ablation.full_causal_21: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.7692926045016077 vs 0.7692926045016077"
+    },
+    {
+      "check": "D_ablation.full_causal_21: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9899895361004535 vs 0.9899895361004535"
+    },
+    {
+      "check": "D_ablation.no_amount_history: TP+FN=fraud",
+      "pass": true,
+      "detail": "tp+fn=977 fraud=977"
+    },
+    {
+      "check": "D_ablation.no_amount_history: TN+FP=legit",
+      "pass": true,
+      "detail": "tn+fp=28670 legit=28670"
+    },
+    {
+      "check": "D_ablation.no_amount_history: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=29647 rows=29647"
+    },
+    {
+      "check": "D_ablation.no_amount_history: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=1313 tp+fp=1313"
+    },
+    {
+      "check": "D_ablation.no_amount_history: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.012033484478549007 vs 0.012033484478549007"
+    },
+    {
+      "check": "D_ablation.no_amount_history: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.9907881269191402 vs 0.9907881269191402"
+    },
+    {
+      "check": "D_ablation.no_amount_history: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.7372429550647372 vs 0.7372429550647372"
+    },
+    {
+      "check": "D_ablation.no_amount_history: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.987966515521451 vs 0.987966515521451"
+    },
+    {
+      "check": "D_ablation.instant_only: TP+FN=fraud",
+      "pass": true,
+      "detail": "tp+fn=977 fraud=977"
+    },
+    {
+      "check": "D_ablation.instant_only: TN+FP=legit",
+      "pass": true,
+      "detail": "tn+fp=28670 legit=28670"
+    },
+    {
+      "check": "D_ablation.instant_only: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=29647 rows=29647"
+    },
+    {
+      "check": "D_ablation.instant_only: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=707 tp+fp=707"
+    },
+    {
+      "check": "D_ablation.instant_only: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.010184862225322637 vs 0.010184862225322637"
+    },
+    {
+      "check": "D_ablation.instant_only: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.4247697031729785 vs 0.4247697031729785"
+    },
+    {
+      "check": "D_ablation.instant_only: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.5869872701555869 vs 0.5869872701555869"
+    },
+    {
+      "check": "D_ablation.instant_only: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9898151377746773 vs 0.9898151377746773"
+    },
+    {
+      "check": "D_ablation.flags_only: TP+FN=fraud",
+      "pass": true,
+      "detail": "tp+fn=977 fraud=977"
+    },
+    {
+      "check": "D_ablation.flags_only: TN+FP=legit",
+      "pass": true,
+      "detail": "tn+fp=28670 legit=28670"
+    },
+    {
+      "check": "D_ablation.flags_only: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=29647 rows=29647"
+    },
+    {
+      "check": "D_ablation.flags_only: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=683 tp+fp=683"
+    },
+    {
+      "check": "D_ablation.flags_only: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.00952214858737356 vs 0.00952214858737356"
+    },
+    {
+      "check": "D_ablation.flags_only: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.4196519959058342 vs 0.4196519959058342"
+    },
+    {
+      "check": "D_ablation.flags_only: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.6002928257686676 vs 0.6002928257686676"
+    },
+    {
+      "check": "D_ablation.flags_only: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9904778514126265 vs 0.9904778514126265"
+    },
+    {
+      "check": "E.window_1: TP+FN=fraud",
+      "pass": true,
+      "detail": "tp+fn=93 fraud=93"
+    },
+    {
+      "check": "E.window_1: TN+FP=legit",
+      "pass": true,
+      "detail": "tn+fp=7318 legit=7318"
+    },
+    {
+      "check": "E.window_1: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=7411 rows=7411"
+    },
+    {
+      "check": "E.window_1: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=162 tp+fp=162"
+    },
+    {
+      "check": "E.window_1: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.009428805684613283 vs 0.009428805684613283"
+    },
+    {
+      "check": "E.window_1: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "1.0 vs 1.0"
+    },
+    {
+      "check": "E.window_1: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.5740740740740741 vs 0.5740740740740741"
+    },
+    {
+      "check": "E.window_1: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9905711943153868 vs 0.9905711943153868"
+    },
+    {
+      "check": "E.window_2: TP+FN=fraud",
+      "pass": true,
+      "detail": "tp+fn=101 fraud=101"
+    },
+    {
+      "check": "E.window_2: TN+FP=legit",
+      "pass": true,
+      "detail": "tn+fp=7310 legit=7310"
+    },
+    {
+      "check": "E.window_2: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=7411 rows=7411"
+    },
+    {
+      "check": "E.window_2: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=178 tp+fp=178"
+    },
+    {
+      "check": "E.window_2: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.010533515731874145 vs 0.010533515731874145"
+    },
+    {
+      "check": "E.window_2: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "1.0 vs 1.0"
+    },
+    {
+      "check": "E.window_2: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.5674157303370787 vs 0.5674157303370787"
+    },
+    {
+      "check": "E.window_2: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9894664842681259 vs 0.9894664842681259"
+    },
+    {
+      "check": "E.window_3: TP+FN=fraud",
+      "pass": true,
+      "detail": "tp+fn=99 fraud=99"
+    },
+    {
+      "check": "E.window_3: TN+FP=legit",
+      "pass": true,
+      "detail": "tn+fp=7312 legit=7312"
+    },
+    {
+      "check": "E.window_3: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=7411 rows=7411"
+    },
+    {
+      "check": "E.window_3: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=166 tp+fp=166"
+    },
+    {
+      "check": "E.window_3: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.009299781181619256 vs 0.009299781181619256"
+    },
+    {
+      "check": "E.window_3: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.98989898989899 vs 0.98989898989899"
+    },
+    {
+      "check": "E.window_3: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.5903614457831325 vs 0.5903614457831325"
+    },
+    {
+      "check": "E.window_3: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9907002188183808 vs 0.9907002188183808"
+    },
+    {
+      "check": "E.window_4: TP+FN=fraud",
+      "pass": true,
+      "detail": "tp+fn=684 fraud=684"
+    },
+    {
+      "check": "E.window_4: TN+FP=legit",
+      "pass": true,
+      "detail": "tn+fp=6730 legit=6730"
+    },
+    {
+      "check": "E.window_4: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=7414 rows=7414"
+    },
+    {
+      "check": "E.window_4: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=738 tp+fp=738"
+    },
+    {
+      "check": "E.window_4: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.010846953937592867 vs 0.010846953937592867"
+    },
+    {
+      "check": "E.window_4: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.9722222222222222 vs 0.9722222222222222"
+    },
+    {
+      "check": "E.window_4: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.9010840108401084 vs 0.9010840108401084"
+    },
+    {
+      "check": "E.window_4: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9891530460624072 vs 0.9891530460624072"
+    },
+    {
+      "check": "protocol.C_protocol.validation.metrics_at_locked: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=29646"
+    },
+    {
+      "check": "protocol.C_protocol.validation.metrics_at_locked: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=488 tp+fp=488"
+    },
+    {
+      "check": "protocol.C_protocol.validation.metrics_at_locked: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.009175247221939036 vs 0.009175247221939036"
+    },
+    {
+      "check": "protocol.C_protocol.validation.metrics_at_locked: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.9954337899543378 vs 0.9954337899543378"
+    },
+    {
+      "check": "protocol.C_protocol.validation.metrics_at_locked: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.44672131147540983 vs 0.44672131147540983"
+    },
+    {
+      "check": "protocol.C_protocol.validation.metrics_at_locked: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9908247527780609 vs 0.9908247527780609"
+    },
+    {
+      "check": "protocol.C_protocol.final_test.metrics_at_locked: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=29647"
+    },
+    {
+      "check": "protocol.C_protocol.final_test.metrics_at_locked: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=1244 tp+fp=1244"
+    },
+    {
+      "check": "protocol.C_protocol.final_test.metrics_at_locked: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.010010463899546565 vs 0.010010463899546565"
+    },
+    {
+      "check": "protocol.C_protocol.final_test.metrics_at_locked: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.9795291709314228 vs 0.9795291709314228"
+    },
+    {
+      "check": "protocol.C_protocol.final_test.metrics_at_locked: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.7692926045016077 vs 0.7692926045016077"
+    },
+    {
+      "check": "protocol.C_protocol.final_test.metrics_at_locked: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9899895361004535 vs 0.9899895361004535"
+    },
+    {
+      "check": "protocol.D_ablation.full_causal_21.final_test_metrics_at_locked: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=29647"
+    },
+    {
+      "check": "protocol.D_ablation.full_causal_21.final_test_metrics_at_locked: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=1244 tp+fp=1244"
+    },
+    {
+      "check": "protocol.D_ablation.full_causal_21.final_test_metrics_at_locked: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.010010463899546565 vs 0.010010463899546565"
+    },
+    {
+      "check": "protocol.D_ablation.full_causal_21.final_test_metrics_at_locked: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.9795291709314228 vs 0.9795291709314228"
+    },
+    {
+      "check": "protocol.D_ablation.full_causal_21.final_test_metrics_at_locked: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.7692926045016077 vs 0.7692926045016077"
+    },
+    {
+      "check": "protocol.D_ablation.full_causal_21.final_test_metrics_at_locked: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9899895361004535 vs 0.9899895361004535"
+    },
+    {
+      "check": "protocol.D_ablation.no_amount_history.final_test_metrics_at_locked: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=29647"
+    },
+    {
+      "check": "protocol.D_ablation.no_amount_history.final_test_metrics_at_locked: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=1313 tp+fp=1313"
+    },
+    {
+      "check": "protocol.D_ablation.no_amount_history.final_test_metrics_at_locked: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.012033484478549007 vs 0.012033484478549007"
+    },
+    {
+      "check": "protocol.D_ablation.no_amount_history.final_test_metrics_at_locked: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.9907881269191402 vs 0.9907881269191402"
+    },
+    {
+      "check": "protocol.D_ablation.no_amount_history.final_test_metrics_at_locked: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.7372429550647372 vs 0.7372429550647372"
+    },
+    {
+      "check": "protocol.D_ablation.no_amount_history.final_test_metrics_at_locked: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.987966515521451 vs 0.987966515521451"
+    },
+    {
+      "check": "protocol.D_ablation.instant_only.final_test_metrics_at_locked: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=29647"
+    },
+    {
+      "check": "protocol.D_ablation.instant_only.final_test_metrics_at_locked: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=707 tp+fp=707"
+    },
+    {
+      "check": "protocol.D_ablation.instant_only.final_test_metrics_at_locked: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.010184862225322637 vs 0.010184862225322637"
+    },
+    {
+      "check": "protocol.D_ablation.instant_only.final_test_metrics_at_locked: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.4247697031729785 vs 0.4247697031729785"
+    },
+    {
+      "check": "protocol.D_ablation.instant_only.final_test_metrics_at_locked: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.5869872701555869 vs 0.5869872701555869"
+    },
+    {
+      "check": "protocol.D_ablation.instant_only.final_test_metrics_at_locked: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9898151377746773 vs 0.9898151377746773"
+    },
+    {
+      "check": "protocol.D_ablation.flags_only.final_test_metrics_at_locked: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=29647"
+    },
+    {
+      "check": "protocol.D_ablation.flags_only.final_test_metrics_at_locked: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=683 tp+fp=683"
+    },
+    {
+      "check": "protocol.D_ablation.flags_only.final_test_metrics_at_locked: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.00952214858737356 vs 0.00952214858737356"
+    },
+    {
+      "check": "protocol.D_ablation.flags_only.final_test_metrics_at_locked: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.4196519959058342 vs 0.4196519959058342"
+    },
+    {
+      "check": "protocol.D_ablation.flags_only.final_test_metrics_at_locked: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.6002928257686676 vs 0.6002928257686676"
+    },
+    {
+      "check": "protocol.D_ablation.flags_only.final_test_metrics_at_locked: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9904778514126265 vs 0.9904778514126265"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_1.metrics_at_locked: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=7411"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_1.metrics_at_locked: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=162 tp+fp=162"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_1.metrics_at_locked: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.009428805684613283 vs 0.009428805684613283"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_1.metrics_at_locked: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "1.0 vs 1.0"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_1.metrics_at_locked: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.5740740740740741 vs 0.5740740740740741"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_1.metrics_at_locked: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9905711943153868 vs 0.9905711943153868"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_2.metrics_at_locked: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=7411"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_2.metrics_at_locked: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=178 tp+fp=178"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_2.metrics_at_locked: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.010533515731874145 vs 0.010533515731874145"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_2.metrics_at_locked: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "1.0 vs 1.0"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_2.metrics_at_locked: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.5674157303370787 vs 0.5674157303370787"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_2.metrics_at_locked: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9894664842681259 vs 0.9894664842681259"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_3.metrics_at_locked: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=7411"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_3.metrics_at_locked: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=166 tp+fp=166"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_3.metrics_at_locked: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.009299781181619256 vs 0.009299781181619256"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_3.metrics_at_locked: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.98989898989899 vs 0.98989898989899"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_3.metrics_at_locked: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.5903614457831325 vs 0.5903614457831325"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_3.metrics_at_locked: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9907002188183808 vs 0.9907002188183808"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_4.metrics_at_locked: TP+TN+FP+FN=rows",
+      "pass": true,
+      "detail": "sum=7414"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_4.metrics_at_locked: alerts=TP+FP",
+      "pass": true,
+      "detail": "alerts=738 tp+fp=738"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_4.metrics_at_locked: FPR=FP/(FP+TN)",
+      "pass": true,
+      "detail": "0.010846953937592867 vs 0.010846953937592867"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_4.metrics_at_locked: recall=TP/(TP+FN)",
+      "pass": true,
+      "detail": "0.9722222222222222 vs 0.9722222222222222"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_4.metrics_at_locked: precision=TP/(TP+FP)",
+      "pass": true,
+      "detail": "0.9010840108401084 vs 0.9010840108401084"
+    },
+    {
+      "check": "protocol.E_temporal_windows.window_4.metrics_at_locked: specificity=TN/(FP+TN)",
+      "pass": true,
+      "detail": "0.9891530460624072 vs 0.9891530460624072"
+    },
+    {
+      "check": "E: independent bootstrap CI overlaps recorded CI",
+      "pass": true,
+      "detail": "ind [0.9980,0.9991] vs rec [0.9980069800773655, 0.9990567797015392]"
+    },
+    {
+      "check": "E: bootstrap CI width consistent",
+      "pass": true,
+      "detail": "ind width 0.0011 vs rec 0.0010"
+    },
+    {
+      "check": "F: causality audit PASS",
+      "pass": true,
+      "detail": "PASS"
+    },
+    {
+      "check": "F: gate B_none",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "F: gate C_match",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "F: gate C_scaler_fit_train_only",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "F: gate C_early_stop_on_validation",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "F: gate C_threshold_from_validation_only",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "F: gate C_no_test_threshold_used",
+      "pass": true,
+      "detail": "True"
+    }
+  ],
+  "verdict": "PASS",
+  "n_checks": 178,
+  "n_pass": 178,
+  "n_fail": 0
+}

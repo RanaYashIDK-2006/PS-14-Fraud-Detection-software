@@ -1,0 +1,442 @@
+{
+  "E_hardneg_fn": {
+    "count": 19,
+    "label": "E_hardneg_FN",
+    "under_covered_pct": 0.0,
+    "genuinely_new_pct": 0.0,
+    "zero_frame_pct": 0.0,
+    "median_merch_tx_count": 109,
+    "median_user_tx_count": 632,
+    "median_amount": 19.22,
+    "median_score_diff_V_minus_E": 0.003258,
+    "swipe_pct": 0.2105,
+    "online_pct": 0.0,
+    "chip_pct": 0.7895,
+    "sample_detail": [
+      {
+        "amount": 70.63,
+        "mcc": 5912,
+        "merch_tx_count": 7,
+        "user_tx_count": 552,
+        "channel": "chip",
+        "E_score": 0.00904,
+        "V_score": 0.016761,
+        "diff": 0.007721
+      },
+      {
+        "amount": 3.1,
+        "mcc": 5812,
+        "merch_tx_count": 157,
+        "user_tx_count": 729,
+        "channel": "swipe",
+        "E_score": 0.00062,
+        "V_score": 0.00105,
+        "diff": 0.00043
+      },
+      {
+        "amount": 4.4,
+        "mcc": 5411,
+        "merch_tx_count": 109,
+        "user_tx_count": 1617,
+        "channel": "swipe",
+        "E_score": 0.001255,
+        "V_score": 0.000387,
+        "diff": -0.000868
+      },
+      {
+        "amount": 85.99,
+        "mcc": 5300,
+        "merch_tx_count": 79,
+        "user_tx_count": 259,
+        "channel": "swipe",
+        "E_score": 0.018525,
+        "V_score": 0.008342,
+        "diff": -0.010183
+      },
+      {
+        "amount": 0.63,
+        "mcc": 5411,
+        "merch_tx_count": 59,
+        "user_tx_count": 1131,
+        "channel": "chip",
+        "E_score": 0.006532,
+        "V_score": 0.019009,
+        "diff": 0.012477
+      },
+      {
+        "amount": 36.62,
+        "mcc": 5310,
+        "merch_tx_count": 4,
+        "user_tx_count": 333,
+        "channel": "chip",
+        "E_score": 0.000732,
+        "V_score": 0.00399,
+        "diff": 0.003258
+      },
+      {
+        "amount": 19.22,
+        "mcc": 5300,
+        "merch_tx_count": 60,
+        "user_tx_count": 831,
+        "channel": "chip",
+        "E_score": 0.017299,
+        "V_score": 0.139359,
+        "diff": 0.12206
+      },
+      {
+        "amount": 134.81,
+        "mcc": 7538,
+        "merch_tx_count": 66,
+        "user_tx_count": 1344,
+        "channel": "chip",
+        "E_score": 0.00906,
+        "V_score": 0.045664,
+        "diff": 0.036604
+      },
+      {
+        "amount": 0.21,
+        "mcc": 5812,
+        "merch_tx_count": 10,
+        "user_tx_count": 403,
+        "channel": "chip",
+        "E_score": 0.003345,
+        "V_score": 0.008739,
+        "diff": 0.005394
+      },
+      {
+        "amount": 103.05,
+        "mcc": 5310,
+        "merch_tx_count": 2,
+        "user_tx_count": 320,
+        "channel": "swipe",
+        "E_score": 0.012503,
+        "V_score": 0.010307,
+        "diff": -0.002196
+      }
+    ]
+  },
+  "V_rawplus_fn": {
+    "count": 19,
+    "label": "V_rawplus_FN",
+    "under_covered_pct": 0.0526,
+    "genuinely_new_pct": 0.0,
+    "zero_frame_pct": 0.0526,
+    "median_merch_tx_count": 157,
+    "median_user_tx_count": 558,
+    "median_amount": 20.83,
+    "median_score_diff_V_minus_E": 0.001609,
+    "swipe_pct": 0.2632,
+    "online_pct": 0.0,
+    "chip_pct": 0.7368,
+    "sample_detail": [
+      {
+        "amount": 70.63,
+        "mcc": 5912,
+        "merch_tx_count": 7,
+        "user_tx_count": 552,
+        "channel": "chip",
+        "E_score": 0.00904,
+        "V_score": 0.016761,
+        "diff": 0.007721
+      },
+      {
+        "amount": 3.1,
+        "mcc": 5812,
+        "merch_tx_count": 157,
+        "user_tx_count": 729,
+        "channel": "swipe",
+        "E_score": 0.00062,
+        "V_score": 0.00105,
+        "diff": 0.00043
+      },
+      {
+        "amount": 4.4,
+        "mcc": 5411,
+        "merch_tx_count": 109,
+        "user_tx_count": 1617,
+        "channel": "swipe",
+        "E_score": 0.001255,
+        "V_score": 0.000387,
+        "diff": -0.000868
+      },
+      {
+        "amount": 22.4,
+        "mcc": 7531,
+        "merch_tx_count": 0,
+        "user_tx_count": 707,
+        "channel": "swipe",
+        "E_score": 0.059513,
+        "V_score": 0.017907,
+        "diff": -0.041606
+      },
+      {
+        "amount": 85.99,
+        "mcc": 5300,
+        "merch_tx_count": 79,
+        "user_tx_count": 259,
+        "channel": "swipe",
+        "E_score": 0.018525,
+        "V_score": 0.008342,
+        "diff": -0.010183
+      },
+      {
+        "amount": 0.63,
+        "mcc": 5411,
+        "merch_tx_count": 59,
+        "user_tx_count": 1131,
+        "channel": "chip",
+        "E_score": 0.006532,
+        "V_score": 0.019009,
+        "diff": 0.012477
+      },
+      {
+        "amount": 36.62,
+        "mcc": 5310,
+        "merch_tx_count": 4,
+        "user_tx_count": 333,
+        "channel": "chip",
+        "E_score": 0.000732,
+        "V_score": 0.00399,
+        "diff": 0.003258
+      },
+      {
+        "amount": 0.21,
+        "mcc": 5812,
+        "merch_tx_count": 10,
+        "user_tx_count": 403,
+        "channel": "chip",
+        "E_score": 0.003345,
+        "V_score": 0.008739,
+        "diff": 0.005394
+      },
+      {
+        "amount": 103.05,
+        "mcc": 5310,
+        "merch_tx_count": 2,
+        "user_tx_count": 320,
+        "channel": "swipe",
+        "E_score": 0.012503,
+        "V_score": 0.010307,
+        "diff": -0.002196
+      },
+      {
+        "amount": 5.42,
+        "mcc": 5812,
+        "merch_tx_count": 93,
+        "user_tx_count": 1164,
+        "channel": "chip",
+        "E_score": 0.000996,
+        "V_score": 0.002979,
+        "diff": 0.001983
+      }
+    ]
+  },
+  "E_caught_V_missed": {
+    "count": 3,
+    "label": "E_caught_V_missed",
+    "under_covered_pct": 0.3333,
+    "genuinely_new_pct": 0.0,
+    "zero_frame_pct": 0.3333,
+    "median_merch_tx_count": 4119,
+    "median_user_tx_count": 404,
+    "median_amount": 22.4,
+    "median_score_diff_V_minus_E": -0.041606,
+    "swipe_pct": 0.3333,
+    "online_pct": 0.0,
+    "chip_pct": 0.6667,
+    "sample_detail": [
+      {
+        "amount": 22.4,
+        "mcc": 7531,
+        "merch_tx_count": 0,
+        "user_tx_count": 707,
+        "channel": "swipe",
+        "E_score": 0.059513,
+        "V_score": 0.017907,
+        "diff": -0.041606
+      },
+      {
+        "amount": 510.24,
+        "mcc": 5712,
+        "merch_tx_count": 4119,
+        "user_tx_count": 404,
+        "channel": "chip",
+        "E_score": 0.057817,
+        "V_score": 0.005892,
+        "diff": -0.051926
+      },
+      {
+        "amount": 6.39,
+        "mcc": 5541,
+        "merch_tx_count": 43753,
+        "user_tx_count": 123,
+        "channel": "chip",
+        "E_score": 0.031038,
+        "V_score": 0.014163,
+        "diff": -0.016875
+      }
+    ]
+  },
+  "V_caught_E_missed": {
+    "count": 3,
+    "label": "V_caught_E_missed",
+    "under_covered_pct": 0.0,
+    "genuinely_new_pct": 0.0,
+    "zero_frame_pct": 0.0,
+    "median_merch_tx_count": 66,
+    "median_user_tx_count": 831,
+    "median_amount": 19.22,
+    "median_score_diff_V_minus_E": 0.036604,
+    "swipe_pct": 0.0,
+    "online_pct": 0.0,
+    "chip_pct": 1.0,
+    "sample_detail": [
+      {
+        "amount": 19.22,
+        "mcc": 5300,
+        "merch_tx_count": 60,
+        "user_tx_count": 831,
+        "channel": "chip",
+        "E_score": 0.017299,
+        "V_score": 0.139359,
+        "diff": 0.12206
+      },
+      {
+        "amount": 134.81,
+        "mcc": 7538,
+        "merch_tx_count": 66,
+        "user_tx_count": 1344,
+        "channel": "chip",
+        "E_score": 0.00906,
+        "V_score": 0.045664,
+        "diff": 0.036604
+      },
+      {
+        "amount": 7.82,
+        "mcc": 5499,
+        "merch_tx_count": 47975,
+        "user_tx_count": 457,
+        "channel": "chip",
+        "E_score": 0.014,
+        "V_score": 0.034485,
+        "diff": 0.020485
+      }
+    ]
+  },
+  "both_missed": {
+    "count": 16,
+    "label": "both_missed",
+    "under_covered_pct": 0.0,
+    "genuinely_new_pct": 0.0,
+    "zero_frame_pct": 0.0,
+    "median_merch_tx_count": 133,
+    "median_user_tx_count": 595,
+    "median_amount": 17.64,
+    "median_score_diff_V_minus_E": 0.002138,
+    "swipe_pct": 0.25,
+    "online_pct": 0.0,
+    "chip_pct": 0.75,
+    "sample_detail": [
+      {
+        "amount": 70.63,
+        "mcc": 5912,
+        "merch_tx_count": 7,
+        "user_tx_count": 552,
+        "channel": "chip",
+        "E_score": 0.00904,
+        "V_score": 0.016761,
+        "diff": 0.007721
+      },
+      {
+        "amount": 3.1,
+        "mcc": 5812,
+        "merch_tx_count": 157,
+        "user_tx_count": 729,
+        "channel": "swipe",
+        "E_score": 0.00062,
+        "V_score": 0.00105,
+        "diff": 0.00043
+      },
+      {
+        "amount": 4.4,
+        "mcc": 5411,
+        "merch_tx_count": 109,
+        "user_tx_count": 1617,
+        "channel": "swipe",
+        "E_score": 0.001255,
+        "V_score": 0.000387,
+        "diff": -0.000868
+      },
+      {
+        "amount": 85.99,
+        "mcc": 5300,
+        "merch_tx_count": 79,
+        "user_tx_count": 259,
+        "channel": "swipe",
+        "E_score": 0.018525,
+        "V_score": 0.008342,
+        "diff": -0.010183
+      },
+      {
+        "amount": 0.63,
+        "mcc": 5411,
+        "merch_tx_count": 59,
+        "user_tx_count": 1131,
+        "channel": "chip",
+        "E_score": 0.006532,
+        "V_score": 0.019009,
+        "diff": 0.012477
+      },
+      {
+        "amount": 36.62,
+        "mcc": 5310,
+        "merch_tx_count": 4,
+        "user_tx_count": 333,
+        "channel": "chip",
+        "E_score": 0.000732,
+        "V_score": 0.00399,
+        "diff": 0.003258
+      },
+      {
+        "amount": 0.21,
+        "mcc": 5812,
+        "merch_tx_count": 10,
+        "user_tx_count": 403,
+        "channel": "chip",
+        "E_score": 0.003345,
+        "V_score": 0.008739,
+        "diff": 0.005394
+      },
+      {
+        "amount": 103.05,
+        "mcc": 5310,
+        "merch_tx_count": 2,
+        "user_tx_count": 320,
+        "channel": "swipe",
+        "E_score": 0.012503,
+        "V_score": 0.010307,
+        "diff": -0.002196
+      },
+      {
+        "amount": 5.42,
+        "mcc": 5812,
+        "merch_tx_count": 93,
+        "user_tx_count": 1164,
+        "channel": "chip",
+        "E_score": 0.000996,
+        "V_score": 0.002979,
+        "diff": 0.001983
+      },
+      {
+        "amount": 14.45,
+        "mcc": 5541,
+        "merch_tx_count": 28686,
+        "user_tx_count": 446,
+        "channel": "chip",
+        "E_score": 0.017219,
+        "V_score": 0.010409,
+        "diff": -0.00681
+      }
+    ]
+  }
+}

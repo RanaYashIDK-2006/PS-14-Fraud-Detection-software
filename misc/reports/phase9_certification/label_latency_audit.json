@@ -1,0 +1,14 @@
+{
+  "candidate": "V_rawplus",
+  "audit_conclusion": "LABEL_LATENCY_STATUS = UNVERIFIED",
+  "reason": "Real label-availability evidence is absent. The prior audit (Phase 4) flagged user/merchant/city fraud-rate features as UNVERIFIED because label finalization timing (chargebacks/reversals) is not established from data/provenance. Phase 9 reaffirms this.",
+  "transaction_time": "transaction ts (available)",
+  "first_availability_of_fraud_label": "UNVERIFIED",
+  "final_label_time": "UNVERIFIED",
+  "observation_window": "UNVERIFIED",
+  "delayed_chargebacks_reversals": "UNVERIFIED",
+  "features_using_labels_before_realistic_availability": "user_fraud_rate, merch_fraud_rate, city_fraud_rate (UNVERIFIED)",
+  "cannot_fabricate_assumption": true,
+  "implication": "This is the principal non-statistical blocker to FULL certification. A conditional certification is appropriate.",
+  "cert_time_utc": "2026-09-06T16:55:38Z"
+}

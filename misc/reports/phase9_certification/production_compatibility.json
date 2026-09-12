@@ -1,0 +1,16 @@
+{
+  "candidate": "V_rawplus",
+  "compatibility": "V_rawplus uses the same 48 native features and same preprocessing as altman_native_E_hardneg_cert_20260904. It can coexist with production infrastructure as a candidate version; it does NOT change production behavior unless explicitly promoted.",
+  "model_loading": "Same serialization format (joblib) as production record; can be loaded by the same model loader path used for mission_E_hardneg.",
+  "schema_validation": "Feature order and count (48) match the production feature contract; schema-compatible with the existing feature pipeline.",
+  "monitoring": "Candidate should be monitored for PSI, alert-rate, and score distribution before any promotion.",
+  "psi_monitoring": "PSI vs production reference must be computed before promotion; not computed during this gate.",
+  "alert_rate_monitoring": "At floor tV*, candidate alerts_per_1k = 118.9 vs E_hardneg 134.6 on val; production alert-rate impact must be assessed online.",
+  "threshold_configuration": "Candidate threshold tV* = 0.0298937337 is distinct from production threshold 0.018758; both can coexist in config.",
+  "rollback_mechanism": "Rollback target is E_hardneg; promotion path must keep E_hardneg intact and be reversible.",
+  "model_version_identification": "Candidate version identified by artifact hash and freeze timestamp; must be tagged distinctly from production version.",
+  "prediction_logging": "Candidate predictions must be logged with candidate version id before any production exposure.",
+  "audit_logging": "Audit logging path is independent of model; candidate integration must preserve append-only audit trail.",
+  "do_not_deploy": true,
+  "cert_time_utc": "2026-09-06T16:57:16Z"
+}

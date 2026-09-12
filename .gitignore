@@ -102,4 +102,5 @@ reports/phase8_*.json
 reports/phase9_certification/
 reports/altman_*.json
 benchmarks/
-scripts/
+backend/scripts/_sweep_out.log
+backend/scripts/_sweep_summary.json

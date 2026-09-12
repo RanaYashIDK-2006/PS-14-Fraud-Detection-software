@@ -1,0 +1,111 @@
+{
+  "candidate": "V_rawplus",
+  "certification_status": "CONDITIONAL",
+  "rationale": "V_rawplus is statistically credible and passes every statistical/methodology gate, including reproduction, threshold provenance, clean forward validation, and segment documentation. However, it cannot receive FULL certification because (1) the three fraud-rate features (user/merchant/city) remain UNVERIFIED for label availability, and (2) offline/production feature parity has not been verified in this gate. Per the brief, these open issues allow CONDITIONAL certification rather than FULL, and CONDITIONAL does NOT authorize production promotion.",
+  "gates": [
+    [
+      "artifact_identity_verified",
+      "PASS",
+      "mission_E_hardneg artifacts hashed; V_rawplus = that ensemble; phase8 controls reproduce it"
+    ],
+    [
+      "no_final_test_access",
+      "PASS",
+      "final_test_firewall.json asserts no final-test rows loaded/scored"
+    ],
+    [
+      "no_leakage",
+      "PASS",
+      "no new features; final-test not touched; hard negatives mined from train only"
+    ],
+    [
+      "causal_features_verified",
+      "PASS",
+      "no new features vs native recipe; prior causal audit applies"
+    ],
+    [
+      "label_availability_verified",
+      "FAIL",
+      "user/merchant/city fraud-rate features UNVERIFIED; label latency unresolved"
+    ],
+    [
+      "feature_parity_verified",
+      "UNVERIFIED",
+      "offline-vs-production parity not run in this gate; required for FULL"
+    ],
+    [
+      "threshold_provenance_verified",
+      "PASS",
+      "tV* = 0.0298937337 reproduced from Phase-6b and Phase-8 at_floor; thresholds identical in two independent source records"
+    ],
+    [
+      "deterministic_reproduction_verified",
+      "PASS",
+      "max|dp| = 0.0 for Phase-8 candidates; V_rawplus reproduced bit-identically in Phase-7 and re-verified by control reproduction"
+    ],
+    [
+      "clean_validation_reproduced",
+      "PASS",
+      "E_hardneg and V_rawplus at-floor confusion reproduced from phase8_controls + phase6b records"
+    ],
+    [
+      "forward_evidence_acceptable",
+      "PASS",
+      "clean Phase-7 windows: V_rawplus >=99.5% recall with FPR <= E on all three"
+    ],
+    [
+      "segment_behavior_documented",
+      "PASS",
+      "coverage + channel segments documented; tradeoffs preserved"
+    ],
+    [
+      "security_integrity_acceptable",
+      "PASS",
+      "no critical issue; joblib risk mitigated by hash verification"
+    ],
+    [
+      "production_compatibility_verified",
+      "PARTIAL",
+      "technical compatibility OK; PSI/alert-rate/parity/online-loading verification pending before promotion"
+    ],
+    [
+      "contaminated_window_handled",
+      "PASS",
+      "2018-2019 window marked INVALID and excluded; documented"
+    ]
+  ],
+  "pass_count": 11,
+  "fail_count": 1,
+  "unverified_count": 1,
+  "partial_count": 1,
+  "final_test_authorized": false,
+  "final_test_note": "FINAL_TEST_AUTHORIZED = FALSE. Even though forward evidence is acceptable, the label-latency and parity conditions are not resolved. A conditional certification may authorize the next controlled evaluation only if the unresolved condition does not invalidate the evaluation itself. Here, the unresolved label-availability condition directly affects the candidate production semantics and therefore should be resolved before any final-test adjudication. The historical Phase-6 one-shot (E 0.9967 / V 0.9908) remains the only existing final-test evidence and is preserved.",
+  "conditions_for_next_phase": [
+    "Resolve label latency for user/merchant/city fraud-rate features (establish real label-availability timing from data/provenance) OR remove those features and re-verify the candidate frontier.",
+    "Complete offline-vs-production feature parity verification for all 48 features, including edge cases (zero amounts, NaN, missing strings, missing/unseen merchant/city/category, extreme values, malformed optional fields).",
+    "Verify production model-loading safety and online feature path for the exact 48-feature contract.",
+    "Compute PSI and alert-rate impact vs production reference before any promotion consideration.",
+    "Keep E_hardneg immutable as rollback baseline until and unless a fully certified candidate supersedes it via an authorized promotion path.",
+    "If certification is upgraded to FULL after the above, a single clean final-test one-shot at tV* = 0.0298937337 may be authorized by explicit decision; no further tuning may follow."
+  ],
+  "historical_final_test_evidence_preserved": {
+    "note": "Phase-6 one-shot (consumed; Rule 2): E_hardneg 0.9967 recall / V_rawplus 0.9908 recall at frozen thresholds. Preserved; not erased; not relabeled.",
+    "E_hardneg": {
+      "recall": 0.9967,
+      "fpr": 0.1099,
+      "tp": 4563,
+      "fn": 15,
+      "fp": 20634,
+      "tn": 167160
+    },
+    "V_rawplus": {
+      "recall": 0.9908,
+      "fpr": 0.0915,
+      "tp": 4536,
+      "fn": 42,
+      "fp": 17175,
+      "tn": 170619
+    }
+  },
+  "cert_time_utc": "2026-09-06T16:48:27Z"
+}

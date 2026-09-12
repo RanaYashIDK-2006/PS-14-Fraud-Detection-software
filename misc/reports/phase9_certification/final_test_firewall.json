@@ -1,0 +1,37 @@
+{
+  "final_test_access": false,
+  "final_test_fingerprint": {
+    "dataset": "IBM credit-card transaction corpus (2018-2020 locked final test window)",
+    "expected_rows": 3782053,
+    "expected_fraud": 4578,
+    "expected_prevalence_pct": 0.121,
+    "time_window": ">=2018"
+  },
+  "reason_no_access": "Phase 9 is a certification gate, not an experiment. No final-test file was opened, no final-test labels were loaded, no final-test predictions were generated. All thresholds/metrics were reproduced from Phase-6/7/8 development artifacts.",
+  "files_touched_by_this_phase": [
+    "reports/phase9_certification\\artifact_identity.json",
+    "reports/phase8_controls.json",
+    "reports/phase8_candidate_matrix.json",
+    "reports/phase8_forward_results.json",
+    "reports/phase8_coverage_results.json",
+    "reports/phase8_channel_results.json",
+    "reports/phase8_threshold_analysis.json",
+    "reports/phase8_reproducibility.json",
+    "reports/phase8_final_decision.json",
+    "PHASE8_ROBUST_MODEL_IMPROVEMENT_REPORT.md",
+    "reports/phase6b_threshold_selection.json",
+    "reports/phase6b_fn_forensics.json",
+    "reports/phase6b_frontier.json",
+    "reports/phase6b_segment_analysis.json",
+    "models/model_records/mission_E_hardneg/config.json",
+    "models/model_records/mission_E_hardneg/models.joblib",
+    "models/model_records/mission_E_hardneg/scores.npz"
+  ],
+  "guard_assertions": {
+    "no_final_test_npz_loaded": true,
+    "no_final_test_labels_loaded": true,
+    "no_final_test_scores_generated": true,
+    "no_final_test_path_in_any_open_call": true,
+    "guard_time_utc": "2026-09-06T16:41:28Z"
+  }
+}

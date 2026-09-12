@@ -1,0 +1,15 @@
+{
+  "phase": 8,
+  "time_utc": "2026-09-06T12:15:34Z",
+  "production": {
+    "guard_ok": true,
+    "production_version": "altman_native_E_hardneg_cert_20260904",
+    "production_threshold": 0.018758,
+    "snapshot_sha": "9882ff1dd058d5e29b469272d1386455ad63242874c549302c71db55d138a98f",
+    "final_test_lock_epoch": 1514764800,
+    "experiment_root": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\experiments\\phase6_exposure_normalization"
+  },
+  "production_modified": false,
+  "final_test_accessed": false,
+  "note": "All thresholds selected on VALIDATION only (>=0.995 exact)."
+}

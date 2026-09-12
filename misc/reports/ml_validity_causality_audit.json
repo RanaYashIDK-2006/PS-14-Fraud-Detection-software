@@ -1,0 +1,135 @@
+{
+  "perturbations": [],
+  "per_feature": {
+    "account_tenure_days": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "amount_ratio": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.9178,
+      "perturbed_scenarios": 40
+    },
+    "amount_zscore": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "days_since_last_similar_txn": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "failed_auth_count_24h": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "gradual_escalation_score": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "hour_deviation": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "hour_of_day": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "is_weekend": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "known_device_count": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "mule_ring_score": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "new_device_flag": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "recipient_novelty": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "shared_device_accounts": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "shared_recipient_accounts": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "txn_freq_last_24h": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "txn_regularity": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "txn_time_unusual": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "unusual_location_flag": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "unusual_recipient_flag": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    },
+    "velocity_deviation": {
+      "max_causal_diff": 0.0,
+      "max_legacy_diff": 0.0,
+      "perturbed_scenarios": 40
+    }
+  },
+  "verdict": "PASS",
+  "scenarios": 10,
+  "perturbation_kinds": [
+    "fraud_burst",
+    "amount_shock",
+    "label_flip",
+    "extra_volume"
+  ],
+  "method": "recompute target-row features from history up to t, append strictly-future perturbed events, recompute; causal max|diff| must be 0.0 (bit-identical)",
+  "built_at": "2026-09-12T09:33:04.230264+00:00",
+  "tolerance": 0.0,
+  "label_and_quarantine": {
+    "B_label_derived_feature_lines": [],
+    "B_none": true,
+    "B_note": "synthetic labels are assigned at event time, and NO model feature consumes any label, so label-latency cannot influence feature values; the label is the OUTCOME only (used for validation metrics/threshold selection, which is legitimate)",
+    "C_val_locked_threshold": 0.42760327458381653,
+    "C_independent_val_threshold": 0.42760327458381653,
+    "C_locked_fpr_on_validation": 0.009175247221939036,
+    "C_match": true,
+    "C_test_metrics_at_locked_consistent": true,
+    "C_no_test_threshold_used": true,
+    "C_scaler_fit_train_only": true,
+    "C_early_stop_on_validation": true,
+    "C_threshold_from_validation_only": true
+  }
+}

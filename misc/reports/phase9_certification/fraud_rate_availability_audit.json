@@ -1,0 +1,62 @@
+{
+  "candidate": "V_rawplus",
+  "features_audited": [
+    "user_fraud_rate",
+    "merch_fraud_rate",
+    "city_fraud_rate"
+  ],
+  "audit_conclusion": "UNVERIFIED - label availability at scoring time not established; predictive usefulness is not evidence of availability",
+  "per_feature": {
+    "user_fraud_rate": {
+      "status": "UNVERIFIED",
+      "exact_numerator": "count of fraud-labeled prior transactions for the user",
+      "exact_denominator": "count of prior transactions for the user",
+      "label_creation_time": "UNVERIFIED",
+      "label_finalization_time": "UNVERIFIED",
+      "transaction_timestamp": "transaction ts",
+      "label_would_have_existed_before_prediction": "UNVERIFIED",
+      "historical_labels_delayed": "UNVERIFIED",
+      "unresolved_cases_enter_denominator": "UNVERIFIED",
+      "future_labels_modify_historical_rates": "Yes",
+      "reconstructable_identically_online": "UNVERIFIED",
+      "production_has_required_labels": "UNVERIFIED",
+      "production_feature_matches_training": "UNVERIFIED",
+      "could_be_computed_at_decision_time_with_only_available_info": "UNVERIFIED"
+    },
+    "merch_fraud_rate": {
+      "status": "UNVERIFIED",
+      "exact_numerator": "count of fraud-labeled prior transactions for the merchant",
+      "exact_denominator": "count of prior transactions for the merchant",
+      "label_creation_time": "UNVERIFIED",
+      "label_finalization_time": "UNVERIFIED",
+      "transaction_timestamp": "transaction ts",
+      "label_would_have_existed_before_prediction": "UNVERIFIED",
+      "historical_labels_delayed": "UNVERIFIED",
+      "unresolved_cases_enter_denominator": "UNVERIFIED",
+      "future_labels_modify_historical_rates": "Yes",
+      "reconstructable_identically_online": "UNVERIFIED",
+      "production_has_required_labels": "UNVERIFIED",
+      "production_feature_matches_training": "UNVERIFIED",
+      "could_be_computed_at_decision_time_with_only_available_info": "UNVERIFIED"
+    },
+    "city_fraud_rate": {
+      "status": "UNVERIFIED",
+      "exact_numerator": "count of fraud-labeled prior transactions for the city",
+      "exact_denominator": "count of prior transactions for the city",
+      "label_creation_time": "UNVERIFIED",
+      "label_finalization_time": "UNVERIFIED",
+      "transaction_timestamp": "transaction ts",
+      "label_would_have_existed_before_prediction": "UNVERIFIED",
+      "historical_labels_delayed": "UNVERIFIED",
+      "unresolved_cases_enter_denominator": "UNVERIFIED",
+      "future_labels_modify_historical_rates": "Yes",
+      "reconstructable_identically_online": "UNVERIFIED",
+      "production_has_required_labels": "UNVERIFIED",
+      "production_feature_matches_training": "UNVERIFIED",
+      "could_be_computed_at_decision_time_with_only_available_info": "UNVERIFIED"
+    }
+  },
+  "overall_feasibility": "UNVERIFIED - none of the three fraud-rate features can be affirmed as computable at decision time from genuinely available information, because real label-availability evidence is absent",
+  "certification_implication": "If any fraud-rate feature remains UNVERIFIED, V_rawplus cannot receive FULL certification; certification status is CONDITIONAL pending label-latency resolution or removal of these features.",
+  "cert_time_utc": "2026-09-06T16:43:26Z"
+}

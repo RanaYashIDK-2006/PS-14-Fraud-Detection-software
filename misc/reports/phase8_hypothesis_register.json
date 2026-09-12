@@ -1,0 +1,30 @@
+{
+  "phase7": {
+    "confirmed": [
+      "V_rawplus dev-robust at >=99.5% (val FPR 0.0992 vs E 0.1153).",
+      "Forward windows 2014/2015/2016: rawplus >=99.5% with equal/better FPR.",
+      "Exposure ablation: raw 0.1051, norm 0.1048, raw+norm 0.0992 -> raw counts matter.",
+      "Val FN parity E=19/V=19 at exact >=99.5% points.",
+      "Channel: V cuts chip/swipe/online FPR with no asymmetric recall loss."
+    ],
+    "supported": [
+      "Raw counts carry signal the rates do not fully replace.",
+      "Under-covered merchants are weakly associated with the E-caught/V-missed trio."
+    ],
+    "inconclusive": [
+      "The Phase-6 test FN gap (E 15 vs V 42) has no dev analogue; mechanism unobserved.",
+      "Whether full-corpus merchant depth (unobserved by frame) would help the frontier."
+    ],
+    "rejected": [
+      "Training-coverage scaling is the absent-merchant FPR lever (0.68-0.79 at all levels).",
+      "Swipe is the asymmetric failure channel (no asymmetric loss at the floor).",
+      "A conditional raw-for-under-covered / rates-elsewhere architecture is needed."
+    ]
+  },
+  "phase8_hypotheses": {
+    "H1": "Full-corpus merchant depth (label-free, causal) reduces G4/absent FPR at >=99.5%.",
+    "H2": "Dropping the 3 UNVERIFIED label-dependent fraud-rate cols costs little on dev.",
+    "H3": "Any fixed-val win transfers to the 2014/2015/2016 forward windows."
+  },
+  "status": "executed in reports/phase8_candidate_matrix.json + phase8_forward_results.json"
+}

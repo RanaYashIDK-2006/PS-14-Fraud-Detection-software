@@ -36,21 +36,21 @@ jobs:
           cache: 'pip'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r backend/requirements.txt
 
       - name: Generate synthetic data
-        run: python src/generate_synthetic_data.py
+        run: python backend/src/generate_synthetic_data.py
 
       - name: Train models
-        run: python src/train_compare.py
+        run: python backend/src/train_compare.py
 
       - name: Run full regression suite
-        run: python scripts/regression_suite.py --fast
+        run: python backend/scripts/regression_suite.py --fast
         env:
           PYTHONIOENCODING: utf-8
 
       - name: Run backup/restore test
-        run: python scripts/backup_restore_test.py
+        run: python backend/scripts/backup_restore_test.py
         env:
           PYTHONIOENCODING: utf-8
 
@@ -72,25 +72,25 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r backend/requirements.txt
           pip install bandit pip-audit
 
       - name: Run Bandit static analysis
         # Same severity floor as security-scan.yml: LOW findings (documented
         # try/except resilience patterns, local tooling subprocess use) are
         # triaged and accepted; medium+ fails the build.
-        run: bandit -r src/ -f json -o bandit-results.json --severity-level medium
+        run: bandit -r backend/src/ -f json -o bandit-results.json --severity-level medium
 
       - name: Run pip-audit dependency scan
         run: pip-audit --format=json --output=pip-audit-results.json
 
       - name: Run custom security scanner
-        run: python scripts/security_scan.py --full --json --output security-scan.json
+        run: python backend/scripts/security_scan.py --full --json --output security-scan.json
         env:
           PYTHONIOENCODING: utf-8
 
       - name: Run penetration test
-        run: python scripts/penetration_test.py
+        run: python backend/scripts/penetration_test.py
         env:
           PYTHONIOENCODING: utf-8
 
@@ -121,19 +121,19 @@ jobs:
           cache: 'pip'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r backend/requirements.txt
 
       # Bake trained artifacts into the image: models/artifacts/ is
       # gitignored (joblib files), so a fresh checkout ships none and the
       # risk engine fails at startup reading metadata.json.
       - name: Generate synthetic data
-        run: python src/generate_synthetic_data.py
+        run: python backend/src/generate_synthetic_data.py
 
       - name: Train models
-        run: python src/train_compare.py
+        run: python backend/src/train_compare.py
 
       - name: Build Docker image
-        run: docker build -t ps14:${{ github.sha }} .
+        run: docker build -t ps14:${{ github.sha }} -f backend/Dockerfile .
 
       - name: Verify container runs as non-root
         run: |
@@ -183,15 +183,15 @@ jobs:
           cache: 'pip'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r backend/requirements.txt
 
       # The live walkthrough boots its own five services (ports 8001-8005)
       # and needs trained model artifacts on the runner.
       - name: Generate synthetic data
-        run: python src/generate_synthetic_data.py
+        run: python backend/src/generate_synthetic_data.py
 
       - name: Train models
-        run: python src/train_compare.py
+        run: python backend/src/train_compare.py
 
       - name: Download Docker image
         uses: actions/download-artifact@v4
@@ -210,7 +210,7 @@ jobs:
       # Walkthrough FIRST: it needs ports 8001-8005 free, which compose
       # would hold. It self-verifies the audit chain and cleans up on exit.
       - name: Run live walkthrough
-        run: bash scripts/live_walkthrough.sh
+        run: bash backend/scripts/live_walkthrough.sh
         env:
           PYTHONIOENCODING: utf-8
 
@@ -225,7 +225,7 @@ jobs:
           echo "CORS_ORIGINS=http://localhost:8000,http://localhost:8004" >> $GITHUB_ENV
 
       - name: Start stack
-        run: docker compose up -d --no-build
+        run: cd backend && docker compose up -d --no-build
         env:
           JWT_SECRET: ${{ env.JWT_SECRET }}
           PII_ENCRYPTION_KEY: ${{ env.PII_ENCRYPTION_KEY }}
@@ -251,8 +251,8 @@ jobs:
             done
             if [ "$ok" -ne 1 ]; then
               echo "[$name] :$port did not become healthy — compose ps + logs:"
-              docker compose ps -a || true
-              docker compose logs --tail=60 "$name" || true
+              cd backend && docker compose ps -a || true
+              cd backend && docker compose logs --tail=60 "$name" || true
               exit 1
             fi
           done
@@ -265,21 +265,24 @@ jobs:
 
       - name: Dump logs on failure
         if: failure()
-        run: docker compose logs --tail=50
+        run: cd backend && docker compose logs --tail=50
 
       - name: Cleanup
         if: always()
-        run: docker compose down -v
+        run: cd backend && docker compose down -v
 
   # ──────────────────────────────────────────────────────────────────────────
-  # Phase 5: Deploy (only on version tags)
+  # Phase 5: Deploy — push image to GHCR on every merge to main
   # ──────────────────────────────────────────────────────────────────────────
   deploy:
-    name: Deploy
+    name: Deploy Image
     runs-on: ubuntu-latest
     needs: [integration]
-    if: startsWith(github.ref, 'refs/tags/v')
-    environment: production
+    # Run on every push to main/develop; also on version tags
+    if: github.event_name == 'push'
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
 
@@ -291,22 +294,56 @@ jobs:
       - name: Load Docker image
         run: docker load < ps14-image.tar.gz
 
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set image metadata
+        id: meta
+        run: |
+          IMAGE=ghcr.io/${{ github.repository }}
+          SHA=${{ github.sha }}
+          SHORT_SHA=${SHA:0:7}
+          TAGS="${IMAGE}:${SHORT_SHA}"
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            TAGS="${TAGS},${IMAGE}:latest"
+          fi
+          # If this is a version tag, also tag with the version
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+            TAGS="${TAGS},${IMAGE}:${VERSION}"
+          fi
+          echo "tags=${TAGS}" >> $GITHUB_OUTPUT
+          echo "image=${IMAGE}" >> $GITHUB_OUTPUT
+          echo "=== Pushing image with tags: ${TAGS} ==="
+
       - name: Tag image
         run: |
-          docker tag ps14:${{ github.sha }} ps14:${GITHUB_REF#refs/tags/}
-          docker tag ps14:${{ github.sha }} ps14:latest
+          IFS=',' read -ra TAG_ARRAY <<< "${{ steps.meta.outputs.tags }}"
+          for tag in "${TAG_ARRAY[@]}"; do
+            docker tag ps14:${{ github.sha }} "${tag}"
+          done
 
-      - name: Deploy to production
+      - name: Push to GHCR
         run: |
-          echo "=== Production Deployment ==="
-          echo "Image: ps14:${GITHUB_REF#refs/tags/}"
-          echo "This step should be customized for your deployment target."
-          echo ""
-          echo "Production checklist:"
-          echo "  [ ] All secrets in secrets manager"
-          echo "  [ ] PostgreSQL instances ready"
-          echo "  [ ] Caddy/reverse proxy configured"
-          echo "  [ ] Firewall rules in place"
-          echo "  [ ] Monitoring/alerting configured"
-          echo "  [ ] Backup schedule verified"
-          echo "  [ ] Restore tested"
+          IFS=',' read -ra TAG_ARRAY <<< "${{ steps.meta.outputs.tags }}"
+          for tag in "${TAG_ARRAY[@]}"; do
+            echo "Pushing ${tag}..."
+            docker push "${tag}"
+          done
+
+      - name: Deployment summary
+        run: |
+          echo "## 🚀 Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Image pushed to GHCR:** ${{ steps.meta.outputs.image }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Tags:** ${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Deploy command:**" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ${{ steps.meta.outputs.image }}:latest" >> $GITHUB_STEP_SUMMARY
+          echo "docker compose up -d" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,140 @@
+{
+  "chip": {
+    "population": 120641,
+    "fraud": 527,
+    "legit": 120114,
+    "fraud_rate": 0.004368,
+    "E_hardneg": {
+      "recall": 0.9715370018975332,
+      "fpr": 0.065271325574038,
+      "precision": 0.06130268199233716,
+      "tp": 512,
+      "fp": 7840,
+      "fn": 15,
+      "tn": 112274,
+      "alerts": 8352,
+      "n_fraud": 527,
+      "n_legit": 120114
+    },
+    "V_rawplus": {
+      "recall": 0.9715370018975332,
+      "fpr": 0.06110028805967664,
+      "precision": 0.06521462234110305,
+      "tp": 512,
+      "fp": 7339,
+      "fn": 15,
+      "tn": 112775,
+      "alerts": 7851,
+      "n_fraud": 527,
+      "n_legit": 120114
+    },
+    "score_stats": {
+      "E_mean": 0.011682,
+      "E_median": 0.000391,
+      "V_mean": 0.016829,
+      "V_median": 0.000444
+    }
+  },
+  "swipe": {
+    "population": 29721,
+    "fraud": 234,
+    "legit": 29487,
+    "fraud_rate": 0.007873,
+    "E_hardneg": {
+      "recall": 0.9829059829059829,
+      "fpr": 0.10302845321667176,
+      "precision": 0.07037943696450429,
+      "tp": 230,
+      "fp": 3038,
+      "fn": 4,
+      "tn": 26449,
+      "alerts": 3268,
+      "n_fraud": 234,
+      "n_legit": 29487
+    },
+    "V_rawplus": {
+      "recall": 0.9786324786324786,
+      "fpr": 0.08003526977990301,
+      "precision": 0.0884511394360757,
+      "tp": 229,
+      "fp": 2360,
+      "fn": 5,
+      "tn": 27127,
+      "alerts": 2589,
+      "n_fraud": 234,
+      "n_legit": 29487
+    },
+    "score_stats": {
+      "E_mean": 0.018256,
+      "E_median": 0.000968,
+      "V_mean": 0.021383,
+      "V_median": 0.000921
+    }
+  },
+  "online": {
+    "population": 24168,
+    "fraud": 3073,
+    "legit": 21095,
+    "fraud_rate": 0.127152,
+    "E_hardneg": {
+      "recall": 1.0,
+      "fpr": 0.41735008295804693,
+      "precision": 0.2587353708849036,
+      "tp": 3073,
+      "fp": 8804,
+      "fn": 0,
+      "tn": 12291,
+      "alerts": 11877,
+      "n_fraud": 3073,
+      "n_legit": 21095
+    },
+    "V_rawplus": {
+      "recall": 1.0,
+      "fpr": 0.3432092913012562,
+      "precision": 0.2979734315911956,
+      "tp": 3073,
+      "fp": 7240,
+      "fn": 0,
+      "tn": 13855,
+      "alerts": 10313,
+      "n_fraud": 3073,
+      "n_legit": 21095
+    },
+    "score_stats": {
+      "E_mean": 0.197629,
+      "E_median": 0.016742,
+      "V_mean": 0.209517,
+      "V_median": 0.012765
+    }
+  },
+  "other": {
+    "population": 0,
+    "fraud": 0,
+    "legit": 0,
+    "fraud_rate": 0.0,
+    "E_hardneg": {
+      "recall": 0.0,
+      "fpr": 0.0,
+      "precision": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "tn": 0,
+      "alerts": 0,
+      "n_fraud": 0,
+      "n_legit": 0
+    },
+    "V_rawplus": {
+      "recall": 0.0,
+      "fpr": 0.0,
+      "precision": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "tn": 0,
+      "alerts": 0,
+      "n_fraud": 0,
+      "n_legit": 0
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "outcome": "C",
+  "outcome_label": "NO WIN (no candidate materially beats V_rawplus at >=99.5%)",
+  "best_candidate": null,
+  "evidence": {
+    "val_fpr_comparison": {
+      "E_hardneg": 0.115304,
+      "V_rawplus": 0.099235,
+      "C_cov": 0.112112,
+      "D_safe": 0.134883
+    },
+    "val_recall_comparison": {
+      "E_hardneg": 0.995044,
+      "V_rawplus": 0.995044,
+      "C_cov": 0.995044,
+      "D_safe": 0.995044
+    },
+    "forward_pass": true,
+    "reproducibility_pass": true,
+    "label_safety": "D_safe drops UNVERIFIED cols 37-39; C_cov keeps them (research only)"
+  },
+  "production_untouched": true,
+  "final_test_untouched": true,
+  "next_action": "Keep E_hardneg. V_rawplus remains dev-robust candidate for certification review."
+}

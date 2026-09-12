@@ -1,0 +1,105 @@
+{
+  "candidate": "V_rawplus",
+  "coverage_segments_at_floor": {
+    "G1_genuinely_new": {
+      "recall": 1.0,
+      "fpr": 0.731183,
+      "precision": 0.19685,
+      "tp": 50,
+      "fp": 204,
+      "fn": 0,
+      "tn": 75,
+      "alerts": 254,
+      "alerts_per_1k": 772.036,
+      "n_fraud": 50,
+      "n_legit": 279
+    },
+    "G2_under_covered": {
+      "recall": 0.993007,
+      "fpr": 0.721917,
+      "precision": 0.089421,
+      "tp": 142,
+      "fp": 1446,
+      "fn": 1,
+      "tn": 557,
+      "alerts": 1588,
+      "alerts_per_1k": 739.981,
+      "n_fraud": 143,
+      "n_legit": 2003
+    },
+    "G3_well_covered": {
+      "recall": 0.995056,
+      "fpr": 0.090782,
+      "precision": 0.191571,
+      "tp": 3623,
+      "fp": 15289,
+      "fn": 18,
+      "tn": 153125,
+      "alerts": 18912,
+      "alerts_per_1k": 109.918,
+      "n_fraud": 3641,
+      "n_legit": 168414
+    },
+    "G4_deep_real_zero_frame": {
+      "recall": 1.0,
+      "fpr": 0.418033,
+      "precision": 0.089286,
+      "tp": 5,
+      "fp": 51,
+      "fn": 0,
+      "tn": 71,
+      "alerts": 56,
+      "alerts_per_1k": 440.945,
+      "n_fraud": 5,
+      "n_legit": 122
+    }
+  },
+  "channel_segments_at_floor": {
+    "chip": {
+      "recall": 0.973435,
+      "fpr": 0.0611,
+      "precision": 0.065334,
+      "tp": 513,
+      "fp": 7339,
+      "fn": 14,
+      "tn": 112775,
+      "alerts": 7852,
+      "alerts_per_1k": 65.086,
+      "n_fraud": 527,
+      "n_legit": 120114
+    },
+    "swipe": {
+      "recall": 0.978632,
+      "fpr": 0.080035,
+      "precision": 0.088451,
+      "tp": 229,
+      "fp": 2360,
+      "fn": 5,
+      "tn": 27127,
+      "alerts": 2589,
+      "alerts_per_1k": 87.11,
+      "n_fraud": 234,
+      "n_legit": 29487
+    },
+    "online": {
+      "recall": 1.0,
+      "fpr": 0.343209,
+      "precision": 0.297973,
+      "tp": 3073,
+      "fp": 7240,
+      "fn": 0,
+      "tn": 13855,
+      "alerts": 10313,
+      "alerts_per_1k": 426.721,
+      "n_fraud": 3073,
+      "n_legit": 21095
+    }
+  },
+  "segment_tradeoff_documented": {
+    "G4_improvement_vs_E": true,
+    "G1_worsening_vs_E": false,
+    "note": "V_rawplus improves G4 FPR (0.418 vs 0.443) but worsens genuinely-new FPR (0.731 vs 0.756). This is a segment tradeoff, not a universal improvement. Documented accurately."
+  },
+  "conclusion": "Segment behavior documented; no segment silently excluded. The candidate is not uniformly superior across segments. This is acceptable for certification if the aggregate + forward evidence supports advancement and label-latency is resolved.",
+  "cert_time_utc": "2026-09-06T16:44:43Z"
+}
