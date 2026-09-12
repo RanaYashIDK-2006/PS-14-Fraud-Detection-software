@@ -15,6 +15,7 @@ The audit store holds only pseudonyms - never plaintext PII.
 
 from __future__ import annotations
 
+import hmac
 import json
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
@@ -98,7 +99,7 @@ def require_compliance_token(
             return username
 
     # Fallback: legacy shared token (backward compatibility)
-    if x_compliance_token == settings.compliance_token:
+    if hmac.compare_digest(x_compliance_token, settings.compliance_token):
         return "legacy-shared-token"
 
     raise HTTPException(status_code=401, detail="invalid compliance credentials")

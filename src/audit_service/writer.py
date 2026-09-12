@@ -147,7 +147,7 @@ def flush_audit_queue(timeout: float = 5.0) -> int:
     Returns the number of events flushed. Used by tests and shutdown.
     """
     _ensure_audit_thread()
-    flushed = 0
+    flushed = _audit_queue.qsize()
     deadline = _time.monotonic() + timeout
     while not _audit_queue.empty() and _time.monotonic() < deadline:
         _time.sleep(0.05)

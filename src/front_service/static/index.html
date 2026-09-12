@@ -1,510 +1,534 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PS-14 — Fraud Detection System</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self';">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta name="description" content="Privacy-first AI fraud detection system. Built for DPDP Act 2023 and RBI Guidelines.">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+      colors: {
+        surface: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 800: '#1e293b', 900: '#0f172a', 950: '#020617' },
+        brand: { 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb' },
+      }
+    }
+  }
+}
+</script>
 <style>
-:root {
-  --bg: #0b0f1a; --surface: #111827; --surface-2: #1a2035; --surface-3: #1e293b;
-  --border: #1e293b; --border-light: #2d3a52;
-  --text: #f1f5f9; --text-secondary: #94a3b8; --text-muted: #64748b;
-  --accent: #3b82f6; --accent-glow: rgba(59,130,246,0.15);
-  --green: #10b981; --green-glow: rgba(16,185,129,0.15);
-  --red: #ef4444; --red-glow: rgba(239,68,68,0.15);
-  --yellow: #f59e0b; --yellow-glow: rgba(245,158,11,0.15);
-  --purple: #8b5cf6; --purple-glow: rgba(139,92,246,0.15);
-  --cyan: #06b6d4; --sidebar-w: 240px;
-  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior: smooth; }
-body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; }
-a { color: var(--accent); text-decoration: none; }
-
-/* SIDEBAR */
-.sidebar {
-  position: fixed; left: 0; top: 0; bottom: 0; width: var(--sidebar-w);
-  background: var(--surface); border-right: 1px solid var(--border);
-  display: flex; flex-direction: column; z-index: 100; padding: 20px 0;
-  transition: transform 0.3s ease;
-}
-.sidebar-logo {
-  display: flex; align-items: center; gap: 12px;
-  padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 12px;
-}
-.sidebar-logo .icon {
-  width: 36px; height: 36px; border-radius: 10px;
-  background: linear-gradient(135deg, var(--accent), var(--purple));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; font-weight: 800; color: white;
-}
-.sidebar-logo h2 { font-size: 15px; font-weight: 700; }
-.sidebar-logo .tag { font-size: 10px; color: var(--text-muted); }
-.sidebar-section { padding: 0 12px; margin-bottom: 8px; }
-.sidebar-label {
-  font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
-  color: var(--text-muted); padding: 6px 8px; font-weight: 600;
-}
-.sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 12px; border-radius: 8px;
-  font-size: 13px; color: var(--text-secondary);
-  cursor: pointer; transition: all 0.2s;
-}
-.nav-item:hover { background: var(--surface-2); color: var(--text); }
-.nav-item.active { background: var(--accent-glow); color: var(--accent); font-weight: 600; }
-.nav-item .dot { width: 7px; height: 7px; border-radius: 50%; }
-.dot.green { background: var(--green); }
-.dot.red { background: var(--red); }
-.dot.yellow { background: var(--yellow); }
-.sidebar-footer {
-  margin-top: auto; padding: 14px 20px;
-  border-top: 1px solid var(--border); font-size: 11px; color: var(--text-muted);
-}
-
-/* MAIN */
-.main { margin-left: var(--sidebar-w); min-height: 100vh; }
-.topbar {
-  position: sticky; top: 0; z-index: 50;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 24px; background: rgba(11,15,26,0.85);
-  backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
-}
-.topbar-left { display: flex; align-items: center; gap: 12px; }
-.topbar-right { display: flex; align-items: center; gap: 10px; }
-.menu-toggle {
-  display: none; background: var(--surface-2); border: 1px solid var(--border);
-  border-radius: 8px; padding: 6px 10px; color: var(--text); cursor: pointer; font-size: 16px;
-}
-.btn {
-  padding: 6px 14px; border-radius: 8px; font-size: 12px;
-  font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; font-family: var(--font);
-}
-.btn-ghost { background: var(--surface-2); color: var(--text-secondary); border: 1px solid var(--border); }
-.btn-ghost:hover { background: var(--surface-3); color: var(--text); }
-.btn-primary { background: linear-gradient(135deg, var(--accent), var(--purple)); color: white; }
-.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(59,130,246,0.3); }
-
-.content { padding: 20px 28px; }
-
-/* STAT CARDS */
-.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
-.stat-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 14px; padding: 20px; position: relative; overflow: hidden; transition: all 0.3s;
-}
-.stat-card:hover { transform: translateY(-2px); border-color: var(--border-light); }
-.stat-card .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
-.stat-card .value { font-size: 28px; font-weight: 800; margin: 6px 0 4px; line-height: 1; }
-.stat-card .change { font-size: 11px; color: var(--text-secondary); }
-.stat-card.green .value { color: var(--green); }
-.stat-card.blue .value { color: var(--accent); }
-.stat-card.red .value { color: var(--red); }
-.stat-card.yellow .value { color: var(--yellow); }
-.stat-card.purple .value { color: var(--purple); }
-.stat-card.cyan .value { color: var(--cyan); }
-.stat-card .icon-bg {
-  position: absolute; top: 14px; right: 14px;
-  width: 36px; height: 36px; border-radius: 10px;
-  display: flex; align-items: center; justify-content: center; font-size: 16px;
-}
-.stat-card.green .icon-bg { background: var(--green-glow); }
-.stat-card.blue .icon-bg { background: var(--accent-glow); }
-.stat-card.red .icon-bg { background: var(--red-glow); }
-.stat-card.yellow .icon-bg { background: var(--yellow-glow); }
-.stat-card.purple .icon-bg { background: var(--purple-glow); }
-.stat-card.cyan .icon-bg { background: rgba(6,182,212,0.15); }
-
-/* CARDS */
-.card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 14px; padding: 20px; margin-bottom: 20px; transition: all 0.3s;
-}
-.card:hover { border-color: var(--border-light); }
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-.card-title { font-size: 14px; font-weight: 600; }
-.card-subtitle { font-size: 11px; color: var(--text-muted); }
-
-/* TABLE */
-.table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-th {
-  text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border);
-  color: var(--text-muted); font-weight: 600; font-size: 10px;
-  text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
-}
-td { padding: 8px 12px; border-bottom: 1px solid rgba(30,41,59,0.5); }
-tr:hover td { background: rgba(59,130,246,0.03); }
-.badge { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: 600; }
-.badge.green { background: var(--green-glow); color: var(--green); }
-.badge.red { background: var(--red-glow); color: var(--red); }
-.badge.yellow { background: var(--yellow-glow); color: var(--yellow); }
-.badge.blue { background: var(--accent-glow); color: var(--accent); }
-
-/* DIAGRAM */
-.diagram {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 14px; padding: 20px; margin-bottom: 20px;
-}
-.diagram svg { width: 100%; height: auto; }
-
-/* INFO BOX */
-.info {
-  background: var(--surface); border-left: 3px solid var(--accent);
-  border-radius: 0 10px 10px 0; padding: 14px 18px;
-  margin-bottom: 20px; font-size: 12px; line-height: 1.7;
-}
-.info strong { color: var(--accent); }
-.info ul { margin: 6px 0 0 16px; }
-.info li { margin-bottom: 3px; color: var(--text-secondary); }
-
-/* FOOTER */
-.footer {
-  text-align: center; color: var(--text-muted); font-size: 11px;
-  padding: 24px; border-top: 1px solid var(--border); margin-top: 20px;
-}
-
-/* SCROLL BAR */
-#scroll-bar {
-  position: fixed; top: 0; left: var(--sidebar-w); right: 0;
-  height: 3px; background: linear-gradient(90deg, var(--accent), var(--purple), var(--green));
-  z-index: 200; transition: width 0.1s linear;
-  box-shadow: 0 0 10px rgba(59,130,246,0.5);
-}
-
-/* ANIMATIONS */
-.anim { opacity: 0; transform: translateY(16px); transition: all 0.5s cubic-bezier(0.22,1,0.36,1); }
-.anim.vis { opacity: 1; transform: translateY(0); }
-
-/* RESPONSIVE */
-@media(max-width: 1024px) {
-  .sidebar { transform: translateX(-100%); }
-  .sidebar.open { transform: translateX(0); }
-  .main { margin-left: 0; }
-  #scroll-bar { left: 0; }
-  .menu-toggle { display: block; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media(max-width: 600px) {
-  .stats-grid { grid-template-columns: 1fr; }
-  .content { padding: 14px; }
-}
-@media print {
-  .sidebar, #scroll-bar { display: none !important; }
-  .main { margin-left: 0; }
-  body { background: white; color: #111; }
-  .card, .stat-card, .diagram { background: #f9f9f9; border-color: #ddd; }
-  .anim { opacity: 1; transform: none; }
-}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #020617; color: #f1f5f9; overflow-x: hidden; }
+  
+  /* Animated gradient background */
+  .bg-mesh {
+    position: fixed; inset: 0; z-index: 0;
+    background: 
+      radial-gradient(ellipse 80% 50% at 20% 40%, rgba(59,130,246,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 20%, rgba(139,92,246,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 60% at 50% 80%, rgba(16,185,129,0.05) 0%, transparent 50%);
+  }
+  
+  /* Glass card effect */
+  .glass {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(30, 41, 59, 0.5);
+  }
+  .glass:hover { border-color: rgba(59, 130, 246, 0.3); }
+  
+  /* Glow effects */
+  .glow-blue { box-shadow: 0 0 20px rgba(59,130,246,0.15); }
+  .glow-green { box-shadow: 0 0 20px rgba(16,185,129,0.15); }
+  .glow-purple { box-shadow: 0 0 20px rgba(139,92,246,0.15); }
+  
+  /* Animated gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Fade in animation */
+  .fade-in {
+    opacity: 0; transform: translateY(20px);
+    transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+  
+  /* Scroll progress */
+  #scroll-progress {
+    position: fixed; top: 0; left: 0; height: 2px; z-index: 9999;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
+    transition: width 0.1s linear;
+  }
+  
+  /* Secret admin trigger — invisible to normal users */
+  #secret-admin-trigger {
+    position: fixed; bottom: 8px; right: 8px;
+    width: 4px; height: 4px; opacity: 0; cursor: default;
+    z-index: 1; border-radius: 50%;
+  }
+  #secret-admin-trigger:hover { opacity: 0.01; cursor: pointer; }
+  
+  /* Smooth scroll */
+  html { scroll-behavior: smooth; }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0f172a; }
+  ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #334155; }
 </style>
 </head>
 <body>
+<div id="scroll-progress"></div>
+<div class="bg-mesh"></div>
 
-<div id="scroll-bar"></div>
+<!-- Secret admin trigger: 4px invisible dot, bottom-right corner -->
+<!-- Triple-click opens admin login. Not visible in UI, not in nav, not in footer. -->
+<div id="secret-admin-trigger" title="" ondblclick="window._adminClicks=(window._adminClicks||0)+1;if(window._adminClicks>=3){window._adminClicks=0;document.getElementById('adminModal').classList.remove('hidden');}"></div>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <div class="icon">14</div>
-    <div><h2>PS-14</h2><div class="tag">Fraud Detection</div></div>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-label">Navigation</div>
-    <nav class="sidebar-nav">
-      <a href="#performance" class="nav-item active"><span>📊</span> Performance</a>
-      <a href="#architecture" class="nav-item"><span>🏗️</span> Architecture</a>
-      <a href="#phases" class="nav-item"><span>🧭</span> Phase Ledger</a>
-      <a href="#cicd" class="nav-item"><span>⚙️</span> CI/CD</a>
-      <a href="#privacy" class="nav-item"><span>🔒</span> Privacy</a>
-      <a href="/monitor-page" class="nav-item"><span>📡</span> Live Monitor</a>
-      <a href="/fraud-report-page" class="nav-item"><span>📋</span> Full Report</a>
-    </nav>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-label">Status</div>
-    <nav class="sidebar-nav">
-      <a class="nav-item"><span class="dot green"></span> ML Engine</a>
-      <a class="nav-item"><span class="dot green"></span> Rules Engine</a>
-      <a class="nav-item"><span class="dot green"></span> Audit Chain</a>
-      <a class="nav-item"><span class="dot green"></span> Privacy Layer</a>
-    </nav>
-  </div>
-  <div class="sidebar-footer">
-    Built for DPDP Act 2023 &amp; RBI Guidelines<br>
-    <span style="color:var(--green)">●</span> All systems operational
-  </div>
-</aside>
-
-<!-- MAIN -->
-<div class="main">
-  <div class="topbar">
-    <div class="topbar-left">
-      <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
-      <span style="font-size:13px;font-weight:600">PS-14 Fraud Detection System</span>
+<!-- Admin Modal (hidden by default) -->
+<div id="adminModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="glass rounded-2xl p-8 w-full max-w-md mx-4">
+    <div class="text-center mb-6">
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-3">
+        <span class="text-xl">🛡️</span>
+      </div>
+      <h2 class="text-xl font-bold">Admin Access</h2>
+      <p class="text-sm text-slate-400 mt-1">Enter the admin passphrase to continue</p>
     </div>
-    <div class="topbar-right">
-      <a href="/fraud-report-page" class="btn btn-ghost">📋 Report</a>
-      <a href="/monitor-page" class="btn btn-primary">📡 Monitor</a>
-    </div>
-  </div>
-
-  <div class="content">
-    <!-- STAT CARDS -->
-    <div class="stats-grid anim" id="performance">
-      <div class="stat-card green">
-        <div class="icon-bg">📈</div>
-        <div class="label">ROC-AUC</div>
-        <div class="value counter" data-target="98.7" data-suffix="%" data-dec="1">0%</div>
-        <div class="change">Certified · E_hardneg · untouched 2018–2020 test</div>
+    <form id="adminPassForm" onsubmit="handleAdminPass(event)">
+      <div class="mb-4">
+        <input type="password" id="adminPassInput" placeholder="Passphrase" required
+          class="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
       </div>
-      <div class="stat-card blue">
-        <div class="icon-bg">🎯</div>
-        <div class="label">Recall @ Locked Threshold</div>
-        <div class="value counter" data-target="99.7" data-suffix="%" data-dec="1">0%</div>
-        <div class="change">4,563/4,578 fraud caught · FPR 10.99%</div>
-      </div>
-      <div class="stat-card cyan">
-        <div class="icon-bg">💳</div>
-        <div class="label">Transactions Tested</div>
-        <div class="value counter" data-target="192.4" data-suffix="K" data-dec="1">0</div>
-        <div class="change">Final temporal test · 2.4% fraud prevalence</div>
-      </div>
-      <div class="stat-card yellow">
-        <div class="icon-bg">⚡</div>
-        <div class="label">p95 Latency</div>
-        <div class="value counter" data-target="162" data-suffix="ms" data-dec="0">0ms</div>
-        <div class="change">Measured live · ~95 req/s · 0% errors</div>
-      </div>
-    </div>
-
-    <!-- MODEL STATUS -->
-    <div class="card anim">
-      <div class="card-header">
-        <div><div class="card-title">Model Status</div><div class="card-subtitle">Current deployed model and clean candidate</div></div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Model</th><th>Features</th><th>ROC-AUC</th><th>Recall</th><th>FPR</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><b>E_hardneg</b> <span style="color:var(--text-muted);font-size:10px">(incumbent)</span></td>
-              <td>48</td>
-              <td style="color:var(--green)">98.7%</td>
-              <td>99.67%</td>
-              <td>10.99%</td>
-              <td><span class="badge green">DEPLOYED</span></td>
-            </tr>
-            <tr>
-              <td><b>P20_45feat</b> <span style="color:var(--text-muted);font-size:10px">(candidate)</span></td>
-              <td>45</td>
-              <td style="color:var(--text-muted)">—</td>
-              <td>—</td>
-              <td>—</td>
-              <td><span class="badge blue">REAL-WORLD VALIDATION BLOCKED</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="info" style="margin-top:12px;margin-bottom:0;border-left-color:var(--yellow)">
-        <strong>E_hardneg</strong> contains 3 fraud-rate features with unverified decision-time label availability.
-        <strong>P20_45feat</strong> removes those features — all 45 are decision-time valid.
-        Production promotion is <b>blocked pending real-world data</b>.
-      </div>
-    </div>
-
-    <!-- ARCHITECTURE -->
-    <div class="diagram anim" id="architecture">
-      <div class="card-header">
-        <div><div class="card-title">System Architecture</div><div class="card-subtitle">How a transaction flows through the pipeline</div></div>
-      </div>
-      <svg viewBox="0 0 800 180">
-        <!-- Transaction -->
-        <rect x="20" y="40" width="120" height="100" rx="12" fill="#1E293B" stroke="#3B82F6" stroke-width="1.5"/>
-        <text x="80" y="75" text-anchor="middle" fill="#3B82F6" font-size="22">💳</text>
-        <text x="80" y="98" text-anchor="middle" fill="#F1F5F9" font-size="11" font-weight="600">Transaction</text>
-        <text x="80" y="115" text-anchor="middle" fill="#94A3B8" font-size="9">User payment</text>
-        <!-- Arrow -->
-        <line x1="145" y1="90" x2="195" y2="90" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="1s" repeatCount="indefinite"/></line>
-        <polygon points="195,86 205,90 195,94" fill="#3B82F6"/>
-        <!-- Privacy -->
-        <rect x="210" y="25" width="130" height="130" rx="12" fill="#1E293B" stroke="#10B981" stroke-width="1.5"/>
-        <text x="275" y="58" text-anchor="middle" fill="#10B981" font-size="22">🔒</text>
-        <text x="275" y="80" text-anchor="middle" fill="#F1F5F9" font-size="11" font-weight="600">Privacy Layer</text>
-        <text x="275" y="98" text-anchor="middle" fill="#94A3B8" font-size="9">Anonymize PII</text>
-        <text x="275" y="113" text-anchor="middle" fill="#94A3B8" font-size="9">Extract 48 features</text>
-        <text x="275" y="140" text-anchor="middle" fill="#52B788" font-size="8">✓ No raw PII</text>
-        <!-- Arrow -->
-        <line x1="345" y1="90" x2="395" y2="90" stroke="#10B981" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="1s" repeatCount="indefinite"/></line>
-        <polygon points="395,86 405,90 395,94" fill="#10B981"/>
-        <!-- ML -->
-        <rect x="410" y="15" width="140" height="150" rx="12" fill="#1E293B" stroke="#8B5CF6" stroke-width="1.5"/>
-        <text x="480" y="48" text-anchor="middle" fill="#8B5CF6" font-size="22">🤖</text>
-        <text x="480" y="70" text-anchor="middle" fill="#F1F5F9" font-size="11" font-weight="600">ML Models</text>
-        <text x="480" y="88" text-anchor="middle" fill="#94A3B8" font-size="9">XGB + LightGBM + CatBoost</text>
-        <text x="480" y="103" text-anchor="middle" fill="#94A3B8" font-size="9">48 features · weights .34/.33/.33</text>
-        <text x="480" y="125" text-anchor="middle" fill="#52B788" font-size="9">ROC-AUC: 98.7%</text>
-        <text x="480" y="143" text-anchor="middle" fill="#94A3B8" font-size="8">rules floor always applies</text>
-        <!-- Arrow -->
-        <line x1="555" y1="90" x2="605" y2="90" stroke="#8B5CF6" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="1s" repeatCount="indefinite"/></line>
-        <polygon points="605,86 615,90 605,94" fill="#8B5CF6"/>
-        <!-- Rules -->
-        <rect x="620" y="30" width="130" height="120" rx="12" fill="#1E293B" stroke="#F43F5E" stroke-width="1.5"/>
-        <text x="685" y="65" text-anchor="middle" fill="#F43F5E" font-size="22">📋</text>
-        <text x="685" y="88" text-anchor="middle" fill="#F1F5F9" font-size="11" font-weight="600">Rules Engine</text>
-        <text x="685" y="105" text-anchor="middle" fill="#94A3B8" font-size="9">41 pattern rules · hard overrides</text>
-        <text x="685" y="125" text-anchor="middle" fill="#52B788" font-size="9">✓ Rules can't be diluted</text>
-        <!-- Animated dot -->
-        <circle r="4" fill="#3B82F6" opacity="0.8"><animateMotion dur="4s" repeatCount="indefinite" path="M80,90 L275,90 L480,90 L685,90"/></circle>
-      </svg>
-    </div>
-
-    <!-- PHASE LEDGER -->
-    <div class="card anim" id="phases">
-      <div class="card-header">
-        <div><div class="card-title">Validation Phase Ledger</div><div class="card-subtitle">Phases 14–25 · every conclusion evidence-classified</div></div>
-        <a href="/monitor-page" class="btn btn-ghost">Live Monitor →</a>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Phase</th><th>Question</th><th>Classification</th><th>Key Evidence</th></tr></thead>
-          <tbody>
-            <tr><td><b>14</b></td><td>Chip supervision transfer</td><td><span class="badge red">NO_ROBUST_WIN</span></td><td>Chip supervision hurt: C2 recall 32.3% vs C0 57.7%</td></tr>
-            <tr><td><b>15</b></td><td>Distribution-shift forensics</td><td><span class="badge yellow">CASE_B</span></td><td>Channel shift PROVEN; 95% weak/no historical analogue</td></tr>
-            <tr><td><b>16</b></td><td>Data-inventory boundary</td><td><span class="badge yellow">NONE</span></td><td>51 datasets, 1 dev-eligible (IBM, synthetic)</td></tr>
-            <tr><td><b>17</b></td><td>IBM generator audit</td><td><span class="badge yellow">ARTIFACT</span></td><td>Abrupt 2017 regime; real-world validity UNVERIFIED</td></tr>
-            <tr><td><b>18</b></td><td>System readiness</td><td><span class="badge yellow">CONDITIONAL</span></td><td>Security PASS; 3 fraud-rate features unverified</td></tr>
-            <tr><td><b>19</b></td><td>Real-world evidence</td><td><span class="badge yellow">BLOCKED</span></td><td>No real-world dataset; no ground-truth labels</td></tr>
-            <tr><td><b>20</b></td><td>Decision-time fix</td><td><span class="badge green">CLEAN</span></td><td>P20_45feat: 45 features, all decision-time valid</td></tr>
-            <tr><td><b>21</b></td><td>Real-world validation</td><td><span class="badge yellow">BLOCKED</span></td><td>No legitimate real-world dataset available</td></tr>
-            <tr><td><b>22</b></td><td>Validation harness</td><td><span class="badge green">READY</span></td><td>Executable CLI runner built and tested</td></tr>
-            <tr><td><b>23</b></td><td>Data acquisition</td><td><span class="badge yellow">PENDING</span></td><td>114 sources; best (Kaggle) has unclear provenance</td></tr>
-            <tr><td><b>23B</b></td><td>Frozen Kaggle eval</td><td><span class="badge yellow">CONDITIONAL</span></td><td>P20 ROC-AUC 0.47 (degraded); promotion BLOCKED</td></tr>
-            <tr><td><b>24</b></td><td>Conditional external eval</td><td><span class="badge yellow">CONDITIONAL</span></td><td>E_hardneg ROC-AUC 0.595 post-reconstruction; FPR 9.9%; promotion BLOCKED</td></tr>
-            <tr><td><b>25</b></td><td>Leakage audit &amp; corrections</td><td><span class="badge green">NO_LEAKAGE</span></td><td>Import fix; 47/48 features causal; no target/temporal/feature leakage; promotion BLOCKED</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="info" style="margin-top:12px;margin-bottom:0;background:var(--surface-2);border-left-color:var(--yellow)">
-        <strong>Current status:</strong> E_hardneg is certified on the synthetic IBM corpus (recall 99.67%, FPR 10.99%).
-        The 2017 regime shift is a generator artifact — these numbers are <b>not real-world performance</b>.
-        Production promotion is <b>blocked pending real-world data</b>.
-      </div>
-    </div>
-
-    <!-- CI/CD PIPELINE -->
-    <div class="card anim" id="cicd">
-      <div class="card-header">
-        <div><div class="card-title">CI/CD Pipeline</div><div class="card-subtitle">GitHub Actions · both workflows run on every push to main</div></div>
-        <a href="https://github.com/RanaYashIDK-2006/PS-14-Fraud-Detection-software/actions" class="btn btn-ghost" target="_blank" rel="noopener">View runs →</a>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Stage</th><th>What it proves</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td><b>Test Suite</b></td><td>22/22 regression checks on a clean checkout (data gen → train → suite)</td><td><span class="badge green">PASSING</span></td></tr>
-            <tr><td><b>Security Scan</b></td><td>bandit medium+ clean · dependency audit · penetration test (0 FAIL)</td><td><span class="badge green">PASSING</span></td></tr>
-            <tr><td><b>Docker Build</b></td><td>Image builds with trained artifacts, runs as non-root, /health answers</td><td><span class="badge green">PASSING</span></td></tr>
-            <tr><td><b>Integration Test</b></td><td>Live register-to-audit walkthrough over HTTP + compose stack + chain verify</td><td><span class="badge green">PASSING</span></td></tr>
-            <tr><td><b>Deploy</b></td><td>Tag-gated (v*) production promotion</td><td><span class="badge blue">ON TAG</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="info" style="margin-top:12px;margin-bottom:0;background:var(--surface-2);border-left-color:var(--green)">
-        <strong>First fully green pipeline (Sept 11, 2026):</strong> fixing it surfaced real defects —
-        a regression-runner NameError that swallowed failure details, an export-signing key that was
-        random per process (signatures unverifiable by design), fresh-checkout test fragility,
-        penetration-test gate semantics, and Docker startup gaps. Details in the README's
-        CI/CD pipeline status section.
-      </div>
-    </div>
-
-    <!-- PRIVACY -->
-    <div class="diagram anim" id="privacy">
-      <div class="card-header">
-        <div><div class="card-title">Privacy Architecture</div><div class="card-subtitle">3 isolated databases with firewall separation</div></div>
-      </div>
-      <svg viewBox="0 0 800 200">
-        <defs>
-          <linearGradient id="shieldG" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#3B82F6;stop-opacity:0.3"/><stop offset="100%" style="stop-color:#10B981;stop-opacity:0.3"/></linearGradient>
-        </defs>
-        <!-- Identity DB -->
-        <g transform="translate(30,10)">
-          <rect width="180" height="180" rx="12" fill="#1E293B" stroke="#F43F5E" stroke-width="1.5"/>
-          <text x="90" y="25" text-anchor="middle" fill="#F43F5E" font-size="11" font-weight="700">🔐 IDENTITY DB</text>
-          <text x="90" y="40" text-anchor="middle" fill="#94A3B8" font-size="8">Real PII stored here</text>
-          <rect x="12" y="50" width="156" height="30" rx="6" fill="rgba(244,63,94,0.08)"/>
-          <text x="90" y="70" text-anchor="middle" fill="#F1F5F9" font-size="9">👤 Name, Email, Phone</text>
-          <rect x="12" y="88" width="156" height="30" rx="6" fill="rgba(244,63,94,0.08)"/>
-          <text x="90" y="108" text-anchor="middle" fill="#F1F5F9" font-size="9">🔑 Password Hash</text>
-          <rect x="12" y="126" width="156" height="30" rx="6" fill="rgba(244,63,94,0.08)"/>
-          <text x="90" y="146" text-anchor="middle" fill="#F1F5F9" font-size="9">🔗 Pseudonym Map</text>
-          <text x="90" y="175" text-anchor="middle" fill="#52B788" font-size="8">✓ Fernet AES-256 encrypted</text>
-        </g>
-        <!-- Firewall -->
-        <g transform="translate(240,35)">
-          <rect width="50" height="130" rx="8" fill="url(#shieldG)" stroke="#52B788" stroke-width="1.5"/>
-          <text x="25" y="35" text-anchor="middle" fill="#52B788" font-size="18">🧱</text>
-          <text x="25" y="55" text-anchor="middle" fill="#F1F5F9" font-size="8" font-weight="700">FIREWALL</text>
-          <text x="25" y="75" text-anchor="middle" fill="#94A3B8" font-size="7">No direct</text>
-          <text x="25" y="88" text-anchor="middle" fill="#94A3B8" font-size="7">access</text>
-        </g>
-        <!-- Fraud DB -->
-        <g transform="translate(340,10)">
-          <rect width="180" height="180" rx="12" fill="#1E293B" stroke="#3B82F6" stroke-width="1.5"/>
-          <text x="90" y="25" text-anchor="middle" fill="#3B82F6" font-size="11" font-weight="700">📊 FRAUD DB</text>
-          <text x="90" y="40" text-anchor="middle" fill="#94A3B8" font-size="8">Anonymous analysis</text>
-          <rect x="12" y="50" width="156" height="30" rx="6" fill="rgba(59,130,246,0.08)"/>
-          <text x="90" y="70" text-anchor="middle" fill="#F1F5F9" font-size="9">🎲 Fraud ID (random)</text>
-          <rect x="12" y="88" width="156" height="30" rx="6" fill="rgba(59,130,246,0.08)"/>
-          <text x="90" y="108" text-anchor="middle" fill="#F1F5F9" font-size="9">📈 Risk Scores</text>
-          <rect x="12" y="126" width="156" height="30" rx="6" fill="rgba(59,130,246,0.08)"/>
-          <text x="90" y="146" text-anchor="middle" fill="#F1F5F9" font-size="9">📋 Feature Vectors</text>
-          <text x="90" y="175" text-anchor="middle" fill="#52B788" font-size="8">✓ No PII ever stored</text>
-        </g>
-        <!-- Audit DB -->
-        <g transform="translate(570,10)">
-          <rect width="160" height="180" rx="12" fill="#1E293B" stroke="#F59E0B" stroke-width="1.5"/>
-          <text x="80" y="25" text-anchor="middle" fill="#F59E0B" font-size="11" font-weight="700">📝 AUDIT DB</text>
-          <text x="80" y="40" text-anchor="middle" fill="#94A3B8" font-size="8">Immutable log chain</text>
-          <rect x="10" y="50" width="140" height="30" rx="6" fill="rgba(245,158,11,0.08)"/>
-          <text x="80" y="70" text-anchor="middle" fill="#F1F5F9" font-size="9">🔗 Hash chain</text>
-          <rect x="10" y="88" width="140" height="30" rx="6" fill="rgba(245,158,11,0.08)"/>
-          <text x="80" y="108" text-anchor="middle" fill="#F1F5F9" font-size="9">👁️ Access logs</text>
-          <rect x="10" y="126" width="140" height="30" rx="6" fill="rgba(245,158,11,0.08)"/>
-          <text x="80" y="146" text-anchor="middle" fill="#F1F5F9" font-size="9">🚫 Append-only</text>
-          <text x="80" y="175" text-anchor="middle" fill="#52B788" font-size="8">✓ Tamper-evident</text>
-        </g>
-      </svg>
-    </div>
-
-    <div class="info anim">
-      <strong>Privacy guarantees:</strong>
-      <ul>
-        <li>✓ No names, addresses, or phone numbers enter the fraud system</li>
-        <li>✓ Fraud IDs are cryptographically random UUIDs — not derived from PII</li>
-        <li>✓ Identity DB encrypted with Fernet AES-256 at rest</li>
-        <li>✓ All access logged in a hash-chained audit trail (append-only, tamper-evident)</li>
-        <li>✓ Built for India's DPDP Act 2023 and RBI guidelines</li>
-      </ul>
-    </div>
-
-    <div class="footer">
-      PS-14 Privacy-First AI Fraud Detection System · Research Prototype · Built for DPDP Act 2023 &amp; RBI Guidelines
-    </div>
+      <button type="submit" class="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all">
+        Unlock
+      </button>
+      <div id="adminPassMsg" class="mt-3 text-sm text-center hidden"></div>
+    </form>
   </div>
 </div>
 
+<!-- Navbar -->
+<nav class="fixed top-0 left-0 right-0 z-40 glass border-b border-slate-800/50">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">14</div>
+      <div>
+        <span class="font-bold text-sm">PS-14</span>
+        <span class="text-xs text-slate-500 ml-2">Fraud Detection</span>
+      </div>
+    </div>
+    <div class="hidden md:flex items-center gap-1">
+      <a href="#performance" class="px-3 py-2 text-sm text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50">Performance</a>
+      <a href="#architecture" class="px-3 py-2 text-sm text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50">Architecture</a>
+      <a href="#phases" class="px-3 py-2 text-sm text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50">Validation</a>
+      <a href="#pipeline" class="px-3 py-2 text-sm text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50">Pipeline</a>
+      <a href="/monitor-page" class="px-3 py-2 text-sm text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50">Monitor</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="/login-page" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50">Sign In</a>
+      <a href="/monitor-page" class="px-4 py-2 text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:opacity-90 transition-all">Dashboard</a>
+    </div>
+  </div>
+</nav>
 
-<!-- Scripts -->
-<script src="/anime.min.js"></script>
-<script src="/motion.js"></script>
-<script src="/chart.min.js"></script>
-<script src="/static/app.js?v=3"></script>
+<!-- Hero Section -->
+<section class="relative pt-32 pb-20 px-6">
+  <div class="max-w-7xl mx-auto text-center">
+    <div class="fade-in">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs text-slate-400 mb-6">
+        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+        All systems operational
+      </div>
+      <h1 class="text-4xl md:text-6xl font-bold mb-4">
+        <span class="gradient-text">Privacy-First</span> AI Fraud Detection
+      </h1>
+      <p class="text-lg text-slate-400 max-w-2xl mx-auto mb-8">
+        Detect fraud without knowing who the person is. AI recommends — verification decides.
+        Built for India's DPDP Act 2023 and RBI Guidelines.
+      </p>
+      <div class="flex items-center justify-center gap-3">
+        <a href="#performance" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all">
+          View Metrics
+        </a>
+        <a href="/fraud-report-page" class="px-6 py-3 glass text-slate-300 font-semibold rounded-xl hover:text-white transition-all">
+          Full Report →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Performance Stats -->
+<section id="performance" class="py-16 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12 fade-in">
+      <h2 class="text-2xl font-bold mb-2">Performance</h2>
+      <p class="text-slate-400 text-sm">Certified metrics on the untouched 2018–2020 temporal test</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 fade-in">
+      <div class="glass rounded-2xl p-6 glow-green">
+        <div class="text-xs text-slate-500 uppercase tracking-wider mb-2">ROC-AUC</div>
+        <div class="text-3xl font-bold text-green-400">98.7%</div>
+        <div class="text-xs text-slate-500 mt-1">Certified · E_hardneg</div>
+      </div>
+      <div class="glass rounded-2xl p-6 glow-blue">
+        <div class="text-xs text-slate-500 uppercase tracking-wider mb-2">Recall</div>
+        <div class="text-3xl font-bold text-blue-400">99.7%</div>
+        <div class="text-xs text-slate-500 mt-1">4,563/4,578 fraud caught</div>
+      </div>
+      <div class="glass rounded-2xl p-6">
+        <div class="text-xs text-slate-500 uppercase tracking-wider mb-2">Transactions</div>
+        <div class="text-3xl font-bold text-cyan-400">192.4K</div>
+        <div class="text-xs text-slate-500 mt-1">2.4% fraud prevalence</div>
+      </div>
+      <div class="glass rounded-2xl p-6 glow-purple">
+        <div class="text-xs text-slate-500 uppercase tracking-wider mb-2">p95 Latency</div>
+        <div class="text-3xl font-bold text-purple-400">162ms</div>
+        <div class="text-xs text-slate-500 mt-1">~95 req/s · 0% errors</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Model Status -->
+<section class="py-16 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="glass rounded-2xl p-6 fade-in">
+      <h3 class="text-lg font-bold mb-4">Model Status</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left text-slate-500 text-xs uppercase tracking-wider">
+              <th class="pb-3">Model</th>
+              <th class="pb-3">Features</th>
+              <th class="pb-3">ROC-AUC</th>
+              <th class="pb-3">Recall</th>
+              <th class="pb-3">FPR</th>
+              <th class="pb-3">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/50">
+            <tr>
+              <td class="py-3 font-semibold">E_hardneg <span class="text-slate-500 text-xs">(incumbent)</span></td>
+              <td class="py-3">48</td>
+              <td class="py-3 text-green-400">98.7%</td>
+              <td class="py-3">99.67%</td>
+              <td class="py-3">10.99%</td>
+              <td class="py-3"><span class="px-2 py-1 rounded-md bg-green-500/10 text-green-400 text-xs font-medium">DEPLOYED</span></td>
+            </tr>
+            <tr>
+              <td class="py-3 font-semibold">P20_45feat <span class="text-slate-500 text-xs">(candidate)</span></td>
+              <td class="py-3">45</td>
+              <td class="py-3 text-slate-500">—</td>
+              <td class="py-3 text-slate-500">—</td>
+              <td class="py-3 text-slate-500">—</td>
+              <td class="py-3"><span class="px-2 py-1 rounded-md bg-blue-500/10 text-blue-400 text-xs font-medium">VALIDATION BLOCKED</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-4 p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 text-sm text-slate-400">
+        <strong class="text-amber-400">E_hardneg</strong> contains 3 fraud-rate features with unverified decision-time label availability.
+        <strong class="text-amber-400">P20_45feat</strong> removes those features. Production promotion is <strong>blocked pending real-world data</strong>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Architecture -->
+<section id="architecture" class="py-16 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12 fade-in">
+      <h2 class="text-2xl font-bold mb-2">Architecture</h2>
+      <p class="text-slate-400 text-sm">How a transaction flows through the pipeline</p>
+    </div>
+    <div class="glass rounded-2xl p-8 fade-in overflow-x-auto">
+      <svg viewBox="0 0 800 160" class="w-full max-w-4xl mx-auto">
+        <!-- Transaction -->
+        <rect x="20" y="30" width="110" height="100" rx="12" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="75" y="65" text-anchor="middle" fill="#3b82f6" font-size="20">💳</text>
+        <text x="75" y="85" text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="600">Transaction</text>
+        <text x="75" y="100" text-anchor="middle" fill="#94a3b8" font-size="8">User payment</text>
+        <!-- Arrow -->
+        <line x1="135" y1="80" x2="185" y2="80" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="1s" repeatCount="indefinite"/></line>
+        <polygon points="185,76 195,80 185,84" fill="#3b82f6"/>
+        <!-- Privacy -->
+        <rect x="200" y="15" width="120" height="130" rx="12" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
+        <text x="260" y="48" text-anchor="middle" fill="#10b981" font-size="20">🔒</text>
+        <text x="260" y="68" text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="600">Privacy Layer</text>
+        <text x="260" y="83" text-anchor="middle" fill="#94a3b8" font-size="8">Anonymize PII</text>
+        <text x="260" y="98" text-anchor="middle" fill="#94a3b8" font-size="8">Extract 48 features</text>
+        <text x="260" y="128" text-anchor="middle" fill="#10b981" font-size="7">✓ No raw PII</text>
+        <!-- Arrow -->
+        <line x1="325" y1="80" x2="375" y2="80" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="1s" repeatCount="indefinite"/></line>
+        <polygon points="375,76 385,80 375,84" fill="#10b981"/>
+        <!-- ML -->
+        <rect x="390" y="5" width="130" height="150" rx="12" fill="#1e293b" stroke="#8b5cf6" stroke-width="1.5"/>
+        <text x="455" y="38" text-anchor="middle" fill="#8b5cf6" font-size="20">🤖</text>
+        <text x="455" y="58" text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="600">ML Models</text>
+        <text x="455" y="73" text-anchor="middle" fill="#94a3b8" font-size="8">XGB + LightGBM + CatBoost</text>
+        <text x="455" y="88" text-anchor="middle" fill="#94a3b8" font-size="8">48 features · weighted</text>
+        <text x="455" y="118" text-anchor="middle" fill="#10b981" font-size="8">ROC-AUC: 98.7%</text>
+        <text x="455" y="138" text-anchor="middle" fill="#94a3b8" font-size="7">rules floor always applies</text>
+        <!-- Arrow -->
+        <line x1="525" y1="80" x2="575" y2="80" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="8" to="0" dur="1s" repeatCount="indefinite"/></line>
+        <polygon points="575,76 585,80 575,84" fill="#8b5cf6"/>
+        <!-- Rules -->
+        <rect x="590" y="20" width="130" height="120" rx="12" fill="#1e293b" stroke="#f43f5e" stroke-width="1.5"/>
+        <text x="655" y="55" text-anchor="middle" fill="#f43f5e" font-size="20">📋</text>
+        <text x="655" y="75" text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="600">Rules Engine</text>
+        <text x="655" y="90" text-anchor="middle" fill="#94a3b8" font-size="8">41 pattern rules</text>
+        <text x="655" y="118" text-anchor="middle" fill="#10b981" font-size="8">✓ Rules can't be diluted</text>
+        <!-- Animated dot -->
+        <circle r="4" fill="#3b82f6" opacity="0.8"><animateMotion dur="4s" repeatCount="indefinite" path="M75,80 L260,80 L455,80 L655,80"/></circle>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- Validation Phases -->
+<section id="phases" class="py-16 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="glass rounded-2xl p-6 fade-in">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-lg font-bold">Validation Phase Ledger</h3>
+          <p class="text-xs text-slate-500">Phases 14–25 · every conclusion evidence-classified</p>
+        </div>
+        <a href="/monitor-page" class="px-3 py-1.5 text-xs font-medium glass rounded-lg text-slate-400 hover:text-white transition-colors">Live Monitor →</a>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left text-slate-500 text-xs uppercase tracking-wider">
+              <th class="pb-3">Phase</th>
+              <th class="pb-3">Question</th>
+              <th class="pb-3">Classification</th>
+              <th class="pb-3">Key Evidence</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/50 text-xs">
+            <tr><td class="py-2 font-bold">14</td><td>Chip supervision transfer</td><td><span class="px-2 py-0.5 rounded bg-red-500/10 text-red-400">NO_ROBUST_WIN</span></td><td class="text-slate-400">Chip supervision hurt: C2 recall 32.3% vs C0 57.7%</td></tr>
+            <tr><td class="py-2 font-bold">15</td><td>Distribution-shift forensics</td><td><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400">CASE_B</span></td><td class="text-slate-400">Channel shift PROVEN; 95% weak/no historical analogue</td></tr>
+            <tr><td class="py-2 font-bold">16</td><td>Data-inventory boundary</td><td><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400">NONE</span></td><td class="text-slate-400">51 datasets, 1 dev-eligible (IBM, synthetic)</td></tr>
+            <tr><td class="py-2 font-bold">17</td><td>IBM generator audit</td><td><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400">ARTIFACT</span></td><td class="text-slate-400">Abrupt 2017 regime; real-world validity UNVERIFIED</td></tr>
+            <tr><td class="py-2 font-bold">18</td><td>System readiness</td><td><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400">CONDITIONAL</span></td><td class="text-slate-400">Security PASS; 3 fraud-rate features unverified</td></tr>
+            <tr><td class="py-2 font-bold">19</td><td>Real-world evidence</td><td><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400">BLOCKED</span></td><td class="text-slate-400">No real-world dataset; no ground-truth labels</td></tr>
+            <tr><td class="py-2 font-bold">20</td><td>Decision-time fix</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400">CLEAN</span></td><td class="text-slate-400">P20_45feat: 45 features, all decision-time valid</td></tr>
+            <tr><td class="py-2 font-bold">21</td><td>Real-world validation</td><td><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400">BLOCKED</span></td><td class="text-slate-400">No legitimate real-world dataset available</td></tr>
+            <tr><td class="py-2 font-bold">22</td><td>Validation harness</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400">READY</span></td><td class="text-slate-400">Executable CLI runner built and tested</td></tr>
+            <tr><td class="py-2 font-bold">23</td><td>Data acquisition</td><td><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400">PENDING</span></td><td class="text-slate-400">114 sources; best (Kaggle) has unclear provenance</td></tr>
+            <tr><td class="py-2 font-bold">23B</td><td>Frozen Kaggle eval</td><td><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400">CONDITIONAL</span></td><td class="text-slate-400">P20 ROC-AUC 0.47 (degraded); promotion BLOCKED</td></tr>
+            <tr><td class="py-2 font-bold">24</td><td>Conditional external eval</td><td><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400">CONDITIONAL</span></td><td class="text-slate-400">E_hardneg ROC-AUC 0.595 post-reconstruction; FPR 9.9%; promotion BLOCKED</td></tr>
+            <tr><td class="py-2 font-bold">25</td><td>Leakage audit & corrections</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400">NO_LEAKAGE</span></td><td class="text-slate-400">Import fix; 47/48 features causal; no leakage; promotion BLOCKED</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-4 p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 text-xs text-slate-400">
+        <strong class="text-amber-400">Current status:</strong> E_hardneg certified on synthetic IBM corpus (recall 99.67%, FPR 10.99%).
+        The 2017 regime shift is a generator artifact — these numbers are <strong>not real-world performance</strong>.
+        Production promotion is <strong>blocked pending real-world data</strong>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CI/CD Pipeline -->
+<section id="pipeline" class="py-16 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="glass rounded-2xl p-6 fade-in">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-lg font-bold">CI/CD Pipeline</h3>
+          <p class="text-xs text-slate-500">GitHub Actions · runs on every push to main</p>
+        </div>
+        <a href="https://github.com/RanaYashIDK-2006/PS-14-Fraud-Detection-software/actions" class="px-3 py-1.5 text-xs font-medium glass rounded-lg text-slate-400 hover:text-white transition-colors" target="_blank" rel="noopener">View runs →</a>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left text-slate-500 text-xs uppercase tracking-wider">
+              <th class="pb-3">Stage</th>
+              <th class="pb-3">What it proves</th>
+              <th class="pb-3">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/50">
+            <tr><td class="py-2 font-semibold">Test Suite</td><td class="text-slate-400 text-xs">22/22 regression checks on clean checkout</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">PASSING</span></td></tr>
+            <tr><td class="py-2 font-semibold">Security Scan</td><td class="text-slate-400 text-xs">bandit medium+ clean · dependency audit · pen test (0 FAIL)</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">PASSING</span></td></tr>
+            <tr><td class="py-2 font-semibold">Docker Build</td><td class="text-slate-400 text-xs">Image builds with trained artifacts, non-root, /health works</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">PASSING</span></td></tr>
+            <tr><td class="py-2 font-semibold">Integration Test</td><td class="text-slate-400 text-xs">Live walkthrough + compose stack + chain verify</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">PASSING</span></td></tr>
+            <tr><td class="py-2 font-semibold">Deploy</td><td class="text-slate-400 text-xs">Push to GHCR on every merge to main</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">ON PUSH</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Privacy -->
+<section class="py-16 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12 fade-in">
+      <h2 class="text-2xl font-bold mb-2">Privacy Architecture</h2>
+      <p class="text-slate-400 text-sm">3 isolated databases with firewall separation</p>
+    </div>
+    <div class="glass rounded-2xl p-8 fade-in overflow-x-auto">
+      <svg viewBox="0 0 800 180" class="w-full max-w-4xl mx-auto">
+        <!-- Identity DB -->
+        <g transform="translate(30,0)">
+          <rect width="170" height="180" rx="12" fill="#1e293b" stroke="#f43f5e" stroke-width="1.5"/>
+          <text x="85" y="22" text-anchor="middle" fill="#f43f5e" font-size="10" font-weight="700">🔐 IDENTITY DB</text>
+          <text x="85" y="36" text-anchor="middle" fill="#94a3b8" font-size="7">Real PII stored here</text>
+          <rect x="10" y="44" width="150" height="28" rx="6" fill="rgba(244,63,94,0.08)"/>
+          <text x="85" y="62" text-anchor="middle" fill="#f1f5f9" font-size="8">👤 Name, Email, Phone</text>
+          <rect x="10" y="80" width="150" height="28" rx="6" fill="rgba(244,63,94,0.08)"/>
+          <text x="85" y="98" text-anchor="middle" fill="#f1f5f9" font-size="8">🔑 Password Hash</text>
+          <rect x="10" y="116" width="150" height="28" rx="6" fill="rgba(244,63,94,0.08)"/>
+          <text x="85" y="134" text-anchor="middle" fill="#f1f5f9" font-size="8">🔗 Pseudonym Map</text>
+          <text x="85" y="168" text-anchor="middle" fill="#10b981" font-size="7">✓ Fernet AES-256</text>
+        </g>
+        <!-- Firewall -->
+        <g transform="translate(220,25)">
+          <rect width="40" height="130" rx="8" fill="rgba(59,130,246,0.1)" stroke="#10b981" stroke-width="1.5"/>
+          <text x="20" y="30" text-anchor="middle" fill="#10b981" font-size="14">🧱</text>
+          <text x="20" y="48" text-anchor="middle" fill="#f1f5f9" font-size="7" font-weight="700">FIREWALL</text>
+          <text x="20" y="65" text-anchor="middle" fill="#94a3b8" font-size="6">No direct</text>
+          <text x="20" y="76" text-anchor="middle" fill="#94a3b8" font-size="6">access</text>
+        </g>
+        <!-- Fraud DB -->
+        <g transform="translate(290,0)">
+          <rect width="170" height="180" rx="12" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+          <text x="85" y="22" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="700">📊 FRAUD DB</text>
+          <text x="85" y="36" text-anchor="middle" fill="#94a3b8" font-size="7">Anonymous analysis</text>
+          <rect x="10" y="44" width="150" height="28" rx="6" fill="rgba(59,130,246,0.08)"/>
+          <text x="85" y="62" text-anchor="middle" fill="#f1f5f9" font-size="8">🎲 Fraud ID (random)</text>
+          <rect x="10" y="80" width="150" height="28" rx="6" fill="rgba(59,130,246,0.08)"/>
+          <text x="85" y="98" text-anchor="middle" fill="#f1f5f9" font-size="8">📈 Risk Scores</text>
+          <rect x="10" y="116" width="150" height="28" rx="6" fill="rgba(59,130,246,0.08)"/>
+          <text x="85" y="134" text-anchor="middle" fill="#f1f5f9" font-size="8">📋 Feature Vectors</text>
+          <text x="85" y="168" text-anchor="middle" fill="#10b981" font-size="7">✓ No PII ever stored</text>
+        </g>
+        <!-- Firewall 2 -->
+        <g transform="translate(480,25)">
+          <rect width="40" height="130" rx="8" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="20" y="30" text-anchor="middle" fill="#f59e0b" font-size="14">🧱</text>
+          <text x="20" y="48" text-anchor="middle" fill="#f1f5f9" font-size="7" font-weight="700">FIREWALL</text>
+          <text x="20" y="65" text-anchor="middle" fill="#94a3b8" font-size="6">Append-only</text>
+          <text x="20" y="76" text-anchor="middle" fill="#94a3b8" font-size="6">enforced</text>
+        </g>
+        <!-- Audit DB -->
+        <g transform="translate(550,0)">
+          <rect width="150" height="180" rx="12" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="75" y="22" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="700">📝 AUDIT DB</text>
+          <text x="75" y="36" text-anchor="middle" fill="#94a3b8" font-size="7">Immutable log chain</text>
+          <rect x="10" y="44" width="130" height="28" rx="6" fill="rgba(245,158,11,0.08)"/>
+          <text x="75" y="62" text-anchor="middle" fill="#f1f5f9" font-size="8">🔗 Hash chain</text>
+          <rect x="10" y="80" width="130" height="28" rx="6" fill="rgba(245,158,11,0.08)"/>
+          <text x="75" y="98" text-anchor="middle" fill="#f1f5f9" font-size="8">👁️ Access logs</text>
+          <rect x="10" y="116" width="130" height="28" rx="6" fill="rgba(245,158,11,0.08)"/>
+          <text x="75" y="134" text-anchor="middle" fill="#f1f5f9" font-size="8">🚫 Append-only</text>
+          <text x="75" y="168" text-anchor="middle" fill="#10b981" font-size="7">✓ Tamper-evident</text>
+        </g>
+      </svg>
+    </div>
+    <div class="glass rounded-2xl p-6 mt-4 fade-in">
+      <h4 class="font-semibold text-sm mb-3">Privacy Guarantees</h4>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-slate-400">
+        <div class="flex items-center gap-2"><span class="text-green-400">✓</span> No names, addresses, or phone numbers enter the fraud system</div>
+        <div class="flex items-center gap-2"><span class="text-green-400">✓</span> Fraud IDs are cryptographically random — not derived from PII</div>
+        <div class="flex items-center gap-2"><span class="text-green-400">✓</span> Identity DB encrypted with Fernet AES-256 at rest</div>
+        <div class="flex items-center gap-2"><span class="text-green-400">✓</span> All access logged in hash-chained audit trail (append-only)</div>
+        <div class="flex items-center gap-2"><span class="text-green-400">✓</span> Built for India's DPDP Act 2023 and RBI Guidelines</div>
+        <div class="flex items-center gap-2"><span class="text-green-400">✓</span> Internal tokens use constant-time comparison (hmac.compare_digest)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-8 px-6 border-t border-slate-800/50">
+  <div class="max-w-7xl mx-auto text-center text-xs text-slate-500">
+    PS-14 Privacy-First AI Fraud Detection System · Research Prototype · Built for DPDP Act 2023 & RBI Guidelines
+  </div>
+</footer>
+
+<script>
+// Scroll progress bar
+window.addEventListener('scroll', function() {
+  const bar = document.getElementById('scroll-progress');
+  if (!bar) return;
+  const pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+  bar.style.width = pct + '%';
+}, { passive: true });
+
+// Fade-in on scroll
+const observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(function(el) { observer.observe(el); });
+
+// Secret admin: triple-click the invisible dot
+window._adminClicks = 0;
+document.getElementById('secret-admin-trigger').addEventListener('click', function() {
+  window._adminClicks++;
+  if (window._adminClicks >= 3) {
+    window._adminClicks = 0;
+    document.getElementById('adminModal').classList.remove('hidden');
+    document.getElementById('adminPassInput').focus();
+  }
+  // Reset after 2s of inactivity
+  clearTimeout(window._adminClickTimer);
+  window._adminClickTimer = setTimeout(function() { window._adminClicks = 0; }, 2000);
+});
+
+// Admin passphrase handler
+async function handleAdminPass(e) {
+  e.preventDefault();
+  const pass = document.getElementById('adminPassInput').value;
+  const msg = document.getElementById('adminPassMsg');
+  
+  try {
+    const r = await fetch('/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: 'admin', passphrase: pass })
+    });
+    const data = await r.json();
+    if (r.ok) {
+      msg.className = 'mt-3 text-sm text-center text-green-400';
+      msg.textContent = '✓ Access granted';
+      msg.classList.remove('hidden');
+      sessionStorage.setItem('admin_token', data.token || '');
+      sessionStorage.setItem('admin_pass', pass);
+      setTimeout(function() { window.location.href = '/admin-page'; }, 800);
+    } else {
+      msg.className = 'mt-3 text-sm text-center text-red-400';
+      msg.textContent = '✗ ' + (data.detail || 'Invalid passphrase');
+      msg.classList.remove('hidden');
+    }
+  } catch (err) {
+    msg.className = 'mt-3 text-sm text-center text-red-400';
+    msg.textContent = '✗ Service unavailable';
+    msg.classList.remove('hidden');
+  }
+}
+</script>
 </body>
 </html>

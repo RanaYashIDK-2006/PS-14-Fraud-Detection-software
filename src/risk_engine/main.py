@@ -18,6 +18,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import sys
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -440,7 +441,7 @@ def _evaluate_decision(features: dict, ml_score: float, ml_weighted: float,
         reason_codes.insert(0, "ML_UNAVAILABLE")
 
     # Odds
-    odds = fusion.odds_of(ml_score) if ml_score > 0 else 0.0
+    odds = fusion.odds_of(ml_score) if ml_score > 0 and fusion is not None else 0.0
     odds = 9999.0 if odds == float("inf") else round(odds, 1)
 
     # Pre-scoring limit enforcement

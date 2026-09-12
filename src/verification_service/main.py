@@ -20,6 +20,7 @@ Service, which logs every read - the audit of the audit.
 
 from __future__ import annotations
 
+import hmac
 import json
 import time
 import uuid
@@ -179,7 +180,7 @@ def current_fraud_id(authorization: str | None = Header(default=None)) -> str:
 def require_compliance_token(x_compliance_token: str | None = Header(default=None, alias="X-Compliance-Token")) -> None:
     """Compliance-role gate for the audit viewer. Production: real RBAC +
     mTLS (section 3); the dev passphrase only exists for the prototype."""
-    if not x_compliance_token or x_compliance_token != settings.compliance_token:
+    if not x_compliance_token or not hmac.compare_digest(x_compliance_token, settings.compliance_token):
         raise HTTPException(status_code=401, detail="compliance role required")
 
 
@@ -503,7 +504,7 @@ def investigator_cases(
     pseudonymous ID + score + confidence + reason codes. Cases live in the
     shared risk store (DB-3) next to the risk_scores they reference.
     """
-    if x_compliance_token != settings.compliance_token:
+    if not hmac.compare_digest(x_compliance_token, settings.compliance_token):
         raise HTTPException(status_code=401, detail="invalid compliance token")
 
     q = db.query(m.InvestigatorCase)
@@ -563,7 +564,7 @@ def create_investigator_case(
     are the queue and auto-casing every high-band event would flood the
     backlog (see audit #30 operational-burden findings).
     """
-    if x_compliance_token != settings.compliance_token:
+    if not hmac.compare_digest(x_compliance_token, settings.compliance_token):
         raise HTTPException(status_code=401, detail="invalid compliance token")
 
     # Resolve the authoritative score row (must exist for traceability).
@@ -650,7 +651,7 @@ def transition_case(
     become labels in the retraining pool the same way user confirmations do
     (audit #30 finding: verdicts previously wrote no outcome).
     """
-    if x_compliance_token != settings.compliance_token:
+    if not hmac.compare_digest(x_compliance_token, settings.compliance_token):
         raise HTTPException(status_code=401, detail="invalid compliance token")
 
     case = db.query(m.InvestigatorCase).filter(m.InvestigatorCase.case_id == case_id).first()

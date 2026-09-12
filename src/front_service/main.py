@@ -29,6 +29,7 @@ import json
 import os
 import subprocess
 import sys
+import urllib.request
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -58,12 +59,11 @@ _test_runner_task = None
 
 def _run_tests_sync():
     """Synchronous test runner (runs in thread executor)."""
-    import os as _os
     root = Path(__file__).resolve().parent.parent.parent
     # Prefer the venv python; fall back to sys.executable
     venv_py = root / ".venv" / "Scripts" / "python.exe"
     py = str(venv_py) if venv_py.exists() else sys.executable
-    env = {**_os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUNBUFFERED": "1",
+    env = {**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUNBUFFERED": "1",
            "PS14_MODE": "development"}
     # Strip Supabase vars — tests use in-process TestClient and Supabase
     # is unreachable in test mode, causing connection timeouts.
@@ -144,11 +144,10 @@ async def lifespan(_app: FastAPI):
 
     # SECURITY: Lock down DB file permissions on startup (Linux/Docker)
     try:
-        import os as _os
         db_dir = Path(settings.db_dir)
         for f in db_dir.glob('*.db'):
             try:
-                _os.chmod(f, 0o600)
+                os.chmod(f, 0o600)
             except OSError:
                 pass  # Windows OneDrive - NTFS ACLs differ
     except Exception:
@@ -220,6 +219,8 @@ _CHAIN_CACHE: dict = {}
 CHAIN_TTL_SECONDS = 30
 _STATUS_CACHE: dict = {}
 STATUS_TTL_SECONDS = 3
+# Shared async HTTP client for status pings (reused across refreshes)
+_status_client: httpx.AsyncClient | None = None
 
 def _load_dotenv() -> None:
     """Merge the gitignored .env into os.environ (missing keys only).
@@ -394,47 +395,50 @@ async def _ping_service(name: str, url: str, client: httpx.AsyncClient) -> tuple
 
 async def _refresh_status_cache() -> None:
     """Background helper: ping all services, fetch chain, and update _STATUS_CACHE."""
+    global _status_client
+    if _status_client is None:
+        _status_client = httpx.AsyncClient(timeout=3.0)
     try:
-        async with httpx.AsyncClient(timeout=3.0) as client:
-            tasks = [_ping_service(name, url, client) for name, url in SERVICES.items()]
-            # Also fetch chain integrity if cache is stale
-            need_chain = _CHAIN_CACHE.get("data") is None or (
-                datetime.now(timezone.utc) - _CHAIN_CACHE.get("ts", datetime.min.replace(tzinfo=timezone.utc))
-            ).total_seconds() > CHAIN_TTL_SECONDS
-            chain_future = client.get(
-                f"{SERVICES['audit'].rstrip('/')}/audit/integrity",
-                headers={"X-Internal-Token": settings.internal_token},
-            ) if need_chain else None
-            results = await asyncio.gather(*tasks, return_exceptions=True)
-            out: dict[str, dict] = {}
-            for result in results:
-                if isinstance(result, Exception):
-                    continue
-                name, info = result
-                out[name] = info
-            # Process chain result
-            chain = _CHAIN_CACHE.get("data")
-            if chain_future:
-                try:
-                    r = await chain_future
-                    if r.status_code == 200:
-                        body = r.json()
-                        chain = {
-                            "ok": bool(body.get("ok")),
-                            "n_entries": body.get("n_entries"),
-                            "first_bad_seq": body.get("first_bad_seq"),
-                            "genesis_hash": (body.get("genesis_hash") or "")[:14],
-                        }
-                        _CHAIN_CACHE["ts"] = datetime.now(timezone.utc)
-                        _CHAIN_CACHE["data"] = chain
-                    else:
-                        chain = {"ok": None, "error": f"http {r.status_code}"}
-                except Exception:
-                    chain = {"ok": None, "error": "unreachable"}
-            if chain and "audit" in out:
-                out["audit"]["chain"] = chain
-            _STATUS_CACHE["data"] = out
-            _STATUS_CACHE["ts"] = datetime.now(timezone.utc)
+        client = _status_client
+        tasks = [_ping_service(name, url, client) for name, url in SERVICES.items()]
+        # Also fetch chain integrity if cache is stale
+        need_chain = _CHAIN_CACHE.get("data") is None or (
+            datetime.now(timezone.utc) - _CHAIN_CACHE.get("ts", datetime.min.replace(tzinfo=timezone.utc))
+        ).total_seconds() > CHAIN_TTL_SECONDS
+        chain_future = client.get(
+            f"{SERVICES['audit'].rstrip('/')}/audit/integrity",
+            headers={"X-Internal-Token": settings.internal_token},
+        ) if need_chain else None
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        out: dict[str, dict] = {}
+        for result in results:
+            if isinstance(result, Exception):
+                continue
+            name, info = result
+            out[name] = info
+        # Process chain result
+        chain = _CHAIN_CACHE.get("data")
+        if chain_future:
+            try:
+                r = await chain_future
+                if r.status_code == 200:
+                    body = r.json()
+                    chain = {
+                        "ok": bool(body.get("ok")),
+                        "n_entries": body.get("n_entries"),
+                        "first_bad_seq": body.get("first_bad_seq"),
+                        "genesis_hash": (body.get("genesis_hash") or "")[:14],
+                    }
+                    _CHAIN_CACHE["ts"] = datetime.now(timezone.utc)
+                    _CHAIN_CACHE["data"] = chain
+                else:
+                    chain = {"ok": None, "error": f"http {r.status_code}"}
+            except Exception:
+                chain = {"ok": None, "error": "unreachable"}
+        if chain and "audit" in out:
+            out["audit"]["chain"] = chain
+        _STATUS_CACHE["data"] = out
+        _STATUS_CACHE["ts"] = datetime.now(timezone.utc)
     except Exception:
         pass
 
@@ -464,44 +468,47 @@ async def status(response: Response) -> JSONResponse:
 
     # Parallel health checks + chain integrity (single shared client)
     need_chain = _CHAIN_CACHE.get("data") is None or (datetime.now(timezone.utc) - _CHAIN_CACHE.get("ts", datetime.min.replace(tzinfo=timezone.utc))).total_seconds() > CHAIN_TTL_SECONDS
+    global _status_client
+    if _status_client is None:
+        _status_client = httpx.AsyncClient(timeout=3.0)
     try:
-        async with httpx.AsyncClient(timeout=3.0) as client:
-            tasks = [_ping_service(name, url, client) for name, url in SERVICES.items()]
-            # Also fetch chain integrity in parallel if cache is stale
-            chain_future = client.get(
-                f"{SERVICES['audit'].rstrip('/')}/audit/integrity",
-                headers={"X-Internal-Token": settings.internal_token},
-            ) if need_chain else None
-            results = await asyncio.gather(*tasks, return_exceptions=True)
-            out: dict[str, dict] = {}
-            for result in results:
-                if isinstance(result, Exception):
-                    # Should not happen with _ping_service, but handle gracefully
-                    continue
-                name, info = result
-                out[name] = info
-            # Use cached chain or fetch new one
-            chain = _CHAIN_CACHE.get("data")
-            if chain_future:
-                try:
-                    r = await chain_future
-                    if r.status_code == 200:
-                        body = r.json()
-                        chain = {
-                            "ok": bool(body.get("ok")),
-                            "n_entries": body.get("n_entries"),
-                            "first_bad_seq": body.get("first_bad_seq"),
-                            "genesis_hash": (body.get("genesis_hash") or "")[:14],
-                        }
-                        _CHAIN_CACHE["ts"] = datetime.now(timezone.utc)
-                        _CHAIN_CACHE["data"] = chain
-                    else:
-                        chain = {"ok": None, "error": f"http {r.status_code}"}
-                except Exception:
-                    chain = {"ok": None, "error": "unreachable"}
-            # Add chain to audit entry
-            if chain and "audit" in out:
-                out["audit"]["chain"] = chain
+        client = _status_client
+        tasks = [_ping_service(name, url, client) for name, url in SERVICES.items()]
+        # Also fetch chain integrity in parallel if cache is stale
+        chain_future = client.get(
+            f"{SERVICES['audit'].rstrip('/')}/audit/integrity",
+            headers={"X-Internal-Token": settings.internal_token},
+        ) if need_chain else None
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        out: dict[str, dict] = {}
+        for result in results:
+            if isinstance(result, Exception):
+                # Should not happen with _ping_service, but handle gracefully
+                continue
+            name, info = result
+            out[name] = info
+        # Use cached chain or fetch new one
+        chain = _CHAIN_CACHE.get("data")
+        if chain_future:
+            try:
+                r = await chain_future
+                if r.status_code == 200:
+                    body = r.json()
+                    chain = {
+                        "ok": bool(body.get("ok")),
+                        "n_entries": body.get("n_entries"),
+                        "first_bad_seq": body.get("first_bad_seq"),
+                        "genesis_hash": (body.get("genesis_hash") or "")[:14],
+                    }
+                    _CHAIN_CACHE["ts"] = datetime.now(timezone.utc)
+                    _CHAIN_CACHE["data"] = chain
+                else:
+                    chain = {"ok": None, "error": f"http {r.status_code}"}
+            except Exception:
+                chain = {"ok": None, "error": "unreachable"}
+        # Add chain to audit entry
+        if chain and "audit" in out:
+            out["audit"]["chain"] = chain
     except Exception:
         # Fallback: return all services as down
         out = {name: {"status": "down"} for name in SERVICES}
@@ -567,9 +574,6 @@ def real_cases_report() -> JSONResponse:
         return JSONResponse({"ran_at": None, "corrupt": True})
 
 
-import subprocess
-import sys as _sys
-
 _run_tests_lock = False
 _run_security_lock = False
 
@@ -587,7 +591,7 @@ def run_tests(request: Request):
         if not script.exists():
             raise HTTPException(status_code=500, detail="real_cases.py not found")
         result = subprocess.run(
-            [_sys.executable, str(script)],
+            [sys.executable, str(script)],
             capture_output=True, text=True, timeout=120,
             cwd=str(Path(__file__).resolve().parent.parent.parent),
         )
@@ -675,10 +679,9 @@ def run_security_scan(request: Request):
         script = SCRIPTS_DIR / "security_scan.py"
         if not script.exists():
             raise HTTPException(status_code=500, detail="security_scan.py not found")
-        import os as _os
-        env = {**_os.environ, "PYTHONIOENCODING": "utf-8"}
+            env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
         result = subprocess.run(
-            [_sys.executable, str(script), "--json", "--output", str(SECURITY_REPORT)],
+            [sys.executable, str(script), "--json", "--output", str(SECURITY_REPORT)],
             capture_output=True, text=True, timeout=60,
             cwd=str(Path(__file__).resolve().parent.parent.parent),
             env=env,
@@ -748,7 +751,7 @@ def run_auto_security_scan(request: Request) -> JSONResponse:
     try:
         env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
         result = subprocess.run(
-            [_sys.executable, str(script), "--quiet"],
+            [sys.executable, str(script), "--quiet"],
             capture_output=True, text=True, timeout=300,
             cwd=str(Path(__file__).resolve().parent.parent.parent),
             env=env,
@@ -793,208 +796,6 @@ def fraud_report(response: Response) -> JSONResponse:
         except Exception as e:
             return JSONResponse({"error": f"failed to read report: {e}"}, status_code=500)
     return JSONResponse({"error": "no report data - run scripts/generate_fraud_report.py"}, status_code=500)
-
-
-# Inline script for fraud report generation (avoids subprocess import issues)
-_FRAUD_REPORT_SCRIPT = """
-import pandas as pd, numpy as np, joblib, json, warnings, os, sys
-warnings.filterwarnings('ignore')
-ROOT = os.getcwd()
-sys.path.insert(0, ROOT)
-
-# Use current production models
-model = joblib.load(os.path.join(ROOT, 'models', 'artifacts', 'xgboost.joblib'))
-scaler = joblib.load(os.path.join(ROOT, 'models', 'artifacts', 'scaler.joblib'))
-imputer = joblib.load(os.path.join(ROOT, 'models', 'artifacts', 'imputer.joblib'))
-
-ML_FEATURES = ['amount_ratio','txn_freq_last_24h','txn_time_unusual','new_device_flag','unusual_location_flag','unusual_recipient_flag','failed_auth_count_24h','days_since_last_similar_txn','gradual_escalation_score','known_device_count','account_tenure_days','hour_of_day','is_weekend','shared_device_accounts','shared_recipient_accounts','mule_ring_score','hour_deviation','amount_zscore','velocity_deviation','recipient_novelty','txn_regularity']
-
-# Load kaggle train+test (need both for per-card feature statistics)
-dfs = []
-for p in [os.path.join(ROOT, 'data', 'kaggle_fraud', 'fraudTrain.csv'), os.path.join(ROOT, 'data', 'kaggle_fraud', 'fraudTest.csv')]:
-    if os.path.exists(p):
-        dfs.append(pd.read_csv(p))
-df = pd.concat(dfs, ignore_index=True)
-# Drop PII
-df = df.drop(columns=['first', 'last', 'street', 'state', 'zip', 'dob', 'job', 'trans_num', 'Unnamed: 0'], errors='ignore')
-
-# Compute features inline (same as train_high_perf.compute_features)
-N = len(ML_FEATURES)
-X = np.zeros((len(df), N), dtype=np.float32)
-amt = df['amt'].values.astype(np.float32)
-hours = pd.to_datetime(df['trans_date_trans_time']).dt.hour.values
-dow = pd.to_datetime(df['trans_date_trans_time']).dt.dayofweek.values
-unix = df['unix_time'].values.astype(np.float64)
-X[:, ML_FEATURES.index('amount_ratio')] = np.where(df.groupby('cc_num')['amt'].transform('median').values > 0, amt / df.groupby('cc_num')['amt'].transform('median').values, 0)
-X[:, ML_FEATURES.index('txn_freq_last_24h')] = df.groupby('cc_num')['cc_num'].transform('count').values.astype(np.float32)
-X[:, ML_FEATURES.index('txn_time_unusual')] = hours / 23.0
-X[:, ML_FEATURES.index('new_device_flag')] = (df.groupby(['cc_num', 'category']).cumcount() == 0).astype(np.float32)
-lat1, lon1 = df['lat'].values, df['long'].values
-lat2, lon2 = df['merch_lat'].values, df['merch_long'].values
-dist = np.sqrt((lat1-lat2)**2 + (lon1-lon2)**2)
-card_dist_med = df.assign(dist=dist).groupby('cc_num')['dist'].transform('median').values
-X[:, ML_FEATURES.index('unusual_location_flag')] = (dist > card_dist_med * 2).astype(np.float32)
-X[:, ML_FEATURES.index('unusual_recipient_flag')] = (df.groupby(['cc_num', 'merchant']).cumcount() == 0).astype(np.float32)
-X[:, ML_FEATURES.index('failed_auth_count_24h')] = 0.0
-df_sorted = df.sort_values(['cc_num', 'unix_time'])
-gaps = df_sorted.groupby('cc_num')['unix_time'].diff().fillna(86400).values / 86400.0
-X[:, ML_FEATURES.index('days_since_last_similar_txn')] = np.clip(gaps[:len(df)], 0, 365).astype(np.float32)
-rolling_mean = df.groupby('cc_num')['amt'].transform(lambda x: x.expanding().mean()).values
-X[:, ML_FEATURES.index('gradual_escalation_score')] = np.where(rolling_mean > 0, amt / rolling_mean, 0).astype(np.float32)
-X[:, ML_FEATURES.index('known_device_count')] = df.groupby('cc_num')['merchant'].transform('nunique').values.astype(np.float32)
-first_tx = df.groupby('cc_num')['unix_time'].transform('min').values
-X[:, ML_FEATURES.index('account_tenure_days')] = ((unix - first_tx) / 86400.0).astype(np.float32)
-X[:, ML_FEATURES.index('hour_of_day')] = hours.astype(np.float32)
-X[:, ML_FEATURES.index('is_weekend')] = (dow >= 5).astype(np.float32)
-X[:, ML_FEATURES.index('shared_device_accounts')] = df.groupby('merchant')['cc_num'].transform('nunique').values.astype(np.float32)
-X[:, ML_FEATURES.index('shared_recipient_accounts')] = X[:, ML_FEATURES.index('shared_device_accounts')]
-X[:, ML_FEATURES.index('mule_ring_score')] = df.groupby('cc_num')['city'].transform('nunique').values.astype(np.float32)
-median_hour = df.groupby('cc_num')['trans_date_trans_time'].transform(lambda x: pd.to_datetime(x).dt.hour.median()).values
-X[:, ML_FEATURES.index('hour_deviation')] = np.abs(hours - median_hour).astype(np.float32)
-grp_mean = df.groupby('cc_num')['amt'].transform('mean').values
-grp_std = df.groupby('cc_num')['amt'].transform('std').fillna(1.0).values
-X[:, ML_FEATURES.index('amount_zscore')] = np.where(grp_std > 0, (amt - grp_mean) / grp_std, 0).astype(np.float32)
-X[:, ML_FEATURES.index('velocity_deviation')] = df.groupby('cc_num')['cc_num'].transform('count').values.astype(np.float32) / 24.0
-seen = df.groupby(['cc_num', 'merchant']).cumcount().values + 1
-X[:, ML_FEATURES.index('recipient_novelty')] = (1.0 / seen).astype(np.float32)
-std_gap = df.groupby('cc_num')['unix_time'].transform(lambda x: x.diff().fillna(0).expanding().std()).values / 3600.0
-X[:, ML_FEATURES.index('txn_regularity')] = np.clip(std_gap, 0, 100).astype(np.float32)
-
-X = imputer.transform(X)
-X = np.nan_to_num(X, nan=0.0, posinf=10.0, neginf=-10.0)
-X = scaler.transform(X)
-df['ml_score'] = model.predict_proba(X)[:, 1]
-df['hour'] = hours
-
-df['is_fraud'] = df['is_fraud'].astype(int)
-# Keep only test set rows (last 30%)
-test_start = int(len(df) * 0.7)
-df = df.iloc[test_start:].copy()
-fraud = df[df.is_fraud == 1].copy()
-legit = df[df.is_fraud == 0].copy()
-
-# Classify
-def classify(row):
-    s = row['ml_score']
-    if s >= 0.9: return 'high_confidence_fraud'
-    if s >= 0.5: return 'borderline_fraud'
-    if s >= 0.05: return 'subtle_fraud'
-    if row['is_fraud'] == 1: return 'missed_fraud'
-    if s >= 0.3: return 'false_positive_risk'
-    return 'legitimate'
-
-df['category'] = df.apply(classify, axis=1)
-
-# Compute actual metrics
-from sklearn.metrics import roc_auc_score, average_precision_score, roc_curve
-y_true = df['is_fraud'].values
-y_prob = df['ml_score'].values
-fpr_arr, tpr_arr, _ = roc_curve(y_true, y_prob)
-valid = fpr_arr <= 0.01
-r1 = tpr_arr[np.where(valid)[0][-1]] if valid.any() else 0
-
-summary = {
-    'total': len(df),
-    'fraud_count': int(fraud.shape[0]),
-    'legit_count': int(legit.shape[0]),
-    'fraud_pct': round(fraud.shape[0] / len(df) * 100, 3),
-    'ml_auc': round(roc_auc_score(y_true, y_prob), 4),
-    'pr_auc': round(average_precision_score(y_true, y_prob), 4),
-    'recall_1pct_fpr': round(r1, 4),
-    'categories': df['category'].value_counts().to_dict(),
-}
-
-# Feature importance
-try:
-    importance = model.feature_importances_
-    features = ML_FEATURES
-    feat_imp = [{'feature': features[i], 'importance': round(float(importance[i]), 4)} for i in np.argsort(importance)[::-1][:10]]
-except Exception:
-    feat_imp = []
-
-# Score distribution buckets
-bins = [0, 0.01, 0.05, 0.1, 0.3, 0.5, 0.7, 0.9, 1.01]
-labels = ['0-1%', '1-5%', '5-10%', '10-30%', '30-50%', '50-70%', '70-90%', '90-100%']
-df['score_bucket'] = pd.cut(df['ml_score'], bins=bins, labels=labels, right=False)
-
-fraud_dist = df[df.is_fraud == 1]['score_bucket'].value_counts().reindex(labels, fill_value=0).to_dict()
-legit_dist = df[df.is_fraud == 0]['score_bucket'].value_counts().reindex(labels, fill_value=0).to_dict()
-
-# Amount distribution
-amt_bins = [0, 1, 5, 25, 100, 500, 2500]
-amt_labels = ['<$1', '$1-5', '$5-25', '$25-100', '$100-500', '$500+']
-df['amt_bucket'] = pd.cut(df['amt'], bins=amt_bins, labels=amt_labels, right=False)
-fraud_amt = df[df.is_fraud == 1]['amt_bucket'].value_counts().reindex(amt_labels, fill_value=0).to_dict()
-legit_amt = df[df.is_fraud == 0]['amt_bucket'].value_counts().reindex(amt_labels, fill_value=0).to_dict()
-
-# Hour distribution
-fraud_hours = fraud['hour'].round(0).value_counts().sort_index().to_dict()
-legit_hours = legit['hour'].round(0).value_counts().sort_index().to_dict()
-
-# Top 10 most suspicious
-top_suspect = df.nlargest(10, 'ml_score')[['ml_score', 'amt', 'hour', 'is_fraud', 'category']].copy()
-top_suspect.index = top_suspect.index.astype(int).tolist()
-top_suspect['idx'] = top_suspect.index
-top_records = top_suspect.to_dict('records')
-
-# Chameleon (missed by ML) details
-missed = fraud[fraud.ml_score < 0.05][['ml_score', 'amt', 'hour']].copy()
-missed.index = missed.index.astype(int).tolist()
-missed['idx'] = missed.index
-missed_records = missed.to_dict('records')
-
-result = {
-    'summary': summary,
-    'feature_importance': feat_imp,
-    'score_distribution': {'fraud': fraud_dist, 'legit': legit_dist, 'labels': labels},
-    'amount_distribution': {'fraud': fraud_amt, 'legit': legit_amt, 'labels': amt_labels},
-    'hour_distribution': {'fraud': fraud_hours, 'legit': legit_hours},
-    'top_suspects': top_records,
-    'chameleon_frauds': missed_records,
-}
-
-# Cross-domain evaluation results (if available)
-import glob as _glob
-cd_path = os.path.join(ROOT, 'data', 'cross_domain_results.json')
-if os.path.exists(cd_path):
-    try:
-        cd = json.load(open(cd_path))
-        result['cross_domain'] = [
-            {'name': v['model_name'], 'roc_auc': v['roc_auc'], 'pr_auc': v['pr_auc'],
-             'precision': v['precision'], 'recall': v['recall'], 'f1': v['f1_score']}
-            for v in cd.get('scenarios', {}).values()
-        ]
-        result['cross_domain_datasets'] = cd.get('datasets', {})
-    except Exception:
-        pass
-
-# Benchmark 1.2M PaySim results (pre-computed)
-br_path = os.path.join(ROOT, 'data', 'benchmark_results.json')
-if os.path.exists(br_path):
-    try:
-        br = json.load(open(br_path))
-        result['benchmark_1m'] = {
-            'dataset': br.get('dataset', 'PaySim 1.2M'),
-            'rows': br.get('rows', 1200000),
-            'fraud_count': br.get('fraud_count', 58800),
-            'fraud_rate': br.get('fraud_rate', 4.9),
-            'roc_auc': br.get('roc_auc', 0.9908),
-            'pr_auc': br.get('pr_auc', 0.9218),
-            'throughput_tps': br.get('throughput_tps', 379786),
-            'eval_time_ms': br.get('eval_time_seconds', 3.2) * 1000,
-            'optimal_threshold': br.get('best_threshold', 0.445),
-            'optimal_recall': br.get('optimal_recall', br.get('best_recall', 99.1)),
-            'optimal_fpr': br.get('optimal_fpr', br.get('best_fpr', 0.008)),
-            'optimal_precision': br.get('optimal_precision', 99.9),
-            'industry_ranking': br.get('industry_ranking', 1),
-            'industry_comparison': br.get('benchmarks', [])[:8],
-        }
-    except Exception:
-        pass
-
-with open(os.path.join(ROOT, 'data', 'fraud_report_data.json'), 'w') as f:
-    json.dump(result, f, default=str)
-"""
 
 
 # --- Real Dataset Evaluation Results ---
@@ -1176,9 +977,8 @@ def monitor_metrics(response: Response) -> JSONResponse:
     # Inference service metrics (port 8006)
     inference = {}
     try:
-        import urllib.request as _urllib_req
-        req = _urllib_req.Request("http://127.0.0.1:8006/health", headers={"Accept": "application/json"})
-        resp = _urllib_req.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
+        req = urllib.request.Request("http://127.0.0.1:8006/health", headers={"Accept": "application/json"})
+        resp = urllib.request.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
         inf_data = json.loads(resp.read())
         inference = {
             "status": inf_data.get("status", "unknown"),
@@ -1197,9 +997,8 @@ def monitor_metrics(response: Response) -> JSONResponse:
     # Risk engine model info (port 8003)
     model_info = {}
     try:
-        import urllib.request as _urllib_req
-        req = _urllib_req.Request("http://127.0.0.1:8003/health", headers={"Accept": "application/json"})
-        resp = _urllib_req.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
+        req = urllib.request.Request("http://127.0.0.1:8003/health", headers={"Accept": "application/json"})
+        resp = urllib.request.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
         risk_data = json.loads(resp.read())
         model_info["risk_engine_status"] = risk_data.get("status", "unknown")
         model_info["risk_engine_model"] = risk_data.get("model", "unknown")
@@ -1274,12 +1073,11 @@ def monitor_unified() -> JSONResponse:
 
     # Fetch from inference service unified-status
     try:
-        import urllib.request as _urllib_req
-        req = _urllib_req.Request(
+        req = urllib.request.Request(
             "http://127.0.0.1:8006/unified-status",
             headers={"Accept": "application/json"},
         )
-        resp = _urllib_req.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
+        resp = urllib.request.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
         data = json.loads(resp.read())
         result["unified_scorer"] = {
             "loaded": data.get("loaded", False),
@@ -1294,12 +1092,11 @@ def monitor_unified() -> JSONResponse:
 
     # Fetch drift status separately for more detail
     try:
-        import urllib.request as _urllib_req
-        req = _urllib_req.Request(
+        req = urllib.request.Request(
             "http://127.0.0.1:8006/drift/status",
             headers={"Accept": "application/json"},
         )
-        resp = _urllib_req.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
+        resp = urllib.request.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
         drift_data = json.loads(resp.read())
         result["drift"] = drift_data
     except Exception:
@@ -1307,12 +1104,11 @@ def monitor_unified() -> JSONResponse:
 
     # Fetch recent drift alerts
     try:
-        import urllib.request as _urllib_req
-        req = _urllib_req.Request(
+        req = urllib.request.Request(
             "http://127.0.0.1:8006/drift/alerts",
             headers={"Accept": "application/json"},
         )
-        resp = _urllib_req.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
+        resp = urllib.request.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
         alert_data = json.loads(resp.read())
         result["drift_alerts"] = alert_data.get("alerts", [])
         result["drift_alert_count"] = alert_data.get("n_alerts", 0)
@@ -1619,7 +1415,7 @@ class DBQueryRequest(BaseModel):
 # TRUE ALLOWLIST: Only these pre-defined queries are permitted.
 # Each maps to a parameterized SQL query. No arbitrary SQL is accepted.
 ALLOWED_QUERIES = {
-    "recent_audit": "SELECT seq, event_type, actor, entry_hash, created_at FROM audit_events ORDER BY seq DESC LIMIT ?",
+    "recent_audit": "SELECT seq, event_type, entry_hash, payload_summary, created_at FROM audit_events ORDER BY seq DESC LIMIT ?",
     "unresolved_alerts": "SELECT event_id, fraud_id, ml_score, band, decision, created_at FROM risk_scores WHERE event_id NOT IN (SELECT event_id FROM verification_outcomes) ORDER BY created_at DESC LIMIT ?",
     "recent_scores": "SELECT event_id, fraud_id, ml_score, band, decision, reasons_json, created_at FROM risk_scores ORDER BY created_at DESC LIMIT ?",
     "recent_features": "SELECT event_id, fraud_id, created_at FROM transaction_features ORDER BY created_at DESC LIMIT ?",
@@ -1955,6 +1751,13 @@ def login_page() -> Response:
     return resp
 
 
+@app.get("/admin-page", include_in_schema=False)
+def admin_page() -> Response:
+    resp = FileResponse(STATIC / "admin.html")
+    resp.headers["Cache-Control"] = "private, no-store"
+    return resp
+
+
 @app.post("/auth/register")
 async def proxy_register(request: Request) -> JSONResponse:
     """Proxy register to identity service."""
@@ -1975,7 +1778,6 @@ async def proxy_register(request: Request) -> JSONResponse:
 async def proxy_login(request: Request) -> JSONResponse:
     """Proxy login to identity service."""
     body = await request.body()
-    client_ip = request.client.host if request.client else "unknown"
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
             r = await client.post(

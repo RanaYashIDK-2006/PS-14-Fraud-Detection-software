@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PS-14 Admin Console</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card: #12121a;
+            --card-hover: #1a1a25;
+            --border: #2a2a3a;
+            --text: #e4e4e7;
+            --text-dim: #71717a;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Passcode Gate Overlay */
+        #passcode-gate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        #passcode-gate.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        
+        .passcode-container {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        
+        .passcode-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 24px;
+            background: var(--accent-glow);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        
+        .passcode-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .passcode-subtitle {
+            font-size: 14px;
+            color: var(--text-dim);
+            margin-bottom: 32px;
+        }
+        
+        .passcode-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 4px;
+            margin-bottom: 16px;
+            transition: border-color 0.2s ease;
+        }
+        
+        .passcode-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .passcode-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+        
+        .passcode-btn:hover {
+            background: #4f46e5;
+        }
+        
+        .passcode-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .passcode-error {
+            color: var(--danger);
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+        }
+        
+        /* Main Content */
+        #admin-content {
+            display: none;
+        }
+        
+        #admin-content.visible {
+            display: block;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .header-logo {
+            font-size: 24px;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .header-badge {
+            padding: 4px 12px;
+            background: var(--accent-glow);
+            color: var(--accent);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .header-user {
+            font-size: 14px;
+            color: var(--text-dim);
+        }
+        
+        .header-logout {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-dim);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .header-logout:hover {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: white;
+        }
+        
+        /* Main Layout */
+        .main {
+            display: flex;
+            min-height: calc(100vh - 65px);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            min-width: 220px;
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            padding: 24px 12px;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 32px;
+        }
+        
+        .sidebar-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+            padding: 0 12px;
+        }
+        
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 14px;
+        }
+        
+        .sidebar-item:hover {
+            background: var(--card-hover);
+            color: var(--text);
+        }
+        
+        .sidebar-item.active {
+            background: var(--accent-glow);
+            color: var(--accent);
+        }
+        
+        .sidebar-item-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+        }
+        
+        .content-header {
+            margin-bottom: 32px;
+        }
+        
+        .content-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .content-subtitle {
+            font-size: 14px;
+            color: var(--text-dim);
+        }
+        
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+        
+        .card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent-glow);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-glow);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .card-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .card-status.healthy {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+        
+        .card-status.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        .card-status.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .card-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .card-label {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+        
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .table-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .table-btn {
+            padding: 8px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-dim);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .table-btn:hover {
+            background: var(--card-hover);
+            color: var(--text);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px 24px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-dim);
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        td {
+            padding: 16px 24px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover td {
+            background: var(--card-hover);
+        }
+        
+        /* DB Explorer */
+        .db-explorer {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .db-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .db-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .db-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            padding: 24px;
+        }
+        
+        .db-table-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .db-table-card:hover {
+            border-color: var(--accent);
+        }
+        
+        .db-table-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .db-table-count {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+        
+        /* Query Editor */
+        .query-editor {
+            margin-top: 24px;
+        }
+        
+        .query-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            resize: vertical;
+            margin-bottom: 12px;
+        }
+        
+        .query-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .query-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .query-btn {
+            padding: 10px 20px;
+            background: var(--accent);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .query-btn:hover {
+            background: #4f46e5;
+        }
+        
+        .query-btn.secondary {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+        
+        .query-btn.secondary:hover {
+            background: var(--card-hover);
+            color: var(--text);
+        }
+        
+        /* Query Results */
+        .query-results {
+            margin-top: 16px;
+            overflow-x: auto;
+        }
+        
+        .query-results table {
+            font-size: 13px;
+        }
+        
+        .query-results th {
+            font-size: 11px;
+            padding: 10px 16px;
+        }
+        
+        .query-results td {
+            padding: 12px 16px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 12px;
+        }
+        
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-badge.online {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+        
+        .status-badge.offline {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .content {
+                padding: 16px;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Passcode Gate -->
+    <div id="passcode-gate">
+        <div class="passcode-container">
+            <div class="passcode-icon">🔐</div>
+            <h2 class="passcode-title">Admin Access</h2>
+            <p class="passcode-subtitle">Enter the admin passcode to continue</p>
+            <input 
+                type="password" 
+                id="passcode-input" 
+                class="passcode-input" 
+                placeholder="••••••••"
+                autocomplete="off"
+            >
+            <button id="passcode-btn" class="passcode-btn">Authenticate</button>
+            <p id="passcode-error" class="passcode-error">Invalid passcode. Please try again.</p>
+        </div>
+    </div>
+    
+    <!-- Main Admin Content -->
+    <div id="admin-content">
+        <header class="header">
+            <div class="header-left">
+                <span class="header-logo">🛡️</span>
+                <h1 class="header-title">PS-14 Admin</h1>
+                <span class="header-badge">v2.0</span>
+            </div>
+            <div class="header-right">
+                <span class="header-user" id="admin-user">Admin</span>
+                <button class="header-logout" id="logout-btn">Logout</button>
+            </div>
+        </header>
+        
+        <div class="main">
+            <nav class="sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Overview</div>
+                    <div class="sidebar-item active" data-tab="dashboard">
+                        <span class="sidebar-item-icon">📊</span>
+                        Dashboard
+                    </div>
+                    <div class="sidebar-item" data-tab="services">
+                        <span class="sidebar-item-icon">🔧</span>
+                        Services
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Data</div>
+                    <div class="sidebar-item" data-tab="database">
+                        <span class="sidebar-item-icon">🗄️</span>
+                        Database Explorer
+                    </div>
+                    <div class="sidebar-item" data-tab="queries">
+                        <span class="sidebar-item-icon">🔍</span>
+                        Query Editor
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Security</div>
+                    <div class="sidebar-item" data-tab="audit">
+                        <span class="sidebar-item-icon">📋</span>
+                        Audit Trail
+                    </div>
+                    <div class="sidebar-item" data-tab="access">
+                        <span class="sidebar-item-icon">🔑</span>
+                        Access Control
+                    </div>
+                </div>
+            </nav>
+            
+            <main class="content">
+                <!-- Dashboard Tab -->
+                <div id="tab-dashboard" class="tab-content">
+                    <div class="content-header">
+                        <h2 class="content-title">Dashboard</h2>
+                        <p class="content-subtitle">System overview and key metrics</p>
+                    </div>
+                    
+                    <div class="cards-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🚀</div>
+                                <span class="card-status healthy">Healthy</span>
+                            </div>
+                            <div class="card-title">System Status</div>
+                            <div class="card-value" id="system-status">—</div>
+                            <div class="card-label">All services operational</div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">📊</div>
+                                <span class="card-status healthy">Active</span>
+                            </div>
+                            <div class="card-title">Transactions</div>
+                            <div class="card-value" id="txn-count">—</div>
+                            <div class="card-label">Processed today</div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">⚠️</div>
+                                <span class="card-status warning">Review</span>
+                            </div>
+                            <div class="card-title">Alerts</div>
+                            <div class="card-value" id="alert-count">—</div>
+                            <div class="card-label">Pending verification</div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🔗</div>
+                                <span class="card-status healthy">Valid</span>
+                            </div>
+                            <div class="card-title">Audit Chain</div>
+                            <div class="card-value" id="audit-entries">—</div>
+                            <div class="card-label">Chain entries</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Services Tab -->
+                <div id="tab-services" class="tab-content" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title">Services</h2>
+                        <p class="content-subtitle">Monitor all PS-14 services</p>
+                    </div>
+                    
+                    <div class="cards-grid" id="services-grid">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+                
+                <!-- Database Tab -->
+                <div id="tab-database" class="tab-content" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title">Database Explorer</h2>
+                        <p class="content-subtitle">Browse and query all databases</p>
+                    </div>
+                    
+                    <div class="db-explorer">
+                        <div class="db-header">
+                            <span class="db-title">Tables</span>
+                            <button class="table-btn" id="refresh-tables">Refresh</button>
+                        </div>
+                        <div class="db-grid" id="db-tables-grid">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Query Editor Tab -->
+                <div id="tab-queries" class="tab-content" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title">Query Editor</h2>
+                        <p class="content-subtitle">Execute read-only pre-defined queries against the database</p>
+                    </div>
+                    
+                    <div class="query-editor">
+                        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap;">
+                            <select id="db-select" style="
+                                padding: 10px 16px;
+                                background: var(--bg);
+                                border: 1px solid var(--border);
+                                border-radius: 6px;
+                                color: var(--text);
+                                font-size: 13px;
+                                width: 200px;
+                            ">
+                                <option value="identity">Identity (DB-1)</option>
+                                <option value="features">Features (DB-2)</option>
+                                <option value="risk">Risk (DB-3)</option>
+                                <option value="verify">Verify (DB-4)</option>
+                                <option value="audit">Audit (DB-5)</option>
+                            </select>
+                            
+                            <select id="query-select" style="
+                                padding: 10px 16px;
+                                background: var(--bg);
+                                border: 1px solid var(--border);
+                                border-radius: 6px;
+                                color: var(--text);
+                                font-size: 13px;
+                                flex: 1;
+                                min-width: 200px;
+                            ">
+                                <option value="recent_audit">Recent Audit Events</option>
+                                <option value="recent_scores">Recent Risk Scores</option>
+                                <option value="unresolved_alerts">Unresolved Alerts</option>
+                                <option value="recent_features">Recent Features</option>
+                                <option value="table_list">List Tables</option>
+                                <option value="row_count:audit_events">Audit Events (row count)</option>
+                                <option value="row_count:risk_scores">Risk Scores (row count)</option>
+                                <option value="row_count:transaction_features">Features (row count)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="query-actions">
+                            <button class="query-btn" id="execute-query">Execute</button>
+                        </div>
+                        
+                        <div class="query-results" id="query-results"></div>
+                    </div>
+                </div>
+                
+                <!-- Audit Tab -->
+                <div id="tab-audit" class="tab-content" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title">Audit Trail</h2>
+                        <p class="content-subtitle">View the hash-chained audit log</p>
+                    </div>
+                    
+                    <div class="data-table">
+                        <div class="table-header">
+                            <span class="table-title">Recent Events</span>
+                            <div class="table-actions">
+                                <button class="table-btn" id="refresh-audit">Refresh</button>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Seq</th>
+                                    <th>Type</th>
+                                    <th>Actor</th>
+                                    <th>Hash</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-table-body">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 32px;">
+                                        Loading audit events...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Access Control Tab -->
+                <div id="tab-access" class="tab-content" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title">Access Control</h2>
+                        <p class="content-subtitle">Manage admin credentials and access</p>
+                    </div>
+                    
+                    <div class="card" style="max-width: 500px;">
+                        <div class="card-header">
+                            <div class="card-icon">🔑</div>
+                        </div>
+                        <div class="card-title">Admin Credentials</div>
+                        <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 16px;">
+                            Current admin session is active. To change credentials, 
+                            update the ADMIN_PASS environment variable and restart the service.
+                        </p>
+                        <div style="
+                            padding: 12px 16px;
+                            background: var(--bg);
+                            border: 1px solid var(--border);
+                            border-radius: 8px;
+                            font-size: 13px;
+                        ">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="color: var(--text-dim);">Session Active</span>
+                                <span style="color: var(--success);">✓ Yes</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--text-dim);">Login Time</span>
+                                <span id="login-time">—</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        // Admin authentication state
+        let isAdminAuthenticated = false;
+        let adminToken = null;
+        let adminPass = null;
+        
+        // Check if already authenticated from index.html login
+        window.addEventListener('DOMContentLoaded', function() {
+            const storedToken = sessionStorage.getItem('admin_token');
+            const storedPass = sessionStorage.getItem('admin_pass');
+            
+            if (storedToken && storedPass) {
+                // Already authenticated - skip passcode gate
+                isAdminAuthenticated = true;
+                adminToken = storedToken;
+                adminPass = storedPass;
+                document.getElementById('passcode-gate').classList.add('hidden');
+                document.getElementById('admin-content').classList.add('visible');
+                document.getElementById('login-time').textContent = new Date().toLocaleString();
+                loadDashboard();
+            }
+        });
+        
+        // Passcode verification (fallback if not authenticated from index.html)
+        document.getElementById('passcode-btn').addEventListener('click', verifyPasscode);
+        document.getElementById('passcode-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verifyPasscode();
+        });
+        
+        async function verifyPasscode() {
+            const passcode = document.getElementById('passcode-input').value;
+            const errorEl = document.getElementById('passcode-error');
+            
+            if (!passcode) {
+                errorEl.textContent = 'Please enter a passcode';
+                errorEl.style.display = 'block';
+                return;
+            }
+            
+            try {
+                // Authenticate via backend
+                const response = await fetch('/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'admin', passphrase: passcode })
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    isAdminAuthenticated = true;
+                    adminToken = data.token;
+                    adminPass = passcode;
+                    sessionStorage.setItem('admin_token', adminToken);
+                    sessionStorage.setItem('admin_pass', adminPass);
+                    document.getElementById('passcode-gate').classList.add('hidden');
+                    document.getElementById('admin-content').classList.add('visible');
+                    document.getElementById('login-time').textContent = new Date().toLocaleString();
+                    loadDashboard();
+                } else {
+                    errorEl.textContent = data.detail || 'Invalid passcode';
+                    errorEl.style.display = 'block';
+                    document.getElementById('passcode-input').value = '';
+                }
+            } catch (error) {
+                errorEl.textContent = 'Authentication failed';
+                errorEl.style.display = 'block';
+            }
+        }
+        
+        // Tab navigation
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const tab = item.dataset.tab;
+                
+                // Update active state
+                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Show tab content
+                document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+                document.getElementById(`tab-${tab}`).style.display = 'block';
+                
+                // Load tab data
+                loadTabData(tab);
+            });
+        });
+        
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            try {
+                await fetch('/admin/logout', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+            } catch (e) {
+                // Ignore logout errors
+            }
+            isAdminAuthenticated = false;
+            adminToken = null;
+            adminPass = null;
+            sessionStorage.removeItem('admin_token');
+            sessionStorage.removeItem('admin_pass');
+            document.getElementById('admin-content').classList.remove('visible');
+            document.getElementById('passcode-gate').classList.remove('hidden');
+            document.getElementById('passcode-input').value = '';
+        });
+        
+        // Load dashboard data
+        async function loadDashboard() {
+            const token = adminToken || sessionStorage.getItem('admin_token');
+            try {
+                const response = await fetch('/status', {
+                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+                });
+                const data = await response.json();
+                
+                document.getElementById('system-status').textContent = data.status || 'OK';
+                document.getElementById('txn-count').textContent = '—';
+                document.getElementById('alert-count').textContent = '—';
+                document.getElementById('audit-entries').textContent = data.audit?.entries || '—';
+                
+                // Load services
+                loadServices(data.services || {});
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+            }
+        }
+        
+        // Load services
+        function loadServices(services) {
+            const grid = document.getElementById('services-grid');
+            grid.innerHTML = '';
+            
+            const serviceNames = {
+                front: { name: 'Front Service', icon: '🌐' },
+                identity: { name: 'Identity Service', icon: '👤' },
+                privacy: { name: 'Privacy Layer', icon: '🔒' },
+                risk: { name: 'Risk Engine', icon: '⚡' },
+                verification: { name: 'Verification', icon: '✅' },
+                audit: { name: 'Audit Service', icon: '📋' }
+            };
+            
+            Object.entries(services).forEach(([key, service]) => {
+                const info = serviceNames[key] || { name: key, icon: '🔧' };
+                const isHealthy = service.status === 'healthy';
+                
+                grid.innerHTML += `
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">${info.icon}</div>
+                            <span class="card-status ${isHealthy ? 'healthy' : 'error'}">
+                                ${isHealthy ? 'Healthy' : 'Down'}
+                            </span>
+                        </div>
+                        <div class="card-title">${info.name}</div>
+                        <div class="card-value" style="font-size: 16px;">
+                            ${isHealthy ? 'Operational' : 'Unavailable'}
+                        </div>
+                        <div class="card-label">
+                            Latency: ${service.latency_ms ? service.latency_ms.toFixed(0) + 'ms' : '—'}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        // Load tab data
+        async function loadTabData(tab) {
+            switch (tab) {
+                case 'database':
+                    await loadDatabaseTables();
+                    break;
+                case 'audit':
+                    await loadAuditEvents();
+                    break;
+            }
+        }
+        
+        // Load database tables
+        async function loadDatabaseTables() {
+            const grid = document.getElementById('db-tables-grid');
+            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); padding: 32px;">Loading tables...</div>';
+            const token = adminToken || sessionStorage.getItem('admin_token');
+            const pass = adminPass || sessionStorage.getItem('admin_pass');
+            try {
+                const response = await fetch('/admin/db-query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        db_name: 'audit',
+                        query: 'table_list',
+                        passphrase: pass
+                    })
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    grid.innerHTML = '';
+                    (data.data || data.rows || []).forEach(row => {
+                        grid.innerHTML += `
+                            <div class="db-table-card" onclick="selectTable('${row.name}')">
+                                <div class="db-table-name">${row.name}</div>
+                                <div class="db-table-count">Click to query</div>
+                            </div>
+                        `;
+                    });
+                } else if (response.status === 401) {
+                    // Session expired — force re-login
+                    sessionStorage.removeItem('admin_token');
+                    sessionStorage.removeItem('admin_pass');
+                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--danger); padding: 32px;">Session expired — <a href="/admin-page" style="color: var(--accent);">re-login</a></div>';
+                } else {
+                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--danger); padding: 32px;">Failed to load tables</div>';
+                }
+            } catch (error) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--danger); padding: 32px;">Failed to load tables</div>';
+            }
+        }
+        
+        // Select table
+        function selectTable(tableName) {
+            // Map table names to available query options
+            const queryMap = {
+                'audit_events': 'recent_audit',
+                'audit_access_log': 'recent_audit',
+                'risk_scores': 'recent_scores',
+                'transaction_features': 'recent_features',
+                'verification_outcomes': 'unresolved_alerts'
+            };
+            const querySelect = document.getElementById('query-select');
+            if (queryMap[tableName]) {
+                querySelect.value = queryMap[tableName];
+            } else {
+                querySelect.value = 'table_list';
+            }
+            document.querySelector('[data-tab="queries"]').click();
+        }
+        
+        // Execute query
+        document.getElementById('execute-query').addEventListener('click', async () => {
+            const db = document.getElementById('db-select').value;
+            const query = document.getElementById('query-select').value;
+            const resultsDiv = document.getElementById('query-results');
+            const token = adminToken || sessionStorage.getItem('admin_token');
+            const pass = adminPass || sessionStorage.getItem('admin_pass');
+            
+            resultsDiv.innerHTML = '<p style="color: var(--text-dim);">Executing query...</p>';
+            
+            try {
+                const response = await fetch('/admin/db-query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        db_name: db,
+                        query: query,
+                        passphrase: pass
+                    })
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const rows = data.data || data.rows || [];
+                    
+                    if (!rows || rows.length === 0) {
+                        resultsDiv.innerHTML = '<p style="color: var(--text-dim);">No results returned</p>';
+                        return;
+                    }
+                    
+                    // Build table
+                    const columns = Object.keys(rows[0]);
+                    let html = '<table><thead><tr>';
+                    columns.forEach(col => {
+                        html += `<th>${col}</th>`;
+                    });
+                    html += '</tr></thead><tbody>';
+                    
+                    rows.forEach(row => {
+                        html += '<tr>';
+                        columns.forEach(col => {
+                            html += `<td>${row[col] ?? 'NULL'}</td>`;
+                        });
+                        html += '</tr>';
+                    });
+                    
+                    html += '</tbody></table>';
+                    resultsDiv.innerHTML = html;
+                } else if (response.status === 401) {
+                    sessionStorage.removeItem('admin_token');
+                    sessionStorage.removeItem('admin_pass');
+                    resultsDiv.innerHTML = '<p style="color: var(--danger);">Session expired — <a href="/admin-page" style="color: var(--accent);">re-login</a></p>';
+                } else {
+                    resultsDiv.innerHTML = `<p style="color: var(--danger);">Error: ${data.error || 'Query failed'}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: var(--danger);">Request failed: ${error.message}</p>`;
+            }
+        });
+        
+
+        
+        // Load audit events
+        async function loadAuditEvents() {
+            const tbody = document.getElementById('audit-table-body');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim);">Loading audit events...</td></tr>';
+            const token = adminToken || sessionStorage.getItem('admin_token');
+            const pass = adminPass || sessionStorage.getItem('admin_pass');
+            try {
+                const response = await fetch('/admin/db-query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        db_name: 'audit',
+                        query: 'recent_audit',
+                        limit: 50,
+                        passphrase: pass
+                    })
+                });
+                const data = await response.json();
+                const rows = data.data || data.rows || [];
+                
+                if (!rows || rows.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim);">No audit events found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = '';
+                rows.forEach(row => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${row.seq}</td>
+                            <td>${row.event_type}</td>
+                            <td>${row.actor}</td>
+                            <td style="font-family: monospace; font-size: 12px;">${row.entry_hash?.substring(0, 16) ?? '—'}...</td>
+                            <td>${new Date(row.created_at).toLocaleString()}</td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--danger);">Failed to load audit events</td></tr>`;
+            }
+        }
+        
+        // Refresh buttons
+        document.getElementById('refresh-tables')?.addEventListener('click', loadDatabaseTables);
+        document.getElementById('refresh-audit')?.addEventListener('click', loadAuditEvents);
+        
+        // Auto-refresh dashboard every 30 seconds
+        setInterval(() => {
+            if (isAdminAuthenticated) {
+                loadDashboard();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
