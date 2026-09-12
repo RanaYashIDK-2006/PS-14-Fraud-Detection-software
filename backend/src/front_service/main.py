@@ -40,7 +40,7 @@ import time
 import jwt
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from starlette.responses import Response
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from pydantic import BaseModel, Field
 
 import sqlite3
@@ -880,15 +880,21 @@ _monitor_latencies: collections.deque = collections.deque(maxlen=500)
 
 
 @app.get("/monitor-page", include_in_schema=False)
-def monitor_page() -> Response:
+def monitor_page(request: Request) -> Response:
+    # Admin-gated: redirect browsers without a valid admin session to login
+    try:
+        _require_admin_session(request)
+    except HTTPException:
+        return RedirectResponse(url="/admin-page?next=%2Fmonitor-page", status_code=303)
     resp = FileResponse(STATIC / "monitor.html")
-    resp.headers["Cache-Control"] = "private, max-age=5"
+    resp.headers["Cache-Control"] = "no-store"
     return resp
 
 
 @app.get("/monitor/metrics")
-def monitor_metrics(response: Response) -> JSONResponse:
-    """Return live monitoring metrics for the dashboard."""
+def monitor_metrics(response: Response, request: Request) -> JSONResponse:
+    """Return live monitoring metrics for the dashboard (admin-only)."""
+    _require_admin_session(request)
     response.headers["Cache-Control"] = "private, max-age=3"
     # Service health — read from the warm cache (background refresher keeps it fresh)
     services = {}
@@ -1062,8 +1068,9 @@ def monitor_metrics(response: Response) -> JSONResponse:
 
 
 @app.get("/monitor/unified")
-def monitor_unified() -> JSONResponse:
-    """Unified detection system metrics — ML + rules + velocity + drift."""
+def monitor_unified(request: Request) -> JSONResponse:
+    """Unified detection system metrics — ML + rules + velocity + drift (admin-only)."""
+    _require_admin_session(request)
     result = {
         "unified_scorer": {},
         "drift": {},
@@ -1599,8 +1606,9 @@ def admin_db_tables(
 
 
 @app.get("/monitor/test-results")
-def monitor_test_results() -> JSONResponse:
-    """Return the latest automated test results."""
+def monitor_test_results(request: Request) -> JSONResponse:
+    """Return the latest automated test results (admin-only)."""
+    _require_admin_session(request)
     if TEST_RESULTS_FILE.exists():
         try:
             data = json.loads(TEST_RESULTS_FILE.read_text())
@@ -1615,14 +1623,15 @@ def monitor_test_results() -> JSONResponse:
 
 
 @app.get("/monitor/phases")
-def monitor_phases() -> JSONResponse:
-    """Return the validation-phase decision ledger (Phases 14-25).
+def monitor_phases(request: Request) -> JSONResponse:
+    """Return the validation-phase decision ledger (Phases 14-25, admin-only).
 
     Reads each phase's immutable decision.json from reports/ — the same
     artifacts pushed to GitHub — so the UI shows the certified verdicts
     without any client-side file access.
     """
-    root = Path(__file__).resolve().parent.parent.parent
+    _require_admin_session(request)
+    root = Path(__file__).resolve().parent.parent.parent.parent / "misc"
     phases_meta = [
         (14, "Chip supervision transfer", "Does 2014-15 chip-fraud training improve 2017 transfer?"),
         (15, "Distribution-shift forensics", "Why did 2017 chip recall fail?"),
@@ -1645,7 +1654,7 @@ def monitor_phases() -> JSONResponse:
         lambda n: root / "reports" / f"phase{n}" / f"{n}_final_decision.json" if isinstance(n, int) else None,
         lambda n: root / "reports" / f"phase{n}" / "25_final_decision.json" if n == 23 else None,
         lambda n: root / "reports" / f"phase{n}" / "26_final_decision.json" if n == 22 else None,
-        lambda n: root / "reports" / f"phase{n}" / "kaggle" / "20_final_decision.json" if str(n) == "23B" else None,
+        lambda n: root / "reports" / ("phase23b" if str(n) == "23B" else f"phase{n}") / "kaggle" / "20_final_decision.json",
         lambda n: root / "reports" / f"phase{n}" / "kaggle" / "20_final_decision.json" if n == 24 else None,
         lambda n: root / "reports" / f"phase{n}" / "final_decision.json" if n == 25 else None,
     ]
@@ -1689,9 +1698,9 @@ def monitor_phases() -> JSONResponse:
 def run_tests_now(request: Request) -> JSONResponse:
     """Manually trigger an immediate test run (synchronous, returns when done).
 
-    Requires admin session cookie — same-origin bypass removed because
-    Origin/Referer headers are trivially spoofable and do not constitute
-    authentication.
+    Requires admin session cookie or Bearer token — same-origin bypass
+    removed because Origin/Referer headers are trivially spoofable and do
+    not constitute authentication.
     """
     _require_admin_session(request)
     try:

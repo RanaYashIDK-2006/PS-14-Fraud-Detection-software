@@ -1,5 +1,18 @@
 var C={green:'#22c55e',red:'#ef4444',accent:'#3b82f6',purple:'#a855f7',yellow:'#eab308',dim:'#64748b',grid:'#1e293b',orange:'#f97316'};
 
+/* Admin-authenticated fetch: the monitor is admin-gated server-side, so every
+   call must carry the admin Bearer token (sessionStorage from the admin login).
+   On 401, bounce to the login page. */
+function authFetch(url, opts) {
+  opts = opts || {};
+  var token = sessionStorage.getItem('admin_token');
+  opts.headers = Object.assign({}, opts.headers || {}, token ? {'Authorization': 'Bearer ' + token} : {});
+  return fetch(url, opts).then(function(r) {
+    if (r.status === 401) { window.location.href = '/login-page?next=/monitor-page'; throw new Error('unauthorized'); }
+    return r;
+  });
+}
+
 function fmt(s){var h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h>0?h+'h '+m+'m':m+'m';}
 
 /* LIVE METRICS */
@@ -46,7 +59,7 @@ function renderLiveMetrics(data){
 
 /* PHASES */
 function loadPhases(){
-  fetch('/monitor/phases').then(function(r){return r.json()}).then(function(data){
+  authFetch('/monitor/phases').then(function(r){return r.json()}).then(function(data){
     var phases=data.phases||[];
     var tbody='';
     for(var i=0;i<phases.length;i++){
@@ -68,7 +81,7 @@ function loadPhases(){
 
 /* TEST RESULTS */
 function loadTestResults(){
-  fetch('/monitor/test-results').then(function(r){return r.json()}).then(function(d){
+  authFetch('/monitor/test-results').then(function(r){return r.json()}).then(function(d){
     var el=document.getElementById('testResults');
     if(!d||!d.timestamp){el.innerHTML='<div style="color:'+C.dim+';font-size:12px">No test results yet — first run pending</div>';return;}
     var ts=new Date(d.timestamp).toLocaleString();
@@ -100,7 +113,7 @@ function loadTestResults(){
 document.getElementById('runBtn').addEventListener('click',function(){
   var btn=this;
   btn.disabled=true;btn.textContent='⏳ Running…';btn.classList.add('running');
-  fetch('/monitor/run-tests',{method:'POST'}).then(function(r){return r.json()}).then(function(){
+  authFetch('/monitor/run-tests',{method:'POST',headers:{'X-Requested-With':'fetch'}}).then(function(r){return r.json()}).then(function(){
     btn.disabled=false;btn.textContent='▶ Run Tests';btn.classList.remove('running');
     loadTestResults();
   }).catch(function(){btn.disabled=false;btn.textContent='▶ Run Tests';btn.classList.remove('running');});
@@ -108,7 +121,7 @@ document.getElementById('runBtn').addEventListener('click',function(){
 
 /* MAIN LOOP */
 function refresh(){
-  fetch('/monitor/metrics').then(function(r){return r.json()}).then(function(data){
+  authFetch('/monitor/metrics').then(function(r){return r.json()}).then(function(data){
     renderLiveMetrics(data);
   }).catch(function(e){console.error('Metrics load failed:',e);});
 }

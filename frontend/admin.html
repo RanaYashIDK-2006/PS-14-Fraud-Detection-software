@@ -907,6 +907,8 @@
                 document.getElementById('passcode-gate').classList.add('hidden');
                 document.getElementById('admin-content').classList.add('visible');
                 document.getElementById('login-time').textContent = new Date().toLocaleString();
+                const next = new URLSearchParams(window.location.search).get('next');
+                if (next && next.startsWith('/')) { window.location.replace(next); return; }
                 loadDashboard();
             }
         });
@@ -945,6 +947,8 @@
                     document.getElementById('passcode-gate').classList.add('hidden');
                     document.getElementById('admin-content').classList.add('visible');
                     document.getElementById('login-time').textContent = new Date().toLocaleString();
+                    const next = new URLSearchParams(window.location.search).get('next');
+                    if (next && next.startsWith('/')) { window.location.href = next; return; }
                     loadDashboard();
                 } else {
                     errorEl.textContent = data.detail || 'Invalid passcode';

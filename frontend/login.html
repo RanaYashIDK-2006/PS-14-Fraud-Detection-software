@@ -155,7 +155,7 @@ async function handleLogin(e) {
       addLog('ok', 'LOGIN → ' + r.status + ' role=' + data.role);
       sessionStorage.setItem('ps14_token', data.access_token || '');
       sessionStorage.setItem('ps14_role', data.role || '');
-      setTimeout(function() { window.location.href = '/monitor-page'; }, 1000);
+      setTimeout(function() { window.location.href = '/'; }, 1000);
     } else if (r.status === 429) {
       msg.className = 'mt-3 text-sm text-center text-amber-400';
       msg.textContent = '⚠ Rate limited: ' + data.detail;
