@@ -70,7 +70,7 @@ def _run_tests_sync():
               "SUPABASE_ANON_KEY"]:
         env.pop(k, None)
     result = subprocess.run(
-        [py, str(root / "scripts" / "regression_suite.py"), "--fast"],
+        [py, str(root / "backend" / "scripts" / "regression_suite.py"), "--fast"],
         capture_output=True, text=True, cwd=str(root),
         timeout=300, env=env,
     )
