@@ -55,6 +55,7 @@ from contextlib import asynccontextmanager
 
 TEST_RESULTS_FILE = Path(settings.db_dir) / "test_results.json"
 FULL_EVAL_FILE = Path(settings.db_dir) / "full_eval_results.json"
+IBM_EVAL_FILE = Path(settings.db_dir) / "ibm_eval_results.json"
 _test_runner_task = None
 
 
@@ -1760,17 +1761,16 @@ def run_full_eval(request: Request) -> JSONResponse:
                   "SUPABASE_ANON_KEY"]:
             env.pop(k, None)
         result = subprocess.run(
-            [py, str(root / "backend" / "scripts" / "full_eval.py"),
-             "--input", str(root / "data" / "validation_kaggle.csv"),
-             "--chunk-size", "50000"],
+            [py, str(root / "backend" / "scripts" / "ibm_eval.py"),
+             "--max-rows", "100000", "--chunk-size", "50000"],
             capture_output=True, text=True, timeout=600, env=env,
             cwd=str(root),
         )
         if result.returncode != 0:
             err = result.stderr[-500:] if result.stderr else result.stdout[-500:]
             return JSONResponse({"error": f"full eval failed (exit {result.returncode}): {err}", "all_passed": False})
-        if FULL_EVAL_FILE.exists():
-            data = json.loads(FULL_EVAL_FILE.read_text(encoding="utf-8"))
+        if IBM_EVAL_FILE.exists():
+            data = json.loads(IBM_EVAL_FILE.read_text(encoding="utf-8"))
             return JSONResponse(data)
         return JSONResponse({"error": "full eval produced no output"})
     except subprocess.TimeoutExpired:
@@ -1785,13 +1785,13 @@ def run_full_eval(request: Request) -> JSONResponse:
 def get_full_eval(request: Request) -> JSONResponse:
     """Return cached full-eval results (admin-only)."""
     _require_admin_session(request)
-    if FULL_EVAL_FILE.exists():
+    if IBM_EVAL_FILE.exists():
         try:
-            data = json.loads(FULL_EVAL_FILE.read_text(encoding="utf-8"))
+            data = json.loads(IBM_EVAL_FILE.read_text(encoding="utf-8"))
             return JSONResponse(data)
         except Exception:
             pass
-    return JSONResponse({"timestamp": None, "error": "No full evaluation results yet — click Run Tests"})
+    return JSONResponse({"timestamp": None, "error": "No IBM evaluation results yet — click Run Tests"})
 
 
 @app.post("/admin/rotate")

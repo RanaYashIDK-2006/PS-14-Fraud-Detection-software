@@ -50,6 +50,54 @@ def typical_hours_default() -> list[int]:
     return list(range(8, 22))  # 8:00–21:59
 
 
+def log_amount_transform(amount: float) -> float:
+    """Log-transformed amount — reduces skew for model training."""
+    return float(np.log1p(max(0, amount)))
+
+
+def hour_cyclical(hour: int) -> tuple[float, float]:
+    """Cyclical encoding of hour: (sin, cos)."""
+    import math
+    angle = 2 * math.pi * hour / 24
+    return (math.sin(angle), math.cos(angle))
+
+
+def amount_zscore_global(amount: float, global_mean: float, global_std: float) -> float:
+    """Z-score of amount vs global distribution."""
+    if global_std <= 0:
+        return 0.0
+    return float((amount - global_mean) / global_std)
+
+
+def compute_general_features(amount: float, hour: int, ts=None) -> dict:
+    """Compute general features from raw transaction data.
+
+    These features are computable from raw columns without per-account
+    history and improve cross-dataset generalization.
+    """
+    import math
+    if ts is not None:
+        import pandas as pd
+        if isinstance(ts, str):
+            ts = pd.Timestamp(ts)
+        day_of_week = ts.dayofweek  # 0=Mon..6=Sun
+        month = ts.month
+    else:
+        day_of_week = 0
+        month = 1
+
+    hour_sin, hour_cos = hour_cyclical(hour)
+    return {
+        "log_amount": log_amount_transform(amount),
+        "day_of_week": day_of_week,
+        "is_night": 1 if hour < 6 else 0,
+        "hour_sin": round(hour_sin, 4),
+        "hour_cos": round(hour_cos, 4),
+        "month": month,
+        "amount_zscore_global": 0.0,  # computed separately with global stats
+    }
+
+
 def amount_bucket(ratio: float) -> str:
     if ratio < 0.5:
         return "low_relative_to_avg"

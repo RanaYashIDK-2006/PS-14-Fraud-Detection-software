@@ -72,6 +72,31 @@ def full_eval(input_path: Path, chunk_size: int = 50_000, max_rows: int | None =
     if not has_label:
         sys.exit("Input CSV must contain a 'label' column for evaluation.")
 
+    # Compute general features from raw columns where available
+    # These improve cross-dataset generalization
+    if "ts" in df.columns:
+        ts = pd.to_datetime(df["ts"], errors="coerce")
+        df["day_of_week"] = ts.dt.dayofweek.fillna(0).astype(int)
+        df["month"] = ts.dt.month.fillna(1).astype(int)
+    if "hour_of_day" in df.columns:
+        h = df["hour_of_day"]
+        df["is_night"] = (h < 6).astype(int)
+        df["hour_sin"] = np.sin(2 * np.pi * h / 24).round(4)
+        df["hour_cos"] = np.cos(2 * np.pi * h / 24).round(4)
+    if "amount_ratio" in df.columns:
+        df["log_amount"] = np.log1p(df["amount_ratio"].clip(lower=0)).round(4)
+    elif "Amount" in df.columns:
+        amt = pd.to_numeric(df["Amount"].astype(str).str.replace("$", "", regex=False), errors="coerce").fillna(0)
+        df["log_amount"] = np.log1p(amt.clip(lower=0)).round(4)
+    # Global z-score for amount
+    if "log_amount" in df.columns:
+        mean_amt = df["log_amount"].mean()
+        std_amt = df["log_amount"].std()
+        if std_amt > 0:
+            df["amount_zscore_global"] = ((df["log_amount"] - mean_amt) / std_amt).round(4)
+        else:
+            df["amount_zscore_global"] = 0.0
+
     # Zero-fill missing ML features
     missing = [f for f in ML_FEATURES if f not in df.columns]
     if missing:
