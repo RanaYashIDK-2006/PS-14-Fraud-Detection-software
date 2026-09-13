@@ -14,7 +14,7 @@
 #      alert, disputes it ("this wasn't me") -> case id + recovery flow,
 #   5. prints the HASH-VERIFIED audit trail (Audit): the pseudonymous
 #      decision trail for this user, the full-chain compliance export
-#      re-verified INDEPENDENTLY by scripts/verify_export.py (HMAC
+#      re-verified INDEPENDENTLY by backend/scripts/verify_export.py (HMAC
 #      signature + per-entry hash linkage recomputed from genesis), and
 #      the Audit Service's own chain-integrity verdict.
 #
@@ -116,17 +116,20 @@ trap cleanup EXIT
 
 start_service() {
   local name="$1" port="$2" mod="$3" pid
+  # After the data/models/backend/frontend/misc reorganization the service
+  # packages live under backend/src.*, so put backend/ on PYTHONPATH.
   if is_windows; then
     # No -RedirectStandardOutput here: the PowerShell 5.1 redirect quirk makes
     # the parent powershell hang. Logs go to the hidden console; health checks
     # are the signal.
     # Git Bash paths (/c/...) are invalid for PowerShell - convert to Windows.
-    local py_win root_win
+    local py_win root_win backend_win
     py_win="$(cygpath -w "$PY" 2>/dev/null || echo "$PY")"
     root_win="$(cygpath -w "$ROOT" 2>/dev/null || echo "$ROOT")"
-    pid="$(powershell -NoProfile -Command "(Start-Process -FilePath '$py_win' -ArgumentList '-m','uvicorn','$mod','--port','$port' -WorkingDirectory '$root_win' -WindowStyle Hidden -PassThru).Id" | tr -d '\r')"
+    backend_win="$(cygpath -w "$ROOT/backend" 2>/dev/null || echo "$ROOT/backend")"
+    pid="$(powershell -NoProfile -Command "\$env:PYTHONPATH='$backend_win'; (Start-Process -FilePath '$py_win' -ArgumentList '-m','uvicorn','$mod','--port','$port' -WorkingDirectory '$root_win' -WindowStyle Hidden -PassThru).Id" | tr -d '\r')"
   else
-    nohup "$PY" -m uvicorn "$mod" --port "$port" >"$WT_DIR/$name.log" 2>&1 &
+    (cd "$ROOT/backend" && nohup "$PY" -m uvicorn "$mod" --port "$port" >"$WT_DIR/$name.log" 2>&1 &)
     pid=$!
   fi
   echo "[$name] started (pid $pid) on :$port"
@@ -398,7 +401,7 @@ echo
 echo "== 7b. full-chain compliance export, re-verified INDEPENDENTLY =="
 curl -s "http://127.0.0.1:$P_AUDIT/audit/export" -H "$AUTH" > "$WT_DIR/export.json"
 echo "  export: $WT_DIR/export.json ($(wc -c < "$WT_DIR/export.json") bytes)"
-"$PY" scripts/verify_export.py "$WT_DIR/export.json"
+"$PY" backend/scripts/verify_export.py "$WT_DIR/export.json"
 
 echo
 echo "== 7c. Audit Service's own chain-integrity verdict =="
