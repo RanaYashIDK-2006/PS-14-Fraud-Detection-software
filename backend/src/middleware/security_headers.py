@@ -52,7 +52,7 @@ def _build_csp(nonce: str = "") -> str:
         directives.append("style-src 'self' 'unsafe-inline' https://fonts.googleapis.com")
     else:
         # Development: allow inline scripts + Tailwind CDN for rapid prototyping
-        directives.append("script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com")
+        directives.append("script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com")
         directives.append("style-src 'self' 'unsafe-inline' https://fonts.googleapis.com")
 
     # Common directives for both modes

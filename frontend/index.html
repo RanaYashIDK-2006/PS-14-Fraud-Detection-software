@@ -7,6 +7,9 @@
 <meta name="description" content="Privacy-first AI fraud detection system. Built for DPDP Act 2023 and RBI Guidelines.">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
 tailwind.config = {
   darkMode: 'class',
@@ -144,7 +147,7 @@ tailwind.config = {
 <!-- Hero Section -->
 <section class="relative pt-32 pb-20 px-6">
   <div class="max-w-7xl mx-auto text-center">
-    <div class="fade-in">
+    <div data-aos="fade-up">
       <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs text-slate-400 mb-6">
         <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
         All systems operational
@@ -203,7 +206,7 @@ tailwind.config = {
 <!-- Model Status -->
 <section class="py-16 px-6">
   <div class="max-w-7xl mx-auto">
-    <div class="glass rounded-2xl p-6 fade-in">
+    <div class="glass rounded-2xl p-6" data-aos="fade-up">
       <h3 class="text-lg font-bold mb-4">Model Status</h3>
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
@@ -252,7 +255,7 @@ tailwind.config = {
       <h2 class="text-2xl font-bold mb-2">Architecture</h2>
       <p class="text-slate-400 text-sm">How a transaction flows through the pipeline</p>
     </div>
-    <div class="glass rounded-2xl p-8 fade-in overflow-x-auto">
+    <div class="glass rounded-2xl p-8" data-aos="fade-up" overflow-x-auto">
       <svg viewBox="0 0 800 160" class="w-full max-w-4xl mx-auto">
         <!-- Transaction -->
         <rect x="20" y="30" width="110" height="100" rx="12" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
@@ -299,7 +302,7 @@ tailwind.config = {
 <!-- Validation Phases -->
 <section id="phases" class="py-16 px-6">
   <div class="max-w-7xl mx-auto">
-    <div class="glass rounded-2xl p-6 fade-in">
+    <div class="glass rounded-2xl p-6" data-aos="fade-up">
       <div class="flex items-center justify-between mb-4">
         <div>
           <h3 class="text-lg font-bold">Validation Phase Ledger</h3>
@@ -346,7 +349,7 @@ tailwind.config = {
 <!-- CI/CD Pipeline -->
 <section id="pipeline" class="py-16 px-6">
   <div class="max-w-7xl mx-auto">
-    <div class="glass rounded-2xl p-6 fade-in">
+    <div class="glass rounded-2xl p-6" data-aos="fade-up">
       <div class="flex items-center justify-between mb-4">
         <div>
           <h3 class="text-lg font-bold">CI/CD Pipeline</h3>
@@ -383,7 +386,7 @@ tailwind.config = {
       <h2 class="text-2xl font-bold mb-2">Privacy Architecture</h2>
       <p class="text-slate-400 text-sm">3 isolated databases with firewall separation</p>
     </div>
-    <div class="glass rounded-2xl p-8 fade-in overflow-x-auto">
+    <div class="glass rounded-2xl p-8" data-aos="fade-up" overflow-x-auto">
       <svg viewBox="0 0 800 180" class="w-full max-w-4xl mx-auto">
         <!-- Identity DB -->
         <g transform="translate(30,0)">
@@ -464,6 +467,19 @@ tailwind.config = {
 </footer>
 
 <script>
+// Initialize AOS (Animate On Scroll)
+AOS.init({
+  duration: 800,
+  easing: 'ease-out-cubic',
+  once: true,
+  offset: 50
+});
+
+// Initialize Lucide Icons
+if (typeof lucide !== 'undefined') {
+  lucide.createIcons();
+}
+
 // Scroll progress bar
 window.addEventListener('scroll', function() {
   const bar = document.getElementById('scroll-progress');
