@@ -101,7 +101,9 @@ services:
 
   # ── Front service: landing page + admin ──────────────────────────────
   front:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     command: >
       gunicorn src.front_service.main:app
       -w 2 -k uvicorn.workers.UvicornWorker
@@ -149,7 +151,9 @@ services:
 
   # ── Identity service ────────────────────────────────────────────────
   identity:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     command: >
       gunicorn src.identity_service.main:app
       -w 2 -k uvicorn.workers.UvicornWorker
@@ -174,7 +178,9 @@ services:
 
   # ── Privacy layer ───────────────────────────────────────────────────
   privacy:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     command: >
       gunicorn src.privacy_layer.main:app
       -w 4 -k uvicorn.workers.UvicornWorker
@@ -199,7 +205,9 @@ services:
 
   # ── Risk engine: 4 workers for high throughput ──────────────────────
   risk:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     command: >
       gunicorn src.risk_engine.main:app
       -w 4 -k uvicorn.workers.UvicornWorker
@@ -230,7 +238,9 @@ services:
 
   # ── Verification service ────────────────────────────────────────────
   verify:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     command: >
       gunicorn src.verification_service.main:app
       -w 2 -k uvicorn.workers.UvicornWorker
@@ -255,7 +265,9 @@ services:
 
   # ── Audit service ───────────────────────────────────────────────────
   audit:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     command: >
       gunicorn src.audit_service.main:app
       -w 2 -k uvicorn.workers.UvicornWorker
@@ -280,7 +292,9 @@ services:
 
   # ── Inference service: 2 workers for batch scoring ──────────────────
   inference:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     command: >
       gunicorn src.inference.service:app
       -w 2 -k uvicorn.workers.UvicornWorker

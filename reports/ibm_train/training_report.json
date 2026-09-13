@@ -1,0 +1,58 @@
+{
+  "training_data": "IBM v2",
+  "total_rows": 1200000,
+  "features": [
+    "amount_ratio",
+    "txn_freq_last_24h",
+    "txn_time_unusual",
+    "new_device_flag",
+    "unusual_location_flag",
+    "unusual_recipient_flag",
+    "failed_auth_count_24h",
+    "days_since_last_similar_txn",
+    "gradual_escalation_score",
+    "known_device_count",
+    "account_tenure_days",
+    "hour_of_day",
+    "is_weekend",
+    "shared_device_accounts",
+    "shared_recipient_accounts",
+    "mule_ring_score",
+    "hour_deviation",
+    "amount_zscore",
+    "velocity_deviation",
+    "recipient_novelty",
+    "txn_regularity"
+  ],
+  "metrics": {
+    "lr": {
+      "roc_auc": 0.9097,
+      "pr_auc": 0.0298,
+      "recall_at_1pct_fpr": 0.3644
+    },
+    "rf": {
+      "roc_auc": 0.9777,
+      "pr_auc": 0.2112,
+      "recall_at_1pct_fpr": 0.7422
+    },
+    "xgb": {
+      "roc_auc": 0.9819,
+      "pr_auc": 0.4063,
+      "recall_at_1pct_fpr": 0.8356
+    },
+    "fused": {
+      "roc_auc": 0.9779,
+      "pr_auc": 0.3138,
+      "recall_at_1pct_fpr": 0.84
+    }
+  },
+  "confusion_matrix_05": {
+    "tn": 177558,
+    "fp": 2217,
+    "fn": 34,
+    "tp": 191
+  },
+  "best_threshold": 0.0034,
+  "best_tpr": 0.9244,
+  "best_fpr": 0.0332
+}

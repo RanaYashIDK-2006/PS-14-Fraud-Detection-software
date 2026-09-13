@@ -5,7 +5,7 @@ Uses the PS-14 model artifacts on kaggle_fraud test data.
 from pathlib import Path
 import pandas as pd, numpy as np, joblib, json, warnings, os, sys
 warnings.filterwarnings('ignore')
-ROOT = Path(__file__).resolve().parent.parent.parent  # repo root.parent  # repo root
+ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
 sys.path.insert(0, str(ROOT / "backend"))
 
 # Use current production models

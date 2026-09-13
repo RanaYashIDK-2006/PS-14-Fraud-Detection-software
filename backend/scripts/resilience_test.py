@@ -21,7 +21,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent.parent  # repo root.parent  # repo root
+ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
 sys.path.insert(0, str(ROOT / "backend"))
 
 

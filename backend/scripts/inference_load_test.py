@@ -20,7 +20,7 @@ from pathlib import Path
 
 import httpx
 
-ROOT = Path(__file__).resolve().parent.parent.parent  # repo root.parent  # repo root
+ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
 sys.path.insert(0, str(ROOT / "backend"))
 
 BASE = "http://127.0.0.1:8006"

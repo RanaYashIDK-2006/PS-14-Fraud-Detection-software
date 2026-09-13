@@ -33,7 +33,7 @@ from pathlib import Path
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parent.parent.parent  # repo root.parent  # repo root
+ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
 sys.path.insert(0, str(ROOT / "backend"))
 
 REPORT: dict = {"check": 29, "generated_at": time.strftime("%Y-%m-%d %H:%M:%S"),

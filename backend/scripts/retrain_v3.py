@@ -25,7 +25,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 import xgboost as xgb
 
-ROOT = Path(__file__).resolve().parent.parent.parent  # repo root.parent  # repo root
+ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
 sys.path.insert(0, str(ROOT / "backend"))
 DATA = ROOT / "data"
 ARTIFACTS = ROOT / "models" / "artifacts"

@@ -37,7 +37,7 @@ from pathlib import Path
 # creates its (empty) schema on import, so point it at a throwaway dir.
 os.environ["DB_DIR"] = tempfile.mkdtemp(prefix="ps14-verify-export-")
 
-ROOT = Path(__file__).resolve().parent.parent.parent  # repo root.parent  # repo root
+ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
 sys.path.insert(0, str(ROOT / "backend"))
 
 from src.audit_service.export import verify_export_chain, verify_export_signature  # noqa: E402

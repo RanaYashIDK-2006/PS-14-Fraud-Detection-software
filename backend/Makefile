@@ -17,19 +17,19 @@ security-install: ## Install security scanning tools
 	@echo "✅ Security tools installed"
 
 security-scan: ## Run basic security scan
-	python scripts/security_scan.py
+	python backend/scripts/security_scan.py
 
 security-scan-full: ## Run full security scan (including dependencies)
-	python scripts/security_scan.py --full
+	python backend/scripts/security_scan.py --full
 
 security-scan-json: ## Run security scan with JSON output
-	python scripts/security_scan.py --json --output .freebuff/security-report.json
+	python backend/scripts/security_scan.py --json --output .freebuff/security-report.json
 
 security-check: ## Run all security checks (scan + tests)
 	@echo "Running security scanner..."
-	python scripts/security_scan.py
+	python backend/scripts/security_scan.py
 	@echo ""
 	@echo "Running security tests..."
-	python scripts/security_test.py || true
+	python backend/scripts/security_test.py || true
 	@echo ""
 	@echo "✅ All security checks complete"

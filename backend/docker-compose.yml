@@ -8,7 +8,9 @@ name: ps14
 
 services:
   front:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     command: sh -c "uvicorn src.front_service.main:app --host 0.0.0.0 --port 8000"
     environment: &shared-env
       DB_DIR: /app/db
@@ -39,7 +41,9 @@ services:
       start_period: 10s
 
   identity:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     command: sh -c "uvicorn src.identity_service.main:app --host 0.0.0.0 --port 8001"
     environment: *shared-env
     ports: ["8001:8001"]
@@ -49,7 +53,9 @@ services:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=2)"]
 
   privacy:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     command: sh -c "uvicorn src.privacy_layer.main:app --host 0.0.0.0 --port 8002"
     environment: *shared-env
     ports: ["8002:8002"]
@@ -59,7 +65,9 @@ services:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8002/health', timeout=2)"]
 
   risk:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     command: sh -c "uvicorn src.risk_engine.main:app --host 0.0.0.0 --port 8003"
     environment: *shared-env
     ports: ["8003:8003"]
@@ -69,7 +77,9 @@ services:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8003/health', timeout=2)"]
 
   verify:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     command: sh -c "uvicorn src.verification_service.main:app --host 0.0.0.0 --port 8004"
     environment: *shared-env
     ports: ["8004:8004"]
@@ -79,7 +89,9 @@ services:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8004/health', timeout=2)"]
 
   audit:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     command: sh -c "uvicorn src.audit_service.main:app --host 0.0.0.0 --port 8005"
     environment: *shared-env
     ports: ["8005:8005"]
@@ -97,7 +109,9 @@ services:
   # the risk service) or `make retrain`.
   #   docker compose --profile train run --rm train
   train:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     profiles: ["train"]
     command: sh -c "python scripts/training_pipeline.py --full"
     environment: *shared-env

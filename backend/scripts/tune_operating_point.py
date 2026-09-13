@@ -51,7 +51,7 @@ import yaml
 # sklearn emits config-propagation warnings on repeated threaded predict calls
 warnings.filterwarnings("ignore", message="sklearn.utils.parallel.delayed")
 
-ROOT = Path(__file__).resolve().parent.parent.parent  # repo root.parent  # repo root
+ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
 sys.path.insert(0, str(ROOT / "backend"))
 
 from src.privacy_layer.features import ML_FEATURES  # noqa: E402

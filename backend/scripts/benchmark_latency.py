@@ -19,7 +19,7 @@ from pathlib import Path
 import numpy as np
 
 warnings.filterwarnings("ignore")
-ROOT = Path(__file__).resolve().parent.parent.parent  # repo root.parent  # repo root
+ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
 sys.path.insert(0, str(ROOT / "backend"))
 
 SEED = 42

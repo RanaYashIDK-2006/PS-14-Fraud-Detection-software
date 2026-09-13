@@ -20,7 +20,7 @@ from pathlib import Path
 
 import urllib.request
 
-ROOT = Path(__file__).resolve().parent.parent.parent  # repo root.parent  # repo root
+ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
 sys.path.insert(0, str(ROOT / "backend"))
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8003

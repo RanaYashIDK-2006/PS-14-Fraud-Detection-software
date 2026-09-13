@@ -32,7 +32,7 @@ import time
 from pathlib import Path
 
 # Add project root to path
-ROOT = Path(__file__).resolve().parent.parent.parent  # repo root.parent  # repo root
+ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
 sys.path.insert(0, str(ROOT / "backend"))
 
 from sqlalchemy import create_engine, text, MetaData, Table

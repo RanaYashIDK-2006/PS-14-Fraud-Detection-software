@@ -41,7 +41,7 @@ from sklearn.metrics import (
 )
 
 # Add project root to path
-ROOT = Path(__file__).resolve().parent.parent.parent  # repo root.parent  # repo root
+ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
 sys.path.insert(0, str(ROOT / "backend"))
 
 from src.privacy_layer.features import ML_FEATURES, mule_ring_score

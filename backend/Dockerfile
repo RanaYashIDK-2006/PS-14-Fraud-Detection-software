@@ -7,16 +7,20 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /app
 
 # System deps first so the layer cache survives code edits.
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY backend/requirements.txt ./backend/requirements.txt
+RUN pip install --no-cache-dir -r backend/requirements.txt
 
 # Application: source, scripts, trained artifacts, and data.
 # db/ is NOT copied — it is a named volume at runtime.
-COPY src ./src
-COPY scripts ./scripts
+COPY backend/src ./backend/src
+COPY backend/scripts ./backend/scripts
+COPY frontend ./frontend
 COPY models ./models
 COPY data ./data
-COPY config ./config
+COPY backend/config ./backend/config
+
+# PYTHONPATH so "from src.xxx import yyy" resolves
+ENV PYTHONPATH=/app/backend
 
 # Create db/ dir so the named-volume mount inherits ps14 ownership.
 # Without this, Docker creates the mount point as root and the

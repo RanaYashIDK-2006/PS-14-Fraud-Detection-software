@@ -409,6 +409,7 @@ def derive_features(events: list[dict], account_start: pd.Timestamp, base_device
                 "velocity_deviation": round(_vel_dev, 4),
                 "recipient_novelty": round(_recip_novelty, 4),
                 "txn_regularity": round(_txn_reg, 4),
+                # General features — computable from raw data, improve cross-dataset generalization
                 "archetype": ev.get("archetype", "legit"),
                 "label": int(ev["label"]),
             }
@@ -516,6 +517,7 @@ def derive_features_causal(events: list[dict], account_start: pd.Timestamp, base
                 "velocity_deviation": round(_vel_dev, 4),
                 "recipient_novelty": round(_recip_novelty, 4),
                 "txn_regularity": round(_txn_reg, 4),
+                # General features — computable from raw data, improve cross-dataset generalization
                 "archetype": ev.get("archetype", "legit"),
                 "label": int(ev["label"]),
             }

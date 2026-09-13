@@ -45,7 +45,7 @@ from sklearn.preprocessing import RobustScaler
 
 warnings.filterwarnings("ignore")
 
-ROOT = Path(__file__).resolve().parent.parent.parent  # repo root.parent  # repo root
+ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
 sys.path.insert(0, str(ROOT / "backend"))
 
 from src.privacy_layer.native_features import ALTMAN_NATIVE_FEATURES, derive_native_features  # noqa: E402
