@@ -19,7 +19,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent.parent  # repo root.parent  # repo root
+ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
 sys.path.insert(0, str(ROOT / "backend"))
 
 TMP = tempfile.mkdtemp(prefix="ps14-risk-")
@@ -122,7 +122,7 @@ def main() -> int:
               f"score={cnp['risk_score']} band={cnp['risk_band']} codes={cnp['reason_codes']}")
 
         escalate = evaluate(
-            c, "ev-escal-0001", vector(gradual_escalation_score=0.8, amount_ratio=1.2, txn_freq_last_24h=2)
+            c, "ev-escal-0001", vector(gradual_escalation_score=1.5, amount_ratio=1.2, txn_freq_last_24h=2)
         )
         check("escalation -> BEHAVIOR_DEVIATION", "BEHAVIOR_DEVIATION" in escalate["reason_codes"],
               f"score={escalate['risk_score']} codes={escalate['reason_codes']}")

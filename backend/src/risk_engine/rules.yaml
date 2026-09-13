@@ -38,7 +38,7 @@ rules:
   - id: RULE_UNUSUAL_TIME
     description: Unusual time of day for this account
     reason_code: UNUSUAL_TIME
-    severity: 0.20
+    severity: 0.05
     condition:
       feature: txn_time_unusual
       op: "=="
@@ -82,25 +82,25 @@ rules:
   - id: RULE_HIGH_FREQUENCY
     description: Transaction frequency is abnormal
     reason_code: FREQUENCY_ABNORMAL
-    severity: 0.35
+    severity: 0.10
     condition:
       feature: txn_freq_last_24h
       op: ">="
-      value: 5
+      value: 25
 
   - id: RULE_ESCALATION
     description: Behavior differs from your usual pattern (gradual escalation)
     reason_code: BEHAVIOR_DEVIATION
-    severity: 1.0
+    severity: 0.15
     condition:
       feature: gradual_escalation_score
       op: ">="
-      value: 0.5
+      value: 1.2
 
   - id: RULE_NEW_ACCOUNT_LARGE
     description: Large transaction from a newly created account
     reason_code: AMOUNT_UNUSUAL
-    severity: 0.60
+    severity: 0.25
     condition:
       all_of:
         - { feature: account_tenure_days, op: "<=", value: 7 }
@@ -130,7 +130,7 @@ rules:
   - id: RULE_MULE_RING
     description: Device or recipient shared with other accounts
     reason_code: MULE_RING
-    severity: 0.60
+    severity: 0.15
     condition:
       any_of:
         - all_of:
@@ -259,7 +259,7 @@ rules:
   - id: RULE_NEW_ACCOUNT_MULTI_SIGNAL
     description: Low-tenure account with multiple weak anomalies
     reason_code: BEHAVIOR_DEVIATION
-    severity: 0.65
+    severity: 0.20
     condition:
       all_of:
         - { feature: account_tenure_days, op: "<=", value: 10 }
@@ -349,16 +349,16 @@ rules:
   - id: RULE_GRADUAL_ESCALATION_STRONG
     description: Strong gradual escalation pattern (boiling frog attack)
     reason_code: BEHAVIOR_DEVIATION
-    severity: 0.75
+    severity: 0.20
     condition:
       feature: gradual_escalation_score
       op: ">="
-      value: 0.4
+      value: 1.8
 
   - id: RULE_AMOUNT_FREQ_COMBINED
     description: High amount + high frequency (double anomaly)
     reason_code: AMOUNT_UNUSUAL
-    severity: 0.65
+    severity: 0.20
     condition:
       all_of:
         - { feature: amount_ratio, op: ">=", value: 1.5 }
@@ -369,12 +369,12 @@ rules:
   - id: RULE_RAPID_FIRE
     description: Very high transaction frequency suggests card testing or bot activity
     reason_code: FREQUENCY_ABNORMAL
-    severity: 0.80
+    severity: 0.30
     level: critical
     condition:
       feature: txn_freq_last_24h
       op: ">="
-      value: 8
+      value: 30
 
   - id: RULE_SILENT_ACCOUNT_WAKE
     description: Account suddenly active after long dormancy with new device
@@ -431,21 +431,21 @@ rules:
   - id: RULE_SHARED_DEVICE
     description: Device shared with other accounts (23.86x fraud signal)
     reason_code: MULE_RING
-    severity: 0.65
+    severity: 0.15
     condition:
       feature: shared_device_accounts
-      op: ">"
-      value: 0
+      op: ">="
+      value: 2
 
   - id: RULE_SHARED_RECIPIENT
     description: Recipient shared with other accounts (243x fraud signal)
     reason_code: MULE_RING
-    severity: 0.70
+    severity: 0.15
     level: critical
     condition:
       feature: shared_recipient_accounts
-      op: ">"
-      value: 0
+      op: ">="
+      value: 3
 
   - id: RULE_MULE_RING_SCORE
     description: High mule ring composite score (47.7x fraud signal)
@@ -459,11 +459,11 @@ rules:
   - id: RULE_HIGH_FREQ_LOW_TENURE
     description: High transaction frequency on young account
     reason_code: BEHAVIOR_DEVIATION
-    severity: 0.55
+    severity: 0.15
     condition:
       all_of:
-        - { feature: txn_freq_last_24h, op: ">=", value: 3 }
-        - { feature: account_tenure_days, op: "<=", value: 14 }
+        - { feature: txn_freq_last_24h, op: ">=", value: 25 }
+        - { feature: account_tenure_days, op: "<=", value: 7 }
 
   - id: RULE_LONG_DORMANT
     description: Long time since last similar transaction + new device
@@ -545,16 +545,16 @@ rules:
     condition:
       feature: account_daily_spend_ratio
       op: ">"
-      value: 5.0
+      value: 10.0
 
   - id: RULE_VELOCITY_DEVICE_BURST
     description: Device handling many transactions in one day (>10)
     reason_code: FREQUENCY_ABNORMAL
-    severity: 0.50
+    severity: 0.15
     condition:
       feature: device_daily_count
       op: ">"
-      value: 10
+      value: 30
 
   - id: RULE_VELOCITY_DEVICE_EXTREME
     description: Device handling extreme transaction volume (>20/day)
@@ -578,10 +578,10 @@ rules:
   - id: RULE_VELOCITY_NIGHT_BURST
     description: High device transaction count during unusual hours
     reason_code: BEHAVIOR_DEVIATION
-    severity: 0.60
+    severity: 0.20
     condition:
       all_of:
-        - { feature: device_daily_count, op: ">", value: 5 }
+        - { feature: device_daily_count, op: ">", value: 25 }
         - { feature: txn_time_unusual, op: "==", value: 1 }
 
 velocity_limits:

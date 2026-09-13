@@ -265,7 +265,7 @@ _RANGE_CHECKS: dict[str, tuple[float, float]] = {
     "velocity_deviation": (0.0, 5.0),         # normalized deviation
     "recipient_novelty": (0.0, 1.0),          # fraction
     "txn_regularity": (0.0, 100.0),           # inter-arrival std in hours
-    "gradual_escalation_score": (0.0, 1.0),   # escalation ratio, clipped to [0,1]
+    "gradual_escalation_score": (0.0, 10.0),   # escalation ratio
 }
 
 
@@ -278,7 +278,7 @@ class FeatureVector(BaseModel):
     unusual_recipient_flag: int = Field(ge=0, le=1)
     failed_auth_count_24h: int = Field(ge=0)
     days_since_last_similar_txn: float = Field(ge=0)
-    gradual_escalation_score: float = Field(ge=0, le=1)
+    gradual_escalation_score: float = Field(ge=0, le=10)
     known_device_count: int = Field(ge=0)
     account_tenure_days: float = Field(ge=0)
     hour_of_day: int = Field(ge=0, le=23)
