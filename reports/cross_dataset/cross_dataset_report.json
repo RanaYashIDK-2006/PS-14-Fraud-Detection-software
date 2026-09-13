@@ -1,0 +1,63 @@
+{
+  "generated": "2026-09-13T11:17:33Z",
+  "note": "ML-only (no rules) comparison. Both models scored on identical rows. IBM v2 holdout rows are strictly AFTER the training prefix (user-disjoint 70/15/15 split, users shared across no folds). Kaggle ULB is a RANK-PRESERVING PCA-PROXY mapping onto the 21-feature contract (V1..V21 slot-filling); treat those numbers as rank-transfer evidence, not feature-semantic evaluation.",
+  "datasets": {
+    "synthetic": {
+      "rows": 9799,
+      "fraud": 181,
+      "fraud_rate": 0.018471,
+      "synthetic_model": {
+        "roc_auc": 0.991,
+        "pr_auc": 0.8614,
+        "recall_at_1pct_fpr": 0.8895,
+        "best_f1": 0.8307,
+        "best_f1_threshold": 0.4104
+      },
+      "ibm_v2_model": {
+        "roc_auc": 0.7398,
+        "pr_auc": 0.243,
+        "recall_at_1pct_fpr": 0.2597,
+        "best_f1": 0.3028,
+        "best_f1_threshold": 0.3639
+      }
+    },
+    "ibm_v2_holdout": {
+      "rows": 200000,
+      "fraud": 214,
+      "fraud_rate": 0.00107,
+      "synthetic_model": {
+        "roc_auc": 0.8512,
+        "pr_auc": 0.029,
+        "recall_at_1pct_fpr": 0.2944,
+        "best_f1": 0.0907,
+        "best_f1_threshold": 0.5968
+      },
+      "ibm_v2_model": {
+        "roc_auc": 0.8726,
+        "pr_auc": 0.0263,
+        "recall_at_1pct_fpr": 0.3084,
+        "best_f1": 0.0587,
+        "best_f1_threshold": 0.4556
+      }
+    },
+    "kaggle_ulb_pca_proxy": {
+      "rows": 284807,
+      "fraud": 492,
+      "fraud_rate": 0.001727,
+      "synthetic_model": {
+        "roc_auc": 0.3659,
+        "pr_auc": 0.0012,
+        "recall_at_1pct_fpr": 0.002,
+        "best_f1": 0.0034,
+        "best_f1_threshold": 0.0185
+      },
+      "ibm_v2_model": {
+        "roc_auc": 0.7644,
+        "pr_auc": 0.006,
+        "recall_at_1pct_fpr": 0.0386,
+        "best_f1": 0.0176,
+        "best_f1_threshold": 0.3417
+      }
+    }
+  }
+}

@@ -243,7 +243,11 @@ def train_ibm(max_rows: int | None = None) -> dict:
     n_fraud = int(y.sum())
     print(f"  Feature matrix: {X.shape}, fraud: {n_fraud} ({n_fraud/len(df)*100:.3f}%)")
 
-    # Time-based split: 70% train, 15% val, 15% test (chronological)
+    # Split: features are computed per-user over each user's own history,
+    # and the frame is sorted by (User, ts) — so a row-range split here is a
+    # USER-DISJOINT split: train/val/test share no users. This measures
+    # cross-user generalization (the production-relevant axis: new accounts
+    # arrive at decision time). It is NOT a chronological split.
     n = len(df)
     train_end = int(n * 0.70)
     val_end = int(n * 0.85)
@@ -357,10 +361,14 @@ def train_ibm(max_rows: int | None = None) -> dict:
     joblib.dump(xgb, ARTIFACTS_DIR / "xgb_model.joblib")
     joblib.dump(cal, ARTIFACTS_DIR / "ibm_calibrator.joblib")
 
-    # Save metadata
+    # Save metadata. NOTE: the risk engine lifespan and calibration test read
+    # seed/data/calibration from this file, so they must always be present.
     metadata = {
         "model_version": f"ibm_v2-{len(df)}rows",
         "training_data": "credit_card_transactions-ibm_v2.csv",
+        "seed": 42,
+        "data": "credit_card_transactions-ibm_v2.csv",
+        "calibration": {"method": "platt", "fitted_on": "fused_val_scores"},
         "n_features": len(ML_FEATURES),
         "features": ML_FEATURES,
         "n_train": len(X_train),
