@@ -109,13 +109,50 @@ function loadTestResults(){
   });
 }
 
-/* RUN TESTS */
+/* FULL EVALUATION */
+function loadFullEval(){
+  authFetch('/monitor/full-eval').then(function(r){return r.json()}).then(function(d){
+    var el=document.getElementById('fullEvalResults');
+    if(!d||!d.timestamp){el.innerHTML='<div style="color:'+C.dim+';font-size:12px">No full evaluation results yet — click Run Tests</div>';return;}
+    var ts=new Date(d.timestamp).toLocaleString();
+    var m=d.metrics||{};
+    var dec=d.decisions||{};
+    var html='<div class="test-header"><div class="test-status"><div class="dot" style="background:'+(m.roc_auc>0.8?C.green:m.roc_auc>0.6?C.yellow:C.red)+'"></div><div class="text" style="color:'+(m.roc_auc>0.8?C.green:m.roc_auc>0.6?C.yellow:C.red)+'">ROC-AUC: '+(m.roc_auc*100).toFixed(1)+'%</div></div><div style="color:'+C.dim+';font-size:11px;margin-left:auto">'+ts+' · '+d.dataset+'</div></div>';
+    html+='<div class="stats" style="margin:12px 0 0 0">';
+    html+='<div class="stat green"><div class="num">'+(m.recall*100).toFixed(1)+'%</div><div class="label">Recall</div></div>';
+    html+='<div class="stat red"><div class="num">'+(m.fpr*100).toFixed(2)+'%</div><div class="label">FPR</div></div>';
+    html+='<div class="stat blue"><div class="num">'+(m.precision*100).toFixed(1)+'%</div><div class="label">Precision</div></div>';
+    html+='<div class="stat purple"><div class="num">'+d.throughput_txn_s.toLocaleString()+'</div><div class="label">txn/s</div></div>';
+    html+='<div class="stat"><div class="num">'+d.total_rows.toLocaleString()+'</div><div class="label">Rows</div></div>';
+    html+='<div class="stat yellow"><div class="num">'+d.total_fraud.toLocaleString()+'</div><div class="label">Fraud</div></div>';
+    html+='</div>';
+    html+='<div style="display:flex;gap:12px;margin-top:8px;font-size:11px;color:'+C.dim+'">';
+    html+='<span>TP: <b style="color:'+C.green+'">'+m.tp.toLocaleString()+'</b></span>';
+    html+='<span>FP: <b style="color:'+C.red+'">'+m.fp.toLocaleString()+'</b></span>';
+    html+='<span>TN: <b style="color:'+C.green+'">'+m.tn.toLocaleString()+'</b></span>';
+    html+='<span>FN: <b style="color:'+C.red+'">'+m.fn.toLocaleString()+'</b></span>';
+    html+='</div>';
+    html+='<div style="display:flex;gap:12px;margin-top:4px;font-size:11px;color:'+C.dim+'">';
+    html+='<span>Allow: <b>'+dec.allow.toLocaleString()+'</b></span>';
+    html+='<span>Step-up: <b>'+dec.step_up.toLocaleString()+'</b></span>';
+    html+='<span>Verify: <b style="color:'+C.red+'">'+dec.verify.toLocaleString()+'</b></span>';
+    html+='</div>';
+    el.innerHTML=html;
+  }).catch(function(e){
+    document.getElementById('fullEvalResults').innerHTML='<div style="color:'+C.red+';font-size:12px">Failed to load full evaluation results</div>';
+  });
+}
+
+/* RUN TESTS + FULL EVAL */
 document.getElementById('runBtn').addEventListener('click',function(){
   var btn=this;
-  btn.disabled=true;btn.textContent='⏳ Running…';btn.classList.add('running');
+  btn.disabled=true;btn.textContent='⏳ Running… (284K rows)';btn.classList.add('running');
   authFetch('/monitor/run-tests',{method:'POST',headers:{'X-Requested-With':'fetch'}}).then(function(r){return r.json()}).then(function(){
-    btn.disabled=false;btn.textContent='▶ Run Tests';btn.classList.remove('running');
     loadTestResults();
+    return authFetch('/monitor/full-eval',{method:'POST',headers:{'X-Requested-With':'fetch'}});
+  }).then(function(r){return r.json()}).then(function(){
+    btn.disabled=false;btn.textContent='▶ Run Tests';btn.classList.remove('running');
+    loadFullEval();
   }).catch(function(){btn.disabled=false;btn.textContent='▶ Run Tests';btn.classList.remove('running');});
 });
 
@@ -130,8 +167,10 @@ function refresh(){
 refresh();
 loadPhases();
 loadTestResults();
+loadFullEval();
 
 // Auto-refresh
 setInterval(refresh,5000);
 setInterval(loadPhases,30000);
 setInterval(loadTestResults,60000);
+setInterval(loadFullEval,120000);

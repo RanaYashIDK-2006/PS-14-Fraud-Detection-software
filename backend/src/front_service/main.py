@@ -54,6 +54,7 @@ from .admin_store import AdminStore
 from contextlib import asynccontextmanager
 
 TEST_RESULTS_FILE = Path(settings.db_dir) / "test_results.json"
+FULL_EVAL_FILE = Path(settings.db_dir) / "full_eval_results.json"
 _test_runner_task = None
 
 
@@ -1732,6 +1733,65 @@ def run_tests_now(request: Request) -> JSONResponse:
         return JSONResponse(results)
     except Exception as e:
         return JSONResponse({"error": str(e), "all_passed": False})
+
+
+FULL_EVAL_LOCK = False
+
+
+@app.post("/monitor/full-eval")
+def run_full_eval(request: Request) -> JSONResponse:
+    """Run full-dataset evaluation against validation_kaggle.csv (admin-only).
+
+    Scores all ~284K transactions using the production model and computes
+    ROC-AUC, recall, FPR, precision, throughput. Results are cached in
+    db/full_eval_results.json and displayed on the monitor panel.
+    """
+    _require_admin_session(request)
+    global FULL_EVAL_LOCK
+    if FULL_EVAL_LOCK:
+        raise HTTPException(status_code=429, detail="full eval already running")
+    FULL_EVAL_LOCK = True
+    try:
+        root = Path(__file__).resolve().parent.parent.parent.parent
+        py = str(root / ".venv" / "Scripts" / "python.exe") if (root / ".venv" / "Scripts" / "python.exe").exists() else sys.executable
+        env = {**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUNBUFFERED": "1",
+               "PS14_MODE": "development"}
+        for k in ["DATABASE_URL", "SUPABASE_URL", "SUPABASE_SERVICE_KEY",
+                  "SUPABASE_ANON_KEY"]:
+            env.pop(k, None)
+        result = subprocess.run(
+            [py, str(root / "backend" / "scripts" / "full_eval.py"),
+             "--input", str(root / "data" / "validation_kaggle.csv"),
+             "--chunk-size", "50000"],
+            capture_output=True, text=True, timeout=600, env=env,
+            cwd=str(root),
+        )
+        if result.returncode != 0:
+            err = result.stderr[-500:] if result.stderr else result.stdout[-500:]
+            return JSONResponse({"error": f"full eval failed (exit {result.returncode}): {err}", "all_passed": False})
+        if FULL_EVAL_FILE.exists():
+            data = json.loads(FULL_EVAL_FILE.read_text(encoding="utf-8"))
+            return JSONResponse(data)
+        return JSONResponse({"error": "full eval produced no output"})
+    except subprocess.TimeoutExpired:
+        return JSONResponse({"error": "full eval timed out (600s)"})
+    except Exception as e:
+        return JSONResponse({"error": str(e)})
+    finally:
+        FULL_EVAL_LOCK = False
+
+
+@app.get("/monitor/full-eval")
+def get_full_eval(request: Request) -> JSONResponse:
+    """Return cached full-eval results (admin-only)."""
+    _require_admin_session(request)
+    if FULL_EVAL_FILE.exists():
+        try:
+            data = json.loads(FULL_EVAL_FILE.read_text(encoding="utf-8"))
+            return JSONResponse(data)
+        except Exception:
+            pass
+    return JSONResponse({"timestamp": None, "error": "No full evaluation results yet — click Run Tests"})
 
 
 @app.post("/admin/rotate")
