@@ -73,7 +73,7 @@ SNAPSHOT_STAMP = "%Y%m%d_%H%M%S"
 # use EXACTLY the same model family and hyperparameters.
 MODEL_SPECS: dict[str, tuple[object, bool]] = {
     "logistic_regression": (
-        LogisticRegression(class_weight="balanced", max_iter=3000, random_state=42),
+        LogisticRegression(C=0.1, class_weight="balanced", max_iter=3000, random_state=42),
         True,
     ),
     "random_forest": (
@@ -468,7 +468,7 @@ def main() -> None:
                     help="report the gate but never fail the retrain")
     args = ap.parse_args()
 
-    root = Path(__file__).resolve().parent.parent
+    root = Path(__file__).resolve().parent.parent.parent  # repo root (data/, models/)
     data_path = root / args.data
     outdir = root / args.outdir
     outdir.mkdir(parents=True, exist_ok=True)
