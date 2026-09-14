@@ -209,8 +209,31 @@ python -m phase22.run_real_world_validation --mode prepare
 python -m phase22.run_real_world_validation --data DATASET --metadata METADATA
 ```
 
-Phase 23 evaluated 114 data sources. The best candidate (Kaggle fraudTrain)
-has unclear provenance and missing channel/label-timing metadata.
+Phase 23 evaluated **114 data sources** classified as:
+
+| Category | Count | Description |
+|---|---|---|
+| Synthetic | 5 | IBM v2, PaySim, PS-14 derived, federated shards |
+| Real (legacy) | 3 | ULB creditcard, Kaggle fraudTrain/Test |
+| Unknown | 2 | Elliptic Bitcoin (not credit card) |
+| Derived | 100+ | PS-14 feature vectors, scores, validation sets |
+| **Real-world eligible** | **0** | None meet all criteria |
+
+> **Dataset classification key:** A "public dataset" is freely available.
+> A "real-world-origin dataset" may contain actual transactions but lacks
+> provenance verification. A "provenance-verified dataset" has documented
+> source, authorization, and label governance. An "independently sourced
+> evaluation dataset" is obtained outside the training pipeline with verified
+> chain of custody. "Production data" is live transaction data from a
+> financial institution. The Kaggle fraudTrain is a public dataset with
+> unclear provenance — it is NOT provenance-verified.
+
+The best candidate (Kaggle fraudTrain) has documented limitations:
+- **Provenance unclear** — may be real or simulated; source undisclosed
+- **No channel information** — chip/swipe/online not available
+- **No label timing** — when was fraud confirmed relative to transaction?
+- **Label definition undisclosed** — what exactly does `is_fraud` mean?
+- **PII present** — names, addresses, dates of birth in the dataset
 
 Phase 23B executed a frozen conditional evaluation of P20_45feat on the
 Kaggle dataset (1.85M rows, 0.58% fraud). With degraded features (33/45
