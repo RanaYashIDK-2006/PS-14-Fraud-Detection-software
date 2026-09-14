@@ -1,0 +1,117 @@
+{
+  "evaluation_id": "eval-20260914T175546+0000-19002de2f24e",
+  "timestamp_utc": "2026-09-14T17:55:46+00:00",
+  "model_identifier": "ps14_fused_ensemble",
+  "model_hash": "0dc8a6b757402c986fea43d0676d5b4005beb1cd9efa504848bf65f829f58169",
+  "artifact_file_hashes": {
+    "calibrator.joblib": "21b37c04060846141e5051f79a17732c3b3e41b34b67e32836be87eb2b6dd983",
+    "fused_val_scores.joblib": "babacd5fa54b264e7b510d4d300024416707088a3459c6a538ca6e636a818d71",
+    "ibm_calibrator.joblib": "3f801a17b80cde4cea24b759656e890353b8b51922e9203284d3308f4bda7bee",
+    "iso_train_scores.joblib": "91d85dd82579e295bc02c37df331d245ea46269d07c1309f2577256b9e4f2081",
+    "isolation_forest.joblib": "d9bfafc7799161a4c1d12a34bc6b51d5b26ba553663a920ceb15e01e977205ed",
+    "logistic_regression.joblib": "8d0c797611d275ac49c5956d73cf1d3425ba9361d096f21d356e98d02c1073c3",
+    "lr_model.joblib": "f55132a220eac707a8b1e2d7fdd6d653ebc12dcc0236beb71ca71e432268f0b8",
+    "random_forest.joblib": "2d4cee5b994f6ff6455f6012eb3265f0329c5657d542c1deb3886ba08f49fad5",
+    "rf_model.joblib": "2404982faaf4ed99b77d6cf43941e9f24afdb52bd16cb66aec573e5fb1226b20",
+    "scaler.joblib": "35da3a015a1cf0b66dcf4ff8bb333b08d169ab88e186f370bdcf9a579365ca61",
+    "stacker.joblib": "561cef08eb1891789190e8a58b09e3f59a38c8ac33884112f987aa6fa34acc9f",
+    "validation_labels.joblib": "d1d44f03455cb0f25e514195d799ed000c77ff107be46e829a48624f887784de",
+    "xgb_model.joblib": "22e3d35ff8e0a647bd5e52c9cc4b7de5c1d45bdb3b6fb44da8d7c690c21ce594",
+    "xgboost.joblib": "43aa559bbf4f7c006f623a66a0ef52307536d6160a98aa892952dc31a936878d"
+  },
+  "preprocessing_version": "1.0",
+  "feature_schema_version": "1.0",
+  "dataset": {
+    "path": "data\\_eval_fixture.csv",
+    "sha256": "b2ec64ab62f29d8c24e691fccf578d0937101d1987d2dad41f9126c4ef278ed3",
+    "size_bytes": 72184,
+    "exists": true
+  },
+  "training_dataset": {
+    "path": "data\\transactions.csv",
+    "sha256": "9f0f56bf0549fccf0c6335ece1514d1ae515a57f809a72658ce5fcaf48525d63",
+    "size_bytes": 1749115,
+    "exists": true
+  },
+  "seed": 42,
+  "threshold": 0.43,
+  "threshold_source": "fixed",
+  "evaluation_config": {
+    "config_file": "data/_eval_fixture_cfg.json",
+    "threshold": 0.43,
+    "threshold_source": "fixed",
+    "seed": 42,
+    "note": "smoke fixture for evaluate.py (Phase 39); threshold 0.43 is the documented ULB operating point, fixed a priori for this run",
+    "metric_definitions_version": "1.0"
+  },
+  "git_commit": "3928144901031764bfce46ab0bd408af48633969",
+  "software": {
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "sklearn": "1.9.0",
+    "xgboost": "3.4.1",
+    "scipy": "1.18.0"
+  },
+  "metric_definitions_version": "1.0",
+  "metrics": {
+    "metric_definitions_version": "1.0",
+    "ranking_metrics": {
+      "roc_auc": 0.9396477495107632,
+      "pr_auc": 0.825009720547998
+    },
+    "operating_point": {
+      "threshold": 0.43,
+      "threshold_source": "fixed",
+      "tp": 33,
+      "fp": 130,
+      "tn": 235,
+      "fn": 2,
+      "recall": 0.9429,
+      "precision": 0.2025,
+      "fpr": 0.3562,
+      "n_alerts": 163
+    },
+    "class_imbalance": {
+      "total": 400,
+      "positive_count": 35,
+      "negative_count": 365,
+      "prevalence": 0.0875,
+      "note": "Accuracy is reported (if at all) as a SECONDARY metric: with fraud prevalence p, a trivial always-legit classifier achieves accuracy 1-p, so accuracy is dominated by the majority class and must not be read as detection effectiveness."
+    },
+    "warnings": [
+      "SMALL_POSITIVE_CLASS: only 35 positive cases \u2014 point estimates of recall/PR-AUC are statistically unstable; confidence intervals may be withheld."
+    ],
+    "baselines": {
+      "majority_class": {
+        "baseline": "majority_class",
+        "description": "always predicts the majority class (legitimate)",
+        "recall": 0.0,
+        "precision": 0.0,
+        "fpr": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.9125,
+        "roc_auc": 0.5,
+        "pr_auc": 0.0875
+      },
+      "random_scores": {
+        "baseline": "random_scores",
+        "description": "uniform random scores in [0,1); threshold 0.5",
+        "recall": 0.4286,
+        "precision": 0.0758,
+        "fpr": 0.5014,
+        "f1": 0.1288,
+        "accuracy": 0.4925,
+        "roc_auc": 0.4062,
+        "pr_auc": 0.0715,
+        "expected_roc_auc": 0.5,
+        "expected_pr_auc": 0.0875
+      }
+    },
+    "recall_at_selected_fpr": 0.9428571428571428
+  },
+  "warnings": [],
+  "status": "COMPLETED",
+  "record_version": "1.0"
+}

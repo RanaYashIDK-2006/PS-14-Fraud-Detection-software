@@ -246,6 +246,8 @@ A rigorous, adversarial audit of the system's readiness. Every conclusion is evi
 | **23B** | Frozen Kaggle external eval | `CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE` | P20_45feat on Kaggle (1.85M rows, 0.58% fraud): ROC-AUC 0.47 (degraded features); E_hardneg unlabeled; production promotion BLOCKED |
 | **24** | Conditional external eval | `CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE` | E_hardneg on Kaggle (555K test rows): ROC-AUC 0.435, recall 26.8%, FPR 44.9%; 5 of 12 promotion gates failed; production promotion BLOCKED |
 | **25** | Leakage audit & corrections | `NO_LEAKAGE_FOUND — within audit scope` | Fixed Phase 24's import-path + tz-comparison + index-order bugs; maximal causal reconstruction (47/48 features); no target/temporal/feature leakage detected by the 10-check audit suite; promotion BLOCKED |
+| **38** | External validation readiness | `IMPLEMENTED` | Dataset intake contract, 9 eligibility gates, causality audit, frozen-model evaluation, 8-gate promotion check; READY, blocked pending an eligible dataset |
+| **39** | Reproducible evaluation & statistical confidence | `IMPLEMENTED` | Immutable evaluation records (model/data hashes, git SHA, seeds); validation-only threshold discipline; bootstrap CIs withheld on small cells; single-source metric definitions; append-only ledger |
 
 ### Current Model Status
 
@@ -344,6 +346,61 @@ Both workflows (`.github/workflows/ci-cd.yml`, `.github/workflows/security-scan.
 - **Leakage audit scope** — the 10-check leakage audit covers target correlation, temporal ordering, entity contamination, scaler fitting, and distribution shift within the audited pipeline. It does not guarantee the absence of all possible leakage forms.
 - **Model calibration scope** — Platt calibration (Brier 0.0009, ECE 0.0013) was fit and validated on synthetic data distribution. Calibration on real-world data has not been attempted.
 
+## Reproducible Evaluation
+
+Every ML evaluation run produces an **immutable evaluation record** that binds the reported metrics to exactly what produced them:
+
+- **Model identity** — SHA-256 over each artifact file (`*.joblib`) plus an aggregate `model_hash`. Any byte change in any artifact changes the evaluation identity.
+- **Dataset identity** — SHA-256 fingerprint over the dataset file's raw bytes (what is hashed: exactly the bytes on disk — no header reinterpretation or normalization).
+- **Configuration** — threshold, `threshold_source` (`validation` | `fixed`), seed, split policy, metric-definitions version.
+- **Environment** — git commit SHA, Python/NumPy/pandas/sklearn/xgboost versions.
+- **Timestamp and evaluation ID** — deterministic ID derived from timestamp + model hash + dataset hash + record content.
+
+Records are stored **append-only** in `reports/evaluation_runs/eval_ledger.jsonl` (one JSON line per run). Re-running an evaluation never overwrites the previous record — failed or unfavorable evaluations are preserved exactly like favorable ones.
+
+**Test/external-data protection:** the operating threshold is selected on validation only, or fixed a priori in the config. `backend/scripts/evaluate.py` refuses runs whose `threshold_source` would tune on the evaluation data itself (`test` / `external` / `holdout` are rejected by design).
+
+### Reproducing an evaluation
+
+```bash
+# Frozen-model evaluation with full provenance record (Phase 39):
+python backend/scripts/evaluate.py \
+    --model-dir models/artifacts \
+    --dataset data/transactions.csv \
+    --config data/eval_config.json \
+    --model-identifier ps14_fused_ensemble \
+    --training-data data/transactions.csv
+
+# → reports/evaluation_runs/eval_ledger.jsonl (append-only)
+# → reports/evaluation_runs/record_<eval-id>.json (machine-readable record)
+# → reports/evaluation_runs/report_<eval-id>.md (human-readable summary)
+```
+
+`train_compare.py` also appends a record automatically on every training run (threshold source recorded as `validation` — thresholds are selected on the validation split, never on test).
+
+### Metric definitions
+
+All metrics are computed by the single-source calculators in `backend/scripts/metric_definitions.py`, with authoritative definitions in [`docs/metric_definitions.md`](docs/metric_definitions.md): ROC-AUC, PR-AUC, recall, precision, FPR, Recall@1%FPR (validation-selected threshold, applied unchanged to test), confusion matrix, prevalence. One implementation per metric — no script may silently reimplement a metric differently.
+
+### Seeds and determinism
+
+All stochastic components record their seed (`--seed 42` default in `train_compare.py` and `evaluate.py`; bootstrap CI seed recorded per report). Model training uses seeded sklearn/XGBoost estimators. **Not claimed:** bit-for-bit reproducibility across different hardware/BLAS builds — floating-point reductions in tree ensembles and linear algebra libraries can differ across platforms; records pin the environment so a reviewer can match it.
+
+### Cross-dataset result matrix
+
+All major evaluations are reported in the standardized matrix (`backend/scripts/result_matrix.py`): Dataset | Domain | Training relationship | Samples | Fraud rate | ROC-AUC | PR-AUC | Recall | FPR | Status. Rows are classified in a closed set (`IN_DOMAIN`, `SAME_GENERATOR_FAMILY`, `CROSS_DOMAIN`, `EXTERNAL`, `UNKNOWN` — unknown is never upgraded) and are **never aggregated into a single score**. Poor external results (ROC-AUC 0.435–0.595) remain visible alongside in-domain results.
+
+## Statistical Interpretation
+
+Every reported metric is an **estimate from a finite dataset**, not a universal population value:
+
+- **In-domain benchmark numbers (e.g. ULB ROC-AUC 0.966) carry sampling uncertainty.** Bootstrap confidence intervals (percentile method, stratified by class, seed recorded) are available via `--bootstrap`; the point estimates in this README are the full-sample values.
+- **Small or imbalanced splits produce unstable estimates.** Confidence intervals are withheld when a conditioning cell has fewer than 30 observations; reports carry explicit `SMALL_POSITIVE_CLASS` / `HEAVY_IMBALANCE` warnings rather than spuriously precise numbers.
+- **Prevalence context is mandatory.** At fraud prevalence *p*, an always-legitimate classifier achieves accuracy `1 − p` — accuracy is never the headline metric here, and PR-AUC is always read against its prevalence baseline.
+- **No statistical-significance claim** is made for any model-vs-baseline or model-vs-model comparison unless a documented test supports it; comparisons share the same split and metric implementation, which makes them fair but not automatically significant.
+- **Baselines** (majority-class, random-score) are evaluated on the same eligible split as the model so "better than baseline" is checkable, not asserted.
+- **Distribution-shift findings are descriptive**: where poor external performance coincides with measured shift, reports say the result is *consistent with* distribution shift — not that shift provably caused it.
+
 ## Reproducibility
 
 ### Training and evaluation
@@ -385,6 +442,8 @@ bash scripts/live_walkthrough.sh            # full 5-service register-to-audit c
 | Calibration | `models/artifacts/calibrator.joblib` | Platt calibration model |
 | Rules config | `src/risk_engine/rules.yaml` | PR-reviewed rules + severity_scale |
 | Metadata | `models/artifacts/metadata.json` | Training provenance, feedback source, OOD gate |
+| Eval ledger | `reports/evaluation_runs/eval_ledger.jsonl` | Append-only evaluation records (model/data hashes, git SHA, thresholds, seeds) |
+| Metric definitions | `docs/metric_definitions.md` | Authoritative metric semantics (v1.0) |
 | Cross-dataset | `reports/cross_dataset/cross_dataset_report.json` | IBM v2 vs synthetic model on 3 datasets |
 | Leakage audit | `misc/reports/phase25/PHASE25_FINAL_REPORT.md` | 10-check audit results |
 | Claims registry | `misc/reports/CLAIMS_REGISTRY.json` | Evidence-classified claim inventory |
