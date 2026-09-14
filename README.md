@@ -1184,25 +1184,41 @@ on other ports — the flow is self-contained (direct curl + the shared local
 DB), so the running services are untouched. Services started by the script
 are stopped again on exit (trap).
 
-## 50-case batch test (live scoring)
+## 50-case scenario/invariant test (live scoring)
 
-`scripts/batch_cases.py` runs 50 distinct scoring scenarios through the
-LIVE Risk Engine (`/internal/evaluate`) and checks the invariants that must
+> **⚠️ This is not real-world validation.** The 50 cases are hand-designed
+> transaction scenarios and seeded perturbations, not verified real-world
+> transactions. They test scoring behavior and system invariants, not
+> detection performance on actual fraud.
+
+`backend/scripts/batch_cases.py` runs 50 synthetic scoring scenarios through
+the LIVE Risk Engine (`/internal/evaluate`) and checks invariants that must
 hold regardless of model weights:
 
 ```
-python scripts/batch_cases.py [--recheck N] [--seed 7]
+python backend/scripts/batch_cases.py [--recheck N] [--seed 7]
 ```
 
-* **5 named scenarios illustrating common fraud patterns** (new device at the usual location;
-  old device 250 miles away; new device + $1,500; usual device + $1,200;
-  different location, small amount) printed as their own table;
-* **45 seeded perturbations** across the whole §16 feature space
-  (amount ratio, velocity, tenure, mule-ring, spend caps, auth anomalies);
-* invariants: valid score/band/reason shape for all 50, **determinism**
-  (re-evaluating a vector yields the same decision), **monotonicity**
-  (adding a red flag never lowers the score), and the **audit chain grows
-  by exactly the number of evaluations and still verifies from genesis**.
+**Structure:**
+* **5 hand-designed scenarios inspired by common fraud patterns** (new device
+  at the usual location; old device 250 miles away; new device + $1,500;
+  usual device + $1,200; different location, small amount) — these are
+  named and printed in their own table for visual inspection;
+* **45 seeded perturbations** across the §16 feature space (amount ratio,
+  velocity, tenure, mule-ring, spend caps, auth anomalies) generated from
+  a base vector with random feature values.
+
+**What it measures:**
+* Scoring behavior: valid score (0–100), band, and reason codes for all 50
+* Determinism: re-evaluating a vector yields the same decision
+* Monotonicity: adding a red flag never lowers the score
+* Audit chain integrity: hash chain grows by exactly the number of events
+  and still verifies from genesis
+
+**Limitations:** This test does not establish detection performance on
+real-world transactions. The scenarios are synthetic and the perturbations
+are randomly generated. Results reflect scoring consistency, not fraud
+detection accuracy.
 
 Requires the live stack (:8003 + :8005) — it is a live check, not part of
 the pipeline. Exit 0 = all invariants held; the decision table and the

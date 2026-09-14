@@ -14,11 +14,13 @@ matter the model weights:
     still verifies (integrity OK) — every decision is chained and the
     batch did not break it.
 
-The 5 "real-world" scenarios from the design discussions (new device /
+The 5 hand-designed scenarios inspired by common fraud patterns (new device /
 unusual location / big amount / velocity / known account) are pinned by
 name and printed in their own table so their bands are visible at a glance;
 they are reported, not asserted, because the ML fusion is opaque by design
 (§11: category-level reasons are the human surface, not raw scores).
+
+These are NOT real-world transactions — they are synthetic test vectors.
 
 Run from the project root with the stack up (ports 8003 + 8005):
   python scripts/batch_cases.py [--recheck N] [--seed 7]
