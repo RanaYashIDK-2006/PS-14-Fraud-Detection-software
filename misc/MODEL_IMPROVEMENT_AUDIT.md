@@ -4,13 +4,13 @@
 
 ## Executive Summary
 
-The objective was to **move the ROC/PR curve left**: reach ≥99% fraud recall with materially fewer false positives than the deployed model — without test-set tuning.
+The objective was to **move the ROC/PR curve left**: reach ≥99% fraud recall with materially fewer false positives than the active model — without test-set tuning.
 
 | System | Locked threshold | Test recall | Test FPR | Prod alerts/1K* | Status |
 |---|---|---|---|---|---|
-| v2 (deployed until 9/4) | 0.78471 | 44.6% | 1.3% | 13.4 | superseded |
-| v3 (deployed) | 0.027328 | 99.54% | 15.87% | 159.8 | baseline |
-| Improved candidate (pre-campaign) | 0.065153 | 97.8% | 7.1% | 72.4 | not deployed |
+| v2 (superseded 9/4) | 0.78471 | 44.6% | 1.3% | 13.4 | superseded |
+| v3 (baseline) | 0.027328 | 99.54% | 15.87% | 159.8 | baseline |
+| Improved candidate (pre-campaign) | 0.065153 | 97.8% | 7.1% | 72.4 | not selected |
 | **E_hardneg (campaign winner)** | **0.026346** | **99.43%** | **9.48%** | **95.9** | **candidate — HOLD** |
 
 \* reweighted to true production prevalence (0.121%), not the fraud-enriched sample.

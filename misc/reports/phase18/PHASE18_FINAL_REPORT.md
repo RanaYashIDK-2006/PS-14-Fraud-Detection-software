@@ -84,8 +84,8 @@ that must be acknowledged before unrestricted production use.
 
 ## Recommendations
 
-1. **E_hardneg should remain deployed** as the best available model
-2. **P11 should NOT be deployed** (temporal robustness failed)
+1. **E_hardneg should remain active in the prototype** as the best available model
+2. **P11 should NOT be promoted** (temporal robustness failed)
 3. **Further modeling against IBM data is NOT justified** (generator artifact, Phase 17)
 4. **New representative data IS required** for real-world performance estimation
 5. **The temporal protocol should NOT be changed** (would not fix a generator artifact)

@@ -4,11 +4,11 @@ Phase-3 mission: test whether a conditional entity+behavior architecture can use
 entity-specific information when trustworthy and fall back to causal behavioral
 evidence when a merchant is absent - without treating identity absence as fraud
 evidence. The 2018-2020 final test was NEVER touched; every decision below is
-validation (2016-2017) only. E_hardneg stays the certified control.
+validation (2016-2017) only. E_hardneg stays the validated control.
 
 ## Executive summary
 
-**Control (certified, deployed, unchanged):** `altman_native_E_hardneg_cert_20260904`,
+**Control (validated, active in prototype, unchanged):** `altman_native_E_hardneg_cert_20260904`,
 threshold 0.018758, test recall 99.67% / FPR 10.99% (TP 4,563 / FN 15 / FP 20,634 / TN 167,160).
 
 **Verdict: KEEP E_HARDNEG.**
@@ -78,7 +78,7 @@ At E's FIXED thresholds (not re-locked), absent-only FPR at P1 (0.053558):
 | PB1 (code-free) on absent | 0.9948 | 0.6323 | 0.9901 | 0.0711 |
 | PB2 on absent | 1.0000 | 0.6372 | 0.9903 | 0.0711 |
 
-At E's FIXED P2 threshold (0.018758, the deployed one):
+At E's FIXED P2 threshold (0.018758, the active one):
 
 | Model (gate present=E) | Absent rec | Absent FPR | Overall rec | Overall FPR |
 |---|---|---|---|---|
@@ -88,7 +88,7 @@ At E's FIXED P2 threshold (0.018758, the deployed one):
 | PB2 on absent | 1.0000 | 0.7940 | 0.9950 | 0.1156 |
 
 The CS1-gate cuts ~5 FPR points on the absent population but sacrifices 1 of 193
-absent frauds at the deployed threshold - a trade along the same frontier, not
+absent frauds at the active threshold - a trade along the same frontier, not
 dominance. True code-free models are worse on both axes.
 
 ## 3. History-depth buckets (absent merchants only, E vs CS1-gate, deployed P2 thr)
@@ -163,7 +163,7 @@ candidates. No candidate is promoted, so no new reproduction artifact is require
 
 | OP | Alerts/1K | Alerts/10K | Alerts/100K | Fraud caught | Legit alerts | Precision |
 |---|---|---|---|---|---|---|
-| E P2 (deployed) | 116.4 | 1163.7 | 11637 | 120 | 11516 | 1.03% |
+| E P2 (active) | 116.4 | 1163.7 | 11637 | 120 | 11516 | 1.03% |
 
 (E-fixed-threshold gate-CS1 cuts ~117 alerts/100k but at 99.48% recall of the absent
 population - documented above as a trade.)
@@ -189,14 +189,14 @@ population - documented above as a trade.)
 
 ## 13. Recommendation
 
-**KEEP E_HARDNEG** (deployed model unchanged; `altman_native_E_hardneg_cert_20260904`
+**KEEP E_HARDNEG** (active model unchanged; `altman_native_E_hardneg_cert_20260904`
 @ 0.018758).
 
 The conditional entity+behavior architecture does not produce a dominating model.
 Identity codes are informative, not the memorization culprit; removing them (true
 Model B) is strictly worse. The only absent-improving configuration - gating a
 novelty-feature model onto absent rows - is a Pareto trade (better absent FPR, worse
-absent recall at the deployed threshold, extra serving surface: second artifact +
+absent recall at the active threshold, extra serving surface: second artifact +
 merchant table + parity gate) and does not meet the mission's dominance bar. The
 honest answer to the Phase-3 question is: at ≥99% recall, PS-14 cannot yet separate
 "unknown merchant identity" from "fraud-like behavior" - the missing information is

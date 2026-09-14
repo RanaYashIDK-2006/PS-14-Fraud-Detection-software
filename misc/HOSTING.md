@@ -92,9 +92,9 @@ sessions) or by deleting `db/admin.json` and re-bootstrapping.
   view`); keep its passphrase in the OS credential store or a secret manager,
   not in the chat or a shared drive.
 
-## 5. Production deployment (VPS / cloud)
+## 5. Production deployment infrastructure (VPS / cloud)
 
-Two options for production:
+Two options for deployment — these are prototype configurations, not production-approved deployments:
 
 ### Option A: Dev compose + Caddy (simpler)
 

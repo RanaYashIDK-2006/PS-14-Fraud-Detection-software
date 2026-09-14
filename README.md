@@ -4,6 +4,14 @@ Phase 2 prototype of the architecture described in the PS-14 design doc.
 Core principle: *detect fraud without unnecessarily knowing who the person
 is. AI recommends — verification decides.*
 
+> **⚠️ Prototype status.** The system includes production-oriented deployment
+> infrastructure (Docker, Caddy auto-HTTPS, PostgreSQL config, CI/CD), but
+> model promotion to production remains blocked pending independently sourced,
+> provenance-verified real-world fraud data and successful external validation.
+> No model in this repository is certified for or deployed in a live financial
+> institution. All performance numbers are measured on synthetic or public
+> research datasets under controlled conditions.
+
 ## Current status (Phase 2 build order)
 
 - [x] **Synthetic dataset generator** — `src/generate_synthetic_data.py`
@@ -121,7 +129,7 @@ Every conclusion is evidence-classified; firewalls are verified.
 
 | Model | Features | Decision-Time Valid | Real-World Evidence | Status |
 |---|---|---|---|---|
-| **E_hardneg** (incumbent) | 48 | 3 fraud-rate features UNVERIFIED | None (synthetic only) | DEPLOYED, UNTOUCHED |
+| **E_hardneg** (incumbent) | 48 | 3 fraud-rate features UNVERIFIED | None (synthetic only) | ACTIVE IN PROTOTYPE, UNTOUCHED |
 | **P20_45feat** (candidate) | 45 | All features valid | None (synthetic only) | ELIGIBLE for real-world validation |
 
 ### Real-World Validation Status
@@ -139,11 +147,11 @@ NEXT_ACTION = Continue authorized real-world data acquisition; wire Phase 25's
               FEATURE_AVAILABILITY/FEATURE_PARITY gates (still Phase 24's hardcoded FAIL stubs)
 ```
 
-**Honest interpretation:** E_hardneg is certified on the synthetic IBM corpus
-(recall 99.67%, FPR 10.99% on the untouched 2018–2020 window) and remains
-deployed as the best available model. The 2017 regime shift is strongly
+**Honest interpretation:** E_hardneg is validated on the synthetic IBM corpus
+(recall 99.67%, FPR 10.99% on the untouched 2018–2020 window) and is the
+active model within the prototype. The 2017 regime shift is strongly
 supported as a generator artifact, so these numbers must not be read as
-real-world performance. Production promotion of P20_45feat is blocked pending
+real-world performance. Model promotion of P20_45feat is blocked pending
 real-world data — the next milestone is data acquisition, not more modeling.
 
 The Phase 22 executable validation harness is READY:
@@ -408,7 +416,7 @@ suppression — a real finding about what is safe to release.
 
 Each service owns a physically separate SQLite store (`db/identity.db` =
 DB-1, `db/features.db` = DB-2) — no shared credentials, no cross-queries.
-Production swaps the SQLite engines for per-store PostgreSQL with its own
+A production deployment would swap the SQLite engines for per-store PostgreSQL with its own
 network segment and KMS keys (section 2).
 
 **Front page:** `src/front_service` (port 8000) serves the project landing
@@ -543,7 +551,7 @@ Endpoints (section 14):
 #### Data-store access matrix
 
 Every store is owned by exactly one service; every read passes through that
-service's API with one of three credentials. Production replaces the shared
+service's API with one of three credentials. A production deployment would replace the shared
 tokens with per-service mTLS + short-lived RBAC credentials (section 3) and
 the shared DB-3 prototype connection with a single owning-service boundary.
 
@@ -569,7 +577,7 @@ and only **break-glass** (`/internal/resolve-fraud-id`, internal token,
 always logged) can map a fraud_id to a person. Nothing else reads PII or
 raw amounts anywhere in the system.
 
-Dev secrets live in `src/settings.py` (env-overridable; see `.env.example`).
+Dev secrets live in `backend/src/settings.py` (env-overridable; see `.env.example`).
 
 **Presentation deck:** `docs/PS-14_fraud_detection.pptx` (16 slides, dark
 theme, speaker notes) — regenerate with `python scripts/build_presentation.py`.
@@ -656,7 +664,7 @@ boots the same six locally.
 
 ### Security Hardening
 
-For production deployment, see **`docs/SECURITY_HARDENING_GUIDE.md`** which covers:
+For prototype hardening reference, see **`docs/SECURITY_HARDENING_GUIDE.md`** which covers:
 - Pre-deployment checklist
 - Secrets management and rotation
 - Network security (TLS, mTLS, CORS)
@@ -686,7 +694,7 @@ OOD recall gate. `make train-only` / `NO_RESTART=1` skips the rebuild.
 ### Cross-domain evaluation (4 real datasets)
 
 PS-14 was evaluated against 4 real public datasets mapped to the §16 feature
-space, proving that domain-specific training is mandatory:
+space, showing that domain-specific training is mandatory:
 
 | Dataset | Source | Rows | Positive | Rate |
 |---|---|---|---|---|
@@ -796,7 +804,7 @@ confidence gets 1.5× boost for human review). Endpoints: `GET
   triggers re-created — the hash chain stays unbroken).
 
 Run with `--dry-run` for safe preview. Schedule as a cron/systemd timer
-in production.
+in a deployment environment.
 
 ### Fairness / bias review (§2.10)
 
@@ -913,7 +921,7 @@ scripts/
   tune_parameters.py            # severity_scale sweep tool
   tune_rules.py                 # rule threshold tuning tool
   import_uci_default.py         # UCI dataset → PS-16 feature mapper
-  deploy.sh                     # one-command production deployment
+  deploy.sh                     # one-command prototype deployment
   retention-cron.sh             # cron wrapper for data retention
 ```
 
@@ -922,15 +930,15 @@ rollout (shadow → canary → rollback) with auto-rollback on breach.
 The investigator case workflow endpoints are in `src/verification_service/main.py`
 with the `InvestigatorCase` model in `src/verification_service/models.py`.
 
-### Production deployment
+### Production deployment infrastructure
 
-Three deployment options (see `HOSTING.md` for full guide):
+Three deployment options (see `HOSTING.md` for full guide) — these are prototype deployment configurations, not production-approved deployments:
 
 ```bash
 # Option 1: Dev (SQLite, localhost)
 docker compose up --build -d
 
-# Option 2: Production (PostgreSQL, Caddy auto-HTTPS)
+# Option 2: Prototype production config (PostgreSQL, Caddy auto-HTTPS)
 cp .env.example .env   # generate ALL secrets
 docker compose -f docker-compose.prod.yml --env-file .env up --build -d
 
@@ -940,7 +948,7 @@ bash scripts/deploy.sh --dry-run    # validate only
 bash scripts/deploy.sh --compose-prod  # use production compose
 ```
 
-Production features:
+Prototype production infrastructure (not production-approved):
 - **Auto-HTTPS** via Caddy with Let's Encrypt (`Caddyfile`)
 - **Per-store PostgreSQL** with separate credentials (`docker-compose.prod.yml`)
 - **Internal-only network** (services can't reach the internet)
@@ -952,12 +960,14 @@ Production features:
 ### CI/CD pipeline status
 
 Both workflows (`.github/workflows/ci-cd.yml`, `.github/workflows/security-scan.yml`) run on
-every push to `main`. As of September 11, 2026 the pipeline is **fully green end-to-end** for
-the first time — all five CI/CD stages pass: Test Suite (22/22 fast regression checks on a
+every push to `main`. The CI/CD pipeline runs five stages: Test Suite (regression checks on a
 clean checkout), Security Scan (bandit medium+ clean, dependency audit, penetration test),
 Docker Build (image builds, runs as non-root, `/health` answers), Integration Test (the live
 register-to-audit walkthrough boots all five services over real HTTP, then the compose stack
 health-checks and the audit chain verifies), and Deploy (tag-gated).
+
+> **Note:** The `rules_gate` test is a documented fragile test — ML alone catches ~97% of
+> synthetic fraud, so rule-removal cannot move recall. 21/22 suites pass consistently.
 
 Getting here surfaced and fixed real defects, not CI-only quirks:
 
@@ -1108,7 +1118,7 @@ hold regardless of model weights:
 python scripts/batch_cases.py [--recheck N] [--seed 7]
 ```
 
-* **5 named real-world scenarios** (new device at the usual location;
+* **5 named scenarios illustrating common fraud patterns** (new device at the usual location;
   old device 250 miles away; new device + $1,500; usual device + $1,200;
   different location, small amount) printed as their own table;
 * **45 seeded perturbations** across the whole §16 feature space
@@ -1134,7 +1144,7 @@ on load and every 60s, hidden until a report exists.
   the final score is `100 * max(ml_fusion, rule_score)` — the strongest
   signal wins, so hard red flags can't be diluted by a confident ML pass.
   Critical rules (`level: critical`) floor the score at 80. The fusion beats
-  every solo model (current test split: PR-AUC 0.9375 vs best solo 0.9340).
+  every solo model (current test split: PR-AUC 0.9375 vs best solo 0.9340). These metrics are on synthetic data.
 - **Cold-start false positives** (fixed): the generator and the live Privacy
   Layer both clamped time-derived features to a 1-day floor, so training
   never saw young accounts and every brand-new account's normal transaction
@@ -1171,7 +1181,7 @@ on load and every 60s, hidden until a report exists.
 - **Calibration + odds**: the stacker output is mapped to the true fraud
   probability by **Platt scaling** (`PlattCalibration` in
   `src/risk_engine/calibration.py`) fit on an out-of-archetype pool
-  blended with the production model's own validation predictions — the
+  blended with the prototype model's own validation predictions — the
   isotonic fit on near-separable data produced a step function, so it was
   replaced (`models/artifacts/calibrator.joblib`); `ml_score` is therefore a
   calibrated probability and the response carries `odds = p/(1-p)` (clamped
@@ -1331,7 +1341,7 @@ on load and every 60s, hidden until a report exists.
 - Identifiers are CSPRNG-random 16-char base32-style IDs — not hashes of any
   PII — fitting the doc's `VARCHAR(16)` pseudonym column (80 bits; a true
   128-bit ID would need ~26 chars, a schema change flagged in review).
-- PII at rest is encrypted (Fernet/AES-256, KMS envelope in production);
+- PII at rest is encrypted (Fernet/AES-256; a production deployment would use KMS envelope encryption);
   login uses a blind index on the email so plaintext is never queried.
 - The fraud-id->identity bridge is internal-only and every resolution is
   logged with actor + reason (break-glass).

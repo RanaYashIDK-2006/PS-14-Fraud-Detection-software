@@ -1,8 +1,8 @@
-# PS14 Security Hardening Guide for Production Deployment
+# PS14 Security Hardening Guide — Prototype Hardening Reference
 
 ## Executive Summary
 
-This guide provides comprehensive security hardening procedures for deploying the PS14 Privacy-First AI Fraud Detection System in production. It covers all critical security controls, compliance requirements, and operational best practices.
+This guide provides security hardening reference for the PS14 Privacy-First AI Fraud Detection System prototype. It is not a production deployment guide; model promotion to production remains blocked pending independently sourced, provenance-verified real-world fraud data. It covers all critical security controls, compliance requirements, and operational best practices.
 
 **Target Audience:** DevOps engineers, security architects, and system administrators
 **Compliance Targets:** DPDP Act 2023, RBI guidelines, GDPR-equivalent controls

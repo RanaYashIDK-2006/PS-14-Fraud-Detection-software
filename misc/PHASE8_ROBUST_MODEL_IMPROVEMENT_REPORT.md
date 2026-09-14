@@ -1,7 +1,7 @@
 # PHASE 8 — ROBUST MODEL IMPROVEMENT & FORWARD-GENERALIZATION REPORT
 
 * Generated: 2026-09-06T12:15:34Z UTC
-* Production: **altman_native_E_hardneg_cert_20260904** @ threshold **0.018758** — **untouched** (guard verified)
+* Active model: **altman_native_E_hardneg_cert_20260904** @ threshold **0.018758** — **untouched** (guard verified)
 * Final test (>=2018): **not loaded, not scored** (all thresholds on validation only)
 
 ## 1. What Phase 7 proved

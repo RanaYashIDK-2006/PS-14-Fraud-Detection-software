@@ -4,7 +4,7 @@ Phase-5 mission (recovered after Cloudflare 524): redesign the training data and
 merchant-history representation so the model sees substantially more of the merchant
 population — without temporal leakage, label-latency leakage, or offline/production
 feature divergence. Control: **E_hardneg
-(`altman_native_E_hardneg_cert_20260904` @ threshold 0.018758) — DEPLOYED and
+(`altman_native_E_hardneg_cert_20260904` @ threshold 0.018758) — ACTIVE IN PROTOTYPE and
 UNTOUCHED.** The locked 2018-2020 final test was NOT used for any decision.
 
 > **INTEGRITY FIX (this phase):** `_merchant_volume.npz` was mis-built — it hashed
@@ -142,5 +142,5 @@ or those features are isolated (see `reports/label_latency_status.json`).
 - `reports/phase5_recovery.json` + `PHASE5_RECOVERY_REPORT.md`
 - `reports/data_coverage_label_latency_audit.json` + `DATA_COVERAGE_LABEL_LATENCY_AUDIT.md` (corrected)
 
-**E_hardneg remains certified and deployed at 0.018758. No production change was
+**E_hardneg remains validated and active in prototype at 0.018758. No promotion change was
 made; the final test was not touched.**

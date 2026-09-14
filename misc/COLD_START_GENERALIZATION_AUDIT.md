@@ -8,9 +8,9 @@ for any development decision in this mission; all experiments below were selecte
 
 ## Executive Summary
 
-Certified deployed baseline (unchanged through this mission):
+Validated baseline (unchanged through this mission):
 
-**E_hardneg (deployed, certified) — 99.67% recall / 10.99% FPR on the untouched test.**
+**E_hardneg (active in prototype) — 99.67% recall / 10.99% FPR on the untouched test.**
 
 Mission outcome after 7 candidates + 5 diagnosis experiments:
 
@@ -19,14 +19,14 @@ Mission outcome after 7 candidates + 5 diagnosis experiments:
 > a Pareto trade-off with aggregate FPR, not a fixable defect at the global-threshold
 > operating point.**
 
-**Recommendation: KEEP E_HARDNEG** (deployed model unchanged). The causal novelty
+**Recommendation: KEEP E_HARDNEG** (active model unchanged). The causal novelty
 features (merchant age + prior volume) are validated to help the unseen population but
 cost ~1 point of overall FPR at the same recall; they are documented as the highest-value
 next iteration rather than promoted.
 
 ## 1. Reproduction of the unseen-merchant claim (mission #2)
 
-Definition (identical to the certified claim): *seen merchant* = the merchant hash-code
+Definition (consistent with the validated claim): *seen merchant* = the merchant hash-code
 feature value appears among the rows the model ACTUALLY trained on (sampled train,
 all fraud + 5% legit, <2016). Diagnosis only — never used to retune.
 
@@ -94,7 +94,7 @@ hash-code removal (F_nohash) is *worse* on both axes.
 
 | Candidate | Description | OP | Thr | Overall rec | Overall FPR | Seen FPR | Unseen FPR | Unseen rec |
 |---|---|---|---|---|---|---|---|---|
-| **E_hardneg (deployed)** | certified baseline | P1 | 0.053558 | 0.9901 | **0.0708** | 0.0635 | 0.6152 | 0.9948 |
+| **E_hardneg (active in prototype)** | validated baseline | P1 | 0.053558 | 0.9901 | **0.0708** | 0.0635 | 0.6152 | 0.9948 |
 | | | P2 | 0.018758 | 0.9950 | **0.1153** | 0.1064 | 0.7743 | 1.0000 |
 | F_nohash | minus merchant/city/card codes | P1 | 0.051335 | 0.9901 | 0.0768 | 0.0694 | 0.6310 | 0.9948 |
 | CS1 | E recipe + 6 novelty feats | P1 | 0.046758 | 0.9901 | 0.0825 | 0.0759 | 0.5723 | 0.9948 |
@@ -171,7 +171,7 @@ improvement, and every candidate that improves unseen merchants regresses the ag
 
 **KEEP E_HARDNEG**
 
-The certified deployed model remains the best aggregate model on locked validation at
+The validated active model remains the best aggregate model on locked validation at
 both ≥99% and ≥99.5% recall. The unseen-merchant FPR is real, reproduced on
 validation, and mechanistically explained; the causal merchant-establishment features
 (age, prior volume) are the validated highest-value next step and should be revisited

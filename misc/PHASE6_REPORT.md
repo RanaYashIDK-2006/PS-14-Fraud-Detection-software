@@ -4,9 +4,9 @@
 
 | Item | Value |
 |---|---|
-| Deployed model | `altman_native_E_hardneg_cert_20260904` |
+| Active model | `altman_native_E_hardneg_cert_20260904` |
 | Locked threshold | **0.018758** |
-| Status | **DEPLOYED — untouched** (guard verified before every job) |
+| Status | **ACTIVE IN PROTOTYPE — untouched** (guard verified before every job) |
 | Model SHA-256 | see `reports/phase6_production_snapshot.json` (verified vs manifest) |
 | Snapshot | `reports/phase6_production_snapshot.json` |
 | Backup (hash-verified) | `BACKUPS/E_hardneg_cert_20260904/` |
@@ -75,7 +75,7 @@
 
 ## 3. Verdict
 
-**E_hardneg remains the deployed production model.** The frozen candidate is
+**E_hardneg remains the active prototype model.** The frozen candidate is
 **CERTIFICATION_PENDING** (not promoted): the FPR/precision gains are real and
 broad, but the recall trade at the locked point (FN 15→42) requires the
 step-18 independent certification and an explicit high-recall operating-point

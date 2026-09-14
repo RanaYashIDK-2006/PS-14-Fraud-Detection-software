@@ -1,7 +1,7 @@
 # PHASE 6B — High-Recall Validation Frontier & False-Negative Forensics
 
 ## 1. Preflight (reports/phase6b_preflight.json)
-- Production `altman_native_E_hardneg_cert_20260904` @ 0.018758 — artifact hashes match manifest: **True**
+- Active model `altman_native_E_hardneg_cert_20260904` @ 0.018758 — artifact hashes match manifest: **True**
 - Frozen candidate dir hashed: 4 files; frame sha256 recorded
 - Final-test labels never loaded by selection code: **True**
 
@@ -56,8 +56,8 @@ E-caught/V-missed set vs all-val-fraud baseline:
 ## 6. Verdict
 - Step-13 (validation only): **CANDIDATE QUALIFIED FOR FINAL CERTIFICATION**
 - Step-9 hypothesis: **PARTIALLY SUPPORTED**
-- Promotion: **OUTCOME B — E_HARDNEG REMAINS DEPLOYED**
-- Reason: Validation frontier at the exact >=99.5% floor favors V_rawplus (FPR 0.1153 -> 0.0992, rel -13.9%; worst segment recall delta -0.0070). The frozen point itself misses the exact floor by 2.7e-7 (one val fraud row, zero alerts — rounding artifact, see knife_edge). However the Phase-6 one-shot untouched evaluation of this operating point recorded recall 0.9908 (< 0.995) with FN 42 against E_hardneg's 0.9967 / FN 15: V_rawplus's val->test recall transfer is -0.0043 while E_hardneg's is +0.0016, and validation offers NO FN-count analogue (val FN 20 vs 19) — the gap is distribution shift, not a val-visible weakness. The >=99.5% recall requirement is NOT maintained on untouched data. Promotion rejected (Step 12): E_hardneg stays deployed.
+- Promotion: **OUTCOME B — E_HARDNEG REMAINS ACTIVE IN PROTOTYPE**
+- Reason: Validation frontier at the exact >=99.5% floor favors V_rawplus (FPR 0.1153 -> 0.0992, rel -13.9%; worst segment recall delta -0.0070). The frozen point itself misses the exact floor by 2.7e-7 (one val fraud row, zero alerts — rounding artifact, see knife_edge). However the Phase-6 one-shot untouched evaluation of this operating point recorded recall 0.9908 (< 0.995) with FN 42 against E_hardneg's 0.9967 / FN 15: V_rawplus's val->test recall transfer is -0.0043 while E_hardneg's is +0.0016, and validation offers NO FN-count analogue (val FN 20 vs 19) — the gap is distribution shift, not a val-visible weakness. The >=99.5% recall requirement is NOT maintained on untouched data. Promotion rejected (Step 12): E_hardneg stays active in prototype.
 
 ## 7. Next action
 No final-test rescoring (consumed once in Phase 6; rule 2). Re-freezing at tV* would be cosmetic (1 val row, 0 alerts). Real blocker = val->test recall transfer of the candidate; next model target = the segments where the transfer degrades (under-covered established merchants, swipe) plus a drift-robust threshold margin.

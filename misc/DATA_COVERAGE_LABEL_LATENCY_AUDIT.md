@@ -3,7 +3,7 @@
 Phase-4 mission: determine whether PS-14's absent-merchant false-positive problem is
 caused by inadequate training coverage, unavailable establishment history, unavailable
 labels at scoring time, sampling strategy, or model architecture. E_hardneg
-(`altman_native_E_hardneg_cert_20260904` @ threshold 0.018758) is the certified control
+(`altman_native_E_hardneg_cert_20260904` @ threshold 0.018758) is the validated control
 and was NOT modified; the final 2018-2020 test was NOT touched for any decision.
 
 > **INTEGRITY CORRECTION (Phase 5 recovery):** the original release reported a
@@ -20,7 +20,7 @@ and was NOT modified; the final 2018-2020 test was NOT touched for any decision.
 
 ## Verdict
 
-**OUTCOME B — DATA/FEATURE REDESIGN. KEEP E_HARDNEG deployed (untouched).**
+**OUTCOME B — DATA/FEATURE REDESIGN. KEEP E_HARDNEG active in prototype (untouched).**
 
 **The absent-merchant FPR is primarily a training-coverage artifact, not a model or
 architecture failure.** The 5% legit sampling used to build the training pool omits

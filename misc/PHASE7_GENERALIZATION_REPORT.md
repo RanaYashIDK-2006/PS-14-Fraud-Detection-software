@@ -1,9 +1,9 @@
 # PHASE 7 — Coverage-Robust & Channel-Robust Generalization
 
 ## 1. Preflight (reports/phase7_preflight.json)
-- Production: `altman_native_E_hardneg_cert_20260904` @ 0.018758 — **DO NOT CHANGE**
+- Active model: `altman_native_E_hardneg_cert_20260904` @ 0.018758 — **DO NOT CHANGE**
 - Final test accessed by Phase-7 code: **False**
-- Production modified: **False**
+- Active model modified: **False**
 
 ## 2. Control Reproduction
 
