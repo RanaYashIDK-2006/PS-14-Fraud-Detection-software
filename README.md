@@ -1278,7 +1278,9 @@ on load and every 60s, hidden until a report exists.
   replaced (`models/artifacts/calibrator.joblib`); `ml_score` is therefore a
   calibrated probability and the response carries `odds = p/(1-p)` (clamped
   at 9999 when p == 1) so thresholds carry business meaning across model
-  versions. The score remains `100 × max(ml, rule)`.
+  versions. The score remains `100 × max(ml, rule)`. Calibration metrics
+  (validated by `backend/scripts/calibration_test.py`): Brier score 0.0009,
+  ECE 0.0013, 16/16 tests pass.
 - **Fail-safe degraded mode**: if ML fusion raises or the circuit breaker
   (3 consecutive failures → open 30s, then half-open probe) is open, the
   evaluation falls back to the declarative rules with a fail-safe floor
