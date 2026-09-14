@@ -40,8 +40,8 @@ Status: VERIFIED | PARTIALLY_VERIFIED | UNSUPPORTED | FALSE | NOT_APPLICABLE
 | M2 | No temporal leakage | ✅ VERIFIED | temporal_test.py (22/22) | Point-in-time correctness |
 | M3 | Calibration implemented | ✅ VERIFIED | calibration_test.py (16/16) | Platt scaling on validation data |
 | M4 | Drift detection | ✅ VERIFIED | drift_detector_test.py (31/31) | PSI-based; needs baseline |
-| M5 | In-domain: 98.5% ROC-AUC (ULB) | ✅ VERIFIED | optuna_ulb_push.py, 5-fold CV: 98.38% | Optuna-tuned XGBoost on ULB creditcard |
-| M6 | Altman: 97.6% ROC-AUC (user-disjoint) | ✅ VERIFIED | optuna_altman_push.py | Honest user-disjoint split; no entity leakage |
+| M5 | In-domain: 96.6% ROC-AUC (ULB) | ✅ VERIFIED | train_compare.py, time-split eval, 284K ULB rows | In-domain only; PCA features do not correspond to §16 production feature space |
+| M6 | Altman: 98.2% ROC-AUC (user-disjoint) | ✅ VERIFIED | ibm_train.py (1.2M rows, user-disjoint split) | Same generator family as training data; not a truly independent source |
 | M7 | Cross-domain transfer | ❌ UNSUPPORTED | cross_domain_v2.py | AUC ~0.5 — fraud signals are domain-specific |
 | M8 | Industry-grade fraud detection | ❌ UNSUPPORTED | Only synthetic/cross-domain eval | No independent validation |
 | M9 | Generalizes to real-world fraud | ❌ UNSUPPORTED | Evaluated on public datasets only | Not validated in production |
