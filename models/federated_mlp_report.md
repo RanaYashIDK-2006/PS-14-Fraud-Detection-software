@@ -1,5 +1,8 @@
 # Federated MLP comparison (section 19)
 
+> **This is a simulation.** No real financial institution participated. All
+> worker processes run on the same machine against synthetic data.
+
 Same account-disjoint shards, same rounds (20) x local epochs (5); LR lr=0.5, MLP lr=0.1, hidden=16. Per-institution PR-AUC:
 
 | institution | LR local | LR fed | LR centr | MLP local | MLP fed | MLP centr |

@@ -1,5 +1,9 @@
 # Federated learning simulation (section 19)
 
+> **This is a simulation.** No real financial institution participated. The
+> federation consists of simulated clients trained on partitions of synthetic
+> data. All worker processes run on the same machine.
+
 Simulated institutions: 3 disjoint account shards of one synthetic population (15000 events, 1.5% fraud, seed 7). FedAvg: 20 rounds x 5 local epochs, lr=0.5; baseline/oracle: 50 epochs. Local split 70%/30% time-based.
 
 | institution | n_test (fraud) | model | PR-AUC | ROC-AUC | F1 | Recall |

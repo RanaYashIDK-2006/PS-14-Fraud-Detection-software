@@ -56,9 +56,10 @@ is. AI recommends — verification decides.*
 - [x] **Feedback loop** — verification outcomes become labeled training rows
   (`scripts/export_feedback.py`), merged via `src/train_compare.py
   --feedback` and retrained (see `models/feedback_loop_report.md`).
-- [x] **Federated learning (stretch)** — 3 simulated institutions on disjoint
-  account shards, FedAvg over worker processes that exchange only weights
-  (`scripts/federated_sim.py`; see `models/federated_report.md`).
+- [x] **Federated learning simulation (stretch)** — 3 simulated institutions on disjoint
+  account shards of synthetic data, FedAvg over worker processes that exchange only weights
+  (`backend/scripts/federated_sim.py`; see `models/federated_report.md`).
+  No real financial institution participated in this experiment.
 
 ## Performance — In-Domain Benchmark and External-Transfer Validation
 
@@ -346,14 +347,20 @@ per-event score cache (the key hashes the per-rule severities/conditions,
 not the scale), so re-runs stay ~0.1s. `--rules` targets a staging copy for
 dry-runs without touching the live config.
 
-### Federated learning (§19, stretch)
+### Federated learning simulation (§19, stretch)
+
+> **⚠️ This is a simulation.** No real financial institution participated in
+> this experiment. The federation consists of simulated clients trained on
+> partitions of synthetic data. The results demonstrate the algorithm's
+> behavior under controlled conditions, not real-world institutional deployment.
 
 Three simulated institutions on account-disjoint shards of one synthetic
 population. Each institution is a separate worker process that trains a
 balanced logistic regression (or, with `--mlp`, a one-hidden-layer ReLU
 MLP) locally and exchanges ONLY weight vectors with the coordinator, which
 averages them with FedAvg (weighted by local size). Raw data, features, and
-labels never cross the boundary. Compares local-only vs federated vs a
+labels never cross the boundary. This is a local simulation — all worker
+processes run on the same machine. Compares local-only vs federated vs a
 centralized oracle:
 
 ```bash
@@ -406,14 +413,16 @@ draws (± std), and the trade-off vs the clean baseline lands in
 
 Honest caveats (also in the reports): naive FedAvg without differential
 privacy leaks information via weight updates; the DP variant is CENTRAL
-(server-side noise — production pairs it with secure aggregation); with
-only 3 institutions the DP budget is shared across a few contributors, so
-even ε = 8 costs ~2/3 of the clean PR-AUC and ε ≤ 4 leaves the model
-indistinguishable from random (that is the quantified price); LR and the
-small MLP are the weight-averageable architectures (RF/XGB/ISO are not);
-per-institution local standardization; the oracle is the theoretical bound
-computed out-of-band; synthetic data is cleanly separable so absolute
-scores are inflated.
+(server-side noise — a real deployment would pair it with secure aggregation
+across actual network boundaries); with only 3 simulated institutions the
+DP budget is shared across a few contributors, so even ε = 8 costs ~2/3 of
+the clean PR-AUC and ε ≤ 4 leaves the model indistinguishable from random
+(that is the quantified price); LR and the small MLP are the
+weight-averageable architectures (RF/XGB/ISO are not); per-institution
+local standardization; the oracle is the theoretical bound computed
+out-of-band; synthetic data is cleanly separable so absolute scores are
+inflated. These results are from a local simulation, not a distributed
+deployment across real organizations.
 
 ### Drift monitoring (§6: population stability index)
 

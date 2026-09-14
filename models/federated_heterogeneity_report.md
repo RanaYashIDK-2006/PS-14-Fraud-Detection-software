@@ -1,5 +1,8 @@
 # Federated heterogeneity map (section 19)
 
+> **This is a simulation.** No real financial institution participated. All
+> worker processes run on the same machine against synthetic data.
+
 Same population (15000 events, 1.5% fraud, seed 7), same rounds (20) x local epochs (5), LR. Each config RE-ASSIGNS accounts to the 3 institutions with different size weights and fraud-rate skews (`split_institutions_skewed`); all metrics are macro PR-AUC on each institution's own held-out test. FL gain = fed - local (positive: FL helps overall); max drag = largest local_i - fed_i (positive: the global model is worse for that institution than its own local model).
 
 | config | realized sizes | realized fraud rates | local | fed | oracle | FL gain | max drag (at) |

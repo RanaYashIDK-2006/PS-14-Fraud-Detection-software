@@ -1,5 +1,8 @@
 # Federated DP privacy-utility trade-off (section 19)
 
+> **This is a simulation.** No real financial institution participated. All
+> worker processes run on the same machine against synthetic data.
+
 Client-level DP FedAvg (clip norm S = 0.2728, delta = 1e-05, rounds = 20) with Gaussian noise calibrated by RDP composition. Macro-averaged across 3 institutions; the same account-disjoint shards are used for every epsilon, and each DP row is the mean over 4 noise draw(s) (+/- std on PR-AUC).
 
 | epsilon | sigma | noise std | PR-AUC (+/- std) | ROC-AUC | F1 | Recall | PR-AUC vs clean |
