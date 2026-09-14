@@ -25,7 +25,7 @@ Four SQLite databases (DB-1 through DB-4) on a shared volume.
 | **Attack** | Attacker gains read access to `features.db` or `risk.db` |
 | **Impact** | Exposes pseudonymous feature vectors and risk scores — not PII |
 | **Likelihood** | Medium (shared volume in prototype; network-isolated in production) |
-| **Existing protection** | DB-2 contains only derived §16 features (no raw amounts, no device IDs, no PII). DB-3 contains only risk scores + pseudonymous fraud IDs. `pseudonym_separation_test.py` proves DB-2 compromise doesn't reveal identity. |
+| **Existing protection** | DB-2 contains only derived §16 features (no raw amounts, no device IDs, no PII). DB-3 contains only risk scores + pseudonymous fraud IDs. `pseudonym_separation_test.py` verifies that direct identity recovery was prevented under the tested DB-2 compromise scenario. |
 | **Remaining risk** | Cross-referencing pseudonymous feature vectors with external behavioral data could enable re-identification if k-anonymity is weak. |
 | **Mitigation** | k-anonymity gate on exports (`k_anonymity_check.py`); production PostgreSQL with per-store credentials + TLS + network isolation |
 

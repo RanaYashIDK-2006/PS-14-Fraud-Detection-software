@@ -6,7 +6,7 @@ Generated: 2026-08-27T20:53:13.225556
 - Total source files: 191
 - Total lines of code: 62965
 - Regression tests: 18/18 PASS
-- Penetration tests: 42/42 PASS
+- Self-authored security regression: 42/42 PASS (not independent pentest)
 - Security scan: 100/100 (Grade A)
 - Claims verified: 14
 
@@ -36,7 +36,7 @@ Generated: 2026-08-27T20:53:13.225556
 ## Security Results
 
 - Scan Score: 100/100 (Grade A)
-- Penetration Tests: 42/42 PASS
+- Security Regression: 42/42 PASS (self-authored, not independent pentest)
 - Regression Suite: 18/18 PASS
 - Sql Injection: All payloads blocked
 - Auth Bypass: All attempts blocked
@@ -50,8 +50,8 @@ Generated: 2026-08-27T20:53:13.225556
 
 - Regression Suites: 18
 - Regression Passed: 18
-- Penetration Tests: 42
-- Penetration Passed: 42
+- Security Regression Scenarios: 42
+- Security Regression Passed: 42
 - Security Scanner Checks: 54
 - Adversarial Tests: 42
 - Leakage Tests: structural + temporal + label

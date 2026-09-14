@@ -9,7 +9,7 @@ Status: VERIFIED | PARTIALLY_VERIFIED | UNSUPPORTED | FALSE | NOT_APPLICABLE
 
 | # | Claim | Status | Evidence | Limitations |
 |---|-------|--------|----------|-------------|
-| S1 | SQL injection prevented | ✅ VERIFIED | Static query allowlist in admin endpoints; penetration_test.py | Only tested against running service |
+| S1 | SQL injection mitigated | ✅ VERIFIED | Static query allowlist in admin endpoints; self-authored security regression | Only tested against running prototype; not independent pentest |
 | S2 | Authentication via JWT | ✅ VERIFIED | risk_engine_test.py (token verification) | Tokens are not revocable in prototype |
 | S3 | No PII in feature store | ✅ VERIFIED | privacy_test.py (27/27 checks) | Raw amounts exist transiently during processing |
 | S4 | No PII in risk scores | ✅ VERIFIED | privacy_test.py | Only fraud_id stored |
@@ -18,7 +18,7 @@ Status: VERIFIED | PARTIALLY_VERIFIED | UNSUPPORTED | FALSE | NOT_APPLICABLE
 | S7 | Rate limiting on auth | ⚠️ PARTIALLY_VERIFIED | penetration_test.py | Login rate limit exists; needs production tuning |
 | S8 | Admin sessions multi-worker safe | ✅ VERIFIED | SQLite-backed SessionStore in src/session_store.py | Survives worker restarts; WAL mode for concurrency |
 | S9 | TLS/HTTPS | ❌ NOT_APPLICABLE | Prototype uses HTTP | Required for production |
-| S10 | Penetration test passes | ⚠️ PARTIALLY_VERIFIED | penetration_test.py | Some tests BLOCKED when services unavailable |
+| S10 | Security regression passes | ⚠️ PARTIALLY_VERIFIED | Self-authored penetration_test.py (42 scenarios) | Not independent pentest; some tests BLOCKED when services unavailable |
 
 ## Privacy Claims
 

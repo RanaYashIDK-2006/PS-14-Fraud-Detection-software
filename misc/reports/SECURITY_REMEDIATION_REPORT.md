@@ -63,7 +63,7 @@
 |---------|-------|
 | SQL injection prevention | Static allowlist works; not tested with automated SQLi scanners (sqlmap) |
 | Rate limiting | In-memory only; not tested across multiple workers |
-| Penetration test overall | Some tests BLOCKED when services unavailable; BLOCKED != PASS |
+| Security regression overall | Some tests BLOCKED when services unavailable; BLOCKED != PASS; self-authored, not independent pentest |
 | In-domain ROC-AUC | Multiple conflicting values (99.13%, 98.77%, 97.98%); needs artifact-specific reproduction |
 | Cross-domain ROC-AUC | 98.5% claim lacks documented weighting methodology |
 | Bandit MEDIUM finding | privacy_layer/main.py:837 uses string-based query construction (false positive: uses parameterized bindings, not interpolation) |

@@ -660,7 +660,7 @@ python scripts/security_test.py     # CORS + rate-limiting + headers + key separ
 python scripts/resilience_test.py    # resilience beyond ML: DB/audit/privacy failure paths
 python scripts/ood_gate_test.py      # OOD recall gate validation
 python scripts/rules_gate_test.py    # rules backtesting gate validation
-python scripts/pseudonym_separation_test.py  # DB-2 compromise doesn't reveal identity
+python scripts/pseudonym_separation_test.py  # tests that DB-2 compromise scenario doesn't directly reveal identity
 python scripts/feature_compatibility_test.py # training/serving feature skew prevention
 python scripts/production_gate_test.py       # fail-closed startup in production mode
 ```
@@ -697,7 +697,7 @@ python scripts/data_retention.py --dry-run  # data retention enforcement (previe
 python scripts/fairness_review.py           # bias analysis across account segments
 python scripts/security_scan.py --full     # security scan (custom SAST + dependency check)
 python scripts/quality_scorecard.py        # consolidated metrics dashboard
-python scripts/penetration_test.py         # offensive security: 42 vectors (all blocked when services running)
+python scripts/penetration_test.py         # self-authored security regression suite: 42 attack scenarios (results not equivalent to independent pentest)
 python scripts/benchmark_comparison.py     # 1.2M dataset benchmark vs industry
 python scripts/compare_ml_systems.py       # PS-14 vs 8 industry systems (rankings, privacy, explainability)
 python scripts/ps14_client.py              # easy API client (CLI + Python)
@@ -729,11 +729,11 @@ Run security scans before deployment:
 ```bash
 python scripts/security_scan.py --full  # Security scan (custom SAST — not a comprehensive audit)
 python scripts/security_test.py         # Runtime security tests (9 checks)
-python scripts/penetration_test.py      # Offensive security (42 vectors, all blocked when services running)
+python scripts/penetration_test.py      # Self-authored security regression (42 attack scenarios; not a professional pentest)
 python scripts/security_ci_gate.py      # CI gate: fails on ANY finding
 ```
 
-**⚠️ Security Note**: The security tests (`security_scan.py`, `penetration_test.py`, `security_ci_gate.py`) are self-authored test suites, not a third-party audit. A professional penetration test is recommended before handling real financial data.
+**⚠️ Security Note**: The security tests (`security_scan.py`, `penetration_test.py`, `security_ci_gate.py`) are self-authored automated security regression tests, not independent penetration testing or a third-party security audit. They verify specific known attack patterns against the running prototype. A professional penetration test by qualified security personnel is recommended before handling real financial data.
 
 **Dockerized retrain:** `bash scripts/docker_retrain.sh` (or `make retrain`)
 runs `training_pipeline.py --full` inside a compose `train` profile
@@ -973,8 +973,8 @@ scripts/
   resilience_test.py            # resilience beyond ML: DB/audit/privacy failure paths
   security_test.py              # CORS, rate-limiting, headers, key separation tests
   front_service_test.py         # front page + admin + offline status tests
-  penetration_test.py           # offensive security: auth bypass, SQLi, JWT forging, IDOR, allowlist tests
-  pseudonym_separation_test.py  # proves DB-2 compromise doesn't reveal identity
+  penetration_test.py           # self-authored security regression: auth bypass, SQLi, JWT forging, IDOR, allowlist tests
+  pseudonym_separation_test.py  # verifies DB-2 isolation under tested compromise scenario
   feature_compatibility_test.py # prevents training/serving feature skew
   production_gate_test.py       # fail-closed startup validation in production mode
   regression_suite.py           # unified test runner for CI/CD
@@ -1094,14 +1094,14 @@ Authentication & authorization:
 
 Input validation:
 - **Pydantic Field constraints** on all request models (min/max length, patterns)
-- **SQL injection eliminated**: arbitrary SQL replaced with allowlist of 4 pre-defined parameterized queries (`recent_audit`, `unresolved_alerts`, `recent_scores`, `recent_features`)
+- **SQL injection mitigated**: arbitrary SQL replaced with allowlist of 4 pre-defined parameterized queries (`recent_audit`, `unresolved_alerts`, `recent_scores`, `recent_features`); tested by self-authored regression suite
 - **DB-tables restricted**: `row_count` and `table_list` only expose non-PII tables via `SAFE_COUNT_TABLES` and `PII_TABLE_NAMES` filters
 - **No stack traces** in error responses (generic messages only)
 - **No internal endpoints** in OpenAPI schemas (`include_in_schema=False`)
 
-Run the penetration test to verify:
+Run the self-authored security regression suite:
 ```bash
-python scripts/penetration_test.py   # attack vectors — PASS/FAIL/BLOCKED per test
+python scripts/penetration_test.py   # 42 attack scenarios — PASS/FAIL/BLOCKED per test
 python scripts/security_ci_gate.py   # CI gate: fails on ANY finding
 ```
 
