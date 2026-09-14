@@ -12,6 +12,45 @@ is. AI recommends — verification decides.*
 > institution. All performance numbers are measured on synthetic or public
 > research datasets under controlled conditions.
 
+## Claims & Evidence
+
+Every claim in this repository is classified by its evidence type and status.
+This table is intended for evaluators who need to distinguish demonstrated
+capabilities from unproven or blocked claims at a glance.
+
+| # | Claim | Evidence | Evidence Type | Status | Limitation |
+|---|---|---|---|---|---|
+| 1 | End-to-end fraud scoring pipeline | 6-service architecture, live walkthrough (`live_walkthrough.sh`), 50-case batch test | Implementation + automated test | **DEMONSTRATED** | Runs on synthetic data; no real-world transaction flow |
+| 2 | ULB benchmark performance (ROC-AUC 0.966) | `train_compare.py`, time-split eval on 284K ULB rows | Experiment | **EXPERIMENTAL** | In-domain only; PCA features do not correspond to §16 production feature space |
+| 3 | External dataset generalization | Phases 23B–25, `cross_dataset_eval.py` | Experiment | **NOT ESTABLISHED** | ROC-AUC degrades to 0.435–0.595 on external data; 0.873 on same-family IBM (not truly independent) |
+| 4 | No data leakage within audited scope | Phase 25 10-check audit, `leakage_structural_test.py` (123/123) | Self-tested | **SELF-TESTED** | Covers target correlation, temporal ordering, entity contamination, scaler fitting, distribution shift; not a mathematical guarantee against all leakage forms |
+| 5 | Privacy/identity separation | `pseudonym_separation_test.py` (14/14), `smoke_test.py` DB-separation checks | Self-tested | **SELF-TESTED** | Tested under specific DB-2 compromise scenarios; not an exhaustive privacy proof |
+| 6 | Database isolation (per-store ownership) | `smoke_test.py` (DB-1 has no features; DB-2 has no PII), 5 physically separate SQLite stores | Self-tested | **SELF-TESTED** | Prototype uses SQLite; production would require per-store PostgreSQL with network segments |
+| 7 | Security regression testing (42 scenarios) | `penetration_test.py` (42 scenarios), `security_test.py` (9 checks) | Self-tested | **SELF-TESTED** | Self-authored automated tests; not equivalent to independent penetration testing |
+| 8 | Independent penetration testing | None | None | **NOT ESTABLISHED** | No independent penetration test exists in the repository; professional pentest recommended |
+| 9 | Federated learning | `federated_sim.py`, `federated_test.py` (43/43), 4 reports | Simulation | **SIMULATED** | Simulated institutions on synthetic data, single machine; no real financial institution participated |
+| 10 | Production deployment infrastructure | Docker, Caddy auto-HTTPS, PostgreSQL config, CI/CD, `deploy.sh` | Implementation | **DEMONSTRATED** | Infrastructure exists; model promotion to production is BLOCKED |
+| 11 | Production model promotion | Phase 22–25 promotion gates, `promotion_guard.py` | Blocked | **BLOCKED** | Pending independently sourced, provenance-verified real-world fraud data |
+| 12 | Model calibration (ml_score as calibrated probability) | PlattCalibration, `calibration_test.py` (16/16), Brier 0.0009, ECE 0.0013 | Self-tested | **SELF-TESTED** | Calibrated on synthetic data distribution; calibration on real data not validated |
+| 13 | Real-world fraud detection effectiveness | None with provenance-verified data | None | **NOT ESTABLISHED** | All evaluations use synthetic or unprovenanced public datasets |
+| 14 | Dataset provenance verification | Phase 23 114-source audit | Experiment | **NOT ESTABLISHED** | 0 of 114 sources meet all provenance criteria; best candidate (Kaggle) has unclear source |
+| 15 | Throughput and scalability | `load_test.py` (~40–60 TPS, ~15–25ms p50) | Self-tested | **SELF-TESTED** | Single concurrent request, SQLite backend, no audit chain writes measured |
+| 16 | 50-case scenario testing | `batch_cases.py`, invariant checks (determinism, monotonicity, audit chain) | Self-tested | **SELF-TESTED** | Synthetic hand-designed scenarios + seeded perturbations; does not establish detection performance |
+| 17 | Cross-domain vs domain-specific training | 4-dataset ROC-AUC matrix, `meta_ensemble.py` | Experiment | **EXPERIMENTAL** | 4 public datasets; diagonal outperformed off-diagonal in this evaluation — not a universal theorem |
+| 18 | CI/CD pipeline validation | `.github/workflows/ci-cd.yml`, `security-scan.yml` | Implementation | **DEMONSTRATED** | Pipeline runs on push to main; `rules_gate` is a documented fragile test (21/22 suites pass) |
+
+### What this project does NOT currently claim
+
+The repository does not currently establish:
+
+- **Production fraud-detection effectiveness** — all performance numbers are from synthetic or unprovenanced public datasets under controlled conditions. No evaluation on provenance-verified real-world transaction data has been completed.
+- **Institutional deployment** — no financial institution uses or has validated this system. The federated learning component is a local simulation with synthetic data.
+- **Independent penetration-test certification** — the 42 security scenarios are self-authored automated regression tests. No professional penetration test or third-party security audit has been conducted.
+- **Regulatory approval** — no regulatory body has reviewed or approved this system. The security hardening guide references DPDP Act and RBI guidelines as design considerations, not as achieved compliance.
+- **Reliable real-world generalization** — external-transfer evaluations show substantial degradation (ROC-AUC 0.435–0.595 on unprovenanced data vs 0.966 in-domain). The cross-domain matrix demonstrates an observed limitation, not a universal property.
+- **Universal superiority of domain-specific training** — the 4-dataset cross-domain experiment shows domain-specific models outperformed cross-domain transfer in this specific evaluation. This is an observed result on these datasets, not a proven theorem about fraud detection.
+- **Data leakage freedom** — the leakage audit covers 10 specific checks within a defined scope. It does not guarantee the absence of all possible leakage forms.
+
 ## Current status (Phase 2 build order)
 
 - [x] **Synthetic dataset generator** — `src/generate_synthetic_data.py`
