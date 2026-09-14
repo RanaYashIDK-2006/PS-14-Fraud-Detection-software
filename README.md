@@ -119,7 +119,7 @@ to external datasets. The results demonstrate substantial degradation:
 |---|---|---|---|---|---|---|
 | Phase 23B | Kaggle fraudTrain (1.85M rows) | P20_45feat | 0.47 | — | — | Degraded features (33/45 unavailable) |
 | Phase 24 | Kaggle test (555K rows) | E_hardneg | 0.435 | 26.8% | 44.9% | 20/48 features reconstructed; 5/12 gates failed |
-| Phase 25 | Kaggle test (reconstructed) | E_hardneg | 0.595 | 18.5% | 9.9% | 47/48 features; leakage audit passed; promotion BLOCKED |
+| Phase 25 | Kaggle test (reconstructed) | E_hardneg | 0.595 | 18.5% | 9.9% | 47/48 features; leakage audit found no issues within scope; promotion BLOCKED |
 | IBM v2 cross-dataset | IBM holdout (200K rows) | IBM v2 model | 0.873 | — | — | Fresh holdout, not training-time test split |
 
 **Key finding:** Models trained on synthetic data do not generalize to
@@ -150,6 +150,13 @@ approximate and use different datasets/protocols — not directly comparable.
 A rigorous, adversarial audit of the system's real-world readiness.
 Every conclusion is evidence-classified; firewalls are verified.
 
+> **Leakage audit limitation:** The leakage audit (Phase 25, 10 checks)
+> establishes that the tested leakage classes were not observed under the
+> audited pipeline. It is not a guarantee against all possible future leakage.
+> The audit covers: target-feature correlation, temporal ordering, entity
+> contamination, scaler fitting, and distribution shift — but cannot rule out
+> unforeformed leakage pathways.
+
 | Phase | Title | Classification | Key Finding |
 |---|---|---|---|
 | **14** | Chip supervision transfer | `NO_ROBUST_WIN` | Chip supervision **hurt**: C2 chip recall 32.3% vs C0 57.7% (−25.4pp) |
@@ -158,13 +165,13 @@ Every conclusion is evidence-classified; firewalls are verified.
 | **17** | IBM generator audit | `SYNTHETIC_REGIME_ARTIFACT` | Abrupt step change at 2017 affecting the whole population; real-world validity UNVERIFIED |
 | **18** | System readiness gate | `CONDITIONALLY_DEPLOYABLE` | Security/monitoring/rollback PASS; 3 fraud-rate features with unverified label availability |
 | **19** | Real-world data gate | `DATA_ACQUISITION_REQUIRED` | Every dataset in the environment is synthetic; no ground-truth labels; production prevalence unknown |
-| **20** | Decision-time remediation | `CLEAN_PROD_COMPAT_CANDIDATE` | P20_45feat: 45 features, all decision-time valid, parity + leakage + causality PASS |
+| **20** | Decision-time remediation | `CLEAN_PROD_COMPAT_CANDIDATE` | P20_45feat: 45 features, all decision-time valid, parity + causality PASS (leakage checked by Phase 25 audit) |
 | **21** | Real-world validation gate | `INSUFFICIENT_REAL_WORLD_EVIDENCE` | No legitimate real-world transaction dataset available; promotion blocked pending data acquisition |
 | **22** | Executable validation harness | `DATA_ACQUISITION_BLOCKED` | Complete CLI runner built (`phase22.run_real_world_validation`); READY but blocked by data absence |
 | **23** | Data acquisition gate | `CONDITIONALLY_AVAILABLE` | 114 sources evaluated; best candidate Kaggle fraudTrain (1.85M rows); provenance unclear, no channel info, no label timing |
 | **23B** | Frozen Kaggle external eval | `CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE` | P20_45feat on Kaggle (1.85M rows, 0.58% fraud): ROC-AUC 0.47 (degraded features); E_hardneg unlabeled; production promotion BLOCKED |
 | **24** | Conditional external eval | `CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE` | E_hardneg on Kaggle (555K test rows): ROC-AUC 0.435, recall 26.8%, FPR 44.9%; 5 of 12 promotion gates failed; production promotion BLOCKED |
-| **25** | Leakage audit & corrections | `NO_LEAKAGE — TOOLING VERIFIED` | Fixed Phase 24's import-path + tz-comparison + index-order bugs; maximal causal reconstruction (47/48 features); no target/temporal/feature leakage; promotion BLOCKED |
+| **25** | Leakage audit & corrections | `NO_LEAKAGE_FOUND — within audit scope` | Fixed Phase 24's import-path + tz-comparison + index-order bugs; maximal causal reconstruction (47/48 features); no target/temporal/feature leakage detected by the 10-check audit suite; promotion BLOCKED |
 
 ### Current Model Status
 
@@ -180,7 +187,7 @@ PHASE22_RUNNER = READY
 PHASE23_ACQUISITION = CONDITIONALLY_AVAILABLE_WITH_CAVEATS
 PHASE23B_EVAL = CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE
 PHASE24_EVAL = CONDITIONAL_EXTERNAL_EVALUATION_COMPLETE (E_hardneg: ROC-AUC 0.435)
-PHASE25_AUDIT = NO_LEAKAGE (post-reconstruction re-eval: ROC-AUC 0.595, recall 18.5%, FPR 9.9%)
+PHASE25_AUDIT = NO_LEAKAGE_FOUND (10-check audit scope; post-reconstruction re-eval: ROC-AUC 0.595, recall 18.5%, FPR 9.9%)
 REAL_WORLD_VALIDATION = BLOCKED (provenance unclear)
 PROMOTION = BLOCKED
 NEXT_ACTION = Continue authorized real-world data acquisition; wire Phase 25's
@@ -230,8 +237,10 @@ Phase 25 corrected Phase 24's defects and closed the remaining audit gap:
 fixed the zip import-path bug (the runner now works from an extracted zip),
 rebuilt feature reconstruction maximally causally (47/48 features available;
 only `err` is unreconstructable — no error/decline code in Kaggle), and ran
-the leakage audit: no target, temporal, or feature leakage; temporal check
-(now bug-fixed) finds 0 future timestamps. The cold-start audit verified
+the leakage audit (10 checks covering target correlation, temporal ordering,
+entity contamination, scaler fitting, and distribution shift): no leakage
+detected within the audited scope; temporal check (now bug-fixed) finds 0
+future timestamps. The cold-start audit verified
 the rate features are healthy in the shipped train-aggregate design
 (user 24.8% / merchant 1.3% / city 21.6% degenerate; median 1,054 tx/card
 history) — the widely-cited "76% degenerate" figure applies only to a

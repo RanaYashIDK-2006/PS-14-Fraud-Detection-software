@@ -8,7 +8,7 @@ reconstructed feature set. The frozen models, thresholds, and all prior
 artifacts were untouched.
 
 ```text
-PHASE25_STATUS=LEAKAGE_AUDIT_COMPLETE
+PHASE25_STATUS=LEAKAGE_AUDIT_COMPLETE (within 10-check audit scope)
 PRODUCTION_VALIDATION=NOT_ESTABLISHED
 PROMOTION_ALLOWED=FALSE
 ```
@@ -53,12 +53,17 @@ Audited against the supplied `is_fraud` target and the full test split:
 
 | Check | Result |
 |-------|--------|
-| Target leakage (feature-label \|corr\| > 0.5) | **NO_LEAKAGE** (0 of numeric features) |
-| Temporal leakage | **NONE** — CHECKED, 0 future timestamps |
-| Feature leakage (label copies / identity transforms) | **NO_LEAKAGE** |
+| Target leakage (feature-label \|corr\| > 0.5) | **NO_LEAKAGE_FOUND** (0 of numeric features exceed threshold) |
+| Temporal leakage | **NONE_FOUND** — CHECKED, 0 future timestamps |
+| Feature leakage (label copies / identity transforms) | **NO_LEAKAGE_FOUND** |
 | Cold-start fragility (rate features) | **OK** — see below |
 
 Artifact: `reports/phase24/kaggle/04_leakage_check.json` (regenerated).
+
+**Limitation:** The leakage audit establishes that the tested leakage classes
+(target correlation, temporal ordering, entity contamination, scaler fitting,
+distribution shift) were not observed under the audited pipeline. It is not a
+guarantee against all possible future leakage or unforeformed pathways.
 
 ### Temporal-check bug fixed
 

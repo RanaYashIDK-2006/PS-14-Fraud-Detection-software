@@ -154,7 +154,7 @@ The forensic audit evaluated a **new inline 25-feature XGB** (trained and evalua
 | Runtime mapper fidelity | **PARTIAL** — mcc_n/has_zip/has_state hardcoded 0; amt proxied; tracker-rate vs expanding-history skew |
 | Audited model == deployed model | **FAIL** — 25-feature inline audit XGB ≠ 15-feature deployed lean ensemble |
 
-**Bottom line:** PRODUCTION PARITY = FAIL. Two actionable items: (1) move `city_state = {}` outside the row-group loop in `train_altman_fullscale.py` and regenerate the cache; (2) decide and execute the model hand-off — either retrain/deploy the audit's 25-feature model as the artifact (re-running the parity test against it), or run the full forensic validation protocol against the deployed 15-feature lean artifact. The audit is methodologically sound and leakage-free, but its numbers describe a candidate model, not the one currently deployed.
+**Bottom line:** PRODUCTION PARITY = FAIL. Two actionable items: (1) move `city_state = {}` outside the row-group loop in `train_altman_fullscale.py` and regenerate the cache; (2) decide and execute the model hand-off — either retrain/deploy the audit's 25-feature model as the artifact (re-running the parity test against it), or run the full forensic validation protocol against the deployed 15-feature lean artifact. The audit is methodologically sound and no leakage was detected, but its numbers describe a candidate model, not the one currently deployed.
 
 ### Files
 - `scripts/segment_performance_audit.py` + `reports/segment_audit.json`

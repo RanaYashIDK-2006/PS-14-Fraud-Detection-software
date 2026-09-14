@@ -318,7 +318,7 @@ Result: 36 pass, 6 non-zero. Disposition of each:
 
 ## Round 3 — ML-VALIDITY GROUND-UP REBUILD (2026-09-03)
 
-Mandate: rebuild PS-14 ML validity from the ground up (leakage-free, chronological, reproducible, independently verified). Evidence: `reports/PS14_ML_VALIDITY_REPORT.md`, `reports/ml_validity_protocol.json`, `reports/ml_validity_causality_audit.json`, `reports/independent_validation.json`, `reports/ml_validity_predictions.npz`.
+Mandate: rebuild PS-14 ML validity from the ground up (leakage-checked, chronological, reproducible, independently verified). Evidence: `reports/PS14_ML_VALIDITY_REPORT.md`, `reports/ml_validity_protocol.json`, `reports/ml_validity_causality_audit.json`, `reports/independent_validation.json`, `reports/ml_validity_predictions.npz`.
 
 ### Findings & fixes
 1. **LEAK FOUND & FIXED (legacy derivation):** `derive_features` computed `amount_ratio`/`amount_zscore`/escalation from the ACCOUNT-WIDE median including future events. Perturbation audit quantifies the leak: adding future events shifts a prior row's `amount_ratio` by up to 0.9178. Legacy `data/transactions.csv` metrics for amount-history features are therefore **INVALID** (preserved, not compared). New `derive_features_causal` (prior-only expanding medians) is bit-identical under every future perturbation (max|d| = 0.0 across 10 accounts x 4 perturbation kinds). Generator gained a `derive_fn` hook + `--causal` CLI (default unchanged).

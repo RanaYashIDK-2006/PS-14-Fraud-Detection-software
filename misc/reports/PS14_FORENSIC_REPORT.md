@@ -297,7 +297,7 @@ NOT VALIDATED
 
 **Blocking failure:** FPR 1.0445% >= 1% (strict inequality) at the validation-locked threshold.
 
-**Note:** The test-sweep finds threshold 0.086 satisfies FPR<1% (FPR=0.983%, recall=92.1%). The blocking failure is specifically that the validation-locked threshold does not perfectly transfer to the test set. This is a well-known calibration gap between validation and test distributions. The system's causal feature pipeline is correct and leakage-free. The evaluation protocol is clean. The threshold transfer gap is a calibration issue, not a leakage issue.
+**Note:** The test-sweep finds threshold 0.086 satisfies FPR<1% (FPR=0.983%, recall=92.1%). The blocking failure is specifically that the validation-locked threshold does not perfectly transfer to the test set. This is a well-known calibration gap between validation and test distributions. The system's causal feature pipeline is correct and no leakage was detected by the audit checks. The evaluation protocol is clean. The threshold transfer gap is a calibration issue, not a leakage issue.
 
 **If the FPR target is relaxed to the test-sweep operating point (threshold 0.086, FPR=0.983%), all critical checks pass:**
 

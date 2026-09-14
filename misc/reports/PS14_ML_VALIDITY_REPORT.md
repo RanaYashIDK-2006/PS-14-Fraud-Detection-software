@@ -1,6 +1,6 @@
 # PS-14 ML VALIDITY REPORT - GROUND-UP REBUILD (2026-09-03)
 
-Leakage-free chronological protocol. Historical metrics from the legacy `transactions.csv` era are **INVALID** for the amount-history features (account-wide median included future transactions - proven by the perturbation audit) and are preserved only as prior evidence, not compared here.
+Chronological protocol with leakage checks (no leakage detected within audit scope). Historical metrics from the legacy `transactions.csv` era are **INVALID** for the amount-history features (account-wide median included future transactions - proven by the perturbation audit) and are preserved only as prior evidence, not compared here.
 
 
 ## A. Dataset Integrity
