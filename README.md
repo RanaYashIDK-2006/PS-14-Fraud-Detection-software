@@ -60,25 +60,45 @@ is. AI recommends — verification decides.*
   account shards, FedAvg over worker processes that exchange only weights
   (`scripts/federated_sim.py`; see `models/federated_report.md`).
 
-## Performance (Honest — Verified, No Data Leakage)
+## Performance — In-Domain Benchmark and External-Transfer Validation
 
-Performance measured against the **Kaggle ULB Credit Card Fraud** dataset
-(284,807 transactions, 492 fraud) and a **1.2M PaySim synthetic** dataset.
-All features are derived from transaction data only — no label-dependent
-features.
+This section reports performance on three categories of evaluation:
+(1) in-domain benchmarks on the training distribution, (2) external-transfer
+evaluation on held-out datasets not seen during training, and (3) system-level
+measurements. The in-domain and external results tell very different stories;
+reading only the in-domain numbers would be misleading.
 
-### Kaggle ULB (real fraud data, 16 features)
+> **⚠️ The ULB and PaySim metrics below measure in-domain benchmark performance
+> on specific public research datasets. They should not be interpreted as
+> evidence of real-world generalization or production readiness. External-transfer
+> evaluations (Phases 23B–25) show substantial degradation when models are
+> applied to out-of-distribution data.**
+
+### In-domain benchmarks (Kaggle ULB and PaySim)
+
+These metrics are from a model trained and evaluated on the same dataset
+family. They measure the model's ability to discriminate fraud within a
+specific data distribution — not its ability to generalize to real-world
+transaction streams.
+
+**Kaggle ULB Credit Card Fraud** (284,807 transactions, 492 fraud;
+PCA-transformed features, Dal Pozzolo et al.)
 
 | Metric | Value | Methodology |
 |---|---|---| 
-| ROC-AUC | 0.966 | `src/train_compare.py`, time-split eval |
+| ROC-AUC | 0.966 | `backend/src/train_compare.py`, time-split eval |
 | Recall@1%FPR | 91.8% | Same |
 | PR-AUC | 0.877 | Same |
 | Precision (threshold 0.43) | 48.0% | Optimal ensemble (0.75 XGB + 0.25 RF) |
 | Recall (threshold 0.43) | 97.8% | 4 frauds missed out of 492 |
 | False Positive Rate | 1.996% | 192/9,618 legit flagged |
 
-### PaySim 1.2M (synthetic, 16 features, in-process only)
+**⚠️ These ULB metrics measure in-domain benchmark performance and should
+not be interpreted as evidence of real-world generalization.** The ULB dataset
+uses PCA-transformed features that do not correspond to the §16 feature space
+used in production. The model was trained on the same data distribution.
+
+**PaySim 1.2M** (synthetic, 16 features, in-process only)
 
 | Metric | Value | Caveat |
 |---|---|---|
@@ -88,9 +108,30 @@ features.
 **⚠️ Previous benchmark claims of ROC-AUC 1.0000 and 752K TPS were based
 on data leakage (5 features derived from the label). The corrected
 benchmark uses only transaction-derived features.** See
-`scripts/benchmark_comparison.py` for methodology.
+`backend/scripts/benchmark_comparison.py` for methodology.
 
-### Live HTTP stack (via `load_test.py`)
+### External-transfer validation (Phases 23B–25)
+
+These evaluations test whether models trained on synthetic IBM data generalize
+to external datasets. The results demonstrate substantial degradation:
+
+| Evaluation | Dataset | Model | ROC-AUC | Recall | FPR | Notes |
+|---|---|---|---|---|---|---|
+| Phase 23B | Kaggle fraudTrain (1.85M rows) | P20_45feat | 0.47 | — | — | Degraded features (33/45 unavailable) |
+| Phase 24 | Kaggle test (555K rows) | E_hardneg | 0.435 | 26.8% | 44.9% | 20/48 features reconstructed; 5/12 gates failed |
+| Phase 25 | Kaggle test (reconstructed) | E_hardneg | 0.595 | 18.5% | 9.9% | 47/48 features; leakage audit passed; promotion BLOCKED |
+| IBM v2 cross-dataset | IBM holdout (200K rows) | IBM v2 model | 0.873 | — | — | Fresh holdout, not training-time test split |
+
+**Key finding:** Models trained on synthetic data do not generalize to
+external datasets. The in-domain ROC-AUC of 0.966 drops to 0.435–0.595 on
+external transfer. This is expected behavior when training and test
+distributions differ substantially.
+
+The IBM v2 cross-dataset result (ROC-AUC 0.873) is the best external-transfer
+number, but it was evaluated on a dataset from the same generator family as
+the training data — not a truly independent source.
+
+### System-level performance (via `load_test.py`)
 
 | Metric | Value | Methodology |
 |---|---|---|
@@ -101,8 +142,8 @@ benchmark uses only transaction-derived features.** See
 database persistence, and concurrent load. The HTTP stack adds ~10-15ms
 overhead beyond pure model inference.
 
-**Industry comparisons** in `scripts/benchmark_comparison.py` are approximate
-and use different datasets/protocols — not directly comparable.
+**Industry comparisons** in `backend/scripts/benchmark_comparison.py` are
+approximate and use different datasets/protocols — not directly comparable.
 
 ## Validation Phases (Phases 14–25)
 
@@ -691,10 +732,17 @@ container (`./models` + `./data` bind-mounted), then rebuilds and restarts
 **only the risk service** — and only when every step passes, including the
 OOD recall gate. `make train-only` / `NO_RESTART=1` skips the rebuild.
 
-### Cross-domain evaluation (4 real datasets)
+### Cross-domain evaluation (4 public datasets)
 
-PS-14 was evaluated against 4 real public datasets mapped to the §16 feature
-space, showing that domain-specific training is mandatory:
+PS-14 was evaluated against 4 public datasets mapped to the §16 feature
+space. This experiment demonstrates that domain-specific training substantially
+outperformed cross-domain transfer in this evaluation — it does not constitute
+a universal proof about fraud detection.
+
+> **⚠️ These datasets are public research benchmarks, not real-world fraud
+> data with verified provenance and label governance. The cross-domain matrix
+> shows an observed limitation of this specific model family on these specific
+> datasets.**
 
 | Dataset | Source | Rows | Positive | Rate |
 |---|---|---|---|---|
@@ -712,19 +760,27 @@ space, showing that domain-specific training is mandatory:
 | Bank | 0.53 | 0.53 | **0.94** | 0.56 |
 | Diabetes | 0.35 | 0.36 | 0.38 | **0.61** |
 
-**Key finding:** Domain-specific training always wins (diagonal = max in each
-column). Cross-domain transfer drops 17–58% because PCA features and
-payment-behavior features encode fundamentally different signals.
+**Key finding:** In this evaluation, the diagonal (same-domain train/test)
+consistently outperformed off-diagonal (cross-domain) results. Cross-domain
+transfer dropped 17–58%, suggesting that PCA features and payment-behavior
+features encode substantially different signals across these datasets. This is
+an observed limitation of this model family on these datasets, not a general
+theorem about fraud detection.
+
+> **Note:** The cross-domain data files are not included in the repository.
+> Results require downloading datasets — see `backend/scripts/real_datasets_expanded.py`.
 
 ```bash
-python scripts/real_datasets_expanded.py   # 4×4 cross-domain evaluation
-python scripts/meta_ensemble.py            # 6-strategy meta-ensemble comparison
-python scripts/train_compare_uci.py        # UCI vs Kaggle head-to-head
+python backend/scripts/real_datasets_expanded.py   # 4×4 cross-domain evaluation
+python backend/scripts/meta_ensemble.py            # 6-strategy meta-ensemble comparison
+python backend/scripts/train_compare_uci.py        # UCI vs Kaggle head-to-head
 ```
 
 ### Meta-ensemble strategies
 
-Six strategies were compared for combining domain-specific models:
+Six strategies were compared for combining domain-specific models on the same
+4-dataset benchmark. These results are specific to this evaluation setup and
+should not be generalized to other fraud detection contexts:
 
 | Strategy | Avg ROC-AUC | vs Single-Domain |
 |---|---|---|
@@ -735,8 +791,10 @@ Six strategies were compared for combining domain-specific models:
 | Best-of (max) | 0.771 | -6.5% |
 | Meta-learner (LOO) | 0.396 | -52.0% |
 
-**Verdict:** If you know the domain → use the domain-specific model. If the
-domain is unknown or mixed → use the universal meta-learner (only -2.7% drop).
+**Verdict:** In this evaluation, if you know the domain → the domain-specific
+model performed best. If the domain is unknown or mixed → the universal
+meta-learner showed the smallest drop (-2.7%). These findings are specific to
+these 4 datasets and this model family.
 
 ### Model uncertainty (§2.1)
 
