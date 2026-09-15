@@ -248,6 +248,40 @@ A rigorous, adversarial audit of the system's readiness. Every conclusion is evi
 | **25** | Leakage audit & corrections | `NO_LEAKAGE_FOUND — within audit scope` | Fixed Phase 24's import-path + tz-comparison + index-order bugs; maximal causal reconstruction (47/48 features); no target/temporal/feature leakage detected by the 10-check audit suite; promotion BLOCKED |
 | **38** | External validation readiness | `IMPLEMENTED` | Dataset intake contract, 9 eligibility gates, causality audit, frozen-model evaluation, 8-gate promotion check; READY, blocked pending an eligible dataset |
 | **39** | Reproducible evaluation & statistical confidence | `IMPLEMENTED` | Immutable evaluation records (model/data hashes, git SHA, seeds); validation-only threshold discipline; bootstrap CIs withheld on small cells; single-source metric definitions; append-only ledger |
+| **40** | Model & data drift monitoring + post-deployment safeguards | `IMPLEMENTED` | Schema drift, feature-availability drift, prediction-score drift, alert hysteresis with dedup/cooldown, label-awareness (no fabricate outcomes), baseline governance, promotion/retraining safeguards; 57/57 tests pass |
+
+### Drift Monitoring & Post-Deployment Safeguards (Phase 40)
+
+The system implements a comprehensive drift monitoring layer that detects feature-distribution drift, schema drift, feature-availability issues, and prediction-score drift. **Drift detection does NOT automatically authorize retraining or promotion.**
+
+**Monitoring types:**
+- **Feature drift** (PSI) — existing runtime detector (in-process per evaluate call) + offline windowed check
+- **Schema drift** — missing/unexpected features, datatype mismatches
+- **Feature-availability drift** — null rates, stale features, degradation detection
+- **Prediction-score drift** — risk-score distribution shift, decision-band proportion changes
+- **Label-awareness** — outcome monitoring only when verified labels exist; no fabricated metrics
+- **Data-quality signals** — missingness, invalid values, range violations
+
+**Alert lifecycle:**
+- Consecutive-window hysteresis (single noisy window does NOT trigger alerts)
+- Deduplication with cooldown (identical alerts suppressed for 5 minutes)
+- State machine: NORMAL → WATCH → WARNING → CRITICAL → RECOVERING → NORMAL
+- Storm protection: 40+ simultaneously drifting features aggregated into one systemic alert
+
+**Safeguards:**
+- `DRIFT DETECTED ≠ AUTOMATIC RETRAINING`
+- `DRIFT DETECTED ≠ AUTOMATIC PROMOTION`
+- Promotion requires all existing gates (leakage, data quality, security, etc.) to pass
+- Critical drift blocks promotion even when all other gates pass
+- Baseline governance: explicit metadata, source classification, approval tracking
+- External/test data cannot silently become the production drift baseline
+
+**Running Phase 40 tests:**
+```
+.venv/Scripts/python.exe backend/scripts/phase40_monitor_test.py   # 57 tests
+.venv/Scripts/python.exe backend/scripts/drift_detector_test.py    # 31 tests (existing)
+.venv/Scripts/python.exe backend/scripts/drift_test.py             # 22 tests (existing)
+```
 
 ### Current Model Status
 
@@ -536,9 +570,9 @@ python scripts/federated_sim.py --hetero-sweep   # size x fraud-skew map -> mode
 
 Honest caveats (also in the reports): naive FedAvg without differential privacy leaks information via weight updates; the DP variant is CENTRAL (server-side noise — a real deployment would pair it with secure aggregation across actual network boundaries); with only 3 simulated institutions the DP budget is shared across a few contributors, so even ε = 8 costs ~2/3 of the clean PR-AUC and ε ≤ 4 leaves the model indistinguishable from random (that is the quantified price); LR and the small MLP are the weight-averageable architectures (RF/XGB/ISO are not); per-institution local standardization; the oracle is the theoretical bound computed out-of-band; synthetic data is cleanly separable so absolute scores are inflated. These results are from a local simulation, not a distributed deployment across real organizations.
 
-### Drift monitoring (§6: population stability index)
+### Drift monitoring (§6: population stability index + Phase 40 comprehensive monitoring)
 
-Week-over-week feature-distribution checks against the distribution the models were trained on. The baseline is stored once as bin edges + expected proportions (never the raw training rows); each check compares only the current window — drift triggers a retraining review, it does not require retaining raw data:
+Week-over-week feature-distribution checks against the distribution the models were trained on, extended by Phase 40 with schema drift, feature-availability drift, prediction-score drift, alert hysteresis, and promotion/retraining safeguards. The baseline is stored once as bin edges + expected proportions (never the raw training rows); each check compares only the current window — drift triggers a retraining review, it does not require retaining raw data:
 
 ```bash
 python scripts/drift_monitor.py build-baseline                # → data/drift_baseline.json
