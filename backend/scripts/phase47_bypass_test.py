@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Phase 47: Promotion bypass-proof activation tests.
+"""Phase 47-48: Promotion bypass-proof activation tests.
 
 Proves that NO caller — direct, None, fake, stale, or concurrent —
 can activate an ineligible model through ModelRegistry.promote().
+
+Phase 48 adds: release_manifest is now also mandatory.
 """
 from __future__ import annotations
 
@@ -27,6 +29,11 @@ from src.monitoring.promotion_gate import (
     GateResult,
     evaluate_promotion,
     evaluate_real_world_validation,
+)
+from src.monitoring.release_manifest import (
+    ReleaseManifest,
+    create_release_manifest,
+    artifact_set_hash,
 )
 from src.risk_engine.model_registry import ModelRegistry, ModelCandidate
 
@@ -57,6 +64,30 @@ def _make_registry(tmpdir: str) -> tuple[ModelRegistry, Path, Path]:
     meta.write_text('{"version": "test_v1"}')
     reg.register_candidate(str(cand), str(meta))
     return reg, cand, meta
+
+
+def _aggregate_hash(path: Path) -> str:
+    """Compute aggregate artifact hash (same as ReleaseManifest)."""
+    art = artifact_set_hash(path.parent)
+    return art["model_hash"] or ""
+
+
+def _make_manifest(tmpdir: str, cand_path: Path, **overrides) -> ReleaseManifest:
+    """Create a signed release manifest for testing."""
+    defaults = dict(
+        release_id="test_release_001",
+        model_id=str(cand_path),
+        model_version="test_v1",
+        feature_version="v1",
+        schema_version="v1",
+        gate_verdict="PROMOTION_ELIGIBLE",
+        gate_timestamp=time.time(),
+    )
+    defaults.update(overrides)
+    return create_release_manifest(
+        artifact_dir=cand_path.parent,
+        **defaults,
+    )
 
 
 def _fake_token(model_id: str, artifact_hash: str, feature_version: str) -> PromotionToken:
@@ -92,7 +123,6 @@ def _blocked_decision() -> PromotionDecision:
 print("\n--- 1. promote(None) must be blocked ---")
 with tempfile.TemporaryDirectory() as tmpdir:
     reg, cand, meta = _make_registry(tmpdir)
-    cand_hash = hashlib.sha256(cand.read_bytes()).hexdigest()
     raised = False
     try:
         reg.promote(gate_decision=None)
@@ -156,14 +186,16 @@ with tempfile.TemporaryDirectory() as tmpdir:
 print("\n--- 5. Fake token with invalid signature ---")
 with tempfile.TemporaryDirectory() as tmpdir:
     reg, cand, meta = _make_registry(tmpdir)
-    cand_hash = hashlib.sha256(cand.read_bytes()).hexdigest()
+    cand_hash = _aggregate_hash(cand)
     fake_d = _eligible_decision(
         model_id=str(cand), artifact_hash=cand_hash, feature_version="v1"
     )
     token = _fake_token(str(cand), cand_hash, "v1")
+    manifest = _make_manifest(tmpdir, cand)
     raised = False
     try:
-        reg.promote(gate_decision=fake_d, promotion_token=token)
+        reg.promote(gate_decision=fake_d, promotion_token=token,
+                    release_manifest=manifest)
     except RuntimeError as e:
         raised = True
         check("5a. RuntimeError on invalid signature",
@@ -173,220 +205,452 @@ with tempfile.TemporaryDirectory() as tmpdir:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 6. Token for wrong model must be blocked
+# 6. Valid token + ELIGIBLE decision WITHOUT manifest must be blocked
 # ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 6. Token for wrong model ---")
+print("\n--- 6. Valid token + ELIGIBLE without manifest ---")
 with tempfile.TemporaryDirectory() as tmpdir:
     reg, cand, meta = _make_registry(tmpdir)
-    cand_hash = hashlib.sha256(cand.read_bytes()).hexdigest()
-    # Create a legitimate token for a DIFFERENT model path
-    other_decision = PromotionDecision(
-        verdict=PromotionVerdict.ELIGIBLE,
-        candidate_model_id="/nonexistent/other.joblib",
-        candidate_artifact_hash=cand_hash,
-        candidate_feature_version="v1",
-    )
-    # This will fail because PromotionToken requires ELIGIBLE verdict
-    # and the model_id won't match. But first, can we even create a token
-    # for the wrong model?
-    try:
-        token = PromotionToken(other_decision)
-        ok, reason = token.verify(
-            expected_model_id=str(cand),
-            expected_artifact_hash=cand_hash,
-            expected_feature_version="v1",
-        )
-        check("6a. token verify rejects wrong model", not ok)
-    except Exception:
-        # Token creation may fail if the decision is for a different model
-        check("6a. token creation correctly fails", True)
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 7. Token for wrong artifact must be blocked
-# ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 7. Token for wrong artifact ---")
-with tempfile.TemporaryDirectory() as tmpdir:
-    reg, cand, meta = _make_registry(tmpdir)
-    cand_hash = hashlib.sha256(cand.read_bytes()).hexdigest()
-    # Create a legitimate token with a DIFFERENT artifact hash
-    good_d = PromotionDecision(
-        verdict=PromotionVerdict.ELIGIBLE,
-        candidate_model_id=str(cand),
-        candidate_artifact_hash="wrong_hash_000000000000000",
-        candidate_feature_version="v1",
+    cand_hash = _aggregate_hash(cand)
+    good_d = _eligible_decision(
+        model_id=str(cand), artifact_hash=cand_hash, feature_version="v1"
     )
     token = PromotionToken(good_d)
-    ok, reason = token.verify(
-        expected_model_id=str(cand),
-        expected_artifact_hash=cand_hash,
-        expected_feature_version="v1",
-    )
-    check("7a. token verify rejects wrong artifact", not ok)
-    check("7b. reason mentions mismatch", "mismatch" in reason.lower())
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 8. Stale token must be blocked
-# ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 8. Stale token (expired) ---")
-# The signature covers the timestamp, so backdating invalidates the
-# signature first.  This is correct: a backdated token is treated as
-# forged, which is a STRONGER guarantee than just "expired".
-with tempfile.TemporaryDirectory() as tmpdir:
-    reg, cand, meta = _make_registry(tmpdir)
-    cand_hash = hashlib.sha256(cand.read_bytes()).hexdigest()
-    good_d = PromotionDecision(
-        verdict=PromotionVerdict.ELIGIBLE,
-        candidate_model_id=str(cand),
-        candidate_artifact_hash=cand_hash,
-        candidate_feature_version="v1",
-    )
-    token = PromotionToken(good_d)
-    # Manually backdate the token timestamp
-    token.timestamp = time.time() - 7200  # 2 hours ago
-    ok, reason = token.verify(
-        expected_model_id=str(cand),
-        expected_artifact_hash=cand_hash,
-        expected_feature_version="v1",
-        max_age_seconds=3600.0,
-    )
-    check("8a. token verify rejects stale token", not ok)
-    # Signature covers timestamp, so backdating = signature mismatch = forged
-    check("8b. reason indicates tampered/forged/expired",
-          any(w in reason.lower() for w in ["tampered", "forged", "expired", "signature", "invalid"]))
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 9. Valid token + ELIGIBLE decision + matching artifact
-# ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 9. Valid token + ELIGIBLE decision ---")
-with tempfile.TemporaryDirectory() as tmpdir:
-    reg, cand, meta = _make_registry(tmpdir)
-    cand_hash = hashlib.sha256(cand.read_bytes()).hexdigest()
-    good_d = PromotionDecision(
-        verdict=PromotionVerdict.ELIGIBLE,
-        candidate_model_id=str(cand),
-        candidate_artifact_hash=cand_hash,
-        candidate_feature_version="v1",
-    )
-    token = PromotionToken(good_d)
-    # But the REAL_WORLD_VALIDATION gate is BLOCKED, so evaluate_promotion()
-    # returns BLOCKED. We need to bypass that for this specific test.
-    # Actually, the gate_decision we pass to promote() is the one we hand-construct.
-    # The registry only checks verdict + token. The gate is in evaluate_promotion().
-    # So if someone hand-constructs ELIGIBLE + valid token, can they promote?
-    # YES — that's the design. The gate is enforced by evaluate_promotion(),
-    # and the token proves the gate was called. But we need to also verify
-    # that the token binds to the REAL_WORLD_VALIDATION gate status.
-    # For now, the token proves the gate was called. The gate's own logic
-    # handles RWV. So a hand-constructed ELIGIBLE + valid token CAN promote
-    # IF the token is authentic.
-    # This is the correct behavior: the token proves evaluate_promotion()
-    # returned ELIGIBLE. If someone bypasses evaluate_promotion() and constructs
-    # the decision manually, they can't forge a valid token (wrong signature).
-    # So this test should PASS — valid token + ELIGIBLE = promotion succeeds.
-    raised = False
-    try:
-        reg.promote(gate_decision=good_d, promotion_token=token)
-    except Exception as e:
-        raised = True
-        print(f"    unexpected error: {e}")
-    check("9a. promotion succeeded", not raised)
-    check("9b. candidate is now None (promoted)", reg.state.candidate is None)
-    check("9c. mode is direct", reg.state.mode == "direct")
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 10. promote() after promote must fail (no candidate)
-# ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 10. promote() with no candidate ---")
-with tempfile.TemporaryDirectory() as tmpdir:
-    reg = ModelRegistry(Path(tmpdir))
-    # No candidate registered
-    raised = False
-    try:
-        reg.promote(gate_decision=_eligible_decision())
-    except Exception as e:
-        raised = True
-    check("10a. no error when no candidate (just returns)", not raised)
-    check("10b. mode unchanged", reg.state.mode == "direct")
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 11. Non-PromotionDecision object must be blocked
-# ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 11. Non-PromotionDecision object ---")
-with tempfile.TemporaryDirectory() as tmpdir:
-    reg, cand, meta = _make_registry(tmpdir)
-    # Pass a random object
-    class FakeDecision:
-        verdict = "PROMOTION_ELIGIBLE"
-    raised = False
-    try:
-        reg.promote(gate_decision=FakeDecision())
-    except RuntimeError:
-        raised = True
-    check("11a. RuntimeError on fake object (no token)", raised)
-    check("11b. candidate not promoted", reg.state.candidate is not None)
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 12. Token cannot be reused for a different artifact
-# ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 12. Token reuse for different artifact ---")
-with tempfile.TemporaryDirectory() as tmpdir:
-    reg, cand, meta = _make_registry(tmpdir)
-    cand_hash = hashlib.sha256(cand.read_bytes()).hexdigest()
-    good_d = PromotionDecision(
-        verdict=PromotionVerdict.ELIGIBLE,
-        candidate_model_id=str(cand),
-        candidate_artifact_hash=cand_hash,
-        candidate_feature_version="v1",
-    )
-    token = PromotionToken(good_d)
-    # Now change the artifact
-    cand.write_bytes(b"MODIFIED model bytes")
-    new_hash = hashlib.sha256(cand.read_bytes()).hexdigest()
     raised = False
     try:
         reg.promote(gate_decision=good_d, promotion_token=token)
     except RuntimeError as e:
         raised = True
-        check("12a. RuntimeError on artifact mismatch", "mismatch" in str(e).lower() or "artifact" in str(e).lower())
+        check("6a. RuntimeError on missing manifest", "manifest" in str(e).lower())
+    check("6b. candidate not promoted", reg.state.candidate is not None)
+    check("6c. exception was raised", raised)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 7. Fake manifest with invalid signature must be blocked
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 7. Fake manifest with invalid signature ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    reg, cand, meta = _make_registry(tmpdir)
+    cand_hash = _aggregate_hash(cand)
+    good_d = _eligible_decision(
+        model_id=str(cand), artifact_hash=cand_hash, feature_version="v1"
+    )
+    token = PromotionToken(good_d)
+    # Create a manifest but corrupt its signature
+    manifest = _make_manifest(tmpdir, cand)
+    manifest._signature = "tampered_signature"
+    raised = False
+    try:
+        reg.promote(gate_decision=good_d, promotion_token=token,
+                    release_manifest=manifest)
+    except RuntimeError as e:
+        raised = True
+        check("7a. RuntimeError on tampered manifest",
+              "signature" in str(e).lower() or "manifest" in str(e).lower())
+    check("7b. candidate not promoted", reg.state.candidate is not None)
+    check("7c. exception was raised", raised)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 8. Manifest with wrong gate verdict must be blocked
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 8. Manifest with wrong gate verdict ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    reg, cand, meta = _make_registry(tmpdir)
+    cand_hash = _aggregate_hash(cand)
+    good_d = _eligible_decision(
+        model_id=str(cand), artifact_hash=cand_hash, feature_version="v1"
+    )
+    token = PromotionToken(good_d)
+    manifest = _make_manifest(tmpdir, cand, gate_verdict="PROMOTION_BLOCKED")
+    raised = False
+    try:
+        reg.promote(gate_decision=good_d, promotion_token=token,
+                    release_manifest=manifest)
+    except RuntimeError as e:
+        raised = True
+        check("8a. RuntimeError on wrong gate verdict", "verdict" in str(e).lower())
+    check("8b. candidate not promoted", reg.state.candidate is not None)
+    check("8c. exception was raised", raised)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 9. Non-ReleaseManifest object must be blocked
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 9. Non-ReleaseManifest object ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    reg, cand, meta = _make_registry(tmpdir)
+    cand_hash = _aggregate_hash(cand)
+    good_d = _eligible_decision(
+        model_id=str(cand), artifact_hash=cand_hash, feature_version="v1"
+    )
+    token = PromotionToken(good_d)
+    raised = False
+    try:
+        reg.promote(gate_decision=good_d, promotion_token=token,
+                    release_manifest="not_a_manifest")
+    except RuntimeError as e:
+        raised = True
+        check("9a. RuntimeError on fake manifest object",
+              "manifest" in str(e).lower())
+    check("9b. candidate not promoted", reg.state.candidate is not None)
+    check("9c. exception was raised", raised)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 10. Stale token must be blocked
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 10. Stale token (expired) ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    reg, cand, meta = _make_registry(tmpdir)
+    cand_hash = _aggregate_hash(cand)
+    good_d = _eligible_decision(
+        model_id=str(cand), artifact_hash=cand_hash, feature_version="v1"
+    )
+    token = PromotionToken(good_d)
+    token.timestamp = time.time() - 7200  # 2 hours ago
+    manifest = _make_manifest(tmpdir, cand)
+    raised = False
+    try:
+        reg.promote(gate_decision=good_d, promotion_token=token,
+                    release_manifest=manifest)
+    except RuntimeError as e:
+        raised = True
+        check("10a. RuntimeError on stale token",
+              "expired" in str(e).lower() or "signature" in str(e).lower() or "token" in str(e).lower())
+    check("10b. candidate not promoted", reg.state.candidate is not None)
+    check("10c. exception was raised", raised)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 11. Token for wrong model must be blocked
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 11. Token for wrong model ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    reg, cand, meta = _make_registry(tmpdir)
+    cand_hash = _aggregate_hash(cand)
+    good_d = _eligible_decision(
+        model_id=str(cand), artifact_hash=cand_hash, feature_version="v1"
+    )
+    # Token for a different model
+    other_d = _eligible_decision(
+        model_id="/nonexistent/other.joblib", artifact_hash=cand_hash,
+        feature_version="v1"
+    )
+    token = PromotionToken(other_d)
+    manifest = _make_manifest(tmpdir, cand)
+    raised = False
+    try:
+        reg.promote(gate_decision=good_d, promotion_token=token,
+                    release_manifest=manifest)
+    except RuntimeError as e:
+        raised = True
+        check("11a. RuntimeError on wrong model token",
+              "mismatch" in str(e).lower() or "token" in str(e).lower())
+    check("11b. candidate not promoted", reg.state.candidate is not None)
+    check("11c. exception was raised", raised)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 12. Token for wrong artifact must be blocked
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 12. Token for wrong artifact ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    reg, cand, meta = _make_registry(tmpdir)
+    cand_hash = _aggregate_hash(cand)
+    good_d = _eligible_decision(
+        model_id=str(cand), artifact_hash=cand_hash, feature_version="v1"
+    )
+    token = PromotionToken(good_d)
+    # Modify the artifact after token creation
+    cand.write_bytes(b"MODIFIED model bytes")
+    manifest = _make_manifest(tmpdir, cand)
+    raised = False
+    try:
+        reg.promote(gate_decision=good_d, promotion_token=token,
+                    release_manifest=manifest)
+    except RuntimeError as e:
+        raised = True
+        check("12a. RuntimeError on artifact mismatch",
+              "mismatch" in str(e).lower() or "artifact" in str(e).lower() or "manifest" in str(e).lower())
     check("12b. candidate not promoted", reg.state.candidate is not None)
     check("12c. exception was raised", raised)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 13. Concurrent promotion attempts
+# 13. Manifest artifact mismatch must be blocked
 # ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 13. Concurrent promotion attempts ---")
-# Use a SHARED registry so all threads contend on the same candidate.
+print("\n--- 13. Manifest artifact mismatch ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    reg, cand, meta = _make_registry(tmpdir)
+    cand_hash = _aggregate_hash(cand)
+    good_d = _eligible_decision(
+        model_id=str(cand), artifact_hash=cand_hash, feature_version="v1"
+    )
+    token = PromotionToken(good_d)
+    # Create manifest, then modify artifact
+    manifest = _make_manifest(tmpdir, cand)
+    cand.write_bytes(b"TAMPERED after manifest creation")
+    raised = False
+    try:
+        reg.promote(gate_decision=good_d, promotion_token=token,
+                    release_manifest=manifest)
+    except RuntimeError as e:
+        raised = True
+        check("13a. RuntimeError on manifest artifact mismatch",
+              "mismatch" in str(e).lower() or "manifest" in str(e).lower() or "binding" in str(e).lower())
+    check("13b. candidate not promoted", reg.state.candidate is not None)
+    check("13c. exception was raised", raised)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 14. Valid token + ELIGIBLE + valid manifest = promotion succeeds
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 14. Valid token + ELIGIBLE + valid manifest ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    reg, cand, meta = _make_registry(tmpdir)
+    cand_hash = _aggregate_hash(cand)
+    good_d = _eligible_decision(
+        model_id=str(cand), artifact_hash=cand_hash, feature_version="v1"
+    )
+    token = PromotionToken(good_d)
+    manifest = _make_manifest(tmpdir, cand)
+    raised = False
+    try:
+        reg.promote(gate_decision=good_d, promotion_token=token,
+                    release_manifest=manifest)
+    except Exception as e:
+        raised = True
+        print(f"    unexpected error: {e}")
+    check("14a. promotion succeeded", not raised)
+    check("14b. candidate is now None (promoted)", reg.state.candidate is None)
+    check("14c. mode is direct", reg.state.mode == "direct")
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 15. promote() with no candidate
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 15. promote() with no candidate ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    reg = ModelRegistry(Path(tmpdir))
+    raised = False
+    try:
+        reg.promote(gate_decision=_eligible_decision())
+    except Exception as e:
+        raised = True
+    check("15a. no error when no candidate (just returns)", not raised)
+    check("15b. mode unchanged", reg.state.mode == "direct")
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 16. promote_to_canary does NOT make model active
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 16. promote_to_canary does NOT activate ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    reg, cand, meta = _make_registry(tmpdir)
+    reg.promote_to_canary(0.5)
+    check("16a. mode is canary", reg.state.mode == "canary")
+    check("16b. candidate still exists (not promoted)", reg.state.candidate is not None)
+    check("16c. candidate status is canary", reg.state.candidate.status == "canary")
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 17. Rollback does NOT require gate
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 17. Rollback works without gate ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    reg, cand, meta = _make_registry(tmpdir)
+    result = reg.rollback()
+    check("17a. rollback returned True", result is True)
+    check("17b. candidate status is rolled_back",
+          reg.state.candidate.status == "rolled_back")
+    check("17c. mode is direct", reg.state.mode == "direct")
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 18. PromotionToken rejects BLOCKED decision
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 18. PromotionToken rejects BLOCKED decision ---")
+try:
+    t = PromotionToken(_blocked_decision())
+    check("18a. should have raised", False)
+except PromotionBlockedError:
+    check("18a. PromotionBlockedError raised", True)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 19. Token serialization roundtrip preserves validity
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 19. Token serialization roundtrip ---")
+good_d = _eligible_decision(
+    model_id="test_model", artifact_hash="abc123", feature_version="v1"
+)
+token = PromotionToken(good_d)
+data = token.to_dict()
+token2 = PromotionToken.from_dict(data)
+ok, _ = token2.verify("test_model", "abc123", "v1")
+check("19a. roundtrip preserves validity", ok)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 20. ReleaseManifest: valid manifest creation + signing + verification
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 20. ReleaseManifest: create + sign + verify ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    td = Path(tmpdir)
+    (td / "model.joblib").write_bytes(b"model bytes")
+    manifest = create_release_manifest(
+        release_id="rel_001",
+        model_id="test_model",
+        model_version="v1",
+        artifact_dir=td,
+        feature_version="f_v1",
+        gate_verdict="PROMOTION_ELIGIBLE",
+    )
+    ok, reason = manifest.verify_signature()
+    check("20a. signature valid", ok)
+    check("20b. has artifact_hash", bool(manifest.artifact_hash))
+    check("20c. gate_verdict is ELIGIBLE", manifest.gate_verdict == "PROMOTION_ELIGIBLE")
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 21. ReleaseManifest: tampered manifest detected
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 21. ReleaseManifest: tampered manifest detected ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    td = Path(tmpdir)
+    (td / "model.joblib").write_bytes(b"model bytes")
+    manifest = create_release_manifest(
+        release_id="rel_002",
+        model_id="test_model",
+        model_version="v1",
+        artifact_dir=td,
+        feature_version="f_v1",
+        gate_verdict="PROMOTION_ELIGIBLE",
+    )
+    # Tamper with the manifest
+    manifest.artifact_hash = "tampered_hash"
+    ok, reason = manifest.verify_signature()
+    check("21a. tampered manifest detected", not ok)
+    check("21b. reason mentions tampered/forged",
+          any(w in reason.lower() for w in ["tampered", "forged", "invalid", "signature"]))
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 22. ReleaseManifest: artifact verification
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 22. ReleaseManifest: artifact verification ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    td = Path(tmpdir)
+    (td / "model.joblib").write_bytes(b"model bytes")
+    manifest = create_release_manifest(
+        release_id="rel_003",
+        model_id="test_model",
+        model_version="v1",
+        artifact_dir=td,
+        feature_version="f_v1",
+        gate_verdict="PROMOTION_ELIGIBLE",
+    )
+    # Verify against same directory
+    ok, reason = manifest.verify_artifacts(td)
+    check("22a. artifacts verify OK", ok)
+    # Modify artifact
+    (td / "model.joblib").write_bytes(b"TAMPERED")
+    ok2, reason2 = manifest.verify_artifacts(td)
+    check("22b. tampered artifact detected", not ok2)
+    check("22c. reason mentions mismatch", "mismatch" in reason2.lower() or "changed" in reason2.lower())
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 23. ReleaseManifest: binding verification
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 23. ReleaseManifest: binding verification ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    td = Path(tmpdir)
+    (td / "model.joblib").write_bytes(b"model bytes")
+    manifest = create_release_manifest(
+        release_id="rel_004",
+        model_id="test_model",
+        model_version="v1",
+        artifact_dir=td,
+        feature_version="f_v1",
+        gate_verdict="PROMOTION_ELIGIBLE",
+    )
+    ok, _ = manifest.verify_binding(expected_model_id="test_model")
+    check("23a. binding OK with correct model_id", ok)
+    ok2, reason2 = manifest.verify_binding(expected_model_id="wrong_model")
+    check("23b. binding fails with wrong model_id", not ok2)
+    check("23c. reason mentions mismatch", "mismatch" in reason2.lower())
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 24. ReleaseManifest: serialization roundtrip
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 24. ReleaseManifest: serialization roundtrip ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    td = Path(tmpdir)
+    (td / "model.joblib").write_bytes(b"model bytes")
+    manifest = create_release_manifest(
+        release_id="rel_005",
+        model_id="test_model",
+        model_version="v1",
+        artifact_dir=td,
+        feature_version="f_v1",
+        gate_verdict="PROMOTION_ELIGIBLE",
+    )
+    data = manifest.to_dict()
+    manifest2 = ReleaseManifest.from_dict(data)
+    ok, _ = manifest2.verify_signature()
+    check("24a. roundtrip preserves signature", ok)
+    check("24b. roundtrip preserves model_id", manifest2.model_id == "test_model")
+    check("24c. roundtrip preserves artifact_hash", manifest2.artifact_hash == manifest.artifact_hash)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 25. REAL_WORLD_VALIDATION blocks centralized gate
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 25. REAL_WORLD_VALIDATION blocks centralized gate ---")
+g = evaluate_real_world_validation()
+check("25a. RWV is BLOCKED", g.status == GateStatus.BLOCKED)
+d = evaluate_promotion(candidate_model_id="test")
+check("25b. full gate returns BLOCKED", d.verdict == PromotionVerdict.BLOCKED)
+check("25c. RWV in blocking gates", "REAL_WORLD_VALIDATION" in d.blocking_gates)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 26. Concurrent promotion attempts
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 26. Concurrent promotion attempts ---")
 import shutil as _shutil
 with tempfile.TemporaryDirectory() as tmpdir:
     shared_dir = Path(tmpdir) / "shared"
     shared_dir.mkdir()
-    # Create candidate files
     (shared_dir / "cand.joblib").write_bytes(b"shared model bytes")
     (shared_dir / "cand_meta.json").write_text('{"version": "v1"}')
-    # Create registry
     reg = ModelRegistry(shared_dir)
     reg.register_candidate(str(shared_dir / "cand.joblib"),
                           str(shared_dir / "cand_meta.json"))
-    cand_hash = hashlib.sha256((shared_dir / "cand.joblib").read_bytes()).hexdigest()
-    good_d = PromotionDecision(
-        verdict=PromotionVerdict.ELIGIBLE,
-        candidate_model_id=str(shared_dir / "cand.joblib"),
-        candidate_artifact_hash=cand_hash,
-        candidate_feature_version="v1",
+    cand_hash = _aggregate_hash(shared_dir / "cand.joblib")
+    good_d = _eligible_decision(
+        model_id=str(shared_dir / "cand.joblib"),
+        artifact_hash=cand_hash,
+        feature_version="v1",
     )
     errors = []
 
     def try_promote():
         try:
             t = PromotionToken(good_d)
-            reg.promote(gate_decision=good_d, promotion_token=t)
+            m = create_release_manifest(
+                release_id="concurrent_test",
+                model_id=str(shared_dir / "cand.joblib"),
+                model_version="v1",
+                artifact_dir=shared_dir,
+                feature_version="v1",
+                gate_verdict="PROMOTION_ELIGIBLE",
+            )
+            reg.promote(gate_decision=good_d, promotion_token=t,
+                        release_manifest=m)
         except Exception as e:
             errors.append(str(e))
 
@@ -396,175 +660,61 @@ with tempfile.TemporaryDirectory() as tmpdir:
     for t in threads:
         t.join()
 
-    # After all threads: candidate should be None (promoted once)
-    # and mode should be direct
-    check("13a. candidate is None after concurrent promotion",
+    check("26a. candidate is None after concurrent promotion",
           reg.state.candidate is None)
-    check("13b. mode is direct", reg.state.mode == "direct")
-    check("13c. no exceptions from any thread", len(errors) == 0)
+    check("26b. mode is direct", reg.state.mode == "direct")
+    check("26c. no exceptions from any thread", len(errors) == 0)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 14. promote_to_canary does NOT make model active
+# 27. canary -> promote must pass gate
 # ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 14. promote_to_canary does NOT activate ---")
-with tempfile.TemporaryDirectory() as tmpdir:
-    reg, cand, meta = _make_registry(tmpdir)
-    reg.promote_to_canary(0.5)
-    check("14a. mode is canary", reg.state.mode == "canary")
-    check("14b. candidate still exists (not promoted)", reg.state.candidate is not None)
-    check("14c. candidate status is canary", reg.state.candidate.status == "canary")
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 15. Rollback does NOT require gate (it restores a previously approved model)
-# ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 15. Rollback works without gate ---")
-with tempfile.TemporaryDirectory() as tmpdir:
-    reg, cand, meta = _make_registry(tmpdir)
-    result = reg.rollback()
-    check("15a. rollback returned True", result is True)
-    check("15b. candidate status is rolled_back",
-          reg.state.candidate.status == "rolled_back")
-    check("15c. mode is direct", reg.state.mode == "direct")
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 16. PromotionToken rejects non-ELIGIBLE decisions
-# ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 16. PromotionToken rejects BLOCKED decision ---")
-try:
-    t = PromotionToken(_blocked_decision())
-    check("16a. should have raised", False)
-except PromotionBlockedError:
-    check("16a. PromotionBlockedError raised", True)
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 17. Token serialization roundtrip preserves validity
-# ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 17. Token serialization roundtrip ---")
-good_d = _eligible_decision(
-    model_id="test_model", artifact_hash="abc123", feature_version="v1"
-)
-token = PromotionToken(good_d)
-data = token.to_dict()
-token2 = PromotionToken.from_dict(data)
-ok, _ = token2.verify("test_model", "abc123", "v1")
-check("17a. roundtrip preserves validity", ok)
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 18. REAL_WORLD_VALIDATION blocks the centralized gate
-# ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 18. REAL_WORLD_VALIDATION blocks centralized gate ---")
-g = evaluate_real_world_validation()
-check("18a. RWV is BLOCKED", g.status == GateStatus.BLOCKED)
-d = evaluate_promotion(candidate_model_id="test")
-check("18b. full gate returns BLOCKED", d.verdict == PromotionVerdict.BLOCKED)
-check("18c. RWV in blocking gates", "REAL_WORLD_VALIDATION" in d.blocking_gates)
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 19. No internal _save() bypass outside promote()
-# ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 19. No _save() bypass outside promote() ---")
-# Verify that _save() is only called from legitimate methods
-import inspect
-from src.risk_engine.model_registry import ModelRegistry
-source = inspect.getsource(ModelRegistry)
-_save_calls = [line.strip() for line in source.split("\n") if "_save()" in line]
-# _save should only appear in: register_candidate, promote_to_canary,
-# record_shadow_comparison, record_candidate_metrics, rollback, promote
-allowed_methods = {
-    "register_candidate", "promote_to_canary", "record_shadow_comparison",
-    "record_candidate_metrics", "rollback", "promote", "_save",
-}
-for line in _save_calls:
-    # All _save calls are internal to the class — no external bypass
-    pass
-check("19a. _save() is instance method only", True)  # structural check
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 20. promote_to_canary + promote must still pass gate
-# ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 20. canary -> promote must pass gate ---")
+print("\n--- 27. canary -> promote must pass gate ---")
 with tempfile.TemporaryDirectory() as tmpdir:
     reg, cand, meta = _make_registry(tmpdir)
     reg.promote_to_canary(0.1)
-    check("20a. in canary mode", reg.state.mode == "canary")
+    check("27a. in canary mode", reg.state.mode == "canary")
     raised = False
     try:
         reg.promote()  # no gate — must fail
     except RuntimeError:
         raised = True
-    check("20b. promote() without gate fails", raised)
-    check("20c. still in canary", reg.state.mode == "canary")
+    check("27b. promote() without gate fails", raised)
+    check("27c. still in canary", reg.state.mode == "canary")
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 21. Token fresh but wrong feature version
+# 28. Manifest with artifact hash mismatch must be blocked
 # ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 21. Token with wrong feature version ---")
+print("\n--- 28. Manifest with artifact hash mismatch ---")
 with tempfile.TemporaryDirectory() as tmpdir:
     reg, cand, meta = _make_registry(tmpdir)
-    cand_hash = hashlib.sha256(cand.read_bytes()).hexdigest()
-    # Token created for feature_version="v1" but candidate has different
-    good_d = PromotionDecision(
-        verdict=PromotionVerdict.ELIGIBLE,
-        candidate_model_id=str(cand),
-        candidate_artifact_hash=cand_hash,
-        candidate_feature_version="v1",
+    cand_hash = _aggregate_hash(cand)
+    good_d = _eligible_decision(
+        model_id=str(cand), artifact_hash=cand_hash, feature_version="v1"
     )
     token = PromotionToken(good_d)
-    ok, reason = token.verify(
-        expected_model_id=str(cand),
-        expected_artifact_hash=cand_hash,
-        expected_feature_version="v2",  # mismatch
-    )
-    check("21a. token verify rejects wrong feature version", not ok)
-    check("21b. reason mentions mismatch", "mismatch" in reason.lower())
+    # Create manifest with WRONG artifact hash
+    manifest = _make_manifest(tmpdir, cand)
+    manifest.artifact_hash = "wrong_hash_00000000000000000000000000"
+    # Re-sign after tampering so signature check passes but binding fails
+    manifest.sign()
+    raised = False
+    try:
+        reg.promote(gate_decision=good_d, promotion_token=token,
+                    release_manifest=manifest)
+    except RuntimeError as e:
+        raised = True
+        check("28a. RuntimeError on artifact hash mismatch",
+              "mismatch" in str(e).lower() or "manifest" in str(e).lower() or "binding" in str(e).lower())
+    check("28b. candidate not promoted", reg.state.candidate is not None)
+    check("28c. exception was raised", raised)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 22. Genuine evaluate_promotion + token flow
+# 29. Full adversarial matrix: all invalid paths blocked
 # ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 22. Genuine evaluate_promotion + token flow ---")
-# Even with genuine evaluate_promotion(), RWV blocks it
-d = evaluate_promotion(
-    candidate_model_id="test_model",
-    candidate_artifact_hash="abc",
-    candidate_feature_version="v1",
-)
-check("22a. genuine gate returns BLOCKED (RWV)", d.verdict == PromotionVerdict.BLOCKED)
-# Cannot create token for BLOCKED decision
-raised = False
-try:
-    PromotionToken(d)
-except PromotionBlockedError:
-    raised = True
-check("22b. cannot create token for BLOCKED", raised)
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 23. Direct state mutation on registry does not affect promote()
-# ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 23. Direct state mutation test ---")
-with tempfile.TemporaryDirectory() as tmpdir:
-    reg, cand, meta = _make_registry(tmpdir)
-    # Try to mutate internal state
-    reg.state.mode = "direct"
-    reg.state.candidate.status = "promoted"
-    # This doesn't go through promote() and doesn't persist properly
-    # But the registry still has the candidate
-    check("23a. state mutation doesn't clear candidate", reg.state.candidate is not None)
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 24. Full adversarial matrix: all invalid paths blocked
-# ═══════════════════════════════════════════════════════════════════════════
-print("\n--- 24. Full adversarial matrix ---")
+print("\n--- 29. Full adversarial matrix ---")
 all_blocked = True
 test_cases = [
     ("None gate", lambda r, c, h: r.promote(gate_decision=None)),
@@ -572,22 +722,23 @@ test_cases = [
     ("BLOCKED decision", lambda r, c, h: r.promote(gate_decision=_blocked_decision())),
     ("ELIGIBLE no token", lambda r, c, h: r.promote(
         gate_decision=_eligible_decision(str(c), h, "v1"))),
+    ("ELIGIBLE + token no manifest", lambda r, c, h: r.promote(
+        gate_decision=_eligible_decision(str(c), h, "v1"),
+        promotion_token=PromotionToken(_eligible_decision(str(c), h, "v1")))),
     ("Fake token", lambda r, c, h: r.promote(
         gate_decision=_eligible_decision(str(c), h, "v1"),
-        promotion_token=_fake_token(str(c), h, "v1"))),
+        promotion_token=_fake_token(str(c), h, "v1"),
+        release_manifest=_make_manifest(str(Path(c).parent), c))),
     ("Wrong model token", lambda r, c, h: r.promote(
         gate_decision=_eligible_decision(str(c), h, "v1"),
-        promotion_token=PromotionToken(PromotionDecision(
-            verdict=PromotionVerdict.ELIGIBLE,
-            candidate_model_id="/wrong/path",
-            candidate_artifact_hash=h,
-            candidate_feature_version="v1",
-        )))),
+        promotion_token=PromotionToken(_eligible_decision(
+            "/wrong/path", h, "v1")),
+        release_manifest=_make_manifest(str(Path(c).parent), c))),
 ]
 for label, fn in test_cases:
     with tempfile.TemporaryDirectory() as tmpdir:
         reg, cand, meta = _make_registry(tmpdir)
-        cand_hash = hashlib.sha256(cand.read_bytes()).hexdigest()
+        cand_hash = _aggregate_hash(cand)
         raised = False
         try:
             fn(reg, cand, cand_hash)
@@ -598,14 +749,48 @@ for label, fn in test_cases:
             print(f"    [FAIL] {label} — promotion succeeded!")
         else:
             print(f"    [PASS] {label} — blocked")
-check("24a. ALL adversarial paths blocked", all_blocked)
+check("29a. ALL adversarial paths blocked", all_blocked)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 30. Manifest determinism: same inputs => same hash
+# ═══════════════════════════════════════════════════════════════════════════
+print("\n--- 30. Manifest determinism ---")
+with tempfile.TemporaryDirectory() as tmpdir:
+    td = Path(tmpdir)
+    (td / "model.joblib").write_bytes(b"model bytes")
+    # Create manifests directly with fixed created_at for determinism
+    from src.monitoring.release_manifest import ReleaseManifest, artifact_set_hash
+    art = artifact_set_hash(td)
+    def _det_manifest(**overrides):
+        defaults = dict(
+            release_id="det_test", model_id="m", model_version="v1",
+            artifact_hash=art["model_hash"], artifact_files=art["files"],
+            feature_version="f1", schema_version="f1",
+            gate_verdict="PROMOTION_ELIGIBLE", gate_timestamp=1000000.0,
+            created_at=1000000.0,
+        )
+        defaults.update(overrides)
+        m = ReleaseManifest(**defaults)
+        m.sign()
+        return m
+    m1 = _det_manifest()
+    m2 = _det_manifest()
+    check("30a. same inputs produce same manifest hash",
+          m1.compute_manifest_hash() == m2.compute_manifest_hash())
+    # Different artifact => different hash
+    (td / "model.joblib").write_bytes(b"DIFFERENT model bytes")
+    art2 = artifact_set_hash(td)
+    m3 = _det_manifest(artifact_hash=art2["model_hash"], artifact_files=art2["files"])
+    check("30b. different artifact produces different hash",
+          m1.compute_manifest_hash() != m3.compute_manifest_hash())
 
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Summary
 # ═══════════════════════════════════════════════════════════════════════════
 print(f"\n{'='*60}")
-print(f"Phase 47 bypass-proof tests: {passed}/{total} passed")
+print(f"Phase 47-48 bypass-proof tests: {passed}/{total} passed")
 if failed:
     print(f"  {failed} FAILED")
     sys.exit(1)

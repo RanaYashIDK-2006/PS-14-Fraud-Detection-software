@@ -92,6 +92,11 @@ from src.monitoring.promotion_gate import (
     evaluate_governance_gates,
     evaluate_security_gates,
 )
+from src.monitoring.release_manifest import (
+    ReleaseManifest,
+    create_release_manifest,
+    artifact_set_hash,
+)
 
 __all__ = [
     # Existing
@@ -188,4 +193,8 @@ __all__ = [
     "evaluate_model_artifact_binding",
     "evaluate_governance_gates",
     "evaluate_security_gates",
+    # Phase 48: release manifest
+    "ReleaseManifest",
+    "create_release_manifest",
+    "artifact_set_hash",
 ]

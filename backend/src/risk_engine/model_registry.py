@@ -164,16 +164,18 @@ class ModelRegistry:
         return True
 
     def promote(self, gate_decision: object | None = None,
-                 promotion_token: object | None = None) -> None:
+                 promotion_token: object | None = None,
+                 release_manifest: object | None = None) -> None:
         """Promote the candidate to production. Called after successful canary.
 
-        Phase 47: promotion REQUIRES a valid PromotionDecision AND a valid
-        PromotionToken.  Passing gate_decision=None is no longer allowed for
-        real promotion — it raises PromotionBlockedError.
+        Phase 47-48: promotion REQUIRES:
+        1. A valid PromotionDecision (gate_decision)
+        2. A valid PromotionToken (HMAC-signed receipt)
+        3. A valid ReleaseManifest (bound to exact artifact/config)
 
-        The token proves evaluate_promotion() was called and returned ELIGIBLE.
-        The registry verifies: token signature, model binding, artifact binding,
-        feature-version binding, and freshness (max 1 hour).
+        The token proves evaluate_promotion() returned ELIGIBLE.
+        The manifest binds the release to its exact artifact set,
+        feature schema, preprocessing, rules, and evaluation evidence.
 
         Thread-safe: uses a lock to prevent concurrent promotion.
         """
@@ -181,7 +183,7 @@ class ModelRegistry:
             if self.state.candidate is None:
                 return
 
-            # Phase 47: mandatory gate — None is no longer accepted
+            # Phase 47: mandatory gate
             if gate_decision is None:
                 raise RuntimeError(
                     "Promotion BLOCKED: gate_decision is required. "
@@ -213,11 +215,41 @@ class ModelRegistry:
                     "Promotion BLOCKED: promotion_token must be a PromotionToken"
                 )
 
+            # Phase 48: verify release manifest
+            if release_manifest is None:
+                raise RuntimeError(
+                    "Promotion BLOCKED: release_manifest is required. "
+                    "Generate a ReleaseManifest for the approved release."
+                )
+
+            from src.monitoring.release_manifest import ReleaseManifest
+            if not isinstance(release_manifest, ReleaseManifest):
+                raise RuntimeError(
+                    "Promotion BLOCKED: release_manifest must be a ReleaseManifest"
+                )
+
+            # Verify manifest signature
+            sig_ok, sig_reason = release_manifest.verify_signature()
+            if not sig_ok:
+                raise RuntimeError(
+                    f"Promotion BLOCKED: manifest {sig_reason}"
+                )
+
+            # Verify manifest gate verdict
+            if release_manifest.gate_verdict != "PROMOTION_ELIGIBLE":
+                raise RuntimeError(
+                    f"Promotion BLOCKED: manifest gate verdict = "
+                    f"{release_manifest.gate_verdict}"
+                )
+
             # Get candidate artifact hash for binding verification
+            # Use the same aggregate hash as ReleaseManifest (SHA-256 of
+            # sorted "name:file-sha256" lines) so binding checks match.
             cand_path = Path(self.state.candidate.model_path)
             if cand_path.is_file():
-                import hashlib as _hl
-                cand_hash = _hl.sha256(cand_path.read_bytes()).hexdigest()
+                from src.monitoring.release_manifest import artifact_set_hash
+                art = artifact_set_hash(cand_path.parent)
+                cand_hash = art["model_hash"] or ""
             else:
                 cand_hash = getattr(gate_decision, "candidate_artifact_hash", "")
 
@@ -232,6 +264,18 @@ class ModelRegistry:
             )
             if not ok:
                 raise RuntimeError(f"Promotion BLOCKED: {reason}")
+
+            # Verify manifest binds to the same artifact/token
+            bind_ok, bind_reason = release_manifest.verify_binding(
+                expected_artifact_hash=cand_hash,
+                expected_feature_version=getattr(
+                    gate_decision, "candidate_feature_version", ""
+                ),
+            )
+            if not bind_ok:
+                raise RuntimeError(
+                    f"Promotion BLOCKED: manifest {bind_reason}"
+                )
 
             self.state.candidate.status = "promoted"
             self.state.mode = "direct"

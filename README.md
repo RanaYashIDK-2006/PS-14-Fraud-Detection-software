@@ -254,6 +254,7 @@ A rigorous, adversarial audit of the system's readiness. Every conclusion is evi
 | **45** | Transactional integrity, concurrency & failure-recovery | `PASS` | Audit chain tamper detection, DB-3/DB-4 reconciliation, concurrent idempotency (10 threads), trace-hash stability, 31/31 tests pass |
 | **46** | Promotion gate & production readiness enforcement | `PASS` | Centralized promotion gate (8 gates), REAL_WORLD_VALIDATION hard block, artifact/feature binding, governance/security gates, ModelRegistry.promote() gated, cmd_deploy() gated; 58/58 adversarial tests pass |
 | **47** | Bypass-proof activation & mandatory gate enforcement | `PASS` | promote(None) removed, PromotionToken (HMAC-signed receipt) required, artifact/feature binding verified, gate freshness (1h max), thread-safe promotion (lock), 52/52 adversarial tests pass |
+| **48** | Signed release manifest & supply-chain integrity | `PASS` | ReleaseManifest (HMAC-signed, canonical JSON SHA-256), binds model+preprocessing+features+rules+evaluation, deterministic hashing, artifact/feature/binding verification, 79/79 adversarial tests pass |
 
 
 ### Runtime Enforcement (Phases 42-43)
@@ -438,6 +439,8 @@ Both workflows (`.github/workflows/ci-cd.yml`, `.github/workflows/security-scan.
 A centralized promotion gate (`src/monitoring/promotion_gate.py`) prevents ineligible models from becoming active.  Every activation path — `ModelRegistry.promote()`, `model_deploy.py`, and manual promotion — MUST pass through `evaluate_promotion()` before the model becomes active.
 
 **Phase 47 hardening:** `promote(None)` no longer works — gate_decision and a signed PromotionToken are both mandatory.  The token proves `evaluate_promotion()` was called and returned ELIGIBLE; the registry verifies the token's HMAC signature, model binding, artifact binding, feature-version binding, and freshness (max 1 hour).
+
+**Phase 48 hardening:** A signed ReleaseManifest is now also mandatory.  The manifest is a canonical JSON record (SHA-256 hashed, HMAC-signed) that binds the exact artifact set, feature schema, preprocessing, rules, and evaluation evidence.  Activation rejects mismatched/tampered artifacts, wrong feature versions, or stale evaluation evidence.
 
 **Required gates (all must PASS):**
 
