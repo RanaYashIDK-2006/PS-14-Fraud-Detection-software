@@ -78,6 +78,19 @@ from src.monitoring.runtime_enforcement import (
     get_expected_feature_count,
     get_expected_feature_names,
 )
+from src.monitoring.promotion_gate import (
+    GateStatus,
+    PromotionVerdict,
+    GateResult,
+    PromotionDecision,
+    PromotionBlockedError,
+    evaluate_promotion,
+    assert_promotion_allowed,
+    evaluate_real_world_validation,
+    evaluate_model_artifact_binding,
+    evaluate_governance_gates,
+    evaluate_security_gates,
+)
 
 __all__ = [
     # Existing
@@ -161,4 +174,16 @@ __all__ = [
     "get_feature_contract_version",
     "get_expected_feature_count",
     "get_expected_feature_names",
+    # Phase 46: promotion gate
+    "GateStatus",
+    "PromotionVerdict",
+    "GateResult",
+    "PromotionDecision",
+    "PromotionBlockedError",
+    "evaluate_promotion",
+    "assert_promotion_allowed",
+    "evaluate_real_world_validation",
+    "evaluate_model_artifact_binding",
+    "evaluate_governance_gates",
+    "evaluate_security_gates",
 ]

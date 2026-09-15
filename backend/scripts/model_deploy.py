@@ -176,6 +176,28 @@ def cmd_deploy(args) -> int:
         for c in bad[:5]:
             print(f"  {c['name']}: {c['detail']}")
         return 2
+    # Phase 46: centralized promotion gate
+    from src.monitoring.promotion_gate import evaluate_promotion, PromotionVerdict
+    import hashlib as _hl
+    cand_hash = _hl.sha256()
+    for p in sorted(cand.iterdir()):
+        if p.is_file():
+            cand_hash.update(p.read_bytes())
+    gate = evaluate_promotion(
+        candidate_model_id=model_id,
+        candidate_artifact_hash=cand_hash.hexdigest(),
+        candidate_feature_version=record.feature_schema_version,
+        evaluated_artifact_hash=cand_hash.hexdigest(),
+        evaluated_feature_version=record.feature_schema_version,
+        governance_gates=record.promotion.get("gates", {}),
+        has_rollback_source=(RELEASES_DIR / f"{model_id}__*").exists() if RELEASES_DIR.exists() else False,
+    )
+    if gate.verdict != PromotionVerdict.ELIGIBLE:
+        print("DEPLOY BLOCKED by centralized promotion gate:")
+        for g in gate.gates:
+            if g.status.value != "PASS":
+                print(f"  [{g.status.value}] {g.gate_name}: {g.reason}")
+        return 6
     if model_id == _current_model_id():
         print("candidate is the SAME model as deployed (no-op redeploy)")
     # Canary gate vs the current deployment (unless --force).

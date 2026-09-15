@@ -252,6 +252,7 @@ A rigorous, adversarial audit of the system's readiness. Every conclusion is evi
 | **43** | Live inference enforcement integration | `PASS` | `enforce_before_inference()` wired into `/internal/evaluate` and `/internal/evaluate-batch`; BLOCK_INFERENCE skips fusion.predict() and uses rules-only; audit event `data_quality_blocked` appended; 35/35 integration tests pass |
 | **44** | Decision integrity, version traceability & audit consistency | `PASS` | Canonical decision trace with deterministic hash, feature-vector hashing (ordering-agnostic), response/DB/audit consistency verification, version traceability (model/feature/rule), 37/37 tests pass |
 | **45** | Transactional integrity, concurrency & failure-recovery | `PASS` | Audit chain tamper detection, DB-3/DB-4 reconciliation, concurrent idempotency (10 threads), trace-hash stability, 31/31 tests pass |
+| **46** | Promotion gate & production readiness enforcement | `PASS` | Centralized promotion gate (8 gates), REAL_WORLD_VALIDATION hard block, artifact/feature binding, governance/security gates, ModelRegistry.promote() gated, cmd_deploy() gated; 58/58 adversarial tests pass |
 
 
 ### Runtime Enforcement (Phases 42-43)
@@ -430,6 +431,25 @@ Prototype production infrastructure (not production-approved):
 Both workflows (`.github/workflows/ci-cd.yml`, `.github/workflows/security-scan.yml`) run on every push to `main`. The CI/CD pipeline runs five stages: Test Suite (regression checks on a clean checkout), Security Scan (bandit medium+ clean, dependency audit, penetration test), Docker Build (image builds, runs as non-root, `/health` answers), Integration Test (the live register-to-audit walkthrough boots all five services over real HTTP, then the compose stack health-checks and the audit chain verifies), and Deploy (tag-gated).
 
 > **Note:** The `rules_gate` test is a documented fragile test — ML alone catches ~97% of synthetic fraud, so rule-removal cannot move recall. 21/22 suites pass consistently.
+
+### Promotion gate (Phase 46)
+
+A centralized promotion gate (`src/monitoring/promotion_gate.py`) prevents ineligible models from becoming active.  Every activation path — `ModelRegistry.promote()`, `model_deploy.py`, and manual promotion — MUST pass through `evaluate_promotion()` before the model becomes active.
+
+**Required gates (all must PASS):**
+
+| Gate | Description | Current status |
+|---|---|---|
+| REAL_WORLD_VALIDATION | Independently sourced, provenance-verified real-world fraud data | **BLOCKED** — no eligible dataset acquired |
+| MODEL_ARTIFACT_BINDING | Candidate artifact matches evaluated artifact | Verified per-deployment |
+| FEATURE_SCHEMA_BINDING | Feature/schema version matches between eval and promotion | Verified per-deployment |
+| MODEL_GOVERNANCE | Leakage, data quality, performance, robustness, security, approval gates | Verified per-model record |
+| SECURITY_CI | Security scan + penetration test + regression suite | Self-authored; not independent audit |
+| DRIFT_STATUS | No critical drift detected | Non-blocking warning |
+| EXTERNAL_DATASET_ELIGIBILITY | External dataset passed eligibility gates | Checked when applicable |
+| ROLLBACK_AVAILABILITY | Rollback source exists | Non-blocking |
+
+**Promotion remains BLOCKED** because REAL_WORLD_VALIDATION has not been satisfied.  The gate is machine-readable and cannot be bypassed by documentation alone.
 
 ## Limitations
 

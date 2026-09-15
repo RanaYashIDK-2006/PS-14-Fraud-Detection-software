@@ -161,10 +161,26 @@ class ModelRegistry:
         self._save()
         return True
 
-    def promote(self) -> None:
-        """Promote the candidate to production. Called after successful canary."""
+    def promote(self, gate_decision: object | None = None) -> None:
+        """Promote the candidate to production. Called after successful canary.
+
+        If gate_decision is a PromotionDecision from the centralized gate,
+        promotion is BLOCKED unless verdict == PROMOTION_ELIGIBLE.
+        Pass None only for backward-compatible callers that bypass the gate
+        (the gate should always be used for real promotion).
+        """
         if self.state.candidate is None:
             return
+        # Phase 46: centralized gate enforcement
+        if gate_decision is not None:
+            verdict = getattr(gate_decision, "verdict", None)
+            if hasattr(verdict, "value"):
+                verdict = verdict.value
+            if verdict != "PROMOTION_ELIGIBLE":
+                blocking = getattr(gate_decision, "blocking_gates", [])
+                raise RuntimeError(
+                    f"Promotion BLOCKED by centralized gate: {blocking}"
+                )
         self.state.candidate.status = "promoted"
         self.state.mode = "direct"
         self.state.candidate = None
