@@ -42,6 +42,7 @@ from src.risk_engine.reason_codes import REASON_CODE_TEXT  # noqa: F401 — re-e
 from src.risk_engine.rules_engine import RulesEngine
 from src.identity_service.security import verify_internal_token
 from src.middleware import apply_security_middleware
+from src.monitoring.runtime_enforcement import enforce_before_inference, EnforcementVerdict
 from src.settings import settings, load_dotenv_and_patch
 load_dotenv_and_patch()
 
@@ -559,6 +560,50 @@ def evaluate(
     # Record features into the runtime drift detector for sliding-window PSI.
     drift_detector.record(features)
 
+    # Phase 42/43: runtime decision-time enforcement.
+    # Validates feature contract, numerical robustness, ordering, freshness.
+    # BLOCK_INFERENCE: skip ML entirely, use rules-only (degraded).
+    enforcement = enforce_before_inference(features)
+    if enforcement.verdict == EnforcementVerdict.BLOCK_INFERENCE:
+        degraded = True
+        ml_score = 0.0
+        ml_weighted = 0.0
+        uncertainty = {"model_variance": 0.0, "model_disagreement": 0.0, "individual_outputs": {}}
+        rule = rules_engine.evaluate(features)
+        dec = _evaluate_decision(features, ml_score, ml_weighted, uncertainty,
+                                 degraded, False, rule)
+        score, band, decision = dec["score"], dec["band"], dec["decision"]
+        reason_codes = ["DATA_QUALITY_BLOCKED"] + dec["reason_codes"]
+        try:
+            db.add(m.RiskScore(
+                fraud_id=req.fraud_id, event_id=req.event_id,
+                risk_score=score, risk_band=band,
+                reason_codes=json.dumps(reason_codes),
+                model_version=model_version, ml_score=0.0,
+                rule_score=rule["score"], degraded=True,
+            ))
+            db.commit()
+        except Exception:
+            db.rollback()
+        background_tasks.add_task(
+            append_audit_event, req.fraud_id, "data_quality_blocked",
+            {"event_id": req.event_id, "verdict": enforcement.verdict.value,
+             "issues": enforcement.validation_issues + enforcement.numerical_issues,
+             "feature_version": FEATURE_VERSION},
+        )
+        _record_latency((_time.monotonic() - _t0) * 1000)
+        return {
+            "event_id": req.event_id, "fraud_id": req.fraud_id,
+            "risk_score": score, "risk_band": band, "decision": decision,
+            "reason_codes": reason_codes, "ml_score": 0.0,
+            "rule_score": rule["score"], "fired_rules": rule["fired_rules"],
+            "degraded": True, "calibrated": False, "odds": 0.0,
+            "limits": dec["limits"],
+            "uncertainty": {"model_variance": 0.0, "model_disagreement": 0.0, "confidence": "low"},
+            "feature_version": FEATURE_VERSION, "rule_version": RULE_VERSION,
+            "enforcement": enforcement.to_dict(),
+        }
+
     # Fail-safe policy: if ML fusion is unavailable (model error, corrupt
     # artifact) or the circuit breaker is open after repeated failures, the
     # evaluation falls back to the declarative rules and is tagged `degraded`
@@ -738,9 +783,53 @@ def evaluate_batch(
         else:
             to_score.append((idx, req))
 
-    # Phase 2: batch ML inference for new events
+    # Phase 2: enforcement + batch ML inference for new events
     if to_score:
         feature_dicts = [req.features.model_dump() for _, req in to_score]
+
+        # Phase 42/43: enforce before inference per event
+        enforcement_results = []
+        blocked_indices = set()
+        for batch_i, fd in enumerate(feature_dicts):
+            enf = enforce_before_inference(fd)
+            enforcement_results.append(enf)
+            if enf.verdict == EnforcementVerdict.BLOCK_INFERENCE:
+                blocked_indices.add(batch_i)
+                # Blocked event: rules-only, no ML
+                rule = rules_engine.evaluate(fd)
+                dec = _evaluate_decision(fd, 0.0, 0.0,
+                    {"model_variance": 0.0, "model_disagreement": 0.0},
+                    True, False, rule)
+                orig_idx, req = to_score[batch_i]
+                results[orig_idx] = {
+                    "event_id": req.event_id, "fraud_id": req.fraud_id,
+                    "risk_score": dec["score"], "risk_band": dec["band"],
+                    "decision": dec["decision"],
+                    "reason_codes": ["DATA_QUALITY_BLOCKED"] + dec["reason_codes"],
+                    "ml_score": 0.0, "rule_score": rule["score"],
+                    "fired_rules": rule["fired_rules"],
+                    "degraded": True, "calibrated": False,
+                    "enforcement": enf.to_dict(),
+                }
+                # Persist blocked result
+                try:
+                    db.add(m.RiskScore(
+                        fraud_id=req.fraud_id, event_id=req.event_id,
+                        risk_score=dec["score"], risk_band=dec["band"],
+                        reason_codes=json.dumps(["DATA_QUALITY_BLOCKED"] + dec["reason_codes"]),
+                        model_version=model_version, ml_score=0.0,
+                        rule_score=rule["score"], degraded=True,
+                    ))
+                    db.commit()
+                except Exception:
+                    db.rollback()
+
+        # Remove blocked events from scoring list
+        to_score_allowed = [(idx, req) for i, (idx, req) in enumerate(to_score)
+                            if i not in blocked_indices]
+        feature_dicts_allowed = [fd for i, fd in enumerate(feature_dicts)
+                                 if i not in blocked_indices]
+
         degraded = False
         try:
             # Use finance-enhanced prediction per-event (same as /evaluate)
@@ -766,18 +855,18 @@ def evaluate_batch(
                     uncertainties.append(u)
         except Exception:
             degraded = True
-            ml_scores = [0.0] * len(to_score)
-            ml_weighteds = [0.0] * len(to_score)
-            uncertainties = [{"model_variance": 0.0, "model_disagreement": 0.0}] * len(to_score)
+            ml_scores = [0.0] * len(to_score_allowed)
+            ml_weighteds = [0.0] * len(to_score_allowed)
+            uncertainties = [{"model_variance": 0.0, "model_disagreement": 0.0}] * len(to_score_allowed)
 
-        # Record features into drift detector
+        # Record features into drift detector (all feature dicts)
         for fd in feature_dicts:
             drift_detector.record(fd)
 
         for batch_idx, ((orig_idx, req), ml_s, ml_w, unc) in enumerate(
-            zip(to_score, ml_scores, ml_weighteds, uncertainties)
+            zip(to_score_allowed, ml_scores, ml_weighteds, uncertainties)
         ):
-            features = feature_dicts[batch_idx]
+            features = feature_dicts_allowed[batch_idx]
             rule = rules_engine.evaluate(features)
 
             # Drift fallback (same as single endpoint)
