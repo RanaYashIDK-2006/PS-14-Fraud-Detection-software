@@ -1,4 +1,4 @@
-"""Model monitoring, drift detection, and safeguards (Phase 40)."""
+"""Model monitoring, drift detection, data quality, and safeguards (Phases 40-41)."""
 from src.monitoring.drift_detector import DriftDetector, ReferenceDistribution, DriftReport
 from src.monitoring.drift_monitor import DriftMonitor, MonitoringStatus
 from src.monitoring.schema_drift import (
@@ -26,6 +26,49 @@ from src.monitoring.baseline_governance import (
     BaselineStatus,
     validate_baseline_source,
     create_baseline,
+)
+from src.monitoring.feature_contract import (
+    FeatureCategory,
+    FeatureStatus,
+    MissingPolicy,
+    FeatureSpec,
+    ML_FEATURE_CONTRACT,
+    ML_FEATURE_VERSION,
+    ML_FEATURE_ORDER,
+    validate_feature,
+    validate_feature_vector,
+    check_feature_ordering,
+    classify_decision_time_availability,
+)
+from src.monitoring.numerical_robustness import (
+    RobustnessResult,
+    safe_float,
+    clamp_value,
+    process_feature,
+    process_feature_vector,
+    has_rejections,
+    get_quality_summary,
+)
+from src.monitoring.feature_freshness import (
+    FreshnessStatus,
+    FreshnessResult,
+    FRESHNESS_REQUIREMENTS,
+    check_feature_freshness,
+    check_vector_freshness,
+    get_stale_features,
+)
+from src.monitoring.temporal_safeguards import (
+    TemporalCheckStatus,
+    TemporalCheckResult,
+    check_timestamp_safety,
+    check_timestamp_ordering,
+    check_rolling_feature_causality,
+    check_feature_causality,
+)
+from src.monitoring.data_quality import (
+    DataQualityStatus,
+    DataQualityReport,
+    assess_data_quality,
 )
 
 __all__ = [
@@ -65,4 +108,42 @@ __all__ = [
     "BaselineStatus",
     "validate_baseline_source",
     "create_baseline",
+    # Phase 41: feature contract
+    "FeatureCategory",
+    "FeatureStatus",
+    "MissingPolicy",
+    "FeatureSpec",
+    "ML_FEATURE_CONTRACT",
+    "ML_FEATURE_VERSION",
+    "ML_FEATURE_ORDER",
+    "validate_feature",
+    "validate_feature_vector",
+    "check_feature_ordering",
+    "classify_decision_time_availability",
+    # Phase 41: numerical robustness
+    "RobustnessResult",
+    "safe_float",
+    "clamp_value",
+    "process_feature",
+    "process_feature_vector",
+    "has_rejections",
+    "get_quality_summary",
+    # Phase 41: feature freshness
+    "FreshnessStatus",
+    "FreshnessResult",
+    "FRESHNESS_REQUIREMENTS",
+    "check_feature_freshness",
+    "check_vector_freshness",
+    "get_stale_features",
+    # Phase 41: temporal safeguards
+    "TemporalCheckStatus",
+    "TemporalCheckResult",
+    "check_timestamp_safety",
+    "check_timestamp_ordering",
+    "check_rolling_feature_causality",
+    "check_feature_causality",
+    # Phase 41: data quality gates
+    "DataQualityStatus",
+    "DataQualityReport",
+    "assess_data_quality",
 ]

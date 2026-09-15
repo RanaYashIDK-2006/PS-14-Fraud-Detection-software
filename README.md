@@ -249,6 +249,25 @@ A rigorous, adversarial audit of the system's readiness. Every conclusion is evi
 | **38** | External validation readiness | `IMPLEMENTED` | Dataset intake contract, 9 eligibility gates, causality audit, frozen-model evaluation, 8-gate promotion check; READY, blocked pending an eligible dataset |
 | **39** | Reproducible evaluation & statistical confidence | `IMPLEMENTED` | Immutable evaluation records (model/data hashes, git SHA, seeds); validation-only threshold discipline; bootstrap CIs withheld on small cells; single-source metric definitions; append-only ledger |
 | **40** | Model & data drift monitoring + post-deployment safeguards | `IMPLEMENTED` | Schema drift, feature-availability drift, prediction-score drift, alert hysteresis with dedup/cooldown, label-awareness (no fabricate outcomes), baseline governance, promotion/retraining safeguards; 57/57 tests pass |
+| **41** | Data quality, feature reliability & decision-time integrity | `IMPLEMENTED` | Feature contract (21 features, classification, validation rules), numerical robustness (NaN/Inf/clamp), missing-data policy (MISSING != ZERO != NOT_APPLICABLE), feature freshness, temporal leakage safeguards, data quality gates (OK/WARNING/BLOCKED); 59/59 tests pass |
+
+### Data Quality & Feature Integrity (Phase 41)
+
+Decision-time feature validity is enforced through a multi-layer pipeline that runs before inference:
+
+**Feature contract:** Each of the 21 ML features has a defined datatype, valid range, missing policy, and category (transaction-derived, historical/behavioral, device/channel, aggregated). Label-derived and future/post-event features are explicitly blocked from decision-time use.
+
+**Numerical robustness:** NaN, +Infinity, -Infinity are caught and handled per feature policy (reject, use_neutral, use_imputed, fail_closed). Values outside valid ranges are clamped. `MISSING` is never silently conflated with `ZERO` — each feature documents its own missing-data behavior.
+
+**Feature freshness:** Time-sensitive features (velocity counts, rolling aggregates) have explicit maximum-age requirements. Stale features are flagged before they can silently appear current.
+
+**Temporal leakage safeguards:** Rolling/aggregate features are verified to use only events at or before the transaction time. Future events cannot contaminate historical feature values. Naive/aware datetime mismatches are caught.
+
+**Data quality gates:** A unified `assess_data_quality()` function combines contract validation, numerical robustness, freshness, and temporal checks into a single OK/WARNING/BLOCKED status. Blocked vectors are rejected; warning vectors are flagged but allowed.
+
+```
+python backend/scripts/phase41_quality_test.py   # 59 tests
+```
 
 ### Drift Monitoring & Post-Deployment Safeguards (Phase 40)
 
