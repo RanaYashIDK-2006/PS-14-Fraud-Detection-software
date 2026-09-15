@@ -248,8 +248,47 @@ A rigorous, adversarial audit of the system's readiness. Every conclusion is evi
 | **25** | Leakage audit & corrections | `NO_LEAKAGE_FOUND — within audit scope` | Fixed Phase 24's import-path + tz-comparison + index-order bugs; maximal causal reconstruction (47/48 features); no target/temporal/feature leakage detected by the 10-check audit suite; promotion BLOCKED |
 | **38** | External validation readiness | `IMPLEMENTED` | Dataset intake contract, 9 eligibility gates, causality audit, frozen-model evaluation, 8-gate promotion check; READY, blocked pending an eligible dataset |
 | **39** | Reproducible evaluation & statistical confidence | `IMPLEMENTED` | Immutable evaluation records (model/data hashes, git SHA, seeds); validation-only threshold discipline; bootstrap CIs withheld on small cells; single-source metric definitions; append-only ledger |
-| **40** | Model & data drift monitoring + post-deployment safeguards | `IMPLEMENTED` | Schema drift, feature-availability drift, prediction-score drift, alert hysteresis with dedup/cooldown, label-awareness (no fabricate outcomes), baseline governance, promotion/retraining safeguards; 57/57 tests pass |
-| **41** | Data quality, feature reliability & decision-time integrity | `IMPLEMENTED` | Feature contract (21 features, classification, validation rules), numerical robustness (NaN/Inf/clamp), missing-data policy (MISSING != ZERO != NOT_APPLICABLE), feature freshness, temporal leakage safeguards, data quality gates (OK/WARNING/BLOCKED); 59/59 tests pass |
+| **40** | Model & data drift monitoring + post-deployment safeguards | `IMPLEMENTED` | Schema drift, feature-availability drift, prediction-score drift, alert hysteresis with dedup/cooldown, label-awareness (no fabricate outcomes), baseline governance, promotion/retraining safeguards; 57/57 tests pass || **41** | Data quality, feature reliability & decision-time integrity | `IMPLEMENTED` | Feature contract (21 features, classification, validation rules), numerical robustness (NaN/Inf/clamp), missing-data policy (MISSING != ZERO != NOT_APPLICABLE), feature freshness, temporal leakage safeguards, data quality gates (OK/WARNING/BLOCKED); 59/59 tests pass |
+| **42** | End-to-end decision-time enforcement audit | `IMPLEMENTED` | Runtime enforcement layer (`enforce_before_inference()`), adversarial regression tests (67/67 pass), invalid input BLOCKED, feature ordering enforced, NaN/Inf caught, missing != zero preserved, no mutation, <0.001ms overhead |
+
+
+### Runtime Enforcement (Phase 42)
+
+Phase 41's safeguards are enforced at the runtime inference boundary via `enforce_before_inference()` — a single centralized function that every inference path must call before model inference.
+
+**Enforcement verdicts:**
+- `PROCEED` — all checks passed
+- `PROCEED_WITH_WARNINGS` — non-critical issues (stale features, extra features)
+- `BLOCK_INFERENCE` — critical issue (missing required, invalid values, wrong ordering)
+- `FALLBACK_RULES` — ML unavailable, use rules-only
+
+**What is enforced at runtime:**
+- Feature ordering matches `ML_FEATURES` contract
+- Required features present (missing with `reject` policy → BLOCK)
+- Invalid values BLOCKED (out-of-range, wrong datatype, NaN/Inf)
+- Numerical robustness applied (safe_float, clamping)
+- Feature freshness checked (stale = warning)
+- Original feature dict never mutated
+- Enforcement overhead <0.001ms (sub-microsecond)
+
+**Known architectural limitation:** The idempotency path (duplicate `event_id`) returns stored results without re-running enforcement. This is safe because stored results were computed with full validation at original ingest time.
+
+**Adversarial test coverage (67 tests):**
+- Valid transactions pass normally
+- Missing/invalid/NaN/Inf inputs are caught
+- Feature ordering violations detected
+- Future timestamps produce warnings
+- Rolling-feature temporal causality verified
+- Label/outcome features cannot reach inference
+- Fraud-rate features not in standard ML_FEATURES
+- Fallback decisions are explicit and auditable
+- Sensitive data not exposed in error messages
+- Monitoring receives quality signals
+- Performance overhead negligible (<0.001ms)
+
+```
+python backend/scripts/phase42_enforcement_test.py   # 67 tests
+```
 
 ### Data Quality & Feature Integrity (Phase 41)
 

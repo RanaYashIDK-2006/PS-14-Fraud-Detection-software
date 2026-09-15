@@ -70,6 +70,14 @@ from src.monitoring.data_quality import (
     DataQualityReport,
     assess_data_quality,
 )
+from src.monitoring.runtime_enforcement import (
+    EnforcementVerdict,
+    EnforcementResult,
+    enforce_before_inference,
+    get_feature_contract_version,
+    get_expected_feature_count,
+    get_expected_feature_names,
+)
 
 __all__ = [
     # Existing
@@ -146,4 +154,11 @@ __all__ = [
     "DataQualityStatus",
     "DataQualityReport",
     "assess_data_quality",
+    # Phase 42: runtime enforcement
+    "EnforcementVerdict",
+    "EnforcementResult",
+    "enforce_before_inference",
+    "get_feature_contract_version",
+    "get_expected_feature_count",
+    "get_expected_feature_names",
 ]
