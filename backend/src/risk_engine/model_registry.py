@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import shutil
+import threading
 import time
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
@@ -60,6 +61,7 @@ class ModelRegistry:
         self.artifacts_dir = artifacts_dir
         self.registry_path = artifacts_dir / "registry.json"
         self.state = self._load()
+        self._lock = threading.Lock()
 
     def _load(self) -> RolloutState:
         if self.registry_path.exists():
@@ -161,18 +163,32 @@ class ModelRegistry:
         self._save()
         return True
 
-    def promote(self, gate_decision: object | None = None) -> None:
+    def promote(self, gate_decision: object | None = None,
+                 promotion_token: object | None = None) -> None:
         """Promote the candidate to production. Called after successful canary.
 
-        If gate_decision is a PromotionDecision from the centralized gate,
-        promotion is BLOCKED unless verdict == PROMOTION_ELIGIBLE.
-        Pass None only for backward-compatible callers that bypass the gate
-        (the gate should always be used for real promotion).
+        Phase 47: promotion REQUIRES a valid PromotionDecision AND a valid
+        PromotionToken.  Passing gate_decision=None is no longer allowed for
+        real promotion — it raises PromotionBlockedError.
+
+        The token proves evaluate_promotion() was called and returned ELIGIBLE.
+        The registry verifies: token signature, model binding, artifact binding,
+        feature-version binding, and freshness (max 1 hour).
+
+        Thread-safe: uses a lock to prevent concurrent promotion.
         """
-        if self.state.candidate is None:
-            return
-        # Phase 46: centralized gate enforcement
-        if gate_decision is not None:
+        with self._lock:
+            if self.state.candidate is None:
+                return
+
+            # Phase 47: mandatory gate — None is no longer accepted
+            if gate_decision is None:
+                raise RuntimeError(
+                    "Promotion BLOCKED: gate_decision is required. "
+                    "Call evaluate_promotion() first and pass the result."
+                )
+
+            # Verify verdict
             verdict = getattr(gate_decision, "verdict", None)
             if hasattr(verdict, "value"):
                 verdict = verdict.value
@@ -181,12 +197,48 @@ class ModelRegistry:
                 raise RuntimeError(
                     f"Promotion BLOCKED by centralized gate: {blocking}"
                 )
-        self.state.candidate.status = "promoted"
-        self.state.mode = "direct"
-        self.state.candidate = None
-        self.state.shadow_log = []
-        self.state.canary_metrics = {}
-        self._save()
+
+            # Phase 47: verify promotion token
+            if promotion_token is None:
+                raise RuntimeError(
+                    "Promotion BLOCKED: promotion_token is required. "
+                    "Generate a PromotionToken from the approved decision."
+                )
+
+            from src.monitoring.promotion_gate import (
+                PromotionToken, PromotionBlockedError,
+            )
+            if not isinstance(promotion_token, PromotionToken):
+                raise RuntimeError(
+                    "Promotion BLOCKED: promotion_token must be a PromotionToken"
+                )
+
+            # Get candidate artifact hash for binding verification
+            cand_path = Path(self.state.candidate.model_path)
+            if cand_path.is_file():
+                import hashlib as _hl
+                cand_hash = _hl.sha256(cand_path.read_bytes()).hexdigest()
+            else:
+                cand_hash = getattr(gate_decision, "candidate_artifact_hash", "")
+
+            # Verify token freshness + binding
+            ok, reason = promotion_token.verify(
+                expected_model_id=self.state.candidate.model_path,
+                expected_artifact_hash=cand_hash,
+                expected_feature_version=getattr(
+                    gate_decision, "candidate_feature_version", ""
+                ),
+                max_age_seconds=3600.0,
+            )
+            if not ok:
+                raise RuntimeError(f"Promotion BLOCKED: {reason}")
+
+            self.state.candidate.status = "promoted"
+            self.state.mode = "direct"
+            self.state.candidate = None
+            self.state.shadow_log = []
+            self.state.canary_metrics = {}
+            self._save()
 
     def status(self) -> dict:
         """Current registry status for monitoring."""

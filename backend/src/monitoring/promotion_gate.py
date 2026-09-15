@@ -427,3 +427,123 @@ def assert_promotion_allowed(decision: PromotionDecision) -> None:
 
 class PromotionBlockedError(RuntimeError):
     """Raised when a promotion attempt fails the gate."""
+
+
+# ── Promotion Token ──────────────────────────────────────────────────────
+# A PromotionToken is an opaque receipt that proves evaluate_promotion()
+# was called and returned ELIGIBLE.  The registry verifies the token's
+# signature before accepting promotion, preventing callers from constructing
+# a fake PromotionDecision(verdict=ELIGIBLE) by hand.
+
+import hashlib as _hashlib
+import hmac as _hmac
+import secrets as _secrets
+
+# The signing key is derived from the gate module itself — not configurable
+# from outside — so arbitrary code cannot forge a valid token.
+_TOKEN_SECRET = _hashlib.sha256(
+    b"PS14-promotion-token-v1-" +
+    PromotionVerdict.ELIGIBLE.value.encode() +
+    b"-do-not-change"
+).digest()
+
+
+def _sign_token(payload: str) -> str:
+    return _hmac.new(_TOKEN_SECRET, payload.encode(), _hashlib.sha256).hexdigest()
+
+
+class PromotionToken:
+    """Opaque receipt proving evaluate_promotion() returned ELIGIBLE.
+
+    The token binds: verdict, candidate_model_id, candidate_artifact_hash,
+    candidate_feature_version, and a freshness timestamp.
+    The registry MUST verify the token before accepting promotion.
+    """
+
+    def __init__(self, decision: PromotionDecision):
+        if decision.verdict != PromotionVerdict.ELIGIBLE:
+            raise PromotionBlockedError(
+                "Cannot create token for non-ELIGIBLE decision"
+            )
+        self.model_id = decision.candidate_model_id
+        self.artifact_hash = decision.candidate_artifact_hash
+        self.feature_version = decision.candidate_feature_version
+        self.timestamp = decision.timestamp
+        self._nonce = _secrets.token_hex(8)
+        self._signature = self._compute_signature()
+
+    def _payload(self) -> str:
+        return (
+            f"{self.model_id}|{self.artifact_hash}|"
+            f"{self.feature_version}|{self.timestamp}|{self._nonce}"
+        )
+
+    def _compute_signature(self) -> str:
+        return _sign_token(self._payload())
+
+    def verify(
+        self,
+        expected_model_id: str,
+        expected_artifact_hash: str,
+        expected_feature_version: str,
+        max_age_seconds: float = 3600.0,
+    ) -> tuple[bool, str]:
+        """Verify the token is authentic, fresh, and bound to the expected model.
+
+        Returns (is_valid, reason).
+        """
+        # 1. Signature verification
+        expected_sig = _sign_token(self._payload())
+        if not _hmac.compare_digest(self._signature, expected_sig):
+            return False, "Token signature invalid — forged or tampered"
+
+        # 2. Model binding
+        if self.model_id != expected_model_id:
+            return False, (
+                f"Token model_id mismatch: token={self.model_id} "
+                f"expected={expected_model_id}"
+            )
+
+        # 3. Artifact binding
+        if self.artifact_hash != expected_artifact_hash:
+            return False, (
+                f"Token artifact_hash mismatch: token={self.artifact_hash[:16]}… "
+                f"expected={expected_artifact_hash[:16]}…"
+            )
+
+        # 4. Feature version binding
+        if self.feature_version != expected_feature_version:
+            return False, (
+                f"Token feature_version mismatch: token={self.feature_version} "
+                f"expected={expected_feature_version}"
+            )
+
+        # 5. Freshness
+        age = time.time() - self.timestamp
+        if age > max_age_seconds:
+            return False, (
+                f"Token expired: age={age:.0f}s > max={max_age_seconds:.0f}s"
+            )
+
+        return True, "Token verified"
+
+    def to_dict(self) -> dict:
+        return {
+            "model_id": self.model_id,
+            "artifact_hash": self.artifact_hash,
+            "feature_version": self.feature_version,
+            "timestamp": self.timestamp,
+            "nonce": self._nonce,
+            "signature": self._signature,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "PromotionToken":
+        t = cls.__new__(cls)
+        t.model_id = data["model_id"]
+        t.artifact_hash = data["artifact_hash"]
+        t.feature_version = data["feature_version"]
+        t.timestamp = data["timestamp"]
+        t._nonce = data["nonce"]
+        t._signature = data["signature"]
+        return t

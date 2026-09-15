@@ -285,8 +285,8 @@ check("23a. NOT_EVALUATED when no record", g.status == GateStatus.NOT_EVALUATED)
 check("23b. blocking when not evaluated", g.blocking is True)
 
 
-# ── 24. Backward-compatible promote() without gate still works ───────────
-print("\n--- 24. Backward-compatible promote() without gate ---")
+# ── 24. promote() without gate is now BLOCKED (Phase 47) ──────────────────
+print("\n--- 24. promote() without gate is BLOCKED ---")
 with tempfile.TemporaryDirectory() as tmpdir:
     reg = ModelRegistry(Path(tmpdir))
     cand_path = Path(tmpdir) / "cand.joblib"
@@ -294,10 +294,13 @@ with tempfile.TemporaryDirectory() as tmpdir:
     meta_path = Path(tmpdir) / "cand_meta.json"
     meta_path.write_text('{"version": "test"}')
     reg.register_candidate(str(cand_path), str(meta_path))
-    # promote() without gate_decision = backward-compatible
-    reg.promote()  # should not raise
-    check("24a. promote() without gate succeeded", reg.state.candidate is None)
-    check("24b. mode is direct", reg.state.mode == "direct")
+    raised = False
+    try:
+        reg.promote()  # Phase 47: must fail without gate
+    except RuntimeError:
+        raised = True
+    check("24a. promote() without gate raises RuntimeError", raised)
+    check("24b. candidate not promoted", reg.state.candidate is not None)
 
 
 # ── 25. File save roundtrip ──────────────────────────────────────────────
