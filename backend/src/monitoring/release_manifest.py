@@ -170,9 +170,10 @@ class ReleaseManifest:
             return False, f"Artifact directory missing: {artifact_dir}"
         actual = artifact_set_hash(artifact_dir)
         if actual["model_hash"] != self.artifact_hash:
+            actual_str = actual['model_hash'][:16] if actual['model_hash'] else 'EMPTY'
             return False, (
                 f"Artifact hash mismatch: "
-                f"actual={actual['model_hash'][:16]}… "
+                f"actual={actual_str}… "
                 f"manifest={self.artifact_hash[:16]}…"
             )
         # Check individual files

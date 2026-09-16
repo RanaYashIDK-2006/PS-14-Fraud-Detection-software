@@ -178,10 +178,13 @@ def verify_release_for_load(
         failures.append(f"manifest_hash: {exc}")
         manifest_hash = ""
 
-    # 3. Gate verdict — only an approved release may load
-    if manifest.gate_verdict != "PROMOTION_ELIGIBLE":
+    # 3. Gate verdict — only an approved or attested release may load.
+    #    PROMOTION_ELIGIBLE = fully promoted; LEGACY_ATTESTED = legacy
+    #    artifact reconstructed from existing evidence (attestation ≠ promotion).
+    _ACCEPTED_VERDICTS = ("PROMOTION_ELIGIBLE", "LEGACY_ATTESTED")
+    if manifest.gate_verdict not in _ACCEPTED_VERDICTS:
         failures.append(
-            f"gate_verdict: {manifest.gate_verdict!r} != PROMOTION_ELIGIBLE"
+            f"gate_verdict: {manifest.gate_verdict!r} not in {_ACCEPTED_VERDICTS}"
         )
 
     # 4. Artifact-set verification (exact bytes on disk)
