@@ -43,6 +43,16 @@ from src.risk_engine.rules_engine import RulesEngine
 from src.identity_service.security import verify_internal_token
 from src.middleware import apply_security_middleware
 from src.monitoring.runtime_enforcement import enforce_before_inference, EnforcementVerdict
+from src.monitoring.runtime_attestation import (
+    RuntimeState,
+    RuntimeAttestation,
+    RELEASE_MANIFEST_FILENAME,
+    verify_release_for_load,
+    build_attestation,
+    detect_runtime_drift,
+    check_registry_runtime_consistency,
+    attestation_audit_payload,
+)
 from src.settings import settings, load_dotenv_and_patch
 load_dotenv_and_patch()
 
@@ -92,6 +102,19 @@ model_version: str
 severity_floor: int
 breaker = CircuitBreaker()
 drift_detector: DriftDetector = DriftDetector(baseline_path=None)
+
+# Phase 49: runtime release attestation — the verified identity of the
+# release actually loaded.  Derived from the signed ReleaseManifest +
+# artifact bytes, NEVER from env vars.  runtime_state gates inference
+# readiness: MODEL_NOT_READY / INCONSISTENT / DRIFTED / FAILED fail closed.
+attestation: RuntimeAttestation | None = None
+runtime_state: RuntimeState = RuntimeState.STARTING
+runtime_failures: list[str] = []
+
+
+def _rule_hash_of(rules_path: Path) -> str:
+    """Content hash of the live rule configuration (first 32 hex chars)."""
+    return hashlib.sha256(rules_path.read_bytes()).hexdigest()[:32]
 
 
 def _record_entity_rates(features: dict, is_fraud: bool) -> None:
@@ -157,35 +180,128 @@ async def lifespan(_app: FastAPI):
     if not settings.use_postgres:
         import src.verification_service.models  # noqa: F401 — register VerificationOutcome table
         m.Base.metadata.create_all(bind=engine)
+    # Phase 49: verify the release BEFORE loading it.  The ReleaseManifest
+    # (Phase 48) signed at promotion time is the authority; the artifact
+    # bytes on disk must match it exactly or the model is NOT loaded and
+    # the service reports MODEL_NOT_READY (health never claims model-ready).
+    global attestation, runtime_state, runtime_failures
+    runtime_state = RuntimeState.STARTING
+    runtime_failures = []
+    release_manifest_path = PRODUCTION_DIR / RELEASE_MANIFEST_FILENAME
+    _live_rule_hash = hashlib.sha256(RULES_PATH.read_bytes()).hexdigest()[:32]
+    manifest_obj = None
+    if release_manifest_path.exists():
+        try:
+            from src.monitoring.release_manifest import ReleaseManifest as _RM
+            manifest_obj = _RM.load(release_manifest_path)
+            _art_dir = PRODUCTION_DIR / "altman_native" if (PRODUCTION_DIR / "altman_native").is_dir() else PRODUCTION_DIR
+            ok, failures, _identity = verify_release_for_load(
+                manifest_obj,
+                _art_dir,
+                expected_rule_hash=_live_rule_hash,
+            )
+            if not ok:
+                runtime_state = RuntimeState.FAILED
+                runtime_failures = failures
+                fusion = None
+                attestation = None  # a failed release leaves NO attestation
+                print(
+                    f"[risk_engine] RELEASE VERIFICATION FAILED — model NOT loaded: "
+                    f"{failures}",
+                    file=sys.stderr,
+                )
+                try:
+                    append_audit_event(
+                        "SYSTEM", "runtime_release_verification_failed",
+                        attestation_audit_payload(None, runtime_state, failures),
+                    )
+                except Exception:  # noqa: BLE001 - audit must not block failure handling
+                    pass
+            else:
+                attestation = build_attestation(_identity, _art_dir)
+        except Exception as e:  # noqa: BLE001 - corrupted manifest file etc.
+            runtime_state = RuntimeState.FAILED
+            runtime_failures = [f"release_manifest: {e}"]
+            fusion = None
+            attestation = None  # a failed release leaves NO attestation
+            print(
+                f"[risk_engine] RELEASE MANIFEST UNREADABLE — model NOT loaded: {e}",
+                file=sys.stderr,
+            )
+    # No release manifest on disk: legacy/dev mode.  The model loads (the
+    # prototype stack has always run this way) but the attestation stays
+    # None (its module-level default) and health reports the runtime as NOT
+    # attested rather than claiming a verified identity it does not have.
+
     # Load model: production manifest decides. altman_native_v2 (48 native
     # features, real 24.4M-row Altman dataset) is served when the manifest
     # says native; otherwise the 21-feature causal ensemble; finally the
     # legacy FusionEngine fallback.
-    try:
-        manifest_path = PRODUCTION_DIR / "manifest.json"
-        native = False
-        if manifest_path.exists():
-            import json as _json
-            _m = _json.loads(manifest_path.read_text(encoding="utf-8"))
-            native = str(_m.get("model_type", "")) == "xgb_lgb_cb_native"
-        if native:
-            from src.risk_engine.altman_native_ensemble import AltmanNativeEnsembleEngine
-            fusion = AltmanNativeEnsembleEngine(PRODUCTION_DIR / "altman_native")
-            print(f"[risk_engine] Loaded Altman-NATIVE ensemble: {fusion.model_version}")
-        else:
-            xgb_prod = PRODUCTION_DIR / "xgb_production.joblib"
-            lgb_prod = PRODUCTION_DIR / "lgb_production.joblib"
-            if xgb_prod.exists() and lgb_prod.exists():
-                from src.risk_engine.altman_ensemble import AltmanEnsembleEngine
-                fusion = AltmanEnsembleEngine(PRODUCTION_DIR)
-                print(f"[risk_engine] Loaded Altman ensemble: {fusion.model_version}")
+    if runtime_state != RuntimeState.FAILED:
+        try:
+            manifest_path = PRODUCTION_DIR / "manifest.json"
+            native = False
+            if manifest_path.exists():
+                import json as _json
+                _m = _json.loads(manifest_path.read_text(encoding="utf-8"))
+                native = str(_m.get("model_type", "")) == "xgb_lgb_cb_native"
+            if native:
+                from src.risk_engine.altman_native_ensemble import AltmanNativeEnsembleEngine
+                fusion = AltmanNativeEnsembleEngine(PRODUCTION_DIR / "altman_native")
+                print(f"[risk_engine] Loaded Altman-NATIVE ensemble: {fusion.model_version}")
             else:
-                fusion = FusionEngine(ARTIFACTS_DIR)
-                print(f"[risk_engine] Loaded PS-14 FusionEngine")
-    except Exception as e:
-        print(f"[risk_engine] FAILED to load model: {e}", file=sys.stderr)
-        import traceback; traceback.print_exc(file=sys.stderr)
-        fusion = None
+                xgb_prod = PRODUCTION_DIR / "xgb_production.joblib"
+                lgb_prod = PRODUCTION_DIR / "lgb_production.joblib"
+                if xgb_prod.exists() and lgb_prod.exists():
+                    from src.risk_engine.altman_ensemble import AltmanEnsembleEngine
+                    fusion = AltmanEnsembleEngine(PRODUCTION_DIR)
+                    print(f"[risk_engine] Loaded Altman ensemble: {fusion.model_version}")
+                else:
+                    fusion = FusionEngine(ARTIFACTS_DIR)
+                    print(f"[risk_engine] Loaded PS-14 FusionEngine")
+        except Exception as e:
+            print(f"[risk_engine] FAILED to load model: {e}", file=sys.stderr)
+            import traceback; traceback.print_exc(file=sys.stderr)
+            fusion = None
+            runtime_state = RuntimeState.FAILED
+            runtime_failures = [f"model_load: {e}"]
+
+    # Post-load: verify the loaded state and set the final runtime state.
+    if runtime_state == RuntimeState.STARTING:
+        if fusion is None:
+            runtime_state = RuntimeState.MODEL_NOT_READY
+            runtime_failures = ["model_load: no model available"]
+        elif attestation is not None:
+            # Verify loaded-model identity where technically possible: the
+            # attestation carries the verified artifact hash of the exact
+            # bytes verified pre-load; joblib objects have no stable post-load
+            # hash, so identity rests on verified bytes + controlled loading
+            # (documented limitation).  Confirm the on-disk state one more
+            # time right after load to catch a racing mutation.
+            drift_state, drift_reasons = detect_runtime_drift(attestation, Path(attestation.artifact_dir))
+            if drift_state == RuntimeState.DRIFTED:
+                runtime_state = RuntimeState.DRIFTED
+                runtime_failures = drift_reasons
+                fusion = None  # fail closed: drift after verification
+            else:
+                runtime_state = RuntimeState.READY
+                try:
+                    append_audit_event(
+                        "SYSTEM", "runtime_release_loaded",
+                        attestation_audit_payload(attestation, runtime_state),
+                    )
+                except Exception:  # noqa: BLE001
+                    pass
+        else:
+            runtime_state = RuntimeState.READY  # legacy/dev: no manifest, model loaded
+            attestation = None
+    try:
+        append_audit_event(
+            "SYSTEM", "runtime_attestation_state",
+            attestation_audit_payload(attestation, runtime_state, runtime_failures),
+        )
+    except Exception:  # noqa: BLE001 - audit must never block startup
+        pass
     cfg = yaml.safe_load(RULES_PATH.read_text(encoding="utf-8"))
     rules_engine = RulesEngine(cfg["rules"], severity_scale=float(cfg.get("severity_scale", 1.0)))
     velocity_limits_cfg = cfg.get("velocity_limits")
@@ -560,6 +676,53 @@ def evaluate(
     # Record features into the runtime drift detector for sliding-window PSI.
     drift_detector.record(features)
 
+    # Phase 49: fail closed when the loaded release is not verified and
+    # consistent.  A drifted/inconsistent/failed runtime state means the
+    # model in memory can no longer be proven to be the approved release —
+    # fall back to rules-only (degraded), never serve normal ML inference.
+    if runtime_state not in (RuntimeState.READY, RuntimeState.STARTING):
+        degraded = True
+        ml_score = 0.0
+        ml_weighted = 0.0
+        uncertainty = {"model_variance": 0.0, "model_disagreement": 0.0, "individual_outputs": {}}
+        rule = rules_engine.evaluate(features)
+        dec = _evaluate_decision(features, ml_score, ml_weighted, uncertainty,
+                                 degraded, False, rule)
+        score, band, decision = dec["score"], dec["band"], dec["decision"]
+        reason_codes = ["RUNTIME_RELEASE_UNVERIFIED"] + dec["reason_codes"]
+        try:
+            db.add(m.RiskScore(
+                fraud_id=req.fraud_id, event_id=req.event_id,
+                risk_score=score, risk_band=band,
+                reason_codes=json.dumps(reason_codes),
+                model_version=model_version, ml_score=0.0,
+                rule_score=rule["score"], degraded=True,
+            ))
+            db.commit()
+        except Exception:
+            db.rollback()
+        background_tasks.add_task(
+            append_audit_event, req.fraud_id, "runtime_release_unverified",
+            {"event_id": req.event_id, "runtime_state": runtime_state.value,
+             "failures": list(runtime_failures)[:20],
+             "feature_version": FEATURE_VERSION,
+             "risk_score": score, "risk_band": band, "decision": decision,
+             "reason_codes": reason_codes,
+             "rule_score": rule["score"], "degraded": True},
+        )
+        _record_latency((_time.monotonic() - _t0) * 1000)
+        return {
+            "event_id": req.event_id, "fraud_id": req.fraud_id,
+            "risk_score": score, "risk_band": band, "decision": decision,
+            "reason_codes": reason_codes, "ml_score": 0.0,
+            "rule_score": rule["score"], "fired_rules": rule["fired_rules"],
+            "degraded": True, "calibrated": False, "odds": 0.0,
+            "limits": dec["limits"],
+            "uncertainty": {"model_variance": 0.0, "model_disagreement": 0.0, "confidence": "low"},
+            "feature_version": FEATURE_VERSION, "rule_version": RULE_VERSION,
+            "runtime_state": runtime_state.value,
+        }
+
     # Phase 42/43: runtime decision-time enforcement.
     # Validates feature contract, numerical robustness, ordering, freshness.
     # BLOCK_INFERENCE: skip ML entirely, use rules-only (degraded).
@@ -589,7 +752,14 @@ def evaluate(
             append_audit_event, req.fraud_id, "data_quality_blocked",
             {"event_id": req.event_id, "verdict": enforcement.verdict.value,
              "issues": enforcement.validation_issues + enforcement.numerical_issues,
-             "feature_version": FEATURE_VERSION},
+             "feature_version": FEATURE_VERSION,
+             # Phase 49: the blocked path still produces a rules-only decision —
+             # record it (incl. reason codes) so the decision is fully
+             # traceable from the audit trail and the compliance card can
+             # join the case with its actual decision.
+             "risk_score": score, "risk_band": band, "decision": decision,
+             "reason_codes": reason_codes,
+             "rule_score": rule["score"], "degraded": True},
         )
         _record_latency((_time.monotonic() - _t0) * 1000)
         return {
@@ -614,7 +784,8 @@ def evaluate(
     ml_score = 0.0
     ml_weighted = 0.0  # XGB+RF ensemble for precision-first scoring
     uncertainty = {"model_variance": 0.0, "model_disagreement": 0.0, "individual_outputs": {}}
-    if breaker.allow():
+    # Phase 49: normal ML inference only from a READY (verified) runtime.
+    if breaker.allow() and runtime_state == RuntimeState.READY:
         try:
             # Use finance-enhanced prediction for micro-fraud/subscription detection
             if fusion._has_finance_model:
@@ -689,6 +860,12 @@ def evaluate(
     )
 
     # Audit trail (DB-4): off the critical path via background task.
+    # Phase 49: bind the audit event to the runtime release identity so a
+    # decision is traceable: decision -> runtime release -> manifest ->
+    # artifact -> evaluation evidence -> promotion authorization.
+    _runtime_release_binding = (
+        attestation.attestation_hash() if attestation is not None else None
+    )
     background_tasks.add_task(
         append_audit_event,
         req.fraud_id, "score_generated",
@@ -702,6 +879,10 @@ def evaluate(
             "model_disagreement": uncertainty["model_disagreement"],
             "escalation_reason": dec["escalation_reason"],
             "drift_state": drift_detector.state,
+            "runtime_state": runtime_state.value,
+            "runtime_release_id": attestation.release_id if attestation else None,
+            "runtime_manifest_hash": attestation.manifest_hash if attestation else None,
+            "runtime_attestation_hash": _runtime_release_binding,
         },
     )
 
@@ -995,7 +1176,23 @@ def drift_status(
 
 @app.get("/health")
 def health():
-    """Health check with DB connectivity verification."""
+    """Health check with DB connectivity and Phase 49 runtime attestation.
+
+    (see full docstring below)
+    """
+    return _health_impl()
+
+
+def _health_impl():
+    """Health check with DB connectivity and Phase 49 runtime attestation.
+
+    Phase 49 semantics: process alive != model ready.  The service reports
+    "ok" only when the DB is reachable AND the loaded release is verified
+    and consistent.  A failed verification, drifted artifact set, or
+    registry/runtime mismatch reports degraded with model != ok so
+    orchestration can distinguish liveness from inference readiness.
+    """
+    global runtime_state, runtime_failures, fusion
     db_ok = True
     model_ok = True
     try:
@@ -1009,6 +1206,17 @@ def health():
             model_ok = False
     except Exception:
         model_ok = False
+    # Phase 49: post-load drift surveillance — fail closed on artifact drift.
+    if model_ok and attestation is not None:
+        drift_state, drift_reasons = detect_runtime_drift(
+            attestation, Path(attestation.artifact_dir)
+        )
+        if drift_state == RuntimeState.DRIFTED:
+            model_ok = False
+            if runtime_state != RuntimeState.DRIFTED:
+                runtime_state = RuntimeState.DRIFTED
+                runtime_failures = drift_reasons
+                fusion = None  # stop serving inference from drifted artifacts
     status = "ok" if db_ok and model_ok else "degraded"
     return {
         "status": status,
@@ -1016,7 +1224,34 @@ def health():
         "started_at": STARTED_AT,
         "db": "ok" if db_ok else "error",
         "model": "ok" if model_ok else "error",
+        "runtime_state": runtime_state.value,
+        "release_attested": attestation is not None,
     }
+
+
+@app.get("/internal/release-attestation", include_in_schema=False)
+def release_attestation(
+    x_internal_token: str = Header(alias="X-Internal-Token"),
+):
+    """Phase 49: read-only runtime release attestation.
+
+    Exposes the verified identity of the release actually loaded into THIS
+    process — derived from the signed ReleaseManifest + artifact bytes, not
+    from environment variables.  No secrets, no HMAC keys, no model
+    internals.  Requires the internal token like every other /internal/*
+    endpoint.
+    """
+    if not verify_internal_token(x_internal_token):
+        raise HTTPException(status_code=401, detail="invalid internal token")
+    body: dict = {
+        "runtime_state": runtime_state.value,
+        "ready": runtime_state == RuntimeState.READY,
+        "attested": attestation is not None,
+        "failures": list(runtime_failures)[:20],
+    }
+    if attestation is not None:
+        body["attestation"] = attestation.to_safe_dict()
+    return body
 
 
 # ── Latency SLO monitoring ──────────────────────────────────────────

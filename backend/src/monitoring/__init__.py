@@ -97,6 +97,16 @@ from src.monitoring.release_manifest import (
     create_release_manifest,
     artifact_set_hash,
 )
+from src.monitoring.runtime_attestation import (
+    RuntimeState,
+    RuntimeAttestation,
+    verify_release_for_load,
+    build_attestation,
+    detect_runtime_drift,
+    check_registry_runtime_consistency,
+    attestation_audit_payload,
+    RELEASE_MANIFEST_FILENAME,
+)
 
 __all__ = [
     # Existing
@@ -197,4 +207,13 @@ __all__ = [
     "ReleaseManifest",
     "create_release_manifest",
     "artifact_set_hash",
+    # Phase 49: runtime attestation
+    "RuntimeState",
+    "RuntimeAttestation",
+    "verify_release_for_load",
+    "build_attestation",
+    "detect_runtime_drift",
+    "check_registry_runtime_consistency",
+    "attestation_audit_payload",
+    "RELEASE_MANIFEST_FILENAME",
 ]

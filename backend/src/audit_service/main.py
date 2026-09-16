@@ -251,6 +251,28 @@ def _latest_case(db: Session) -> dict | None:
             if sp.get("event_id") == event_id:
                 score = {"risk_band": sp.get("risk_band"), "risk_score": sp.get("risk_score")}
                 break
+        if score is None:
+            # Phase 49: the evaluation may have been data-quality blocked or
+            # served from an unverified runtime — those events carry the
+            # resulting rules-only decision, so the card can still tell the
+            # whole story instead of showing a case with no decision.
+            for s in (
+                db.query(m.AuditEvent)
+                .filter(
+                    m.AuditEvent.event_type.in_(
+                        ["data_quality_blocked", "runtime_release_unverified"]),
+                    m.AuditEvent.fraud_id == row.fraud_id,
+                )
+                .order_by(desc(m.AuditEvent.seq))
+                .all()
+            ):
+                try:
+                    sp = json.loads(s.payload_summary)
+                except (json.JSONDecodeError, TypeError, ValueError):
+                    continue
+                if sp.get("event_id") == event_id:
+                    score = {"risk_band": sp.get("risk_band"), "risk_score": sp.get("risk_score")}
+                    break
     return {
         "case_id": payload.get("case_id"),
         "outcome": payload.get("outcome"),

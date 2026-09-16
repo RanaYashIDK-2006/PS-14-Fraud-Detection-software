@@ -21,4 +21,9 @@ REASON_CODE_TEXT = {
     "UNCERTAINTY_ESCALATION": "Low model confidence escalated to verify",
     "UNCERTAINTY_INVESTIGATION": "Low model confidence flagged for investigation",
     "DOMAIN_SHIFT": "Features outside expected training range — domain compatibility uncertain",
+    # System-level codes (degraded/blocked paths). These are category-level
+    # explanations, not model internals - safe for users, and required so the
+    # verification/audit UIs render text instead of the raw code.
+    "ML_UNAVAILABLE": "Automated model scoring was unavailable — decision based on standard rule checks",
+    "DATA_QUALITY_BLOCKED": "Transaction data did not pass integrity checks — model scoring withheld",
 }

@@ -58,9 +58,12 @@ def main() -> int:
         check("landing page 200", r.status_code == 200, f"status={r.status_code}")
         check("landing page is the PS-14 front page",
               "<title>PS-14" in r.text and "Privacy-First" in r.text)
-        # The landing page is the report-style PS-14 page; the live service
-        # status surface is the /monitor page (which consumes /status).
-        check("landing page links to the status monitor", "/monitor" in r.text, "monitor link")
+        # The landing page deliberately does NOT link /monitor-page: monitor
+        # and fraud-report are admin-only (commit 18ea5af — reachable via the
+        # secret triple-click + passphrase flow). Assert the intentional
+        # absence instead of a stale link expectation.
+        check("landing page does not expose the admin monitor link", "/monitor-page" not in r.text,
+              "monitor link leaked to public page")
 
         h = c.get("/health")
         check("health ok", h.status_code == 200 and h.json().get("service") == "front-page",

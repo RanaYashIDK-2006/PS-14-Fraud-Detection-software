@@ -255,6 +255,7 @@ A rigorous, adversarial audit of the system's readiness. Every conclusion is evi
 | **46** | Promotion gate & production readiness enforcement | `PASS` | Centralized promotion gate (8 gates), REAL_WORLD_VALIDATION hard block, artifact/feature binding, governance/security gates, ModelRegistry.promote() gated, cmd_deploy() gated; 58/58 adversarial tests pass |
 | **47** | Bypass-proof activation & mandatory gate enforcement | `PASS` | promote(None) removed, PromotionToken (HMAC-signed receipt) required, artifact/feature binding verified, gate freshness (1h max), thread-safe promotion (lock), 52/52 adversarial tests pass |
 | **48** | Signed release manifest & supply-chain integrity | `PASS` | ReleaseManifest (HMAC-signed, canonical JSON SHA-256), binds model+preprocessing+features+rules+evaluation, deterministic hashing, artifact/feature/binding verification, 79/79 adversarial tests pass |
+| **49** | Runtime release attestation, deployment integrity & active-model drift | `PASS` | Pre-load release verification in the risk-engine lifespan (manifest hash/signature/artifact-set/component bindings/gate verdict), runtime attestation endpoint (`/internal/release-attestation`), fail-closed runtime states (STARTING/READY/MODEL_NOT_READY/INCONSISTENT/DRIFTED/FAILED), post-load drift surveillance in /health, inference gated on READY, DecisionTrace/audit bound to runtime release identity, blocked decisions carry the rules-only decision in the audit trail; 63/63 tests pass + live HTTP evidence |
 
 
 ### Runtime Enforcement (Phases 42-43)
@@ -441,6 +442,16 @@ A centralized promotion gate (`src/monitoring/promotion_gate.py`) prevents ineli
 **Phase 47 hardening:** `promote(None)` no longer works — gate_decision and a signed PromotionToken are both mandatory.  The token proves `evaluate_promotion()` was called and returned ELIGIBLE; the registry verifies the token's HMAC signature, model binding, artifact binding, feature-version binding, and freshness (max 1 hour).
 
 **Phase 48 hardening:** A signed ReleaseManifest is now also mandatory.  The manifest is a canonical JSON record (SHA-256 hashed, HMAC-signed) that binds the exact artifact set, feature schema, preprocessing, rules, and evaluation evidence.  Activation rejects mismatched/tampered artifacts, wrong feature versions, or stale evaluation evidence.
+
+**Phase 49 hardening (runtime attestation):** The invariant now extends to the running service:
+
+    APPROVED RELEASE == DEPLOYED RELEASE == LOADED RELEASE == INFERENCE RELEASE
+
+The risk engine's lifespan **verifies the release before loading it**: it discovers the ReleaseManifest (`models/production/release_manifest.json`), verifies the canonical manifest hash, the HMAC signature, the aggregate artifact-set hash against the exact bytes on disk, the component bindings (feature/schema/preprocessing/rule/evaluation), and the gate verdict — all BEFORE the model is deserialized.  If any check fails, the model is NOT loaded, no runtime attestation is published, health reports `model: error` / `runtime_state: FAILED`, and a `runtime_release_verification_failed` audit event is appended.  Normal ML inference is gated on `runtime_state == READY`; any other state (MODEL_NOT_READY / INCONSISTENT / DRIFTED / FAILED) fail-closes to rules-only degraded decisions tagged `RUNTIME_RELEASE_UNVERIFIED`.
+
+After load, `/health` re-checks the artifact set on every call (post-load drift surveillance): a file replaced after startup flips the state to `DRIFTED`, drops the model, and reports degraded — a file modification never becomes a new active model.  The read-only `/internal/release-attestation` endpoint (internal-token protected) exposes the verified runtime identity (release_id, model_version, artifact_hash, manifest_hash, feature/schema/preprocessing/rule hashes, loaded_at) with no secrets.  Decisions carry `runtime_state` / `runtime_release_id` / `runtime_manifest_hash` / `runtime_attestation_hash` in the audit payload, and blocked/degraded decisions (data-quality or runtime-integrity failures) record the resulting rules-only decision in the audit trail so every case stays traceable.
+
+**Limitations:** runtime identity rests on verified artifact bytes + controlled loading (joblib objects have no stable post-load cryptographic identity); single-process per store is assumed (multi-worker deployments must share the same release directory and would each attest independently); environment variables can NEVER attest a release — `MODEL_VERSION=x` in the environment is not evidence.
 
 **Required gates (all must PASS):**
 

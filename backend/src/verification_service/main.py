@@ -217,10 +217,13 @@ def compliance_events(
     if status != 200:
         raise HTTPException(status_code=status, detail=data.get("detail", "audit service unavailable"))
     # Add category-level reason texts for the UI (section 11) - never
-    # thresholds, weights, or raw probabilities.
+    # thresholds, weights, or raw probabilities. Phase 49: also decorate the
+    # blocked/degraded decision events, which carry the reason codes of the
+    # rules-only decision actually returned to the caller.
     for ev in data.get("events", []):
         payload = ev.get("payload", {})
-        if ev.get("event_type") == "score_generated" and payload.get("reason_codes"):
+        if ev.get("event_type") in ("score_generated", "data_quality_blocked",
+                                    "runtime_release_unverified") and payload.get("reason_codes"):
             payload["reason_texts"] = [REASON_CODE_TEXT.get(c, c) for c in payload["reason_codes"]]
     return data
 

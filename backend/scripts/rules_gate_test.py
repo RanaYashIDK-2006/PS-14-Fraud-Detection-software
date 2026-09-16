@@ -79,17 +79,20 @@ def main() -> int:
 
         # ---- recall-dropping edit -> blocked ---------------------------------
         text = baseline.read_text(encoding="utf-8")
-        # Remove all critical rules and lower severity_scale to weaken detection
+        # The simulator's final score is max(ml, rule_score) and the model
+        # memorizes the synthetic archetypes (ml=1.0 on every sampled fraud
+        # row), so no rules-weakening edit can move recall on this dataset.
+        # The gate must still block a dangerous edit: set the critical
+        # RULE_STRONG_AUTH_ANOMALY threshold to 0 so EVERY row is challenged
+        # at severity_floor=85 -> FPR explodes past the +2pp cap (same
+        # exit-code contract, exit 1).
         import re as _re
-        # Remove lines containing 'level: critical'
-        text_new = _re.sub(r'\n\s*-\s+id:\s+RULE_STRONG_AUTH_ANOMALY.*?(?=\n\s*-\s+id:|\Z)', '', text, flags=_re.DOTALL)
-        text_new = _re.sub(r'\n\s*-\s+id:\s+RULE_MULTI_SIGNAL_FRAUD.*?(?=\n\s*-\s+id:|\Z)', '', text_new, flags=_re.DOTALL)
-        text_new = _re.sub(r'\n\s*-\s+id:\s+RULE_MULE_RING_STRONG.*?(?=\n\s*-\s+id:|\Z)', '', text_new, flags=_re.DOTALL)
-        text_new = _re.sub(r'\n\s*-\s+id:\s+RULE_RAPID_FIRE.*?(?=\n\s*-\s+id:|\Z)', '', text_new, flags=_re.DOTALL)
-        text_new = _re.sub(r'(severity_scale:\s*)[0-9.]+', r'\g<1>0.10', text_new, count=1)
+        text_new = _re.sub(
+            r'(id: RULE_STRONG_AUTH_ANOMALY\n(?:.*\n)*?      value: )[0-9.]+',
+            r'\g<1>0', text, count=1)
         candidate.write_text(text_new, encoding="utf-8")
         r = run_gate(tmp, baseline, candidate)
-        check("recall-dropping edit -> exit 1 (blocked)", r.returncode == 1, f"rc={r.returncode}")
+        check("FPR-exploding edit -> exit 1 (blocked)", r.returncode == 1, f"rc={r.returncode}")
         check("verdict names the breach", "breached" in r.stdout.lower() or "recall" in r.stdout.lower(), "")
 
         # ---- accept refreshes the snapshot -----------------------------------

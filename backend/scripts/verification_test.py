@@ -122,7 +122,11 @@ def main() -> int:
             "AUTH_ANOMALY", "FREQUENCY_ABNORMAL", "BEHAVIOR_DEVIATION",
             "DAILY_SPEND_EXCEEDED", "ACCOUNT_DAILY_LIMIT", "DEVICE_DAILY_LIMIT",
             "DOMAIN_SHIFT", "UNCERTAINTY_ESCALATION", "UNCERTAINTY_INVESTIGATION",
-            "MULE_RING"}, str(attack_alert["reason_codes"]))
+            "MULE_RING",
+            # Phase 42/49 system codes: degraded/blocked decisions carry these
+            # category-level explanations; they have user-facing texts in
+            # REASON_CODE_TEXT and never leak model internals.
+            "ML_UNAVAILABLE", "DATA_QUALITY_BLOCKED"}, str(attack_alert["reason_codes"]))
         check("alerts: human-readable texts", any("device" in t.lower() for t in attack_alert["reason_texts"]), str(attack_alert["reason_texts"]))
 
         r = vc.get("/alerts")  # no token
@@ -400,8 +404,15 @@ def main() -> int:
         types = {e["event_type"] for e in evs}
         check("compliance: trail has scores + outcomes",
               {"score_generated", "verification_resolved"} <= types, str(types))
-        score_ev = next(e for e in evs if e["event_type"] == "score_generated")
-        sp = score_ev["payload"]
+        # A legit ALLOW decision legitimately has EMPTY reason codes, and
+        # since Phase 42 enforcement an out-of-contract attack evaluation is
+        # data-quality BLOCKED (decision recorded on the data_quality_blocked
+        # event instead of score_generated).  Accept either event type that
+        # carries the decision payload for these checks.
+        decision_ev = next((e for e in evs if e["event_type"] in ("score_generated", "data_quality_blocked")
+                            and e["payload"].get("reason_codes")), None)
+        check("compliance: trail has a decision payload", decision_ev is not None, str(types))
+        sp = decision_ev["payload"] if decision_ev else {}
         check("compliance: score payload", sp.get("risk_score") is not None and bool(sp.get("reason_codes")), str(sp))
         check("compliance: category-level reason texts", "reason_texts" in sp, str(sp.get("reason_codes")))
         res_ev = next(e for e in evs if e["event_type"] == "verification_resolved")
