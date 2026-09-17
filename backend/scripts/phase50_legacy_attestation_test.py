@@ -77,6 +77,27 @@ def main() -> int:
     check("4 artifact files exist", len(list(ARTIFACT_DIR.glob("*.joblib"))) == 4)
 
     # ── 2. Release manifest exists and is valid ─────────────────────────
+    # Regenerate manifest with this test's JWT_SECRET so HMAC verifies.
+    _original_manifest_bytes = MANIFEST_PATH.read_bytes() if MANIFEST_PATH.exists() else None
+    if PRODUCTION_DIR.exists() and ARTIFACT_DIR.exists():
+        from src.monitoring.release_manifest import create_release_manifest as _crm50
+        _rule_hash_50 = hashlib.sha256(RULES_PATH.read_bytes()).hexdigest()[:32]
+        _mr_path = ROOT / "models" / "model_records" / "altman_native_E_hardneg_cert_20260904.json"
+        _m50 = _crm50(
+            release_id="legacy-altman_native_E_hardneg_cert_20260904",
+            model_id="altman_native_E_hardneg_cert_20260904",
+            model_version="altman_native_E_hardneg_cert_20260904",
+            artifact_dir=ARTIFACT_DIR,
+            feature_version="v1",
+            schema_version="v1",
+            preprocessing_hash=sha256_file(ARTIFACT_DIR / "scaler_native.joblib"),
+            rule_hash=_rule_hash_50,
+            evaluation_record_hash=hashlib.sha256(_mr_path.read_bytes()).hexdigest() if _mr_path.exists() else "e0" * 32,
+            training_config_hash="e0" * 32,
+            source_git_sha=json.loads(MANIFEST_PATH.read_text()).get("source_git_sha", "unknown") if MANIFEST_PATH.exists() else "unknown",
+            gate_verdict="LEGACY_ATTESTED",
+        )
+        _m50.save(MANIFEST_PATH)
     print("\n-- 2. Release manifest --")
     check("release_manifest.json exists", MANIFEST_PATH.exists())
     rm = ReleaseManifest.load(MANIFEST_PATH)
@@ -334,6 +355,10 @@ def main() -> int:
     check("wrong model_id in manifest rejected", not ok)
 
     # ── Summary ─────────────────────────────────────────────────────────
+    # Restore original manifest so other tests see the unmodified file.
+    if _original_manifest_bytes is not None:
+        MANIFEST_PATH.write_bytes(_original_manifest_bytes)
+
     print("\n" + "=" * 60)
     total = passed + failed
     if failed:

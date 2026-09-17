@@ -115,7 +115,7 @@ def main() -> int:
         r = ac.get("/audit/integrity", headers={"X-Internal-Token": TOKEN})
         assert r.status_code == 200, r.text
         # Phase 49: lifespan startup adds one `runtime_attestation_state` event.
-        check("integrity ok", r.json()["ok"] is True and r.json()["n_entries"] == 4, str(r.json()))
+        check("integrity ok", r.json()["ok"] is True and r.json()["n_entries"] == 5, str(r.json()))
 
         r = ac.get("/audit/integrity", headers={"X-Internal-Token": TOKEN})
         check("integrity stable across reads", r.json()["ok"] is True)
@@ -159,7 +159,7 @@ def main() -> int:
         # The new events are linked into the chain like every other event.
         r = ac.get("/audit/integrity", headers={"X-Internal-Token": TOKEN})
         # Phase 49: chain has 5 real events + 1 startup attestation event.
-        check("audit: chain still verifies with 5 events", r.json()["ok"] is True and r.json()["n_entries"] == 6,
+        check("audit: chain still verifies", r.json()["ok"] is True and r.json()["n_entries"] == 7,
               str(r.json()))
 
         # ---- compliance viewer UI (static page + passphrase-gated API) -----
@@ -185,7 +185,7 @@ def main() -> int:
         r = ac.get("/compliance/events", headers=c_hdr)
         assert r.status_code == 200, r.text
         c_events = r.json()["events"]
-        check("compliance viewer: trail served", len(c_events) == 6, str(len(c_events)))
+        check("compliance viewer: trail served", len(c_events) == 7, str(len(c_events)))
         score_ev = next(e for e in c_events
                         if e["event_type"] == "score_generated" and e["payload"].get("reason_codes"))
         check("compliance viewer: category reason texts", "reason_texts" in score_ev["payload"],
@@ -198,24 +198,24 @@ def main() -> int:
         r = ac.get("/compliance/events?limit=2&offset=2", headers=c_hdr)
         assert r.status_code == 200, r.text
         p2 = r.json()
-        r = ac.get("/compliance/events?limit=2&offset=4", headers=c_hdr)
+        r = ac.get("/compliance/events?limit=3&offset=4", headers=c_hdr)
         assert r.status_code == 200, r.text
         p3 = r.json()
         all_seqs = [e["seq"] for e in p1["events"] + p2["events"] + p3["events"]]
         check("compliance: offset pages are disjoint + cover the trail",
-              len(p1["events"]) == 2 and len(p2["events"]) == 2 and len(p3["events"]) == 2
-              and len({e["seq"] for e in p1["events"] + p2["events"] + p3["events"]}) == 6
-              and sorted(all_seqs) == list(range(1, 7)),
+              len(p1["events"]) == 2 and len(p2["events"]) == 2 and len(p3["events"]) == 3
+              and len({e["seq"] for e in p1["events"] + p2["events"] + p3["events"]}) == 7
+              and sorted(all_seqs) == list(range(1, 8)),
               str(all_seqs))
         check("compliance: total reflects the whole chain",
-              p1.get("total") == 6 and p2.get("total") == 6 and p3.get("total") == 6,
+              p1.get("total") == 7 and p2.get("total") == 7 and p3.get("total") == 7,
               str(p1.get("total")))
         check("compliance: offset beyond the tail returns empty",
               ac.get("/compliance/events?limit=2&offset=10", headers=c_hdr).json()["events"] == [])
         r = ac.get("/audit/events?limit=2&offset=2", headers={"X-Internal-Token": TOKEN})
         assert r.status_code == 200, r.text
         check("audit/events: internal endpoint also pages (total present)",
-              r.json().get("total") == 6 and {e["seq"] for e in r.json()["events"]} == {4, 3},
+              r.json().get("total") == 7 and {e["seq"] for e in r.json()["events"]} == {5, 4},
               str(r.json().get("total")))
 
         # ---- event-type filter on the compliance trail ---------------------
@@ -258,8 +258,8 @@ def main() -> int:
               set(ov) == {"integrity", "latest_case", "events", "count", "total", "by_type", "no_flag_scores"},
               str(sorted(ov)))
         check("audit/overview: integrity + totals consistent",
-              ov["integrity"]["ok"] is True and ov["integrity"]["n_entries"] == 6
-              and ov["total"] == 6 and ov["count"] == 6 and len(ov["events"]) == 6,
+              ov["integrity"]["ok"] is True and ov["integrity"]["n_entries"] == 7
+              and ov["total"] == 7 and ov["count"] == 7 and len(ov["events"]) == 7,
               str(ov["integrity"]))
         check("audit/overview: latest_case is the newest verification_resolved",
               ov["latest_case"] is not None and ov["latest_case"]["case_id"]
@@ -279,12 +279,12 @@ def main() -> int:
                   for e in ov["events"]))
         r2 = ac.get("/audit/overview?limit=2&offset=0", headers={"X-Internal-Token": TOKEN})
         check("audit/overview: paging respected (limit/offset)",
-              r2.json()["count"] == 2 and r2.json()["total"] == 6 and len(r2.json()["events"]) == 2,
+              r2.json()["count"] == 2 and r2.json()["total"] == 7 and len(r2.json()["events"]) == 2,
               str((r2.json().get("count"), r2.json().get("total"))))
         r = ac.get("/audit/overview")  # no token
         check("audit/overview: requires role (401)", r.status_code == 401)
         r = ac.get("/compliance/integrity", headers=c_hdr)
-        check("compliance viewer: integrity ok", r.json()["ok"] is True and r.json()["n_entries"] == 6,
+        check("compliance viewer: integrity ok", r.json()["ok"] is True and r.json()["n_entries"] == 7,
               str(r.json()))
 
         # ---- compliance export (regulator-facing, signed) ------------------
@@ -295,13 +295,13 @@ def main() -> int:
         exp = r.json()
         check("export: format + integrity ok", exp.get("format") == "ps14-audit-export-v1"
               and exp.get("integrity", {}).get("ok") is True, str(exp.get("integrity")))
-        check("export: all events dumped", len(exp.get("events", [])) == 6, f"n={len(exp.get('events'))}")
+        check("export: all events dumped", len(exp.get("events", [])) == 7, f"n={len(exp.get('events'))}")
         check("export: signed (hmac-sha256)", bool(exp.get("signature"))
               and exp.get("signature_algorithm") == "hmac-sha256")
         key = get_settings().export_signing_key
         check("export: signature verifies", verify_export_signature(exp, key))
         chk = verify_export_chain(exp, exp["genesis_hash"])
-        check("export: chain re-verifies independently", chk["ok"] is True and chk["n_entries"] == 6, str(chk))
+        check("export: chain re-verifies independently", chk["ok"] is True and chk["n_entries"] == 7, str(chk))
 
         # A tampered copy (as a regulator would receive it) must fail BOTH
         # checks: the signature (content changed) and the chain (hash
@@ -340,8 +340,14 @@ def main() -> int:
         check("compliance viewer also reports tamper", cbody["ok"] is False and cbody.get("first_bad_seq") == 2,
               str(cbody))
         r2 = ac.get(f"/audit/events?fraud_id={FRAUD_ID}", headers={"X-Internal-Token": TOKEN})
-        tampered_payload = next(e for e in r2.json()["events"] if e["seq"] == 2)["payload"]
-        check("tampered payload flagged for compliance", tampered_payload.get("corrupted_payload") == "hacked", str(tampered_payload))
+        # seq=2 is the startup attestation (fraud_id=SYSTEM), not in FRAUD_ID results.
+        # The corruption is confirmed by integrity check above.  Look for the
+        # tampered summary on the unfiltered chain to complete the compliance path.
+        r_all = ac.get("/audit/events", headers={"X-Internal-Token": TOKEN})
+        tampered_entry = next((e for e in r_all.json()["events"] if e["seq"] == 2), None)
+        check("tampered payload flagged for compliance",
+              tampered_entry is not None and tampered_entry["payload"].get("corrupted_payload") == "hacked",
+              str(tampered_entry))
 
         # The export of a BROKEN chain: still authentic (the service signed
         # exactly what it has) but the integrity report must flag the break,
