@@ -190,6 +190,20 @@ from src.monitoring.external_evaluation import (
     create_fixture_certification,
     DEFAULT_EXCLUSION_POLICY,
 )
+from src.monitoring.real_world_dataset_execution import (
+    RealWorldDatasetExecution,
+    ExecutionState,
+    ProvenanceEvidence,
+    LabelEvidence,
+    TemporalEvidence,
+    IndependenceEvidence,
+    FeatureMapping,
+    LeakageCheckResult,
+    EligibilityCertificate,
+    ForensicEvent,
+    GateResult,
+    create_fixture_execution,
+)
 
 __all__ = [
     # Existing
@@ -374,4 +388,17 @@ __all__ = [
     "create_test_fixture_dataset",
     "create_fixture_certification",
     "DEFAULT_EXCLUSION_POLICY",
+    # Phase 58: real-world dataset execution
+    "RealWorldDatasetExecution",
+    "ExecutionState",
+    "ProvenanceEvidence",
+    "LabelEvidence",
+    "TemporalEvidence",
+    "IndependenceEvidence",
+    "FeatureMapping",
+    "LeakageCheckResult",
+    "EligibilityCertificate",
+    "ForensicEvent",
+    "GateResult",
+    "create_fixture_execution",
 ]
