@@ -204,6 +204,18 @@ from src.monitoring.real_world_dataset_execution import (
     GateResult,
     create_fixture_execution,
 )
+from src.monitoring.real_world_validation_execution import (
+    RealWorldValidationExecution,
+    ValidationState,
+    SelectionCondition,
+    ValidationSnapshot,
+    FrozenPreprocessingRecord,
+    EvaluationResult,
+    ValidationForensicEvent,
+    create_fixture_validation,
+    build_fixture_selection_args,
+    build_real_world_selection_args,
+)
 
 __all__ = [
     # Existing
@@ -401,4 +413,15 @@ __all__ = [
     "ForensicEvent",
     "GateResult",
     "create_fixture_execution",
+    # Phase 59: real-world validation execution
+    "RealWorldValidationExecution",
+    "ValidationState",
+    "SelectionCondition",
+    "ValidationSnapshot",
+    "FrozenPreprocessingRecord",
+    "EvaluationResult",
+    "ValidationForensicEvent",
+    "create_fixture_validation",
+    "build_fixture_selection_args",
+    "build_real_world_selection_args",
 ]
