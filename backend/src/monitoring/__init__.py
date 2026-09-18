@@ -212,10 +212,22 @@ from src.monitoring.real_world_validation_execution import (
     FrozenPreprocessingRecord,
     EvaluationResult,
     ValidationForensicEvent,
-    create_fixture_validation,
-    build_fixture_selection_args,
+    create_fixture_validation,    build_fixture_selection_args,
     build_real_world_selection_args,
 )
+from src.monitoring.dataset_evidence_ingestion import (
+    DatasetEvidenceIngestion,
+    EvidencePackage,
+    EvidenceItem,
+    EvidenceManifest,
+    EvidenceDiff,
+    EvidenceCategoryGate,
+    EvidencePackageState,
+    EvidenceStatus,
+    SourceCaptureLevel,
+    create_fixture_evidence_package,
+)
+
 
 __all__ = [
     # Existing
@@ -424,4 +436,15 @@ __all__ = [
     "create_fixture_validation",
     "build_fixture_selection_args",
     "build_real_world_selection_args",
+    # Phase 60: dataset evidence ingestion
+    "DatasetEvidenceIngestion",
+    "EvidencePackage",
+    "EvidenceItem",
+    "EvidenceManifest",
+    "EvidenceDiff",
+    "EvidenceCategoryGate",
+    "EvidencePackageState",
+    "EvidenceStatus",
+    "SourceCaptureLevel",
+    "create_fixture_evidence_package",
 ]
