@@ -1,0 +1,140 @@
+{
+  "research_feature_version": "public_v1",
+  "description": "Feature schema using only fields commonly found in public fraud datasets",
+  "production_feature_version": "v1 (PS-14 21-feature contract)",
+  "production_features_count": 21,
+  "public_features_count": 14,
+  "features": {
+    "amount": {
+      "description": "Transaction amount",
+      "source": "raw transaction amount",
+      "available_in": [
+        "ULB",
+        "Kaggle"
+      ],
+      "type": "float",
+      "notes": "Direct from dataset"
+    },
+    "hour_of_day": {
+      "description": "Hour of transaction (0-23)",
+      "source": "transaction timestamp",
+      "available_in": [
+        "Kaggle",
+        "IBM_v2"
+      ],
+      "type": "int",
+      "notes": "Cannot compute from ULB Time (seconds offset)"
+    },
+    "is_weekend": {
+      "description": "1 if transaction on weekend",
+      "source": "transaction timestamp",
+      "available_in": [
+        "Kaggle"
+      ],
+      "type": "int",
+      "notes": "Cannot compute from ULB Time (seconds offset)"
+    },
+    "amount_zscore": {
+      "description": "Z-score of amount vs account mean",
+      "source": "amount + account history",
+      "available_in": [
+        "ULB",
+        "Kaggle"
+      ],
+      "type": "float",
+      "notes": "ULB: uses Time as account proxy; Kaggle: uses cc_num"
+    },
+    "amount_ratio": {
+      "description": "Ratio of amount to account median",
+      "source": "amount + account history",
+      "available_in": [
+        "ULB",
+        "Kaggle"
+      ],
+      "type": "float",
+      "notes": "ULB: uses Time as account proxy; Kaggle: uses cc_num"
+    },
+    "txn_count_cumulative": {
+      "description": "Cumulative transaction count for account",
+      "source": "transaction ordering",
+      "available_in": [
+        "ULB",
+        "Kaggle"
+      ],
+      "type": "int",
+      "notes": "Proxy for txn_freq_last_24h"
+    },
+    "v1": {
+      "description": "PCA component V1",
+      "available_in": [
+        "ULB"
+      ],
+      "type": "float",
+      "notes": "ULB only, no semantic meaning"
+    },
+    "v2": {
+      "description": "PCA component V2",
+      "available_in": [
+        "ULB"
+      ],
+      "type": "float",
+      "notes": "ULB only, no semantic meaning"
+    },
+    "v3": {
+      "description": "PCA component V3",
+      "available_in": [
+        "ULB"
+      ],
+      "type": "float",
+      "notes": "ULB only, no semantic meaning"
+    },
+    "v4": {
+      "description": "PCA component V4",
+      "available_in": [
+        "ULB"
+      ],
+      "type": "float",
+      "notes": "ULB only, no semantic meaning"
+    },
+    "category_encoded": {
+      "description": "Transaction category (encoded)",
+      "source": "merchant category",
+      "available_in": [
+        "Kaggle"
+      ],
+      "type": "float",
+      "notes": "Mean fraud rate encoding"
+    },
+    "merchant_fraud_rate": {
+      "description": "Historical fraud rate for merchant",
+      "source": "merchant history",
+      "available_in": [
+        "Kaggle"
+      ],
+      "type": "float",
+      "notes": "Computed from training data"
+    },
+    "distance_from_home": {
+      "description": "Distance from cardholder location to merchant",
+      "source": "lat/long coordinates",
+      "available_in": [
+        "Kaggle"
+      ],
+      "type": "float",
+      "notes": "Haversine distance"
+    }
+  },
+  "missing_from_public": {
+    "count": 7,
+    "features": [
+      "new_device_flag (requires device_id)",
+      "unusual_location_flag (requires geolocation baseline)",
+      "unusual_recipient_flag (requires recipient history)",
+      "shared_device_accounts (requires device-account graph)",
+      "shared_recipient_accounts (requires recipient-account graph)",
+      "mule_ring_score (requires full account graph)",
+      "recipient_novelty (requires recipient history)"
+    ],
+    "note": "These require institutional-grade device/location/recipient telemetry"
+  }
+}

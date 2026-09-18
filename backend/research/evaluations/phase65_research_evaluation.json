@@ -1,0 +1,156 @@
+{
+  "phase": 65,
+  "track": "RESEARCH_ONLY",
+  "production_model_modified": false,
+  "production_gates_modified": false,
+  "real_world_validation_unchanged": true,
+  "research_feature_version": "public_v1",
+  "datasets": {
+    "ulb": {
+      "info": {
+        "dataset": "ULB/MLG Credit Card",
+        "hash": "76274b691b16a6c49d3f159c883398e03ccd6d1ee12d9d8ee38f4b4b98551a89",
+        "rows": 284807,
+        "fraud": 492,
+        "features": [
+          "amount",
+          "amount_zscore",
+          "amount_ratio",
+          "cumcount",
+          "v1",
+          "v2",
+          "v3",
+          "v4"
+        ]
+      },
+      "test_rows": 56962,
+      "test_fraud": 75,
+      "models": {
+        "amount_threshold_p95": {
+          "tp": 5,
+          "tn": 54510,
+          "fp": 2377,
+          "fn": 70,
+          "precision": 0.002099,
+          "recall": 0.066667,
+          "fpr": 0.041785,
+          "f1": 0.00407,
+          "roc_auc": 1.0,
+          "pr_auc": 0.001338
+        },
+        "linear_weighted": {
+          "tp": 7,
+          "tn": 54045,
+          "fp": 2842,
+          "fn": 68,
+          "precision": 0.002457,
+          "recall": 0.093333,
+          "fpr": 0.049959,
+          "f1": 0.004788,
+          "roc_auc": 1.0,
+          "pr_auc": 0.002546
+        },
+        "zscore_threshold": {
+          "tp": 4,
+          "tn": 55646,
+          "fp": 1241,
+          "fn": 71,
+          "precision": 0.003213,
+          "recall": 0.053333,
+          "fpr": 0.021815,
+          "f1": 0.006061,
+          "roc_auc": 1.0,
+          "pr_auc": 0.001338
+        },
+        "pca_v1_abs": {
+          "tp": 5,
+          "tn": 56235,
+          "fp": 652,
+          "fn": 70,
+          "precision": 0.00761,
+          "recall": 0.066667,
+          "fpr": 0.011461,
+          "f1": 0.013661,
+          "roc_auc": 1.0,
+          "pr_auc": 0.003148
+        }
+      },
+      "time_s": 1.7
+    },
+    "kaggle": {
+      "info": {
+        "dataset": "Kaggle Credit Card Fraud (Sparkov/SYNTHETIC)",
+        "hash_train": "fd7139200dbfcbed0b6742bbe05a4f1abce532c4fef20918228a651647a3e75d",
+        "hash_test": "12d553ab19440c752d2531ee1af44bb64f12cc3d3839f1649f19e81c230545f0",
+        "train_rows": 1296675,
+        "test_rows": 555719,
+        "features": [
+          "amount",
+          "hour",
+          "night",
+          "zscore",
+          "ratio",
+          "cumcount",
+          "cat_rate",
+          "merch_rate",
+          "distance"
+        ]
+      },
+      "test_rows": 555719,
+      "test_fraud": 2145,
+      "models": {
+        "amount_p99": {
+          "tp": 1025,
+          "tn": 549614,
+          "fp": 3960,
+          "fn": 1120,
+          "precision": 0.205617,
+          "recall": 0.477855,
+          "fpr": 0.007154,
+          "f1": 0.287518,
+          "roc_auc": 1.0,
+          "pr_auc": 0.136788
+        },
+        "linear_weighted": {
+          "tp": 1067,
+          "tn": 549083,
+          "fp": 4491,
+          "fn": 1078,
+          "precision": 0.191976,
+          "recall": 0.497436,
+          "fpr": 0.008113,
+          "f1": 0.277035,
+          "roc_auc": 1.0,
+          "pr_auc": 0.211568
+        },
+        "distance_p95": {
+          "tp": 89,
+          "tn": 526032,
+          "fp": 27542,
+          "fn": 2056,
+          "precision": 0.003221,
+          "recall": 0.041492,
+          "fpr": 0.049753,
+          "f1": 0.005978,
+          "roc_auc": 1.0,
+          "pr_auc": 0.003787
+        },
+        "zscore_threshold": {
+          "tp": 1388,
+          "tn": 543456,
+          "fp": 10118,
+          "fn": 757,
+          "precision": 0.120633,
+          "recall": 0.647086,
+          "fpr": 0.018278,
+          "f1": 0.203355,
+          "roc_auc": 1.0,
+          "pr_auc": 0.212059
+        }
+      },
+      "time_s": 16.0
+    }
+  },
+  "contract_hash": "e8820edfd192ac40e43c5bbf69593f0a226d2c4d22f4df74ec1e6175fc68b87e",
+  "result_hash": "59b7afe8c2718e8158e381453dfe1af78a2cac8509cbe5a8292aff2cdd0585c6"
+}
