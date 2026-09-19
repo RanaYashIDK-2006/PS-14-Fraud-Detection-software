@@ -261,6 +261,16 @@ from src.monitoring.outcome_trust import (
     OutcomeTrustRecord,
     OutcomeTrustGovernor,
 )
+from src.monitoring.dataset_admission import (
+    AdmissionState,
+    ExclusionReason,
+    DatasetCandidate,
+    OutcomeAdmission,
+    AdmissionStats,
+    AdmissionResult,
+    DatasetAdmissionEngine,
+    make_dataset_candidate,
+)
 
 
 __all__ = [
@@ -520,4 +530,13 @@ __all__ = [
     "evaluate_outcome_trust",
     "OutcomeTrustRecord",
     "OutcomeTrustGovernor",
+    # Phase 82: dataset admission
+    "AdmissionState",
+    "ExclusionReason",
+    "DatasetCandidate",
+    "OutcomeAdmission",
+    "AdmissionStats",
+    "AdmissionResult",
+    "DatasetAdmissionEngine",
+    "make_dataset_candidate",
 ]
