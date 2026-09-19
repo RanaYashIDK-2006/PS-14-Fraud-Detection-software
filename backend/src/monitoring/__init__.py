@@ -249,6 +249,18 @@ from src.monitoring.lifecycle import (
     get_lifecycle,
     reset_lifecycle,
 )
+from src.monitoring.outcome_trust import (
+    TrustClass,
+    OutcomeTrustPolicyVersion,
+    SourcePolicy,
+    SOURCE_POLICIES,
+    POLICY_VERSION,
+    TrustDecision,
+    OutcomeTrustError,
+    evaluate_outcome_trust,
+    OutcomeTrustRecord,
+    OutcomeTrustGovernor,
+)
 
 
 __all__ = [
@@ -497,4 +509,15 @@ __all__ = [
     "OutcomeValidationError",
     "validate_outcome",
     "compute_outcome_hash",
+    # Phase 81: outcome trust governance
+    "TrustClass",
+    "OutcomeTrustPolicyVersion",
+    "SourcePolicy",
+    "SOURCE_POLICIES",
+    "POLICY_VERSION",
+    "TrustDecision",
+    "OutcomeTrustError",
+    "evaluate_outcome_trust",
+    "OutcomeTrustRecord",
+    "OutcomeTrustGovernor",
 ]
