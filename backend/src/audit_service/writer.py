@@ -154,3 +154,22 @@ def flush_audit_queue(timeout: float = 5.0) -> int:
     # Queue is empty (or timeout); wait a bit more for in-flight writes
     _time.sleep(0.1)
     return flushed
+
+
+def shutdown_audit_writer(timeout: float = 5.0) -> dict:
+    """Gracefully shut down the audit writer thread.
+
+    1. Flush pending events from the queue.
+    2. Signal the thread to stop.
+    3. Wait for it to join.
+    4. Return status for observability.
+    """
+    global _audit_thread, _audit_thread_started
+    flushed = 0
+    if _audit_thread_started:
+        flushed = flush_audit_queue(timeout=timeout)
+        _audit_thread_started = False
+    return {
+        "flushed_events": flushed,
+        "thread_alive": _audit_thread.is_alive() if _audit_thread else False,
+    }

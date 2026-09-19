@@ -243,6 +243,12 @@ from src.monitoring.observability import (
     ObservabilityStore,
     generate_correlation_id,
 )
+from src.monitoring.lifecycle import (
+    LifecycleState,
+    LifecycleManager,
+    get_lifecycle,
+    reset_lifecycle,
+)
 
 
 __all__ = [
@@ -478,4 +484,9 @@ __all__ = [
     "AlertEvaluator",
     "ObservabilityStore",
     "generate_correlation_id",
+    # Phase 76: lifecycle
+    "LifecycleState",
+    "LifecycleManager",
+    "get_lifecycle",
+    "reset_lifecycle",
 ]

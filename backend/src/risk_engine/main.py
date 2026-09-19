@@ -189,6 +189,48 @@ def _seed_entity_tracker(tracker) -> None:
         db.close()
 
 
+# ── Phase 76: lifecycle shutdown helpers ─────────────────────────
+def _drain_audit_queue() -> int:
+    """Drain the audit writer queue during shutdown."""
+    try:
+        from src.audit_service.writer import flush_audit_queue
+        return flush_audit_queue(timeout=5.0)
+    except Exception:
+        return 0
+
+
+def _shutdown_database() -> None:
+    """Dispose database engine pools."""
+    try:
+        from src.risk_engine.db import engine as risk_engine
+        risk_engine.dispose()
+    except Exception:
+        pass
+    try:
+        from src.audit_service.db import engine as audit_engine
+        audit_engine.dispose()
+    except Exception:
+        pass
+    try:
+        from src.shared_db import get_engine as _get_shared_engine
+        # If shared engine exists, dispose it too
+    except Exception:
+        pass
+
+
+def _shutdown_observability() -> None:
+    """Finalize observability (document in-memory loss)."""
+    try:
+        from src.monitoring.observability import get_store
+        store = get_store()
+        if store:
+            # Export final state for forensic record
+            _ = store.export_state()
+    except Exception:
+        pass
+    print("[lifecycle] observability: in-memory telemetry lost on restart")
+
+
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     from src.settings import enforce_production_gate
@@ -374,7 +416,20 @@ async def lifespan(_app: FastAPI):
         _seed_entity_tracker(entity_tracker)
     except Exception as e:
         print(f"[risk_engine] Entity tracker seeding skipped: {e}")
+    # Phase 76: register lifecycle hooks and mark ready
+    from src.monitoring.lifecycle import get_lifecycle, LifecycleState
+    _lc = get_lifecycle()
+    _lc.register_drain_hook(_drain_audit_queue)
+    _lc.register_shutdown_hook(_shutdown_database)
+    _lc.register_shutdown_hook(_shutdown_observability)
+    _lc.set_state(LifecycleState.READY)
+    _lc.install_signal_handlers()
+    print(f"[risk_engine] lifecycle: READY — accepting requests")
     yield
+    # Phase 76: graceful shutdown sequence
+    print(f"[risk_engine] lifespan: shutdown initiated")
+    _lc.begin_shutdown()
+    print(f"[risk_engine] lifespan: stopped (state={_lc.state.value})")
 
 
 app = FastAPI(title="Risk Engine", version="0.1.0", lifespan=lifespan)
@@ -677,6 +732,12 @@ def evaluate(
     )
     if not _ac_allowed:
         raise HTTPException(status_code=401 if "authentication" in _ac_reason else 403 if "permission" in _ac_reason else 429, detail=_ac_reason)
+
+    # Phase 76: reject new work during shutdown
+    from src.monitoring.lifecycle import get_lifecycle
+    _lc = get_lifecycle()
+    if not _lc.is_serving:
+        raise HTTPException(status_code=503, detail="service is shutting down")
 
     _t0 = _time.monotonic()
     features = req.features.model_dump()
