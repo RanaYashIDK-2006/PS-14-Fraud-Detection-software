@@ -33,16 +33,23 @@ if not _settings.use_postgres:
         pass  # Race condition: another process created the tables first
 
 
-# ── Async audit queue (non-blocking writes) ────────────────────────
-# Production critical path fix: audit writes are synchronous and block
-# fraud decisions. This queue buffers events and writes them in a
-# background thread, keeping the detection path fast.
+# ── Serialized audit chain writer ────────────────────────────────
+# Production critical path fix: audit writes are asynchronous (queued)
+# to avoid blocking fraud decisions.  CRITICAL INVARIANT: every chain
+# entry must reference exactly one predecessor.  To enforce this, a
+# single lock serializes the prev_hash lookup → hash computation →
+# database insert sequence.  Without the lock, concurrent callers
+# (background thread + queue-full synchronous fallback) could observe
+# the same last row and produce duplicate predecessors.
 import threading as _threading
 import queue as _queue
 
 _audit_queue: _queue.Queue = _queue.Queue(maxsize=10000)
 _audit_thread: _threading.Thread | None = None
 _audit_thread_started = False
+# Phase 77: serializes prev_hash lookup → hash → insert to guarantee
+# exactly one entry references each predecessor.
+_chain_lock: _threading.Lock = _threading.Lock()
 
 
 def _audit_writer_loop():
@@ -59,26 +66,35 @@ def _audit_writer_loop():
 
 
 def _write_audit_event(fraud_id: str, event_type: str, payload: dict) -> AuditEvent:
-    """Synchronous audit write (called by background thread)."""
-    db = SessionLocal()
-    try:
-        prev = db.query(AuditEvent).order_by(desc(AuditEvent.seq)).first()
-        prev_hash = prev.entry_hash if prev is not None else GENESIS_HASH
-        body = canonical(payload)
-        entry_hash = hashlib.sha256((prev_hash + body).encode("utf-8")).hexdigest()
-        row = AuditEvent(
-            event_id=str(uuid.uuid4()),
-            fraud_id=fraud_id,
-            event_type=event_type,
-            prev_hash=prev_hash,
-            entry_hash=entry_hash,
-            payload_summary=json.dumps(payload),
-        )
-        db.add(row)
-        db.commit()
-        return row
-    finally:
-        db.close()
+    """Synchronous audit write, serialized by _chain_lock.
+
+    The lock ensures that the sequence:
+      1. query last row (prev_hash lookup)
+      2. compute entry_hash
+      3. insert new row
+    is atomic with respect to all other writers.  No two entries can
+    legitimately reference the same predecessor.
+    """
+    with _chain_lock:
+        db = SessionLocal()
+        try:
+            prev = db.query(AuditEvent).order_by(desc(AuditEvent.seq)).first()
+            prev_hash = prev.entry_hash if prev is not None else GENESIS_HASH
+            body = canonical(payload)
+            entry_hash = hashlib.sha256((prev_hash + body).encode("utf-8")).hexdigest()
+            row = AuditEvent(
+                event_id=str(uuid.uuid4()),
+                fraud_id=fraud_id,
+                event_type=event_type,
+                prev_hash=prev_hash,
+                entry_hash=entry_hash,
+                payload_summary=json.dumps(payload),
+            )
+            db.add(row)
+            db.commit()
+            return row
+        finally:
+            db.close()
 
 
 def _ensure_audit_thread():
