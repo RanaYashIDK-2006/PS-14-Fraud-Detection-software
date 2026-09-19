@@ -275,6 +275,17 @@ from src.monitoring.dataset_admission import (
     evaluate_feature_compatibility,
     KNOWN_EXTERNAL_SCHEMAS,
 )
+from src.monitoring.dataset_ingestion import (
+    DatasetClassification,
+    LabelProvenance,
+    DatasetProvenance,
+    IngestionResult,
+    DatasetIngestionError,
+    ingest_dataset,
+    scan_data_directory,
+    compute_file_hash,
+    KNOWN_DATASETS,
+)
 
 
 __all__ = [
@@ -547,4 +558,14 @@ __all__ = [
     "FeatureSchemaDescriptor",
     "evaluate_feature_compatibility",
     "KNOWN_EXTERNAL_SCHEMAS",
+    # Phase 84: dataset ingestion
+    "DatasetClassification",
+    "LabelProvenance",
+    "DatasetProvenance",
+    "IngestionResult",
+    "DatasetIngestionError",
+    "ingest_dataset",
+    "scan_data_directory",
+    "compute_file_hash",
+    "KNOWN_DATASETS",
 ]
