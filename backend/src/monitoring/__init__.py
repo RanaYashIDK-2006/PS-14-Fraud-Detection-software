@@ -300,6 +300,10 @@ from src.monitoring.external_dataset_evidence import (
     build_evaluation_manifest,
     build_evidence_from_ingestion,
 )
+from src.monitoring.model_contract_reconciliation import (
+    ReconciliationStatus,
+    reconcile_model_contract,
+)
 
 
 __all__ = [
@@ -595,4 +599,7 @@ __all__ = [
     "assess_external_dataset_readiness",
     "build_evaluation_manifest",
     "build_evidence_from_ingestion",
+    # Phase 86: model contract reconciliation
+    "ReconciliationStatus",
+    "reconcile_model_contract",
 ]
