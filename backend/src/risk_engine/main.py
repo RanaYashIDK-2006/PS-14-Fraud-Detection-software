@@ -43,6 +43,14 @@ from src.risk_engine.rules_engine import RulesEngine
 from src.identity_service.security import verify_internal_token
 from src.middleware import apply_security_middleware
 from src.monitoring.runtime_enforcement import enforce_before_inference, EnforcementVerdict
+from src.monitoring.observability_integration import (
+    init_observability, on_request_received, on_auth_failure,
+    on_validation_failure, on_idempotent_replay, on_feature_block,
+    on_degraded_mode, on_drift_detected, on_evaluation_complete,
+    on_evaluation_error, on_release_integrity_failure,
+    evaluate_alerts, get_health_report, get_metrics_summary,
+    get_model_telemetry_summary, get_security_events_summary,
+)
 from src.monitoring.runtime_attestation import (
     RuntimeState,
     RuntimeAttestation,
@@ -340,6 +348,14 @@ async def lifespan(_app: FastAPI):
         f"{drift_detector._baseline is not None} "
         f"({drift_baseline.name if drift_baseline.exists() else 'none'})"
     )
+    # Phase 72: initialize observability store.
+    _obs_store = init_observability("risk-engine")
+    _obs_store.model_telemetry.model_id = model_version or "unknown"
+    _obs_store.model_telemetry.release_id = (
+        attestation.release_id if attestation else "unattested"
+    )
+    _obs_store.model_telemetry.feature_version = FEATURE_VERSION
+    print(f"[risk_engine] observability store initialized")
     # Entity-level fraud rate tracker — seeded from DB-2 history on startup.
     entity_tracker = get_entity_tracker()
     try:
@@ -637,7 +653,13 @@ def evaluate(
     db: Session = Depends(get_db),
 ):
     if not verify_internal_token(x_internal_token):
+        # Phase 72: record auth failure before raising
+        on_auth_failure()
         raise HTTPException(status_code=401, detail="invalid internal token")
+
+    # Phase 72: observability - request received
+    _obs_ctx = on_request_received(event_id=req.event_id, fraud_id=req.fraud_id)
+    _obs_cid = _obs_ctx.get("cid", "")
 
     _t0 = _time.monotonic()
     features = req.features.model_dump()
@@ -653,6 +675,17 @@ def evaluate(
                 detail=f"event_id '{req.event_id}' already scored for fraud_id '{existing.fraud_id}', not '{req.fraud_id}'",
             )
         _rc = json.loads(existing.reason_codes)
+        # Phase 72: record idempotent replay
+        on_idempotent_replay(correlation_id=_obs_cid, event_id=req.event_id)
+        _lat = (_time.monotonic() - _t0) * 1000
+        on_evaluation_complete(
+            correlation_id=_obs_cid, event_id=req.event_id,
+            fraud_id=req.fraud_id, ml_score=existing.ml_score,
+            risk_band=existing.risk_band, decision=band_of(existing.risk_score)[1],
+            risk_score=existing.risk_score, degraded=existing.degraded,
+            latency_ms=_lat, release_id=attestation.release_id if attestation else "",
+            feature_version=FEATURE_VERSION, idempotent_replay=True,
+        )
         return {
             "event_id": existing.event_id,
             "fraud_id": existing.fraud_id,
@@ -681,6 +714,9 @@ def evaluate(
     # model in memory can no longer be proven to be the approved release —
     # fall back to rules-only (degraded), never serve normal ML inference.
     if runtime_state not in (RuntimeState.READY, RuntimeState.STARTING):
+        # Phase 72: record degraded mode entry
+        on_degraded_mode(correlation_id=_obs_cid, reason="runtime_release_unverified",
+                         runtime_state=runtime_state.value)
         degraded = True
         ml_score = 0.0
         ml_weighted = 0.0
@@ -728,6 +764,8 @@ def evaluate(
     # BLOCK_INFERENCE: skip ML entirely, use rules-only (degraded).
     enforcement = enforce_before_inference(features)
     if enforcement.verdict == EnforcementVerdict.BLOCK_INFERENCE:
+        # Phase 72: record feature enforcement block
+        on_feature_block(correlation_id=_obs_cid, enforcement_result=enforcement.to_dict())
         degraded = True
         ml_score = 0.0
         ml_weighted = 0.0
@@ -886,7 +924,22 @@ def evaluate(
         },
     )
 
-    _record_latency((_time.monotonic() - _t0) * 1000)
+    _lat = (_time.monotonic() - _t0) * 1000
+    _record_latency(_lat)
+
+    # Phase 72: record evaluation completion observability
+    on_evaluation_complete(
+        correlation_id=_obs_cid, event_id=req.event_id,
+        fraud_id=req.fraud_id, ml_score=round(ml_score, 4),
+        risk_band=band, decision=decision, risk_score=score,
+        degraded=degraded, latency_ms=_lat,
+        model_variance=uncertainty.get("model_variance", 0.0),
+        model_disagreement=uncertainty.get("model_disagreement", 0.0),
+        release_id=attestation.release_id if attestation else "",
+        feature_version=FEATURE_VERSION,
+        runtime_state=runtime_state.value,
+        reason_codes=reason_codes,
+    )
 
     return {
         "event_id": req.event_id, "fraud_id": req.fraud_id,
@@ -1218,15 +1271,18 @@ def _health_impl():
                 runtime_failures = drift_reasons
                 fusion = None  # stop serving inference from drifted artifacts
     status = "ok" if db_ok and model_ok else "degraded"
-    return {
-        "status": status,
-        "service": "risk-engine",
-        "started_at": STARTED_AT,
-        "db": "ok" if db_ok else "error",
-        "model": "ok" if model_ok else "error",
-        "runtime_state": runtime_state.value,
-        "release_attested": attestation is not None,
-    }
+    # Phase 72: integrate Phase 70 health report
+    _health = get_health_report(
+        db_ok=db_ok, model_ok=model_ok,
+        runtime_state=runtime_state.value,
+        release_id=attestation.release_id if attestation else "",
+        model_id=model_version or "unknown",
+        feature_version=FEATURE_VERSION,
+    )
+    _health["service"] = "risk-engine"
+    _health["started_at"] = STARTED_AT
+    _health["release_attested"] = attestation is not None
+    return _health
 
 
 @app.get("/internal/release-attestation", include_in_schema=False)
@@ -1335,3 +1391,22 @@ def metrics(
         f'ps14_risk_latency_p999_ms {round(lats[int(n*0.999)], 2) if n else 0}',
     ]
     return Response(content="\n".join(lines) + "\n", media_type="text/plain")
+
+
+@app.get("/internal/observability", include_in_schema=False)
+def observability(
+    x_internal_token: str = Header(alias="X-Internal-Token"),
+):
+    """Phase 72: comprehensive observability summary.
+
+    Returns structured metrics, model telemetry, security events,
+    and alert state from the runtime-integrated Phase 70 store.
+    """
+    if not verify_internal_token(x_internal_token):
+        raise HTTPException(status_code=401, detail="invalid internal token")
+    return {
+        "metrics": get_metrics_summary(),
+        "model_telemetry": get_model_telemetry_summary(),
+        "security": get_security_events_summary(),
+        "alerts": evaluate_alerts(),
+    }
