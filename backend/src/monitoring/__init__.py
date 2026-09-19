@@ -286,6 +286,20 @@ from src.monitoring.dataset_ingestion import (
     compute_file_hash,
     KNOWN_DATASETS,
 )
+from src.monitoring.external_dataset_evidence import (
+    EligibilityStatus,
+    ReadinessStatus,
+    IndependenceStatus,
+    ProvenanceStatus,
+    ExternalDatasetEvidence,
+    EligibilityAssessment,
+    ReadinessAssessment,
+    EvaluationManifest,
+    assess_eligibility,
+    assess_external_dataset_readiness,
+    build_evaluation_manifest,
+    build_evidence_from_ingestion,
+)
 
 
 __all__ = [
@@ -568,4 +582,17 @@ __all__ = [
     "scan_data_directory",
     "compute_file_hash",
     "KNOWN_DATASETS",
+    # Phase 85: external dataset evidence
+    "EligibilityStatus",
+    "ReadinessStatus",
+    "IndependenceStatus",
+    "ProvenanceStatus",
+    "ExternalDatasetEvidence",
+    "EligibilityAssessment",
+    "ReadinessAssessment",
+    "EvaluationManifest",
+    "assess_eligibility",
+    "assess_external_dataset_readiness",
+    "build_evaluation_manifest",
+    "build_evidence_from_ingestion",
 ]
