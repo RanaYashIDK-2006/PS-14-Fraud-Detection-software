@@ -51,6 +51,10 @@ from src.monitoring.observability_integration import (
     evaluate_alerts, get_health_report, get_metrics_summary,
     get_model_telemetry_summary, get_security_events_summary,
 )
+from src.monitoring.access_control import (
+    check_access, get_rate_limiter, Role, authenticate_and_authorize,
+    resolve_role, mask_token_for_log,
+)
 from src.monitoring.runtime_attestation import (
     RuntimeState,
     RuntimeAttestation,
@@ -652,14 +656,19 @@ def evaluate(
     x_internal_token: str = Header(alias="X-Internal-Token"),
     db: Session = Depends(get_db),
 ):
-    if not verify_internal_token(x_internal_token):
-        # Phase 72: record auth failure before raising
-        on_auth_failure()
-        raise HTTPException(status_code=401, detail="invalid internal token")
-
-    # Phase 72: observability - request received
+    # Phase 73: integrated access control (auth + authz + rate limit)
     _obs_ctx = on_request_received(event_id=req.event_id, fraud_id=req.fraud_id)
     _obs_cid = _obs_ctx.get("cid", "")
+    _client_ip = "127.0.0.1"  # placeholder; real IP from request.client in middleware
+    _ac_allowed, _ac_reason, _ac_meta = check_access(
+        token=x_internal_token,
+        endpoint="/internal/evaluate",
+        client_ip=_client_ip,
+        internal_token=settings.internal_token,
+        correlation_id=_obs_cid,
+    )
+    if not _ac_allowed:
+        raise HTTPException(status_code=401 if "authentication" in _ac_reason else 403 if "permission" in _ac_reason else 429, detail=_ac_reason)
 
     _t0 = _time.monotonic()
     features = req.features.model_dump()
