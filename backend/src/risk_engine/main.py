@@ -55,6 +55,7 @@ from src.monitoring.access_control import (
     check_access, get_rate_limiter, Role, authenticate_and_authorize,
     resolve_role, mask_token_for_log,
 )
+from src.shared_db_helpers import get_pool_health, test_database_connection
 from src.monitoring.runtime_attestation import (
     RuntimeState,
     RuntimeAttestation,
@@ -1291,6 +1292,12 @@ def _health_impl():
     _health["service"] = "risk-engine"
     _health["started_at"] = STARTED_AT
     _health["release_attested"] = attestation is not None
+    # Phase 74: connection pool health
+    try:
+        _pool_health = get_pool_health(engine)
+        _health["database"] = _pool_health
+    except Exception:
+        _health["database"] = {"status": "error"}
     return _health
 
 

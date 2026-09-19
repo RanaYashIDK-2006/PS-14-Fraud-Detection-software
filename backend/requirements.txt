@@ -24,3 +24,4 @@ httpx
 
 # Presentation deck builder (scripts/build_presentation.py)
 python-pptx
+alembic
