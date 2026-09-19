@@ -489,4 +489,12 @@ __all__ = [
     "LifecycleManager",
     "get_lifecycle",
     "reset_lifecycle",
+    # Phase 80: outcome pipeline
+    "OutcomeLabel",
+    "OutcomeStatus",
+    "OutcomeSource",
+    "OutcomeRecord",
+    "OutcomeValidationError",
+    "validate_outcome",
+    "compute_outcome_hash",
 ]
