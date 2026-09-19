@@ -227,6 +227,22 @@ from src.monitoring.dataset_evidence_ingestion import (
     SourceCaptureLevel,
     create_fixture_evidence_package,
 )
+from src.monitoring.observability import (
+    SecurityEventType,
+    SecuritySeverity,
+    SecurityEvent,
+    StructuredLogEntry,
+    OperationalMetrics,
+    ModelTelemetry,
+    AlertCondition,
+    DEFAULT_ALERT_CONDITIONS,
+    HealthLevel,
+    HealthReport,
+    SecurityIncidentLedger,
+    AlertEvaluator,
+    ObservabilityStore,
+    generate_correlation_id,
+)
 
 
 __all__ = [
@@ -447,4 +463,19 @@ __all__ = [
     "EvidenceStatus",
     "SourceCaptureLevel",
     "create_fixture_evidence_package",
+    # Phase 70: observability
+    "SecurityEventType",
+    "SecuritySeverity",
+    "SecurityEvent",
+    "StructuredLogEntry",
+    "OperationalMetrics",
+    "ModelTelemetry",
+    "AlertCondition",
+    "DEFAULT_ALERT_CONDITIONS",
+    "HealthLevel",
+    "HealthReport",
+    "SecurityIncidentLedger",
+    "AlertEvaluator",
+    "ObservabilityStore",
+    "generate_correlation_id",
 ]
