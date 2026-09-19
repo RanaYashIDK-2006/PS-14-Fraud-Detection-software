@@ -1,0 +1,15 @@
+{
+  "phase": 78,
+  "description": "SBOM integrity record for PS-14",
+  "sbom_file": "phase78_sbom.json",
+  "sbom_format": "CycloneDX 1.5",
+  "sbom_sha256": "b7df397b2fa5bd6b8329a2bd3a2438923bbd23fe443943752ed9e3b13e46d9a5",
+  "components_count": 143,
+  "pip_audit_vulnerabilities": 0,
+  "pip_audit_dependencies_scanned": 143,
+  "generation_tool": "phase78-sbom-gen 1.0",
+  "python_version": "3.12",
+  "platform": "win32",
+  "generated_at": "2026-09-19T00:00:00Z",
+  "notes": "Generated from installed packages via importlib.metadata. Pre-fix audit entries with duplicate prev_hash remain in the test DB as historical evidence of the Phase 76/77 bug."
+}
