@@ -270,6 +270,10 @@ from src.monitoring.dataset_admission import (
     AdmissionResult,
     DatasetAdmissionEngine,
     make_dataset_candidate,
+    FeatureCompatibilityState,
+    FeatureSchemaDescriptor,
+    evaluate_feature_compatibility,
+    KNOWN_EXTERNAL_SCHEMAS,
 )
 
 
@@ -539,4 +543,8 @@ __all__ = [
     "AdmissionResult",
     "DatasetAdmissionEngine",
     "make_dataset_candidate",
+    "FeatureCompatibilityState",
+    "FeatureSchemaDescriptor",
+    "evaluate_feature_compatibility",
+    "KNOWN_EXTERNAL_SCHEMAS",
 ]

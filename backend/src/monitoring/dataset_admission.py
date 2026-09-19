@@ -35,6 +35,11 @@ from src.monitoring.outcome_trust import (
     OutcomeTrustRecord,
     get_source_policy,
 )
+from src.monitoring.feature_contract import (
+    ML_FEATURE_CONTRACT,
+    ML_FEATURE_ORDER,
+    ML_FEATURE_VERSION,
+)
 
 
 # ── Admission states ──────────────────────────────────────────────────
@@ -63,6 +68,16 @@ class ExclusionReason(str, Enum):
     MISSING_TRUST_RECORD = "missing_trust_record"
     PROVENANCE_INVALID = "provenance_invalid"
     NO_OUTCOMES = "no_outcomes"
+    # Phase 83: feature compatibility reasons
+    FEATURE_SCHEMA_MISSING = "feature_schema_missing"
+    FEATURE_COUNT_MISMATCH = "feature_count_mismatch"
+    FEATURE_NAME_MISMATCH = "feature_name_mismatch"
+    FEATURE_ORDER_MISMATCH = "feature_order_mismatch"
+    FEATURE_TYPE_MISMATCH = "feature_type_mismatch"
+    FEATURE_VERSION_MISMATCH = "feature_version_mismatch"
+    MODEL_PROVENANCE_MISMATCH = "model_provenance_mismatch"
+    RELEASE_PROVENANCE_MISMATCH = "release_provenance_mismatch"
+    FEATURE_MAPPING_UNAVAILABLE = "feature_mapping_unavailable"
 
 
 # ── Dataset candidate definition ──────────────────────────────────────
@@ -75,11 +90,13 @@ class DatasetCandidate:
     created_at: datetime
     outcome_schema_version: int
     policy_version: str
+    feature_schema_id: str = ""  # Phase 83: candidate feature schema identifier
 
 
 def make_dataset_candidate(
     dataset_version: str = "1.0",
     outcome_schema_version: int = 1,
+    feature_schema_id: str = "",
 ) -> DatasetCandidate:
     """Create a new dataset candidate with deterministic ID."""
     ds_id = f"DS-{uuid.uuid4().hex[:12].upper()}"
@@ -89,6 +106,7 @@ def make_dataset_candidate(
         created_at=datetime.now(timezone.utc),
         outcome_schema_version=outcome_schema_version,
         policy_version="outcome_trust_policy_v1",
+        feature_schema_id=feature_schema_id,
     )
 
 
@@ -141,6 +159,154 @@ class AdmissionStats:
     latest_decision_at: str | None = None
 
 
+# ── Feature compatibility ────────────────────────────────
+
+class FeatureCompatibilityState(str, Enum):
+    """Feature schema compatibility result."""
+    EXACT_COMPATIBLE = "exact_compatible"
+    INCOMPATIBLE = "incompatible"
+    UNKNOWN = "unknown"
+    SCHEMA_MISSING = "schema_missing"
+
+
+@dataclass(frozen=True)
+class FeatureSchemaDescriptor:
+    """Describes a dataset candidate feature representation.
+
+    Immutable and deterministic. Used for feature compatibility
+    evaluation against the authoritative model contract.
+    """
+    schema_id: str  # e.g. "ps14_v1", "ulb_pca_v1"
+    feature_count: int
+    feature_names: tuple[str, ...]  # ordered
+    feature_types: tuple[str, ...]  # parallel to feature_names
+    feature_version: str = ""
+    source_description: str = ""  # e.g. "ULB Credit Card PCA"
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "schema_id": self.schema_id,
+            "feature_count": self.feature_count,
+            "feature_names": list(self.feature_names),
+            "feature_types": list(self.feature_types),
+            "feature_version": self.feature_version,
+            "source_description": self.source_description,
+        }
+
+
+def evaluate_feature_compatibility(
+    candidate_schema: FeatureSchemaDescriptor | None,
+    target_model_id: str = "altman_native",
+    target_release_id: str = "",
+    target_feature_version: str = ML_FEATURE_VERSION,
+) -> dict[str, Any]:
+    """Evaluate feature compatibility between candidate schema and target model.
+
+    Returns a dict with:
+    - compatibility: FeatureCompatibilityState value
+    - details: list of specific mismatch reasons
+    - target: authoritative contract info
+    - candidate: candidate schema info
+    """
+    if candidate_schema is None:
+        return {
+            "compatibility": FeatureCompatibilityState.SCHEMA_MISSING.value,
+            "details": ["no candidate feature schema provided"],
+            "target": {
+                "model_id": target_model_id,
+                "feature_version": target_feature_version,
+                "feature_count": len(ML_FEATURE_ORDER),
+                "feature_names": list(ML_FEATURE_ORDER),
+            },
+            "candidate": None,
+        }
+
+    details: list[str] = []
+
+    # Target contract info
+    target_info = {
+        "model_id": target_model_id,
+        "feature_version": target_feature_version,
+        "feature_count": len(ML_FEATURE_ORDER),
+        "feature_names": list(ML_FEATURE_ORDER),
+    }
+
+    candidate_info = candidate_schema.to_dict()
+
+    # 1. Feature count
+    if candidate_schema.feature_count != len(ML_FEATURE_ORDER):
+        details.append(
+            f"feature_count_mismatch: candidate={candidate_schema.feature_count} "
+            f"expected={len(ML_FEATURE_ORDER)}"
+        )
+
+    # 2. Feature names (as set)
+    candidate_set = set(candidate_schema.feature_names)
+    target_set = set(ML_FEATURE_ORDER)
+    missing = target_set - candidate_set
+    extra = candidate_set - target_set
+    if missing:
+        details.append(f"missing_features: {sorted(missing)}")
+    if extra:
+        details.append(f"extra_features: {sorted(extra)}")
+
+    # 3. Feature order (only if names match)
+    if not missing and not extra:
+        if list(candidate_schema.feature_names) != list(ML_FEATURE_ORDER):
+            details.append("feature_order_mismatch: names match but order differs")
+
+    # 4. Feature types
+    type_mismatches = []
+    for name in ML_FEATURE_ORDER:
+        if name in candidate_set:
+            idx = list(candidate_schema.feature_names).index(name)
+            if idx < len(candidate_schema.feature_types):
+                candidate_type = candidate_schema.feature_types[idx]
+                target_spec = ML_FEATURE_CONTRACT.get(name)
+                if target_spec and candidate_type != target_spec.datatype:
+                    type_mismatches.append(
+                        f"{name}: candidate={candidate_type} expected={target_spec.datatype}"
+                    )
+    if type_mismatches:
+        details.append(f"type_mismatches: {type_mismatches}")
+
+    # 5. Feature version
+    if candidate_schema.feature_version:
+        if candidate_schema.feature_version != target_feature_version:
+            details.append(
+                f"feature_version_mismatch: candidate={candidate_schema.feature_version} "
+                f"expected={target_feature_version}"
+            )
+
+    # Determine compatibility
+    if not details:
+        compatibility = FeatureCompatibilityState.EXACT_COMPATIBLE
+    else:
+        compatibility = FeatureCompatibilityState.INCOMPATIBLE
+
+    return {
+        "compatibility": compatibility.value,
+        "details": details,
+        "target": target_info,
+        "candidate": candidate_info,
+    }
+
+
+# Known external schemas for regression testing
+KNOWN_EXTERNAL_SCHEMAS: dict[str, FeatureSchemaDescriptor] = {
+    "ulb_creditcard_pca": FeatureSchemaDescriptor(
+        schema_id="ulb_creditcard_pca",
+        feature_count=30,  # V1-V28 + Amount + Class
+        feature_names=tuple(
+            [f"V{i}" for i in range(1, 29)] + ["Amount", "Class"]
+        ),
+        feature_types=tuple(["float"] * 30),
+        feature_version="",
+        source_description="ULB Credit Card Fraud Detection (PCA-transformed)",
+    ),
+}
+
+
 # ── Admission result ──────────────────────────────────────────────────
 
 @dataclass(frozen=True)
@@ -175,6 +341,7 @@ class DatasetAdmissionEngine:
         self,
         candidate: DatasetCandidate,
         cutoff_time: datetime | None = None,
+        feature_schema: FeatureSchemaDescriptor | None = None,
     ) -> AdmissionResult:
         """Evaluate all available outcomes against admission rules.
 
@@ -214,11 +381,16 @@ class DatasetAdmissionEngine:
             # Compute statistics
             stats = self._compute_stats(admitted, excluded, all_outcomes, trust_map)
 
-            # Determine admission state
-            state = self._determine_state(admitted, stats)
+            # Evaluate feature compatibility
+            feature_compat = evaluate_feature_compatibility(
+                candidate_schema=feature_schema,
+            )
+
+            # Determine admission state (includes feature compatibility)
+            state = self._determine_state(admitted, stats, feature_compat)
 
             # Build manifest (deterministic)
-            manifest = self._build_manifest(candidate, stats, state)
+            manifest = self._build_manifest(candidate, stats, state, feature_compat)
             manifest_hash = self._hash_manifest(manifest)
 
             return AdmissionResult(
@@ -424,13 +596,23 @@ class DatasetAdmissionEngine:
         self,
         admitted: list[OutcomeAdmission],
         stats: AdmissionStats,
+        feature_compat: dict | None = None,
     ) -> AdmissionState:
-        """Determine dataset admission state from admission results."""
+        """Determine dataset admission state.
+
+        Feature compatibility blocks admission when the candidate
+        schema is incompatible with the target model contract.
+        """
         if stats.total_outcomes == 0:
             return AdmissionState.NOT_READY
 
         if stats.exclusion_reasons.get(ExclusionReason.NO_OUTCOMES.value, 0) > 0:
             return AdmissionState.NOT_READY
+
+        # BLOCKED if feature schema is incompatible
+        if feature_compat is not None:
+            if feature_compat.get("compatibility") == FeatureCompatibilityState.INCOMPATIBLE.value:
+                return AdmissionState.BLOCKED
 
         # BLOCKED if only non-production sources or policy violations
         blocked_reasons = {
@@ -440,7 +622,6 @@ class DatasetAdmissionEngine:
         }
         for reason_key in stats.exclusion_reasons:
             if reason_key in blocked_reasons:
-                # If ALL outcomes are excluded for blocked reasons, it's BLOCKED
                 if stats.admitted == 0:
                     return AdmissionState.BLOCKED
 
@@ -454,13 +635,15 @@ class DatasetAdmissionEngine:
         candidate: DatasetCandidate,
         stats: AdmissionStats,
         state: AdmissionState,
+        feature_compat: dict | None = None,
     ) -> dict[str, Any]:
         """Build a deterministic manifest from candidate and stats."""
-        return {
+        manifest = {
             "dataset_id": candidate.dataset_id,
             "dataset_version": candidate.dataset_version,
             "outcome_schema_version": candidate.outcome_schema_version,
             "policy_version": candidate.policy_version,
+            "feature_schema_id": candidate.feature_schema_id or "",
             "admission_state": state.value,
             "total_outcomes": stats.total_outcomes,
             "admitted": stats.admitted,
@@ -478,6 +661,20 @@ class DatasetAdmissionEngine:
             "earliest_decision_at": stats.earliest_decision_at,
             "latest_decision_at": stats.latest_decision_at,
         }
+        # Phase 83: feature compatibility metadata
+        if feature_compat is not None:
+            manifest["feature_compatibility"] = {
+                "compatibility": feature_compat.get("compatibility", "unknown"),
+                "details": sorted(feature_compat.get("details", [])),
+                "target_model_id": feature_compat.get("target", {}).get("model_id", ""),
+                "target_feature_version": feature_compat.get("target", {}).get("feature_version", ""),
+                "target_feature_count": feature_compat.get("target", {}).get("feature_count", 0),
+                "candidate_feature_count": (feature_compat.get("candidate", {}).get("feature_count", 0)
+                    if feature_compat.get("candidate") else 0),
+                "candidate_schema_id": (feature_compat.get("candidate", {}).get("schema_id", "")
+                    if feature_compat.get("candidate") else ""),
+            }
+        return manifest
 
     @staticmethod
     def _hash_manifest(manifest: dict) -> str:
