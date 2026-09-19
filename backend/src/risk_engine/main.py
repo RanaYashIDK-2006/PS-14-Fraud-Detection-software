@@ -55,6 +55,10 @@ from src.monitoring.access_control import (
     check_access, get_rate_limiter, Role, authenticate_and_authorize,
     resolve_role, mask_token_for_log,
 )
+from src.monitoring.security_hardening import (
+    init_security_hardening, get_security_health_status,
+    redact_string, mask_database_url, safe_error_message,
+)
 from src.shared_db_helpers import get_pool_health, test_database_connection
 from src.monitoring.runtime_attestation import (
     RuntimeState,
@@ -361,6 +365,9 @@ async def lifespan(_app: FastAPI):
     )
     _obs_store.model_telemetry.feature_version = FEATURE_VERSION
     print(f"[risk_engine] observability store initialized")
+    # Phase 75: initialize security hardening — key lifecycle, config validation
+    init_security_hardening()
+    print(f"[risk_engine] security hardening initialized")
     # Entity-level fraud rate tracker — seeded from DB-2 history on startup.
     entity_tracker = get_entity_tracker()
     try:
@@ -1298,6 +1305,14 @@ def _health_impl():
         _health["database"] = _pool_health
     except Exception:
         _health["database"] = {"status": "error"}
+    # Phase 75: security hardening health
+    try:
+        _sec_health = get_security_health_status(
+            database_url=str(settings.database_url),
+        )
+        _health["security"] = _sec_health
+    except Exception:
+        _health["security"] = {"status": "error"}
     return _health
 
 
