@@ -606,6 +606,10 @@ __all__ = [
     # Phase 89: institutional dataset registry
     # Phase 90: worldline access specification
     # Phase 91: worldline provider request & acceptance package validator
+    # Phase 92: external dataset dry-run
+    "run_dry_run",
+    "run_all_scenarios",
+    "ScenarioId",
     "build_provider_request",
     "validate_worldline_acceptance_package",
     "build_acceptance_package",
