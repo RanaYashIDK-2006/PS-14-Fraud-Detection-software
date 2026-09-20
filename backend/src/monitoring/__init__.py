@@ -610,6 +610,27 @@ __all__ = [
     # Phase 93: real-world evaluation protocol
     # Phase 94: RWV readiness audit & evidence pack
     # Phase 95: provider evidence & dataset qualification gate
+    # Phase 96: controlled RWV execution harness
+    "create_session",
+    "run_synthetic_harness_test",
+    "capture_model_identity",
+    "build_evaluation_config",
+    "compute_metrics",
+    "validate_temporal_ordering",
+    "validate_labels",
+    "validate_feature_transformation",
+    "compute_result_hash",
+    "create_audit_event",
+    "RWVSession",
+    "EvaluationConfig",
+    "ModelIdentitySnapshot",
+    "DatasetIdentitySnapshot",
+    "EvaluationMetrics",
+    "RWVEvaluationRecord",
+    "AuditEvent",
+    "SessionState",
+    "ExecutionStatus",
+    "check_rwv_execution_eligibility",
     "qualify_dataset",
     "qualify_all_known_candidates",
     "compute_evidence_hash",
