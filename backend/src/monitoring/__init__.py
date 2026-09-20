@@ -604,6 +604,13 @@ __all__ = [
     "reconcile_model_contract",
     # Phase 88: IEEE-CIS forensic audit
     # Phase 89: institutional dataset registry
+    # Phase 90: worldline access specification
+    "build_access_spec",
+    "ACCEPTANCE_MATRIX",
+    "WORLDLINE_ECOM_2017_NAG",
+    "WORLDLINE_ONLINE_2018",
+    "evaluate_access_package",
+    "ingest_local_dataset",
     "run_registry",
     "get_preflight_summary",
     "CANONICAL_48",
