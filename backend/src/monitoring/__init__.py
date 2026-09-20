@@ -603,6 +603,12 @@ __all__ = [
     "ReconciliationStatus",
     "reconcile_model_contract",
     # Phase 88: IEEE-CIS forensic audit
+    # Phase 89: institutional dataset registry
+    "run_registry",
+    "get_preflight_summary",
+    "CANONICAL_48",
+    "WORLDLINE_RECORD",
+    "NOVATTI_RECORD",
     "run_forensic_audit",
     "get_derivability_summary",
     "get_leakage_summary",
