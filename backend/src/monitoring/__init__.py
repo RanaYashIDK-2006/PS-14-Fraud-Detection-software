@@ -602,4 +602,12 @@ __all__ = [
     # Phase 86: model contract reconciliation
     "ReconciliationStatus",
     "reconcile_model_contract",
+    # Phase 88: IEEE-CIS forensic audit
+    "run_forensic_audit",
+    "get_derivability_summary",
+    "get_leakage_summary",
+    "DERIVABILITY_MATRIX",
+    "ENTITY_CONTINUITY",
+    "IEEE_CIS_PROVENANCE",
+    "LABEL_PROVENANCE",
 ]
