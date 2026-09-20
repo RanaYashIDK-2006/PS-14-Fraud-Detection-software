@@ -608,6 +608,10 @@ __all__ = [
     # Phase 91: worldline provider request & acceptance package validator
     # Phase 92: external dataset dry-run
     # Phase 93: real-world evaluation protocol
+    # Phase 94: RWV readiness audit & evidence pack
+    "run_readiness_audit",
+    "build_evidence_pack",
+    "validate_evidence_pack",
     "build_protocol",
     "build_identity_lock",
     "compute_metrics",
