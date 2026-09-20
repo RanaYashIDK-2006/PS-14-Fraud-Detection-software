@@ -609,6 +609,16 @@ __all__ = [
     # Phase 92: external dataset dry-run
     # Phase 93: real-world evaluation protocol
     # Phase 94: RWV readiness audit & evidence pack
+    # Phase 95: provider evidence & dataset qualification gate
+    "qualify_dataset",
+    "qualify_all_known_candidates",
+    "compute_evidence_hash",
+    "ProviderEvidence",
+    "QualificationReport",
+    "DatasetQualificationState",
+    "EvidenceStatus",
+    "QUALIFICATION_DIMENSIONS",
+    "KNOWN_CANDIDATES",
     "run_readiness_audit",
     "build_evidence_pack",
     "validate_evidence_pack",
