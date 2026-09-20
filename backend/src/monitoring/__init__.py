@@ -605,6 +605,14 @@ __all__ = [
     # Phase 88: IEEE-CIS forensic audit
     # Phase 89: institutional dataset registry
     # Phase 90: worldline access specification
+    # Phase 91: worldline provider request & acceptance package validator
+    "build_provider_request",
+    "validate_worldline_acceptance_package",
+    "build_acceptance_package",
+    "hash_acceptance_package",
+    "generate_provider_checklist",
+    "REQUIRED_SOURCE_FIELDS",
+    "CANONICAL_48",
     "build_access_spec",
     "ACCEPTANCE_MATRIX",
     "WORLDLINE_ECOM_2017_NAG",
