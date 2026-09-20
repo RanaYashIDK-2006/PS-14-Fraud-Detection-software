@@ -611,6 +611,15 @@ __all__ = [
     # Phase 94: RWV readiness audit & evidence pack
     # Phase 95: provider evidence & dataset qualification gate
     # Phase 96: controlled RWV execution harness
+    # Phase 97: RWV result adjudication & acceptance gate
+    "adjudicate_rwv_result",
+    "verify_adjudication_hash",
+    "RWVAdjudication",
+    "ValidityStatus",
+    "AcceptanceStatus",
+    "PromotionEvidenceStatus",
+    "ValidityReason",
+    "ADJUDICATION_POLICY_VERSION",
     "create_session",
     "run_synthetic_harness_test",
     "capture_model_identity",
