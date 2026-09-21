@@ -614,6 +614,7 @@ __all__ = [
     # Phase 97: RWV result adjudication & acceptance gate
     # Phase 98: RWV-to-promotion boundary & evidence integration
     # Phase 99: RWV evidence ledger & reproducibility certification
+    # Phase 100: independent system-wide security & RWV audit
     "adjudicate_rwv_result",
     "verify_adjudication_hash",
     "RWVAdjudication",
