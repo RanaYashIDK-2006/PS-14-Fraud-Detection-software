@@ -612,6 +612,7 @@ __all__ = [
     # Phase 95: provider evidence & dataset qualification gate
     # Phase 96: controlled RWV execution harness
     # Phase 97: RWV result adjudication & acceptance gate
+    # Phase 98: RWV-to-promotion boundary & evidence integration
     "adjudicate_rwv_result",
     "verify_adjudication_hash",
     "RWVAdjudication",
