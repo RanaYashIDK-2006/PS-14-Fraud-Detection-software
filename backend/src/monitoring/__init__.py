@@ -613,6 +613,7 @@ __all__ = [
     # Phase 96: controlled RWV execution harness
     # Phase 97: RWV result adjudication & acceptance gate
     # Phase 98: RWV-to-promotion boundary & evidence integration
+    # Phase 99: RWV evidence ledger & reproducibility certification
     "adjudicate_rwv_result",
     "verify_adjudication_hash",
     "RWVAdjudication",
