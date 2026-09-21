@@ -13,6 +13,14 @@ eligible for promotion to active/production.  Consolidates gates from:
 Every activation path (ModelRegistry.promote, cmd_deploy, manual) MUST pass
 through evaluate_promotion() before the model becomes active.
 
+TRUST BOUNDARY NOTE (Phase 101):
+Runtime attestation (Phase 49) is enforced SEPARATELY at startup in
+risk_engine/main.py, not within this gate.  The promotion gate validates
+the ReleaseManifest signature and artifact binding; startup attestation
+validates the loaded release bytes.  These are independent lifecycle
+phases: promotion gate at promotion time, attestation at deployment time.
+Neither alone is sufficient.
+
 STATUS: IMPLEMENTED
 REAL_WORLD_VALIDATION: BLOCKED_PENDING_ELIGIBLE_DATASET
 """
