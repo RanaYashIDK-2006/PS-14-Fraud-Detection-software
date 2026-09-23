@@ -1,0 +1,889 @@
+{
+  "artifact_integrity": {
+    "entries": [
+      [
+        "models/production/altman_native_e_hardneg_cert/manifest.json",
+        "9882ff1dd058d5e29b469272d1386455ad63242874c549302c71db55d138a98f",
+        "9882ff1dd058d5e29b469272d1386455ad63242874c549302c71db55d138a98f"
+      ],
+      [
+        "models/production/altman_native_e_hardneg_cert/feature_list.json",
+        "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+        "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f"
+      ],
+      [
+        "models/production/altman_native_e_hardneg_cert/xgb_native.joblib",
+        "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+        "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc"
+      ],
+      [
+        "models/production/altman_native_e_hardneg_cert/lgb_native.joblib",
+        "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+        "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f"
+      ],
+      [
+        "models/production/altman_native_e_hardneg_cert/cb_native.joblib",
+        "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+        "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f"
+      ],
+      [
+        "models/production/altman_native_e_hardneg_cert/scaler_native.joblib",
+        "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+        "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611"
+      ],
+      [
+        "models/production/release_registry.json",
+        "dde0835299d857dc0cfeccbe44acc5453254dbc1a5d1fb7b3721c73a8ef96cc7",
+        "dde0835299d857dc0cfeccbe44acc5453254dbc1a5d1fb7b3721c73a8ef96cc7"
+      ],
+      [
+        "models/feature_contract.json",
+        "c1bb76b42fde8736a6baf0fd190c17d353eab6107f2a305e75049ecf40561d22",
+        "c1bb76b42fde8736a6baf0fd190c17d353eab6107f2a305e75049ecf40561d22"
+      ],
+      [
+        "src/risk_engine/rules.yaml",
+        "85803185ce32aa367a49fee5591e5c419b9c2b2e7ec2e1b0e232bef3d11f1814",
+        "85803185ce32aa367a49fee5591e5c419b9c2b2e7ec2e1b0e232bef3d11f1814"
+      ],
+      [
+        "src/monitoring/real_world_evaluation_protocol.py",
+        "293e1bc4b8817c50742536aaa0bd1a4f54ec6570f8f62aeca42f6524a111ad57",
+        "293e1bc4b8817c50742536aaa0bd1a4f54ec6570f8f62aeca42f6524a111ad57"
+      ],
+      [
+        "data/transactions.csv",
+        "9f0f56bf0549fccf0c6335ece1514d1ae515a57f809a72658ce5fcaf48525d63",
+        "9f0f56bf0549fccf0c6335ece1514d1ae515a57f809a72658ce5fcaf48525d63"
+      ],
+      [
+        "data/feedback_labeled.csv",
+        "2dd28cabd123ccc85949c2e453cf5b67ea628c4f33482b5bcdd78c9530cfcf55",
+        "2dd28cabd123ccc85949c2e453cf5b67ea628c4f33482b5bcdd78c9530cfcf55"
+      ]
+    ],
+    "threshold_after": 0.018758,
+    "threshold_before": 0.018758,
+    "threshold_unchanged": true,
+    "unchanged": true
+  },
+  "baseline_audit": {
+    "amount": {
+      "count": 284807.0,
+      "max": 25691.16,
+      "mean": 88.349619,
+      "median": 22.0,
+      "min": 0.0,
+      "p95": 365.0
+    },
+    "class_distribution": [
+      [
+        "0",
+        284315
+      ],
+      [
+        "1",
+        492
+      ]
+    ],
+    "duplicate_findings": [
+      284807,
+      282953,
+      1854,
+      0,
+      6940,
+      3129
+    ],
+    "fraud_pct": 0.172749,
+    "fraud_rows": 492,
+    "missing_by_column": [],
+    "missing_total": 0,
+    "non_fraud_rows": 284315,
+    "ragged_rows": 0,
+    "time_stats": {
+      "calendar_conversion": 0.0,
+      "max": 172792.0,
+      "mean": 94813.859575,
+      "min": 0.0
+    },
+    "total_rows": 284807,
+    "type_mismatch_total": 0,
+    "unmapped_labels": 0,
+    "verification_warnings": [
+      "leakage_fields_present"
+    ]
+  },
+  "calibration_reason": "no legitimate probability-producing evaluation path exists for ULB: native model evaluation is forbidden (Group B) and rule severity scores are not calibrated probabilities of fraud; no recalibration, calibration fitting or calibration artifact change is performed",
+  "calibration_status": "NOT_APPLICABLE",
+  "components": [
+    {
+      "findings": [
+        "probes=22",
+        "expectation_mismatches=0",
+        "non-finite, out-of-range, malformed and missing-field payloads all rejected by pydantic validators",
+        "extreme-but-finite 1e308 accepted (documented limit)",
+        "duplicate event_id accepted at the schema boundary (persistence layer owns deduplication; out of scope)",
+        "injected Class/V1/V28 keys ignored by the schema (never become features)"
+      ],
+      "input_features": [
+        "synthetic contract probes",
+        "event_id",
+        "fraud_id",
+        "FeatureVector fields"
+      ],
+      "limitations": [
+        "probes are synthetic contract tests of the validation boundary, never dataset rows and never evidence",
+        "positive class = invalid payload (should be rejected)",
+        "probe decision threshold 0.5 on a binary reject indicator, not the production scoring threshold",
+        "covers spec Mode B error handling (structured rejection outcomes recorded per probe) and robustness to extreme values (NaN/Inf/overflow/extremes) against the EXISTING validators, unchanged"
+      ],
+      "metric_scope": "validation conformance (invalid-payload class)",
+      "metrics": [
+        [
+          "accuracy",
+          1.0
+        ],
+        [
+          "alert_rate",
+          0.772727
+        ],
+        [
+          "balanced_accuracy",
+          1.0
+        ],
+        [
+          "brier_score",
+          0.0
+        ],
+        [
+          "class_imbalance",
+          {
+            "fraud_count": 17,
+            "fraud_rate": 0.772727,
+            "rows": 22
+          }
+        ],
+        [
+          "f1",
+          1.0
+        ],
+        [
+          "fn",
+          0
+        ],
+        [
+          "fnr",
+          0.0
+        ],
+        [
+          "fp",
+          0
+        ],
+        [
+          "fpr",
+          0.0
+        ],
+        [
+          "fraud_capture_rate",
+          0.772727
+        ],
+        [
+          "mcc",
+          1.0
+        ],
+        [
+          "pr_auc",
+          0.0
+        ],
+        [
+          "precision",
+          1.0
+        ],
+        [
+          "recall",
+          1.0
+        ],
+        [
+          "roc_auc",
+          1.0
+        ],
+        [
+          "specificity",
+          1.0
+        ],
+        [
+          "support_fraud",
+          17
+        ],
+        [
+          "support_legit",
+          5
+        ],
+        [
+          "threshold",
+          0.5
+        ],
+        [
+          "threshold_source",
+          "probe conformance decision (binary reject indicator); the production-reference analysis uses PRODUCTION_THRESHOLD"
+        ],
+        [
+          "tn",
+          5
+        ],
+        [
+          "total",
+          22
+        ],
+        [
+          "total_fraud",
+          17
+        ],
+        [
+          "tp",
+          17
+        ]
+      ],
+      "name": "input_validation",
+      "status": "evaluated"
+    },
+    {
+      "findings": [
+        "rows_checked=284807",
+        "constraint_violations=0",
+        "amount_min=0 amount_max=25691.2"
+      ],
+      "input_features": [
+        "Amount"
+      ],
+      "limitations": [
+        "amount_ratio (relative amount) is NOT derivable: ULB has no account typical-amount history",
+        "conformance checks the PRODUCTION amount constraints (ge=0 and finite) read from FeatureVector field metadata; no alternate constraint is invented"
+      ],
+      "metric_scope": "descriptive statistics and constraint conformance; no prediction semantics",
+      "metrics": [],
+      "name": "amount_processing",
+      "status": "evaluated"
+    },
+    {
+      "findings": [
+        "relative ordering verified by deterministic tertiles",
+        "calendar conversion: none"
+      ],
+      "input_features": [
+        "Time"
+      ],
+      "limitations": [
+        "Time is dataset-relative seconds (ordering_only_relative); absolute calendar semantics are unavailable and are never fabricated",
+        "hour_of_day and is_weekend therefore stay underivable for every rule that reads them"
+      ],
+      "metric_scope": "ordering and distribution only; no prediction semantics",
+      "metrics": [],
+      "name": "timestamp_processing",
+      "status": "evaluated"
+    },
+    {
+      "findings": [
+        "class_distribution=(('0', 284315), ('1', 492))",
+        "unmapped_labels=0",
+        "Phase 107 warning 'leakage_fields_present' carried: label present in raw data, excluded from features",
+        "PCA columns are never mapped: ML_FEATURE_ORDER and FeatureVector contain no V1..V28 field"
+      ],
+      "input_features": [
+        "Class"
+      ],
+      "limitations": [
+        "Class is the TARGET LABEL and is never an input feature: absent from ML_FEATURE_ORDER, from FeatureVector fields and from the native 48-vector",
+        "label semantics carried verbatim from the Phase 106 registry (1 = fraud, 0 otherwise)"
+      ],
+      "metric_scope": "handling conformance; no prediction semantics",
+      "metrics": [],
+      "name": "class_label_handling",
+      "status": "evaluated"
+    },
+    {
+      "findings": [
+        "rule_features=17",
+        "derivable_features=0",
+        "score_vector=constant_0 over 284807 rows",
+        "distinct_scores=1"
+      ],
+      "input_features": [],
+      "limitations": [
+        "0 of 17 rule features are derivable from ULB (declared per feature in RULE_FEATURE_UNAVAILABILITY); the engine is evaluated under the empty legitimate input and fail-closes to a constant 0.0 score for every row",
+        "the metric block measures fail-closed DECISION behavior, never detection capability",
+        "component scores are rule severities, not calibrated probabilities"
+      ],
+      "metric_scope": "score vector feeds the evaluation-level metric block (labels = Class)",
+      "metrics": [],
+      "name": "rules_engine_fail_closed",
+      "status": "evaluated"
+    },
+    {
+      "findings": [
+        "band[low:allow]=284807",
+        "band_of(0) -> ('low', 'allow') for every row (constant fail-closed score)"
+      ],
+      "input_features": [
+        "rule score"
+      ],
+      "limitations": [
+        "evaluated in the rules-only degraded composition (100*max(unavailable ml, rule_score)); the native fusion path is forbidden for ULB, so this observes banding of the fail-closed score only"
+      ],
+      "metric_scope": "decision distribution; no prediction semantics",
+      "metrics": [],
+      "name": "decision_infrastructure",
+      "status": "evaluated"
+    },
+    {
+      "findings": [
+        "missing_cells=0",
+        "ragged_rows=0",
+        "within_source_duplicates=1854, cross_source=0 (Phase 107 record)",
+        "schema conformity verified against the Phase 106 expected schema; discrepancies are recorded by the Phase 107 record, never silently dropped"
+      ],
+      "input_features": [
+        "schema",
+        "cell values",
+        "Phase 107 record"
+      ],
+      "limitations": [
+        "duplicate statistics are the Phase 107 ingestion findings (reused, not recomputed)"
+      ],
+      "metric_scope": "quality counts; no prediction semantics",
+      "metrics": [],
+      "name": "data_quality_enforcement",
+      "status": "evaluated"
+    },
+    {
+      "findings": [],
+      "input_features": [],
+      "limitations": [
+        "benchmark rows must never enter the production decision/audit records (Phase 108 writes results only under reports/external_benchmark/phase108/ulb/); no audit-chain write is performed by design"
+      ],
+      "metric_scope": "NOT_APPLICABLE",
+      "metrics": [],
+      "name": "audit_trace_generation",
+      "status": "not_applicable"
+    }
+  ],
+  "contamination": {
+    "benchmark_wrote_training": false,
+    "feedback_sha256": "2dd28cabd123ccc85949c2e453cf5b67ea628c4f33482b5bcdd78c9530cfcf55",
+    "train_fingerprint_overlap": 0,
+    "train_rows": 9799,
+    "train_sha256_after": "9f0f56bf0549fccf0c6335ece1514d1ae515a57f809a72658ce5fcaf48525d63",
+    "train_sha256_before": "9f0f56bf0549fccf0c6335ece1514d1ae515a57f809a72658ce5fcaf48525d63",
+    "train_unchanged": true,
+    "ts_domains_disjoint": true
+  },
+  "dataset_canonical_name": "ULB Credit Card Fraud Detection (creditcard.csv)",
+  "dataset_id": "ULB_CREDIT_CARD_FRAUD",
+  "dataset_sha256": "76274b691b16a6c49d3f159c883398e03ccd6d1ee12d9d8ee38f4b4b98551a89",
+  "dataset_status": "acquired_verified",
+  "error_analysis": {
+    "amount_buckets": [
+      {
+        "fn": 249,
+        "fp": 0,
+        "fraud": 249,
+        "hi": 10.0,
+        "label": "[0, 10)",
+        "lo": 0.0,
+        "rows": 97314,
+        "tn": 97065,
+        "tp": 0
+      },
+      {
+        "fn": 56,
+        "fp": 0,
+        "fraud": 56,
+        "hi": 50.0,
+        "label": "[10, 50)",
+        "lo": 10.0,
+        "rows": 92390,
+        "tn": 92334,
+        "tp": 0
+      },
+      {
+        "fn": 57,
+        "fp": 0,
+        "fraud": 57,
+        "hi": 100.0,
+        "label": "[50, 100)",
+        "lo": 50.0,
+        "rows": 37718,
+        "tn": 37661,
+        "tp": 0
+      },
+      {
+        "fn": 95,
+        "fp": 0,
+        "fraud": 95,
+        "hi": 500.0,
+        "label": "[100, 500)",
+        "lo": 100.0,
+        "rows": 47893,
+        "tn": 47798,
+        "tp": 0
+      },
+      {
+        "fn": 26,
+        "fp": 0,
+        "fraud": 26,
+        "hi": 1000.0,
+        "label": "[500, 1000)",
+        "lo": 500.0,
+        "rows": 6423,
+        "tn": 6397,
+        "tp": 0
+      },
+      {
+        "fn": 9,
+        "fp": 0,
+        "fraud": 9,
+        "hi": 5000.0,
+        "label": "[1000, 5000)",
+        "lo": 1000.0,
+        "rows": 3014,
+        "tn": 3005,
+        "tp": 0
+      },
+      {
+        "fn": 0,
+        "fp": 0,
+        "fraud": 0,
+        "hi": Infinity,
+        "label": "[5000, inf)",
+        "lo": 5000.0,
+        "rows": 55,
+        "tn": 55,
+        "tp": 0
+      }
+    ],
+    "fn": 492,
+    "fn_amount": {
+      "count": 492.0,
+      "max": 2125.87,
+      "mean": 122.211321,
+      "median": 9.25,
+      "min": 0.0,
+      "p95": 648.0
+    },
+    "fp": 0,
+    "fp_amount": "NOT_APPLICABLE",
+    "fraud_amount": {
+      "count": 492.0,
+      "max": 2125.87,
+      "mean": 122.211321,
+      "median": 9.25,
+      "min": 0.0,
+      "p95": 648.0
+    },
+    "identifier_exposure": "aggregate_amount_and_time_only",
+    "legit_amount": {
+      "count": 284315.0,
+      "max": 25691.16,
+      "mean": 88.291022,
+      "median": 22.0,
+      "min": 0.0,
+      "p95": 364.43
+    },
+    "reconciliation": [
+      [
+        "tp+fp+fn+tn==rows",
+        true
+      ],
+      [
+        "fn==fraud_count",
+        true
+      ],
+      [
+        "fp==0",
+        true
+      ],
+      [
+        "fn_amount_count==fraud_count",
+        true
+      ],
+      [
+        "amount_bucket_rows_cover",
+        true
+      ]
+    ],
+    "temporal_buckets": [
+      {
+        "fn": 217,
+        "fp": 0,
+        "fraud": 217,
+        "hi": 94935.0,
+        "label": "early",
+        "lo": 0.0,
+        "rows": 94935,
+        "tn": 94718,
+        "tp": 0
+      },
+      {
+        "fn": 153,
+        "fp": 0,
+        "fraud": 153,
+        "hi": 189870.0,
+        "label": "middle",
+        "lo": 94935.0,
+        "rows": 94935,
+        "tn": 94782,
+        "tp": 0
+      },
+      {
+        "fn": 122,
+        "fp": 0,
+        "fraud": 122,
+        "hi": 284807.0,
+        "label": "late",
+        "lo": 189870.0,
+        "rows": 94937,
+        "tn": 94815,
+        "tp": 0
+      }
+    ],
+    "tn": 284315,
+    "tp": 0
+  },
+  "execution_version": "phase108_execution_v1",
+  "fraud_count": 492,
+  "fraud_prevalence": 0.001727,
+  "group": "group_b",
+  "imbalance_warning": "Severe class imbalance (0.1727% fraud): raw accuracy is misleading because the majority-class baseline already scores 99.83% while catching zero fraud.  Read balanced accuracy, precision, recall, F1, MCC, PR-AUC and ROC-AUC together; never accuracy alone.",
+  "integrity_result": "VERIFIED",
+  "leakage_findings": [
+    "Class excluded: absent from ML_FEATURE_ORDER (21) and from FeatureVector fields",
+    "PCA V1..V28 never mapped: no canonical feature and no native feature references an undeclared component",
+    "Phase 106 known_leakage_risks carried verbatim (PCA semantics undisclosed)",
+    "Phase 107 warning 'leakage_fields_present' carried",
+    "label leakage excluded from every component input declaration"
+  ],
+  "manifest": {
+    "benchmark_id": "phase108-ulb-component-evaluation",
+    "canonical_mapping": "canonical map_raw_to_native pipeline unchanged",
+    "code_version": "phase108_execution_v1",
+    "created_at": "2026-09-23T00:00:00+00:00",
+    "dataset_id": "ULB_CREDIT_CARD_FRAUD",
+    "dataset_sha256": "76274b691b16a6c49d3f159c883398e03ccd6d1ee12d9d8ee38f4b4b98551a89",
+    "domain_feature_count": 21,
+    "evaluation_configuration": [
+      [
+        "sweep_grid",
+        "0,0.005,0.018758,0.05,0.5"
+      ],
+      [
+        "temporal_split",
+        "tertiles by row count over a stable Time-ascending sort (ties broken by original row order); Time stays in dataset-relative seconds; no calendar period is claimed"
+      ],
+      [
+        "amount_buckets",
+        "[lo, hi) with the final bucket open-ended"
+      ],
+      [
+        "probes",
+        "22"
+      ],
+      [
+        "band_composition",
+        "rules-only degraded composition"
+      ],
+      [
+        "ml_version",
+        "v1"
+      ]
+    ],
+    "evaluation_modes": [
+      "MODE_A_BASELINE_DATASET_AUDIT",
+      "MODE_B_COMPONENT_EVALUATION"
+    ],
+    "feature_version": "v1",
+    "label_counts": [
+      [
+        "0",
+        284315
+      ],
+      [
+        "1",
+        492
+      ]
+    ],
+    "manifest_hash": "d3b9b9103f02b7df2d2ff9785c329b07396a279bfa85eefb6b0696ec2acf6775",
+    "manifest_version": "phase108_evaluation_manifest_v1",
+    "metric_configuration": [
+      [
+        "threshold",
+        "0.018758"
+      ],
+      [
+        "threshold_source",
+        "PRODUCTION_THRESHOLD locked"
+      ],
+      [
+        "semantics",
+        "port of real_world_evaluation_protocol compute_metrics, fixture-proven equal"
+      ],
+      [
+        "zero_division",
+        "guarded to 0.0 (authority convention)"
+      ],
+      [
+        "rounding",
+        "round(..., 6) per authority"
+      ]
+    ],
+    "mode_c_status": "NOT_APPLICABLE",
+    "model_id": "altman_native",
+    "native_feature_count": 48,
+    "native_feature_version": "v1",
+    "not_gate_evidence": [
+      "ProviderEvidence",
+      "QualificationResult",
+      "RWVPromotionEvidence",
+      "PromotionToken"
+    ],
+    "production_threshold": 0.018758,
+    "release_id": "release-altman_native_E_hardneg_cert_20260904",
+    "row_count": 284807,
+    "schema_hash": "eb5a7f0652502a72971b81fb206b7f4aadc8724737f5368d6390f9d057ac3b9a"
+  },
+  "metric_block": [
+    [
+      "accuracy",
+      0.998273
+    ],
+    [
+      "alert_rate",
+      0.0
+    ],
+    [
+      "balanced_accuracy",
+      0.5
+    ],
+    [
+      "brier_score",
+      0.001727
+    ],
+    [
+      "class_imbalance",
+      {
+        "fraud_count": 492,
+        "fraud_rate": 0.001727,
+        "rows": 284807
+      }
+    ],
+    [
+      "f1",
+      0.0
+    ],
+    [
+      "fn",
+      492
+    ],
+    [
+      "fnr",
+      1.0
+    ],
+    [
+      "fp",
+      0
+    ],
+    [
+      "fpr",
+      0.0
+    ],
+    [
+      "fraud_capture_rate",
+      0.001727
+    ],
+    [
+      "mcc",
+      0.0
+    ],
+    [
+      "pr_auc",
+      0.000864
+    ],
+    [
+      "precision",
+      0.0
+    ],
+    [
+      "recall",
+      0.0
+    ],
+    [
+      "roc_auc",
+      0.5
+    ],
+    [
+      "specificity",
+      1.0
+    ],
+    [
+      "support_fraud",
+      492
+    ],
+    [
+      "support_legit",
+      284315
+    ],
+    [
+      "threshold",
+      0.018758
+    ],
+    [
+      "threshold_source",
+      "PRODUCTION_THRESHOLD (locked, read-only)"
+    ],
+    [
+      "tn",
+      284315
+    ],
+    [
+      "total",
+      284807
+    ],
+    [
+      "total_fraud",
+      492
+    ],
+    [
+      "tp",
+      0
+    ]
+  ],
+  "mode_c_status": "NOT_APPLICABLE",
+  "modes_executed": [
+    "MODE_A_BASELINE_DATASET_AUDIT",
+    "MODE_B_COMPONENT_EVALUATION"
+  ],
+  "native_eligible_rows": 0,
+  "native_model_evaluation": "NOT_APPLICABLE",
+  "native_model_evaluation_reasons": [
+    "ULB is Group B: 5/48 native features usable, 43 blocking",
+    "Altman-Native ensemble requires the canonical 48-vector; ULB offers only Time, Amount and 28 undisclosed PCA components",
+    "PCA substitution, feature imputation, alternate mapping and column renaming are forbidden; no alternate model is created to obtain metrics",
+    "the existing rules engine is the only scored production component and it fail-closes because none of its 17 features is derivable from ULB"
+  ],
+  "phase": 108,
+  "probe_mismatches": 0,
+  "result_hash": "7f926fa240ca04cd9464a4727705c2aaae84453b4f380c6067cc45b5d4d9b6d2",
+  "robustness_findings": [
+    "NaN, +Inf and float-overflow payloads rejected (finite validator)",
+    "negative amount and amount_ratio rejected (ge=0)",
+    "hour_of_day 24/-1, flags >1, escalation 11.0 rejected (range validators)",
+    "short/long event_id and malformed fraud_id rejected (length/pattern validators)",
+    "missing required FeatureVector field rejected",
+    "extreme-but-finite 1e308 accepted (documented boundary)",
+    "numeric strings coerced, non-numeric strings rejected (existing schema behavior, unchanged)",
+    "duplicate event_id accepted at validation (dedup belongs to persistence; out of scope for this phase)",
+    "expectation_mismatches=0"
+  ],
+  "row_count": 284807,
+  "schema_hash": "eb5a7f0652502a72971b81fb206b7f4aadc8724737f5368d6390f9d057ac3b9a",
+  "scope": "component_evaluation_only",
+  "sweep": {
+    "labels": [
+      "DIAGNOSTIC_ONLY",
+      "NON_PRODUCTION",
+      "NO_THRESHOLD_CHANGE"
+    ],
+    "pr_auc_note": "PR-AUC is a property of the score vector, not of a single threshold; the constant value is reported unchanged on every sweep row",
+    "production_threshold": 0.018758,
+    "rows": [
+      [
+        0.0,
+        0.001727,
+        1.0,
+        0.003449,
+        0.0,
+        0.000864
+      ],
+      [
+        0.005,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.000864
+      ],
+      [
+        0.018758,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.000864
+      ],
+      [
+        0.05,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.000864
+      ],
+      [
+        0.5,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.000864
+      ]
+    ],
+    "statement": "The threshold sweep is descriptive analysis only and does not constitute threshold selection or model optimization."
+  },
+  "temporal": {
+    "calendar_conversion": "none",
+    "future_leakage_note": "descriptive partitioning only: the split uses Time alone; no feature, label or score from a later row influences any earlier row, so no future information leaks into the past",
+    "ordering_deterministic": true,
+    "slices": [
+      {
+        "fraud": 217,
+        "fraud_rate": 0.002286,
+        "name": "early",
+        "row_hi": 94935,
+        "row_lo": 0,
+        "rows": 94935,
+        "time_max": 65096.0,
+        "time_min": 0.0
+      },
+      {
+        "fraud": 153,
+        "fraud_rate": 0.001612,
+        "name": "middle",
+        "row_hi": 189870,
+        "row_lo": 94935,
+        "rows": 94935,
+        "time_max": 128593.0,
+        "time_min": 65096.0
+      },
+      {
+        "fraud": 122,
+        "fraud_rate": 0.001285,
+        "name": "late",
+        "row_hi": 284807,
+        "row_lo": 189870,
+        "rows": 94937,
+        "time_max": 172792.0,
+        "time_min": 128593.0
+      }
+    ],
+    "split_method": "tertiles by row count over a stable Time-ascending sort (ties broken by original row order); Time stays in dataset-relative seconds; no calendar period is claimed",
+    "timestamp_status": "ordering_only_relative"
+  },
+  "threshold_unchanged": true,
+  "threshold_used": 0.018758,
+  "usable_native_features": [
+    "amt",
+    "log_amt",
+    "amt_sq",
+    "high_amt",
+    "very_high_amt"
+  ]
+}

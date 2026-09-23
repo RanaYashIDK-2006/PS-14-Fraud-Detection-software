@@ -1,0 +1,88 @@
+{
+  "benchmark_id": "phase108-ulb-component-evaluation",
+  "canonical_mapping": "canonical map_raw_to_native pipeline unchanged",
+  "code_version": "phase108_execution_v1",
+  "created_at": "2026-09-23T00:00:00+00:00",
+  "dataset_id": "ULB_CREDIT_CARD_FRAUD",
+  "dataset_sha256": "76274b691b16a6c49d3f159c883398e03ccd6d1ee12d9d8ee38f4b4b98551a89",
+  "domain_feature_count": 21,
+  "evaluation_configuration": [
+    [
+      "sweep_grid",
+      "0,0.005,0.018758,0.05,0.5"
+    ],
+    [
+      "temporal_split",
+      "tertiles by row count over a stable Time-ascending sort (ties broken by original row order); Time stays in dataset-relative seconds; no calendar period is claimed"
+    ],
+    [
+      "amount_buckets",
+      "[lo, hi) with the final bucket open-ended"
+    ],
+    [
+      "probes",
+      "22"
+    ],
+    [
+      "band_composition",
+      "rules-only degraded composition"
+    ],
+    [
+      "ml_version",
+      "v1"
+    ]
+  ],
+  "evaluation_modes": [
+    "MODE_A_BASELINE_DATASET_AUDIT",
+    "MODE_B_COMPONENT_EVALUATION"
+  ],
+  "feature_version": "v1",
+  "label_counts": [
+    [
+      "0",
+      284315
+    ],
+    [
+      "1",
+      492
+    ]
+  ],
+  "manifest_hash": "d3b9b9103f02b7df2d2ff9785c329b07396a279bfa85eefb6b0696ec2acf6775",
+  "manifest_version": "phase108_evaluation_manifest_v1",
+  "metric_configuration": [
+    [
+      "threshold",
+      "0.018758"
+    ],
+    [
+      "threshold_source",
+      "PRODUCTION_THRESHOLD locked"
+    ],
+    [
+      "semantics",
+      "port of real_world_evaluation_protocol compute_metrics, fixture-proven equal"
+    ],
+    [
+      "zero_division",
+      "guarded to 0.0 (authority convention)"
+    ],
+    [
+      "rounding",
+      "round(..., 6) per authority"
+    ]
+  ],
+  "mode_c_status": "NOT_APPLICABLE",
+  "model_id": "altman_native",
+  "native_feature_count": 48,
+  "native_feature_version": "v1",
+  "not_gate_evidence": [
+    "ProviderEvidence",
+    "QualificationResult",
+    "RWVPromotionEvidence",
+    "PromotionToken"
+  ],
+  "production_threshold": 0.018758,
+  "release_id": "release-altman_native_E_hardneg_cert_20260904",
+  "row_count": 284807,
+  "schema_hash": "eb5a7f0652502a72971b81fb206b7f4aadc8724737f5368d6390f9d057ac3b9a"
+}
