@@ -108,6 +108,15 @@ cleanup() {
         taskkill //F //PID "$pid" >/dev/null 2>&1 && echo "  stopped pid $pid" || true
       else
         kill "$pid" >/dev/null 2>&1 && echo "  stopped pid $pid" || true
+        # SIGTERM only signals: uvicorn can outlive it with connections open,
+        # and a later step rebinding these ports (compose up) fails with
+        # EADDRINUSE. Wait briefly, then force-kill so the port is genuinely
+        # released before this script exits.
+        for _ in $(seq 1 15); do
+          kill -0 "$pid" 2>/dev/null || break
+          sleep 1
+        done
+        kill -9 "$pid" >/dev/null 2>&1 || true
       fi
     done
   fi
