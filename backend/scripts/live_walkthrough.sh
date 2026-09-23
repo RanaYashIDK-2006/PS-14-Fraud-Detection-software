@@ -129,7 +129,13 @@ start_service() {
     backend_win="$(cygpath -w "$ROOT/backend" 2>/dev/null || echo "$ROOT/backend")"
     pid="$(powershell -NoProfile -Command "\$env:PYTHONPATH='$backend_win'; (Start-Process -FilePath '$py_win' -ArgumentList '-m','uvicorn','$mod','--port','$port' -WorkingDirectory '$root_win' -WindowStyle Hidden -PassThru).Id" | tr -d '\r')"
   else
-    (cd "$ROOT/backend" && nohup "$PY" -m uvicorn "$mod" --port "$port" >"$WT_DIR/$name.log" 2>&1 &)
+    # Mirror the Windows branch: cwd stays $ROOT (children resolve db/,
+    # models/ and .env relative to it) with backend/ on PYTHONPATH for src.*.
+    # The redirect must run in the parent cwd, and '&' must be outside the
+    # subshell so pid=$! is set under `set -u`; exec makes that pid uvicorn's.
+    (cd "$ROOT" && PYTHONPATH="$ROOT/backend${PYTHONPATH:+:$PYTHONPATH}" \
+      exec "$PY" -m uvicorn "$mod" --port "$port") \
+      >"$ROOT/$WT_DIR/$name.log" 2>&1 &
     pid=$!
   fi
   echo "[$name] started (pid $pid) on :$port"

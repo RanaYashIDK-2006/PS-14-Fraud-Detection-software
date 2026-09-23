@@ -51,7 +51,7 @@ jobs:
       
       - name: Run Safety (Dependencies)
         run: |
-          safety check --file requirements.txt --output json > safety-report.json
+          safety check --file backend/requirements.txt --output json > safety-report.json
         continue-on-error: false
       
       - name: Check for Secrets
