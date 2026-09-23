@@ -304,7 +304,9 @@ jobs:
       - name: Set image metadata
         id: meta
         run: |
-          IMAGE=ghcr.io/${{ github.repository }}
+          # GHCR references must be lowercase (docker rejects uppercase
+          # repository names with "invalid reference format").
+          IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}
           SHA=${{ github.sha }}
           SHORT_SHA=${SHA:0:7}
           TAGS="${IMAGE}:${SHORT_SHA}"
