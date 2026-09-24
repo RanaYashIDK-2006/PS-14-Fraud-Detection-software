@@ -18,6 +18,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+# Phase 109 — test-fixture isolation: the lifecycle probes below append
+# hash-chained events through the real audit writer.  On 2026-09-19 those
+# runs wrote into the shared production db/audit.db (and raced a second
+# writer process, producing the quarantined seq-731/735/740/745/750 forks).
+# Bind DB-4 (settings.db_dir) to a private temp directory for this process
+# so every probe below is isolated from the production chain.
+os.environ["DB_DIR"] = tempfile.mkdtemp(prefix="ps14_phase76_")
+
 passed = 0
 failed = 0
 errors = []
@@ -282,6 +290,16 @@ print("\n=== SECTION 6: Idempotency After Restart Simulation ===")
 from src.risk_engine.db import SessionLocal
 from src.risk_engine.models import RiskScore
 import uuid
+
+# Phase 109: with DB_DIR bound to a fresh temp dir the DB-3 tables do not
+# exist yet (previously the live risk service created them in the shared
+# db).  Create them here so the idempotency probes are self-contained.
+try:
+    from src.risk_engine.db import engine as _risk_eng
+    from src.risk_engine.models import Base as _RiskBase
+    _RiskBase.metadata.create_all(bind=_risk_eng)
+except Exception:
+    pass
 
 test_event_id = f"FLIFECYCLE{uuid.uuid4().hex[:8].upper()}"
 test_fraud_id = f"FFLIFECYCLE{uuid.uuid4().hex[:10].upper()}"

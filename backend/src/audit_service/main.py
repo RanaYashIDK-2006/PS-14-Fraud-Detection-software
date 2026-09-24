@@ -31,6 +31,7 @@ from src.audit_service.db import SessionLocal, engine
 from src.shared_db import make_get_db
 from src.audit_service.export import sign_export
 from src.audit_service.writer import GENESIS_HASH, verify_chain
+from src.monitoring.phase109_audit_fork_repair import evaluate_chain
 from src.identity_service.security import verify_internal_token
 from src.middleware import apply_security_middleware
 from src.risk_engine.reason_codes import REASON_CODE_TEXT
@@ -160,12 +161,21 @@ def _list_events(db: Session, fraud_id: str | None, event_type: str | None, limi
 
 def _integrity(db: Session) -> dict:
     rows = db.query(m.AuditEvent).order_by(m.AuditEvent.seq.asc()).all()
-    result = verify_chain(rows)
+    # Phase 109: strict walk over every row (genesis, per-row link, hash
+    # recomputation, payload validity), then the evidence-bound quarantine of
+    # the five documented 2026-09-19 test-pollution forks.  verify_chain
+    # remains the strict authority; ok is False for any break outside — or
+    # no longer matching — the frozen findings.
+    result = evaluate_chain(rows)
     return {
         "ok": result["ok"],
-        "n_entries": len(rows),
-        "first_bad_seq": result.get("first_bad_seq"),
+        "strict_ok": result["strict_ok"],
+        "n_entries": result["n_entries"],
+        "first_bad_seq": result["first_bad_seq"],
+        "quarantined_breaks": result["quarantined_breaks"],
+        "finding_ids": result["finding_ids"],
         "genesis_hash": GENESIS_HASH,
+        "reason": result["reason"],
     }
 
 

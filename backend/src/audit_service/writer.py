@@ -16,7 +16,8 @@ import json
 import time as _time
 import uuid
 
-from sqlalchemy import desc
+from sqlalchemy import desc, text
+from sqlalchemy.exc import OperationalError
 
 from src.audit_service.db import SessionLocal, engine
 from src.audit_service.models import AuditEvent, Base
@@ -72,29 +73,54 @@ def _write_audit_event(fraud_id: str, event_type: str, payload: dict) -> AuditEv
       1. query last row (prev_hash lookup)
       2. compute entry_hash
       3. insert new row
-    is atomic with respect to all other writers.  No two entries can
-    legitimately reference the same predecessor.
+    is atomic with respect to all other writers *in this process*.
+
+    Phase 109: a process-local threading.Lock cannot order two separate
+    processes sharing db/audit.db — the stale max-seq read that produced
+    the seq-731/735/740/745/750 forks on 2026-09-19 (two writers both
+    chained onto the same predecessor).  SQLite admits a single writer, so
+    taking the IMMEDIATE reservation *before* the prev_hash lookup closes
+    the race across processes: a second writer blocks inside
+    BEGIN IMMEDIATE until the first commits, then reads the fresh maximum.
+    A bounded retry covers lock-timeout expiry under heavy contention.
     """
-    with _chain_lock:
-        db = SessionLocal()
-        try:
-            prev = db.query(AuditEvent).order_by(desc(AuditEvent.seq)).first()
-            prev_hash = prev.entry_hash if prev is not None else GENESIS_HASH
-            body = canonical(payload)
-            entry_hash = hashlib.sha256((prev_hash + body).encode("utf-8")).hexdigest()
-            row = AuditEvent(
-                event_id=str(uuid.uuid4()),
-                fraud_id=fraud_id,
-                event_type=event_type,
-                prev_hash=prev_hash,
-                entry_hash=entry_hash,
-                payload_summary=json.dumps(payload),
-            )
-            db.add(row)
-            db.commit()
-            return row
-        finally:
-            db.close()
+    last_err: Exception | None = None
+    for attempt in range(4):
+        with _chain_lock:
+            db = SessionLocal()
+            try:
+                db.rollback()  # discard any prior statement state
+                if not _settings.use_postgres:
+                    # Cross-process serialization (SQLite single-writer):
+                    # reservation is taken BEFORE the max-seq read.
+                    db.execute(text("BEGIN IMMEDIATE"))
+                prev = db.query(AuditEvent).order_by(desc(AuditEvent.seq)).first()
+                prev_hash = prev.entry_hash if prev is not None else GENESIS_HASH
+                body = canonical(payload)
+                entry_hash = hashlib.sha256((prev_hash + body).encode("utf-8")).hexdigest()
+                row = AuditEvent(
+                    event_id=str(uuid.uuid4()),
+                    fraud_id=fraud_id,
+                    event_type=event_type,
+                    prev_hash=prev_hash,
+                    entry_hash=entry_hash,
+                    payload_summary=json.dumps(payload),
+                )
+                db.add(row)
+                db.commit()
+                return row
+            except OperationalError as exc:
+                # "database is locked"/"busy": another writer held the
+                # reservation past busy_timeout — back off and retry.
+                last_err = exc
+                _time.sleep(0.02 * (attempt + 1))
+            finally:
+                try:
+                    db.rollback()  # no-op after commit; discards an open IMMEDIATE tx
+                except Exception:
+                    pass
+                db.close()
+    raise last_err if last_err else RuntimeError("audit append failed")
 
 
 def _ensure_audit_thread():

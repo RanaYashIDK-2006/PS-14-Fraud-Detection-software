@@ -26,9 +26,28 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
+sys.path.insert(0, str(ROOT / "backend"))  # Phase 109: src.* imports below
 DB_DIR = ROOT / "db"
 
 DB_BASE_NAMES = ["identity.db", "features.db", "risk.db", "audit.db"]
+
+
+def _dump_audit(db_path):
+    """Read-only snapshot of audit_events as (list[dict], max_seq).
+
+    Phase 109: the shared chain receives legitimate live appends while this
+    suite runs, so the originals-untouched check compares the HISTORICAL
+    PREFIX (every row present in the Phase-1 copy) instead of racing a
+    whole-file hash.  Any mutation, deletion, or truncation of history
+    still fails; later appends are live traffic, not the suite's doing.
+    """
+    con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+    con.row_factory = sqlite3.Row
+    rows = [dict(r) for r in con.execute(
+        "SELECT * FROM audit_events ORDER BY seq"
+    ).fetchall()]
+    con.close()
+    return rows, (rows[-1]["seq"] if rows else 0)
 
 passed = 0
 failed = 0
@@ -129,38 +148,15 @@ def main() -> None:
         flush_audit_queue(timeout=2.0)
     except Exception:
         pass
-    # Repair any broken chain links from concurrent async writes
-    audit_db = DB_DIR / "audit.db"
-    if audit_db.exists():
-        import hashlib as _hl
-        expected_genesis = _hl.sha256(b"PS-14 audit genesis v1").hexdigest()
-        try:
-            conn = sqlite3.connect(str(audit_db), timeout=5)
-            rows = conn.execute(
-                "SELECT seq, event_type, prev_hash, entry_hash, payload_summary "
-                "FROM audit_events ORDER BY seq"
-            ).fetchall()
-            broken = 0
-            prev = expected_genesis
-            for seq, etype, prev_h, entry_h, payload in rows:
-                try:
-                    body = json.dumps(json.loads(payload), sort_keys=True, separators=(",", ":"), default=str)
-                except Exception:
-                    body = payload
-                recomputed = _hl.sha256((prev + body).encode("utf-8")).hexdigest()
-                if prev_h != prev or entry_h != recomputed:
-                    conn.execute(
-                        "UPDATE audit_events SET prev_hash=?, entry_hash=? WHERE seq=?",
-                        (prev, recomputed, seq)
-                    )
-                    broken += 1
-                prev = entry_h
-            conn.commit()
-            conn.close()
-            if broken > 0:
-                print(f"  Repaired {broken} broken chain links")
-        except Exception as e:
-            print(f"  Chain repair skipped: {e}")
+    # Phase 109: the former "repair broken chain links" block UPDATEd
+    # historical prev_hash/entry_hash values to force verification green.
+    # Audit rows are append-only evidence — rewriting them is forbidden
+    # (and the audit_events_no_update trigger blocked the statement anyway,
+    # so the block was a dead no-op whose intent violates the evidence
+    # rules). The five documented 2026-09-19 test-pollution forks are
+    # quarantined by evidence-bound findings in
+    # src/monitoring/phase109_audit_fork_repair.py instead; this suite
+    # never mutates audit history.
 
     work_dir = Path(tempfile.mkdtemp(prefix="ps14_brt_"))
     src_dir = work_dir / "source"
@@ -312,42 +308,34 @@ def main() -> None:
         if audit_path.exists():
             try:
                 conn = sqlite3.connect(str(audit_path))
-                cols = [r[1] for r in conn.execute(
-                    "PRAGMA table_info(audit_events)"
+                conn.row_factory = sqlite3.Row
+                rows = [dict(r) for r in conn.execute(
+                    "SELECT * FROM audit_events ORDER BY seq"
                 ).fetchall()]
-                if "previous_hash" in cols:
-                    rows = conn.execute(
-                        "SELECT seq, entry_hash, previous_hash FROM audit_events ORDER BY seq"
-                    ).fetchall()
-                elif "prev_hash" in cols:
-                    rows = conn.execute(
-                        "SELECT seq, entry_hash, prev_hash FROM audit_events ORDER BY seq"
-                    ).fetchall()
-                else:
-                    rows = []
                 conn.close()
 
                 if len(rows) == 0:
                     check("Audit chain (empty)", True, "no events to verify")
                 else:
-                    # Genesis hash: sha256("PS-14 audit genesis v1")
-                    import hashlib as _hl
-                    expected_genesis = _hl.sha256(b"PS-14 audit genesis v1").hexdigest()
-                    chain_ok = True
-                    for i, (seq, entry_hash, prev_hash) in enumerate(rows):
-                        if i == 0:
-                            if prev_hash != expected_genesis:
-                                chain_ok = False
-                                check(f"Audit seq {seq} genesis hash", False,
-                                      f"expected {expected_genesis[:20]}..., got {prev_hash[:20]}...")
-                        else:
-                            expected_prev = rows[i - 1][1]  # previous entry's hash
-                            if prev_hash != expected_prev:
-                                chain_ok = False
-                                check(f"Audit seq {seq} chain link", False,
-                                      f"prev_hash mismatch")
-                    check("Audit chain integrity", chain_ok,
-                          f"verified {len(rows)} entries")
+                    # Phase 109: strict walk over every restored row plus
+                    # the evidence-bound quarantine of the five documented
+                    # 2026-09-19 forks. A faithful backup PRESERVES those
+                    # rows byte-for-byte; a corrupted or modified one
+                    # fails closed.
+                    from src.monitoring.phase109_audit_fork_repair import (
+                        AFFECTED_SEQUENCES,
+                        evaluate_chain,
+                    )
+                    res = evaluate_chain(rows)
+                    check("Audit chain integrity (strict + quarantine)",
+                          res["ok"],
+                          f"strict_ok={res['strict_ok']} first_bad={res['first_bad_seq']}")
+                    check("Restore preserves all five quarantined forks",
+                          set(res.get("quarantined_breaks") or []) == set(AFFECTED_SEQUENCES),
+                          str(res.get("quarantined_breaks")))
+                    check("Restored row count matches walk",
+                          res["n_entries"] == len(rows),
+                          str(res["n_entries"]))
             except Exception as e:
                 check("Audit chain", False, str(e))
 
@@ -359,17 +347,27 @@ def main() -> None:
             src = DB_DIR / db_base
             if not src.exists():
                 continue
-            # Re-checkpoint to ensure WAL is clean for hash comparison
-            checkpoint_db(src)
-            h = sha256_file(src)
-            # Compare against our working copy (which was checkpointed the same way)
             src_copy = src_dir / db_base
-            if src_copy.exists():
+            if not src_copy.exists():
+                check(f"Original {db_base} unchanged", True, "no copy to compare")
+                continue
+            if db_base == "audit.db":
+                rows_copy, max_copy = _dump_audit(src_copy)
+                rows_src, max_src = _dump_audit(src)
+                prefix = [r for r in rows_src if r["seq"] <= max_copy]
+                same = prefix == rows_copy and max_src >= max_copy
+                check(f"Original {db_base} unchanged (historical prefix)",
+                      same,
+                      f"{len(rows_copy)} prefix rows identical, "
+                      f"{max_src - max_copy} live append(s)")
+            else:
+                # Re-checkpoint to ensure WAL is clean for hash comparison
+                checkpoint_db(src)
+                h = sha256_file(src)
+                # Compare against our working copy (checkpointed the same way)
                 h_copy = sha256_file(src_copy)
                 check(f"Original {db_base} unchanged", h == h_copy,
                       f"hash={h[:16]}...")
-            else:
-                check(f"Original {db_base} unchanged", True, "no copy to compare")
 
         print()
 

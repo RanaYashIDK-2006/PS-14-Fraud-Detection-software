@@ -1,0 +1,246 @@
+{
+  "affected_test_suites": [
+    "front_service_test",
+    "backup_restore_test",
+    "penetration_test",
+    "security_ci_gate_test"
+  ],
+  "analysis_timestamp": "2026-09-24T07:30:00+00:00",
+  "backup_restore": [
+    "clean backup -> restore -> strict+quarantine verification: 71/71 checks PASS",
+    "restore preserves all five quarantined fork rows byte-for-byte",
+    "original DBs untouched (hash comparison PASS)",
+    "corrupted backup copies rejected as unreadable (CORRUPTED_BACKUP = REJECTED)"
+  ],
+  "concurrency": [
+    [
+      "legacy_race_2_processes",
+      "REPRODUCED: stale max-seq read forks the chain (duplicate prev_hash signature)"
+    ],
+    [
+      "repaired_1_writer_x15",
+      "strict-valid, unique seq/event_id, all rows landed"
+    ],
+    [
+      "repaired_2_writers_x15",
+      "strict-valid, unique seq/event_id, all rows landed"
+    ],
+    [
+      "repaired_5_writers_x10",
+      "strict-valid, unique seq/event_id, all rows landed"
+    ],
+    [
+      "repaired_10_writers_x6",
+      "strict-valid, unique seq/event_id, all rows landed"
+    ],
+    [
+      "process_restart_continuation",
+      "second round chains cleanly onto prior writers"
+    ],
+    [
+      "crash_inside_immediate_tx",
+      "uncommitted row rolled back atomically; chain strict-valid"
+    ],
+    [
+      "contention_retry",
+      "blocked writer waits on the held reservation, then lands both events"
+    ]
+  ],
+  "created_at": "2026-09-24T09:00:00+00:00",
+  "database_changes": [
+    "NONE \u2014 no DDL added, dropped, or altered.",
+    "audit_events PRIMARY KEY (seq), append-only triggers, and indexes unchanged.",
+    "No row of db/audit.db was written by this phase outside of append_audit_event itself."
+  ],
+  "declarations": [
+    "No audit record was deleted, mutated, truncated, or re-hashed.",
+    "Sequence numbers were not reset and the append-only triggers are unchanged.",
+    "The strict verifier (writer.verify_chain) is unchanged and still fails the live chain.",
+    "The writer repair adds a database reservation; it adds no application-level override.",
+    "The quarantine is evidence-bound metadata: any content drift on a quarantined row fails closed.",
+    "No model was retrained, modified, released, or promoted.",
+    "No threshold change was made; 0.018758 remains the production threshold.",
+    "No real-world validation was performed and no provider evidence was created.",
+    "This report and its manifest authorize nothing."
+  ],
+  "evidence_hash": "b4353df6cb4d6f09d37e235b09cbe8c9fe76a729b900da5e84337679e1f31649",
+  "findings": [
+    {
+      "actual_previous_hash": "bfa463fa6b4d5d63b543573dc419e9308555fa38681d11268795f7c57eaa6faa",
+      "conflicting_event_ids": [
+        "5f3b3441-28f6-4b6e-89dd-e5724a041f01",
+        "4153fa4a-57c1-4d1c-ad32-078661ef5866"
+      ],
+      "evidence_hash": "e328a6bfc92287489ec2c4ae7008ddb7373843dc89d3f229c87cec5c00bdec1f",
+      "expected_previous_hash": "6ddb2c14e87631d7ce117621d392978044750c179da9eef264111831829ea3e5",
+      "finding_id": "P109-FORK-731",
+      "first_bad_sequence": 731
+    },
+    {
+      "actual_previous_hash": "57d96a33f50b5b724c625241662eec3c8fe49c9ce0abad7517e33318c8070117",
+      "conflicting_event_ids": [
+        "d2747086-9f77-43e2-af9d-b8764ee3ea65",
+        "b366f62f-9746-4e7e-b9c9-0ed634cd591c"
+      ],
+      "evidence_hash": "5eaf76ee80ecb4df3385dc72ae63f77f0f50f5f1c7f0131c3d9df6abae2af4a8",
+      "expected_previous_hash": "378f0277bab7c1d7843380ea8721fe8e55098e2cb8c7fd69af66b79906ee391f",
+      "finding_id": "P109-FORK-735",
+      "first_bad_sequence": 735
+    },
+    {
+      "actual_previous_hash": "543d8821ca9635fe97f11786193d8c5e2a9f15da02be65f7f8d2d7ab8179b530",
+      "conflicting_event_ids": [
+        "2ec15f82-dbec-4ebc-92d7-83e3e32426c4",
+        "bb79a795-4085-4f2f-ab6d-480559baee91"
+      ],
+      "evidence_hash": "fb3db7060049bb2b29e852a986c9eeb313d9e1ab5f63004f7d14225dbf942d91",
+      "expected_previous_hash": "7114d8231a726ae1988cdd081e58e55cddd15e21b5a91b516bb9749862aa48b9",
+      "finding_id": "P109-FORK-740",
+      "first_bad_sequence": 740
+    },
+    {
+      "actual_previous_hash": "09e952a5f0c942bafb10b40bd299b3f0797462c8ae652ee5fcba3d187b472db1",
+      "conflicting_event_ids": [
+        "f1fa7789-d98c-4b87-ae74-c9d713b14f86",
+        "5f2c4ddb-7d00-4789-82ad-889ae6fc470f"
+      ],
+      "evidence_hash": "b739e0758568b381986a6dff320fb6de462efbbe9a8584f255d449f8bd538ba5",
+      "expected_previous_hash": "1c211f26f270dbe93e0a1965aa6c7a08d69e942339342115ea38275c01a8a1f0",
+      "finding_id": "P109-FORK-745",
+      "first_bad_sequence": 745
+    },
+    {
+      "actual_previous_hash": "eb5f6190d163e502e5442d58a56523a857b7d26809b8ab63b85f063b1cbc780f",
+      "conflicting_event_ids": [
+        "cf4d381d-7e58-4e0d-94db-5ab830915d14",
+        "e9f98114-1c5f-4a86-9059-ddfe13f172de"
+      ],
+      "evidence_hash": "eedd33e199eb03a75adc6f701361dbe6d39d9443826da05559a850b6586343b5",
+      "expected_previous_hash": "eb952f94ad998d7d3e85d02cb28f3a236780c6f715874b5ff3944d93c4141464",
+      "finding_id": "P109-FORK-750",
+      "first_bad_sequence": 750
+    }
+  ],
+  "forbidden_result_states": [
+    "REAL_WORLD_VALIDATION_COMPLETE",
+    "PROMOTION_ELIGIBLE",
+    "PRODUCTION_VALIDATED",
+    "INSTITUTIONALLY_VALIDATED"
+  ],
+  "fork": {
+    "affected_sequences": [
+      731,
+      735,
+      740,
+      745,
+      750
+    ],
+    "first_bad_sequence": 731,
+    "n_forked_links": 5,
+    "observed_window": [
+      "2026-09-19 07:56:32",
+      "2026-09-19 08:02:53"
+    ],
+    "writer_context": "scripts/phase76_lifecycle_recovery_test.py SECTION 7 called append_audit_event(...) three times per run (queue + background writer thread) from two overlapping test processes against the shared db/audit.db on 2026-09-19 07:56-08:03; the pre-Phase-109 writer held only a per-process threading.Lock and took no SQLite write reservation before its 'SELECT max(seq)' read, so both processes observed the same last row; no per-row writer/process/transaction identity column exists in the schema \u2014 identity is inferred from event_type/fraud_id/timestamps; SQLite autocommit statements expose no transaction ids"
+  },
+  "front_service": [
+    "front_service_test: 0 failures \u2014 chain checks pass quarantine-aware without touching business behavior.",
+    "request -> decision -> DB-3 -> DB-4 path re-verified; the repaired writer is the single write path those requests use."
+  ],
+  "global_state": {
+    "PROMOTION": "PROMOTION_GATE_REQUIRED",
+    "REAL_WORLD_VALIDATION": "BLOCKED_PENDING_ELIGIBLE_DATASET",
+    "SYSTEM_READINESS": "SYSTEM_READY_PENDING_ELIGIBLE_DATASET",
+    "qualified_datasets": []
+  },
+  "historical_evidence_treatment": "preserved byte-for-byte; quarantine recorded only in separate metadata (phase109_audit_fork_repair.AuditForkFinding)",
+  "limitations": [
+    "The five forked rows are permanent evidence: strict_ok on the live chain remains False forever by design; only ok (trustworthiness under quarantine) is True.",
+    "The quarantine binds exact row content \u2014 restoring a byte-identical backup stays ok=True, but any drift on those rows (including a legitimate-looking rewrite) fails closed.",
+    "The writer repair governs appends through the audit writer module; any future raw-SQL writer must take the same BEGIN IMMEDIATE reservation.",
+    "No per-row writer/process/transaction identity exists in the schema, so historical writer identity remains inferred from event_type/fraud_id/timestamps."
+  ],
+  "manifest_id": "phase109-repair-v1",
+  "migration": "NOT_REQUIRED_NO_DDL_CHANGE",
+  "not_authorizes": [
+    "RWV",
+    "promotion",
+    "release creation",
+    "model modification",
+    "gate bypass"
+  ],
+  "penetration": [
+    [
+      "modified_payload",
+      "DETECTED \u2014 self-consistency failure, fail closed"
+    ],
+    [
+      "forged_prev_hash_unquarantined_seq",
+      "DETECTED \u2014 unquarantined link break, fail closed"
+    ],
+    [
+      "forged_break_at_731_wrong_evidence",
+      "DETECTED \u2014 evidence mismatch on the quarantined seq, fail closed"
+    ],
+    [
+      "deleted_row",
+      "DETECTED \u2014 link break at the gap, fail closed"
+    ],
+    [
+      "reordered_rows",
+      "DETECTED \u2014 genesis/link break, fail closed"
+    ],
+    [
+      "duplicate_seq_row",
+      "DETECTED \u2014 link break on the duplicate, fail closed"
+    ],
+    [
+      "tampered_quarantined_row_in_memory",
+      "DETECTED \u2014 quarantine binding invalidated, fail closed"
+    ],
+    [
+      "duplicate_event_id_under_repaired_writer",
+      "PREVENTED \u2014 unique seq/event_id under 10-writer matrix"
+    ]
+  ],
+  "phase": "PHASE_109_AUDIT_FORK_REPAIR",
+  "pre_existing_failures": [
+    "phase49/phase50 attestation suites: HealthReport model-key drift (pre-dates Phase 109)",
+    "security_test: post-stack-startup transient (documented; passes on rerun)",
+    "phase86 model-contract reconciliation: legacy release-manifest convention expectation"
+  ],
+  "production_identity": {
+    "domain_feature_count": 21,
+    "feature_version": "v1",
+    "model_id": "altman_native",
+    "native_feature_count": 48,
+    "production_threshold": 0.018758,
+    "release_id": "release-altman_native_E_hardneg_cert_20260904"
+  },
+  "repair": [
+    "writer.append path: BEGIN IMMEDIATE write reservation is taken BEFORE the max-seq/prev-hash read, so concurrent appenders serialize on the database instead of racing a stale read (cross-process safe; the old threading.Lock only ordered threads inside one process).",
+    "Quarantine-aware evaluation: evaluate_chain() runs the full strict walk over every row and reports ok=True only when every broken link is one of the five frozen, evidence-matched findings; verify_chain() itself is untouched.",
+    "Test-fixture isolation: phase76_lifecycle_recovery_test now writes lifecycle events to a temporary DB, so regression runs no longer add rows to the shared chain (live lifecycle count frozen at 75).",
+    "backup_restore_test's former Phase-0 'repair broken chain links' block (an UPDATE of historical hashes, dead behind the append-only trigger but forbidden in intent) was removed; its Phase-8 check now uses the strict + evidence-bound walk."
+  ],
+  "repair_state": "AUDIT_CHAIN_INTEGRITY_RESTORED",
+  "resolved_failures": [
+    "front_service_test audit-chain check (first_bad_seq=731)",
+    "backup_restore_test Phase-8 audit chain integrity",
+    "penetration_test chain validity check",
+    "security_ci_gate_test audit-chain check"
+  ],
+  "root_cause": {
+    "description": "cross-process stale max-seq read: two writer domains both chained onto the same predecessor entry hash; the later insert kept the stale prev_hash while SQLite autoincrement gave it the next seq, producing a link whose prev_hash equals the predecessor-of-predecessor's entry hash",
+    "primary": "CONCURRENT_WRITER_ORDERING",
+    "secondary": [
+      "TEST_FIXTURE_POLLUTION"
+    ]
+  },
+  "security": [
+    "No bypass parameters exist anywhere in the Phase 109 surface (force/allow_unverified/skip_validation/override/admin_override/ignore_chain/skip_verification): signature and source scans PASS.",
+    "No repair/override endpoint was added; audit APIs keep their existing auth.",
+    "penetration_test and security_ci_gate: PASS.",
+    "No network call, no credential or secret access, no external-artifact deserialization, no model fitting, and no promotion call exists in any Phase 109 file."
+  ]
+}
