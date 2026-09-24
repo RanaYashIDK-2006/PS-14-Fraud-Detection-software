@@ -190,6 +190,27 @@ class AdminStore:
         totp_data = record.get("totp")
         return totp_data is not None and totp_data.get("enabled", False)
 
+    def consume_totp_step(self, step: int) -> bool:
+        """One-time-use guard for login codes.
+
+        Returns True and records the time-step when it is newer than the
+        last consumed step; returns False when the step has already been
+        spent (replay within the verification window).
+        """
+        record = self.load()
+        if record is None:
+            return False
+        totp_data = record.get("totp")
+        if totp_data is None:
+            return False
+        last_step = int(totp_data.get("last_step", -1))
+        if step <= last_step:
+            return False
+        totp_data["last_step"] = step
+        record["totp"] = totp_data
+        self.save(record)
+        return True
+
     def rotate_passphrase(self, current: str, new: str) -> bool:
         """Re-hash and re-wrap the blob key under the NEW passphrase."""
         record = self.load()

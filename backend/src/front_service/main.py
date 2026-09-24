@@ -27,6 +27,7 @@ import hashlib
 import hmac
 import json
 import os
+import re
 import subprocess
 import sys
 import urllib.request
@@ -257,20 +258,42 @@ def _session_key(record: dict) -> bytes:
     return hashlib.sha256(b"ps14-admin-session:" + record["pass_hash"].encode()).digest()
 
 
-def _require_admin(authorization: str | None = Header(default=None)) -> tuple[dict, bytes]:
+def _require_admin(
+    request: Request,
+    authorization: str | None = Header(default=None),
+) -> tuple[dict, bytes]:
+    """Admin gate: Bearer token, or the admin_session cookie as a fallback.
+
+    The login endpoint sets a cookie as well as returning a token, but the
+    cookie path previously had no way in — every cookie-only call to a
+    _require_admin endpoint failed with 401 even for a valid session.  The
+    cookie path reconstructs the payload from the session record (sub is
+    stored at login) and requires X-Requested-With on state-changing
+    methods, mirroring _require_admin_session's CSRF rule.
+    """
     record = store.load()
-    if record is None or not authorization or not authorization.startswith("Bearer "):
+    if record is None:
+        raise HTTPException(status_code=401, detail="admin not configured")
+    if authorization and authorization.startswith("Bearer "):
+        try:
+            payload = jwt.decode(authorization.removeprefix("Bearer "),
+                                 _session_key(record), algorithms=["HS256"])
+        except Exception:
+            raise HTTPException(status_code=401, detail="invalid or expired admin session")
+        session_data = _admin_sessions.get(payload.get("jti", ""))
+        if session_data is None:
+            raise HTTPException(status_code=401, detail="admin session expired or revoked")
+        return payload, bytes.fromhex(session_data["blob_key_hex"])
+    session_id = request.cookies.get("admin_session")
+    if not session_id:
         raise HTTPException(status_code=401, detail="admin session required")
-    try:
-        payload = jwt.decode(authorization.removeprefix("Bearer "),
-                             _session_key(record), algorithms=["HS256"])
-    except Exception:
-        raise HTTPException(status_code=401, detail="invalid or expired admin session")
-    session_data = _admin_sessions.get(payload.get("jti", ""))
+    if request.method in ("POST", "PUT", "DELETE", "PATCH") and not request.headers.get("x-requested-with"):
+        raise HTTPException(status_code=403, detail="CSRF check failed: missing X-Requested-With header")
+    session_data = _admin_sessions.get(session_id)
     if session_data is None:
         raise HTTPException(status_code=401, detail="admin session expired or revoked")
-    blob_key = bytes.fromhex(session_data["blob_key_hex"])
-    return payload, blob_key
+    payload = {"sub": session_data.get("sub", "admin"), "role": "admin", "jti": session_id}
+    return payload, bytes.fromhex(session_data["blob_key_hex"])
 
 
 def _build_essentials() -> dict:
@@ -1234,10 +1257,18 @@ def admin_login(req: LoginRequest, request: Request) -> dict:
         totp_secret = store.get_totp_secret()
         if totp_secret:
             if not req.totp_code:
+                # A missing code is a UI retry (the gate only learns TOTP is on
+                # from this 401), so it does not count toward lockout.
                 raise HTTPException(status_code=401, detail="TOTP code required")
             totp = TOTPAuthenticator(totp_secret)
-            if not totp.verify_code(req.totp_code):
+            step = totp.verify_step(req.totp_code)
+            if step is None:
+                _record_admin_login_failure(client_ip)
                 raise HTTPException(status_code=401, detail="Invalid TOTP code")
+            # One-time use: a time-step already spent on a login is a replay.
+            if not store.consume_totp_step(step):
+                _record_admin_login_failure(client_ip)
+                raise HTTPException(status_code=401, detail="TOTP code already used")
     
     blob_key = store.unwrap_blob_key(req.passphrase)
     if blob_key is None:
@@ -1248,7 +1279,7 @@ def admin_login(req: LoginRequest, request: Request) -> dict:
     jti = uuid.uuid4().hex
     token = jwt.encode({"sub": record["username"], "role": "admin", "jti": jti,
                         "exp": expires}, _session_key(record), algorithm="HS256")
-    _admin_sessions.put(jti, {"blob_key_hex": blob_key.hex()}, expires)
+    _admin_sessions.put(jti, {"blob_key_hex": blob_key.hex(), "sub": record["username"]}, expires)
     record = store.load()  # refreshed login_count / last_login
     resp = JSONResponse({
         "token": token,
@@ -1424,8 +1455,8 @@ class DBQueryRequest(BaseModel):
 # Each maps to a parameterized SQL query. No arbitrary SQL is accepted.
 ALLOWED_QUERIES = {
     "recent_audit": "SELECT seq, event_type, entry_hash, payload_summary, created_at FROM audit_events ORDER BY seq DESC LIMIT ?",
-    "unresolved_alerts": "SELECT event_id, fraud_id, ml_score, band, decision, created_at FROM risk_scores WHERE event_id NOT IN (SELECT event_id FROM verification_outcomes) ORDER BY created_at DESC LIMIT ?",
-    "recent_scores": "SELECT event_id, fraud_id, ml_score, band, decision, reasons_json, created_at FROM risk_scores ORDER BY created_at DESC LIMIT ?",
+    "unresolved_alerts": "SELECT event_id, fraud_id, ml_score, risk_band, scored_at FROM risk_scores WHERE event_id NOT IN (SELECT event_id FROM verification_outcomes) ORDER BY scored_at DESC LIMIT ?",
+    "recent_scores": "SELECT event_id, fraud_id, ml_score, rule_score, risk_band, reason_codes, degraded, scored_at FROM risk_scores ORDER BY scored_at DESC LIMIT ?",
     "recent_features": "SELECT event_id, fraud_id, created_at FROM transaction_features ORDER BY created_at DESC LIMIT ?",
     "table_list": "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name",
 }
@@ -1450,6 +1481,54 @@ PII_TABLE_NAMES = {
     "auth_credentials",
     "pseudonym_access_log",
 }
+
+# PII masking shared by the allowlisted runner and the read-only SQL editor.
+PII_MASK_COLUMNS = {"email_encrypted", "phone_encrypted", "address_encrypted", "secret_hash", "pass_hash"}
+PII_FULL_MASK_COLUMNS = {"email_encrypted", "phone_encrypted", "address_encrypted"}  # binary blobs — never show
+
+# Tables the database editor may never write: PII tables are restricted
+# outright, and audit_events is append-only by trigger (edits are refused
+# here rather than surfacing as a raise from the writer).
+EDIT_DENY_TABLES = PII_TABLE_NAMES | {"audit_events"}
+
+# Read-only SQL editor: first-token allowlist. The connection is also opened
+# with URI mode=ro, so this is defense in depth, not the only gate.
+SQL_READONLY_FIRST_TOKENS = {"select", "with"}
+_SQL_FIRST_TOKEN_RE = re.compile(r"^\s*([A-Za-z]+)")
+_TABLE_NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+SQL_PII_TABLE_PATTERN = re.compile(
+    r"\b(" + "|".join(re.escape(t) for t in sorted(PII_TABLE_NAMES)) + r")\b",
+    re.IGNORECASE,
+)
+
+
+def _open_ro(db_path: Path) -> sqlite3.Connection:
+    """Open a SQLite file strictly read-only (URI mode=ro)."""
+    conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True, timeout=5)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def _apply_pii_mask(rows: list[dict]) -> list[dict]:
+    for row in rows:
+        for col in PII_FULL_MASK_COLUMNS:
+            if col in row:
+                row[col] = "[ENCRYPTED]"
+        for col in PII_MASK_COLUMNS:
+            if col in row and row[col] not in ("[ENCRYPTED]", None):
+                row[col] = "[REDACTED]"
+    return rows
+
+
+def _verify_totp_if_enabled(totp_code: str | None) -> None:
+    """Mandatory TOTP step for privileged DB actions (mirrors db-query)."""
+    if store.is_totp_enabled():
+        totp_secret = store.get_totp_secret()
+        if totp_secret:
+            if not totp_code:
+                raise HTTPException(status_code=401, detail="TOTP code required")
+            if not TOTPAuthenticator(totp_secret).verify_code(totp_code):
+                raise HTTPException(status_code=401, detail="invalid TOTP code")
 
 
 @app.post("/admin/db-query")
@@ -1531,16 +1610,7 @@ def admin_db_query(
     if q == "table_list":
         result = [r for r in result if r.get("name", "") not in PII_TABLE_NAMES]
 
-    # PII masking: mask encrypted columns and sensitive fields in identity DB
-    _PII_MASK_COLUMNS = {"email_encrypted", "phone_encrypted", "address_encrypted", "secret_hash", "pass_hash"}
-    _PII_FULL_MASK_COLUMNS = {"email_encrypted", "phone_encrypted", "address_encrypted"}  # binary blobs — never show
-    for row in result:
-        for col in _PII_FULL_MASK_COLUMNS:
-            if col in row:
-                row[col] = "[ENCRYPTED]"
-        for col in _PII_MASK_COLUMNS:
-            if col in row and row[col] not in ("[ENCRYPTED]", None):
-                row[col] = "[REDACTED]"
+    _apply_pii_mask(result)  # shared module-level PII mask
 
     # Audit-log the access with resolved query name and table (for row_count)
     payload, _blob_key = _session
@@ -1605,6 +1675,384 @@ def admin_db_tables(
     except Exception:
         raise HTTPException(status_code=400, detail="failed to list tables")
     return {"db": req.db_name, "tables": result}
+
+
+# ----------------------------------------------------------------------
+# Admin data console: read-only SQL, schema/row browsing, guarded single-row
+# edits, live counters, and the audit-trail proxy. Everything below sits
+# behind the admin gate; DB actions additionally require the admin
+# passphrase (and TOTP when enabled) and are audit-logged like db-query.
+
+class DBSqlRequest(BaseModel):
+    db_name: str = Field(min_length=1, max_length=50)
+    passphrase: str = Field(min_length=1, max_length=200)
+    sql: str = Field(min_length=1, max_length=2000)
+    limit: int = Field(default=200, ge=1, le=500)
+    totp_code: str | None = Field(None, min_length=6, max_length=6)
+
+
+@app.post("/admin/db-sql")
+def admin_db_sql(
+    req: DBSqlRequest,
+    _session: tuple[dict, bytes] = Depends(_require_admin),
+) -> dict:
+    """Read-only SQL for the admin query editor.
+
+    Gates: admin session + admin passphrase (+ TOTP when enabled);
+    first-token allowlist of SELECT/WITH; connection opened URI mode=ro;
+    sqlite3 refuses multi-statement strings; PII table names rejected
+    outright; output masked and capped at `limit` rows; every run
+    audit-logged with the actor and truncated statement.
+    """
+    if req.db_name not in _DBS:
+        raise HTTPException(status_code=400, detail=f"unknown database: {req.db_name}")
+    db_path = _DBS[req.db_name]
+    if not db_path.exists():
+        raise HTTPException(status_code=404, detail=f"database file not found: {db_path}")
+    if not _db_passphrase_ok(req.db_name, req.passphrase):
+        raise HTTPException(status_code=401, detail="invalid credentials")
+    _verify_totp_if_enabled(req.totp_code)
+
+    sql = req.sql.strip()
+    first = _SQL_FIRST_TOKEN_RE.match(sql)
+    if not first or first.group(1).lower() not in SQL_READONLY_FIRST_TOKENS:
+        raise HTTPException(status_code=400, detail="only SELECT/WITH statements are allowed")
+    if SQL_PII_TABLE_PATTERN.search(sql):
+        raise HTTPException(status_code=400, detail="query references a restricted table")
+
+    try:
+        conn = _open_ro(db_path)
+        try:
+            cur = conn.execute(sql)  # multi-statement strings are refused by sqlite3
+            result = [dict(r) for r in cur.fetchmany(req.limit)]
+        finally:
+            conn.close()
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"query failed: {exc}")
+
+    _apply_pii_mask(result)
+    payload, _blob_key = _session
+    audit_ok = True
+    try:
+        from src.audit_service.writer import append_audit_event
+        append_audit_event(
+            "ADMIN-DB",
+            "admin_db_sql",
+            {"actor": payload.get("sub", "admin"), "db": req.db_name,
+             "sql": sql[:200], "rows": len(result)},
+        )
+    except Exception:
+        audit_ok = False  # the read still succeeds; the gap is reported honestly
+    return {
+        "db": req.db_name,
+        "rows": len(result),
+        "data": result,
+        "truncated": len(result) >= req.limit,
+        "audit_logged": audit_ok,
+    }
+
+
+class DBSchemaRequest(BaseModel):
+    db_name: str = Field(default="identity", min_length=1, max_length=50)
+    passphrase: str = Field(min_length=1, max_length=200)
+
+
+@app.post("/admin/db-schema")
+def admin_db_schema(
+    req: DBSchemaRequest,
+    _session: tuple[dict, bytes] = Depends(_require_admin),
+) -> dict:
+    """Tables, columns and row counts for the database explorer.
+
+    PII tables are omitted entirely (same posture as the allowlisted
+    table_list query); everything is read through a mode=ro connection.
+    """
+    if req.db_name not in _DBS:
+        raise HTTPException(status_code=400, detail=f"unknown database: {req.db_name}")
+    db_path = _DBS[req.db_name]
+    if not db_path.exists():
+        raise HTTPException(status_code=404, detail=f"database not found: {req.db_name}")
+    if not _db_passphrase_ok(req.db_name, req.passphrase):
+        raise HTTPException(status_code=401, detail=f"invalid passphrase for {req.db_name}")
+
+    conn = _open_ro(db_path)
+    try:
+        names = [r[0] for r in conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' "
+            "AND name NOT LIKE 'sqlite_%' ORDER BY name"
+        ).fetchall()]
+        tables = []
+        for name in names:
+            if name in PII_TABLE_NAMES:
+                continue
+            cols = [dict(c) for c in conn.execute(
+                "SELECT name, type, pk FROM pragma_table_info(?)", (name,)
+            ).fetchall()]
+            quoted = name.replace('"', '""')
+            n = conn.execute(f'SELECT COUNT(*) FROM "{quoted}"').fetchone()[0]
+            tables.append({
+                "name": name,
+                "columns": cols,
+                "rows": n,
+                "editable": name not in EDIT_DENY_TABLES,
+            })
+    finally:
+        conn.close()
+    return {"db": req.db_name, "tables": tables}
+
+
+class DBRowsRequest(BaseModel):
+    db_name: str = Field(min_length=1, max_length=50)
+    passphrase: str = Field(min_length=1, max_length=200)
+    table: str = Field(min_length=1, max_length=64)
+    limit: int = Field(default=50, ge=1, le=200)
+
+
+@app.post("/admin/db-rows")
+def admin_db_rows(
+    req: DBRowsRequest,
+    _session: tuple[dict, bytes] = Depends(_require_admin),
+) -> dict:
+    """Browse rows of a schema-validated table (newest first, read-only)."""
+    if req.db_name not in _DBS:
+        raise HTTPException(status_code=400, detail=f"unknown database: {req.db_name}")
+    db_path = _DBS[req.db_name]
+    if not db_path.exists():
+        raise HTTPException(status_code=404, detail=f"database not found: {req.db_name}")
+    if not _db_passphrase_ok(req.db_name, req.passphrase):
+        raise HTTPException(status_code=401, detail=f"invalid passphrase for {req.db_name}")
+    if not _TABLE_NAME_RE.match(req.table):
+        raise HTTPException(status_code=400, detail="invalid table name")
+    if req.table in PII_TABLE_NAMES:
+        raise HTTPException(status_code=403, detail="restricted table")
+
+    conn = _open_ro(db_path)
+    try:
+        exists = conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name = ?", (req.table,)
+        ).fetchone()
+        if not exists:
+            raise HTTPException(status_code=404, detail=f"table not found: {req.table}")
+        cur = conn.execute(
+            f'SELECT rowid AS _rowid, * FROM "{req.table}" ORDER BY rowid DESC LIMIT ?',
+            (req.limit,),
+        )
+        rows = [dict(r) for r in cur.fetchall()]
+    finally:
+        conn.close()
+    _apply_pii_mask(rows)
+    return {
+        "db": req.db_name,
+        "table": req.table,
+        "rows": len(rows),
+        "data": rows,
+        "editable": req.table not in EDIT_DENY_TABLES,
+    }
+
+
+class DBUpdateRequest(BaseModel):
+    db_name: str = Field(min_length=1, max_length=50)
+    passphrase: str = Field(min_length=1, max_length=200)
+    table: str = Field(min_length=1, max_length=64)
+    rowid: int = Field(ge=1)
+    changes: dict[str, str | int | float | bool | None]
+    totp_code: str | None = Field(None, min_length=6, max_length=6)
+
+
+@app.post("/admin/db-update")
+def admin_db_update(
+    req: DBUpdateRequest,
+    _session: tuple[dict, bytes] = Depends(_require_admin),
+) -> dict:
+    """Guarded single-row edit for the database editor.
+
+    Denied where it matters: PII tables and the append-only audit_events
+    are never editable, primary-key columns are never editable, column
+    names are validated against the live schema, values must be scalars,
+    exactly one row must match, and the before/after values of every
+    changed column are audit-logged.
+    """
+    if req.db_name not in _DBS:
+        raise HTTPException(status_code=400, detail=f"unknown database: {req.db_name}")
+    db_path = _DBS[req.db_name]
+    if not db_path.exists():
+        raise HTTPException(status_code=404, detail=f"database not found: {req.db_name}")
+    if not _db_passphrase_ok(req.db_name, req.passphrase):
+        raise HTTPException(status_code=401, detail="invalid credentials")
+    _verify_totp_if_enabled(req.totp_code)
+    if not _TABLE_NAME_RE.match(req.table):
+        raise HTTPException(status_code=400, detail="invalid table name")
+    if req.table in EDIT_DENY_TABLES:
+        raise HTTPException(status_code=403, detail=f"table is not editable: {req.table}")
+    if not req.changes:
+        raise HTTPException(status_code=400, detail="no changes supplied")
+    if len(req.changes) > 15:
+        raise HTTPException(status_code=400, detail="too many columns in one update")
+
+    conn = sqlite3.connect(str(db_path), timeout=5)
+    conn.row_factory = sqlite3.Row
+    try:
+        exists = conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name = ?", (req.table,)
+        ).fetchone()
+        if not exists:
+            raise HTTPException(status_code=404, detail=f"table not found: {req.table}")
+        cols = {
+            r["name"]: r
+            for r in conn.execute("SELECT name, pk FROM pragma_table_info(?)", (req.table,)).fetchall()
+        }
+        old_row = conn.execute(
+            f'SELECT * FROM "{req.table}" WHERE rowid = ?', (req.rowid,)
+        ).fetchone()
+        if old_row is None:
+            raise HTTPException(status_code=404, detail="row not found")
+        old = dict(old_row)
+
+        assigns: list[str] = []
+        values: list = []
+        for col, val in req.changes.items():
+            if col not in cols:
+                raise HTTPException(status_code=400, detail=f"unknown column: {col}")
+            if cols[col]["pk"]:
+                raise HTTPException(status_code=403, detail=f"primary-key column not editable: {col}")
+            if val is not None and not isinstance(val, (str, int, float, bool)):
+                raise HTTPException(status_code=400, detail="values must be scalars")
+            if isinstance(val, str) and len(val) > 4000:
+                raise HTTPException(status_code=400, detail="value too long")
+            assigns.append(f'"{col}" = ?')
+            values.append(val)
+
+        values.append(req.rowid)
+        cur = conn.execute(
+            f'UPDATE "{req.table}" SET {", ".join(assigns)} WHERE rowid = ?', values
+        )
+        if cur.rowcount != 1:
+            conn.rollback()
+            raise HTTPException(status_code=409, detail="row update did not apply")
+        conn.commit()
+    except HTTPException:
+        raise
+    except sqlite3.Error as exc:
+        conn.rollback()
+        raise HTTPException(status_code=400, detail=f"update failed: {exc}")
+    finally:
+        conn.close()
+
+    payload, _blob_key = _session
+    audit_ok = True
+    try:
+        from src.audit_service.writer import append_audit_event
+        append_audit_event(
+            "ADMIN-DB",
+            "admin_db_update",
+            {"actor": payload.get("sub", "admin"), "db": req.db_name,
+             "table": req.table, "rowid": req.rowid,
+             "changes": dict(req.changes),
+             "previous": {k: old.get(k) for k in req.changes}},
+        )
+    except Exception:
+        audit_ok = False
+    return {
+        "db": req.db_name,
+        "table": req.table,
+        "rowid": req.rowid,
+        "applied": True,
+        "audit_logged": audit_ok,
+    }
+
+
+@app.get("/admin/api/live")
+def admin_api_live(request: Request) -> dict:
+    """Live monitor counters: direct mode=ro reads plus recent chain events.
+
+    Read-only by construction; degrades to null counters for absent files
+    instead of failing the whole feed.
+    """
+    _require_admin_session(request)
+
+    def scalar(db_name: str, sql: str, params: tuple = ()) -> int | None:
+        path = _DBS[db_name]
+        if not path.exists():
+            return None
+        try:
+            conn = _open_ro(path)
+            try:
+                row = conn.execute(sql, params).fetchone()
+                return int(row[0]) if row is not None else None
+            finally:
+                conn.close()
+        except Exception:
+            return None
+
+    def rows(db_name: str, sql: str, params: tuple = ()) -> list[dict] | None:
+        path = _DBS[db_name]
+        if not path.exists():
+            return None
+        try:
+            conn = _open_ro(path)
+            try:
+                return [dict(r) for r in conn.execute(sql, params).fetchall()]
+            finally:
+                conn.close()
+        except Exception:
+            return None
+
+    since = (datetime.now(timezone.utc) - timedelta(hours=24)).strftime("%Y-%m-%d %H:%M:%S")
+    band_rows = rows("risk", "SELECT risk_band, COUNT(*) AS n FROM risk_scores GROUP BY risk_band ORDER BY risk_band") or []
+    return {
+        "ts": datetime.now(timezone.utc).isoformat(),
+        "features_total": scalar("features", "SELECT COUNT(*) FROM transaction_features"),
+        "features_24h": scalar(
+            "features",
+            "SELECT COUNT(*) FROM transaction_features WHERE created_at >= ?",
+            (since,),
+        ),
+        "scores_total": scalar("risk", "SELECT COUNT(*) FROM risk_scores"),
+        "scores_24h": scalar(
+            "risk",
+            "SELECT COUNT(*) FROM risk_scores WHERE scored_at >= ?",
+            (since,),
+        ),
+        "bands": {r["risk_band"]: r["n"] for r in band_rows},
+        "unresolved_alerts": scalar(
+            "risk",
+            "SELECT COUNT(*) FROM risk_scores "
+            "WHERE event_id NOT IN (SELECT event_id FROM verification_outcomes)",
+        ),
+        "outcomes_total": scalar("verify", "SELECT COUNT(*) FROM verification_outcomes"),
+        "recent_events": rows(
+            "audit",
+            "SELECT seq, event_type, fraud_id, created_at, entry_hash "
+            "FROM audit_events ORDER BY seq DESC LIMIT 8",
+        ) or [],
+    }
+
+
+@app.get("/admin/api/audit-overview")
+def admin_audit_overview(request: Request, limit: int = 50) -> dict:
+    """Proxy to the Audit Service: authoritative chain integrity + events.
+
+    Reads are resilient: when the audit service is down this returns 503
+    and the console says so, rather than showing a stale green badge.
+    """
+    _require_admin_session(request)
+    base = SERVICES["audit"].rstrip("/")
+    headers = {"X-Internal-Token": settings.internal_token}
+    limit = max(1, min(limit, 200))
+    try:
+        integrity_resp = httpx.get(f"{base}/audit/integrity", headers=headers, timeout=3.0)
+        events_resp = httpx.get(f"{base}/audit/events?limit={limit}", headers=headers, timeout=3.0)
+    except Exception:
+        raise HTTPException(status_code=503, detail="audit service unreachable")
+    if integrity_resp.status_code != 200:
+        raise HTTPException(status_code=503, detail=f"integrity check failed (http {integrity_resp.status_code})")
+    integrity = integrity_resp.json()
+    events = events_resp.json() if events_resp.status_code == 200 else {}
+    return {
+        "integrity": integrity,
+        "events": events.get("events", []),
+        "total": events.get("total"),
+    }
 
 
 @app.get("/monitor/test-results")

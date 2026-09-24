@@ -63,19 +63,22 @@ class TOTPAuthenticator:
         
         return str(code).zfill(self.digits)
     
-    def verify_code(self, code: str, window: int = 1) -> bool:
+    def verify_step(self, code: str, window: int = 1) -> Optional[int]:
         """
-        Verify a TOTP code.
-        
+        Verify a TOTP code and return the matched time-step.
+
+        The matched step lets callers enforce one-time use: a step that was
+        already consumed for a login is rejected on replay.
+
         Args:
             code: The code to verify
             window: Number of time steps to check before/after current (default: 1)
-            
+
         Returns:
-            True if the code is valid, False otherwise
+            The matched time-step, or None if the code is invalid
         """
         if not code or len(code) != self.digits:
-            return False
+            return None
         
         current_time = time.time()
         
@@ -92,9 +95,22 @@ class TOTPAuthenticator:
             expected_code = str(code_int % (10 ** self.digits)).zfill(self.digits)
             
             if hmac.compare_digest(code, expected_code):
-                return True
+                return time_step
         
-        return False
+        return None
+    
+    def verify_code(self, code: str, window: int = 1) -> bool:
+        """
+        Verify a TOTP code (bool wrapper around verify_step).
+
+        Args:
+            code: The code to verify
+            window: Number of time steps to check before/after current (default: 1)
+
+        Returns:
+            True if the code is valid, False otherwise
+        """
+        return self.verify_step(code, window) is not None
     
     def get_time_remaining(self) -> int:
         """

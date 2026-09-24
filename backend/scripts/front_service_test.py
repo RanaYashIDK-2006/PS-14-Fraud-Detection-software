@@ -24,6 +24,7 @@ import json
 import os
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
@@ -38,6 +39,8 @@ os.environ["ADMIN_PASS"] = ADMIN_PASS
 from fastapi.testclient import TestClient  # noqa: E402
 
 from src.front_service.main import app  # noqa: E402
+from src.front_service import main as fm  # noqa: E402
+from src.middleware.totp import TOTPAuthenticator  # noqa: E402
 
 ADMIN_FILE = Path(DB_TMP) / "admin.json"
 
@@ -214,6 +217,133 @@ def main() -> int:
         check("essential payload is ciphertext, not JSON",
               "\"jwt_secret\"" not in raw and "\"services\"" not in raw)
         check("login count tracked", record.get("login_count", 0) >= 1, str(record.get("login_count")))
+
+        # ---- TOTP second factor (opt-in from Access Control) -------------
+        # Placed after the 8-field record check above: enabling TOTP adds the
+        # ninth field ("totp"), asserted explicitly at the end.
+        print("\n-- admin TOTP second factor --")
+        fm._admin_login_failures.clear()  # isolate from earlier negative logins
+
+        def _bad_code() -> str:
+            """A code guaranteed to differ from the current window's code."""
+            v = good.generate_code()
+            return ("0" if v[0] != "0" else "1") + v[1:]
+
+        # RFC 6238 test vectors (secret from the RFC appendices, SHA1, T=59
+        # -> step 1: 94287082 at 8 digits; the 6-digit form is its mod 1e6,
+        # identical to RFC 4226 HOTP counter=1).
+        rfc_secret = b"12345678901234567890"
+        check("RFC-6238 vector T=59 (8 digits)",
+              TOTPAuthenticator(rfc_secret, digits=8).generate_code(59) == "94287082",
+              TOTPAuthenticator(rfc_secret, digits=8).generate_code(59))
+        check("6-digit default derives from the same truncation",
+              TOTPAuthenticator(rfc_secret).generate_code(59) == "287082",
+              TOTPAuthenticator(rfc_secret).generate_code(59))
+
+        cur_pass = new_pass  # the passphrase was rotated above
+
+        # The rotation above revoked every session — re-login for a fresh one
+        # (TOTP is still off here, so no code is needed yet).
+        r = c.post("/admin/login", json={"username": "admin", "passphrase": cur_pass})
+        check("fresh session for the TOTP section",
+              r.status_code == 200 and "token" in r.json(), f"status={r.status_code}")
+        auth = {"Authorization": "Bearer " + r.json().get("token", "")}
+
+        r = c.get("/admin/totp/status", headers=auth)
+        check("totp status initially disabled",
+              r.status_code == 200 and r.json().get("enabled") is False, r.text[:80])
+
+        r = c.get("/admin/totp/setup", headers=auth)
+        d = r.json()
+        secret_b32 = d.get("secret", "")
+        check("setup returns a pending base32 secret",
+              r.status_code == 200 and len(secret_b32) == 32 and d.get("enabled") is False,
+              f"status={r.status_code} len={len(secret_b32)}")
+
+        raw_file = ADMIN_FILE.read_text(encoding="utf-8")
+        record = json.loads(raw_file)
+        check("totp secret encrypted at rest (base32 absent from file)",
+              record.get("totp", {}).get("encrypted") is True and secret_b32 not in raw_file)
+
+        good = TOTPAuthenticator.from_base32(secret_b32)
+
+        r = c.post("/admin/totp/verify", headers=auth, json={"totp_code": _bad_code()})
+        check("verify with wrong code -> 401 and still disabled",
+              r.status_code == 401 and not fm.store.is_totp_enabled(), f"status={r.status_code}")
+
+        r = c.post("/admin/login", json={"username": "admin", "passphrase": cur_pass})
+        check("pending (unverified) secret does not gate login",
+              r.status_code == 200, f"status={r.status_code}")
+
+        r = c.post("/admin/totp/verify", headers=auth, json={"totp_code": good.generate_code()})
+        check("verify with correct code -> enabled",
+              r.status_code == 200 and fm.store.is_totp_enabled(),
+              f"status={r.status_code} {r.text[:80]}")
+
+        r = c.post("/admin/login", json={"username": "admin", "passphrase": cur_pass})
+        check("login without code after enable -> 401 required",
+              r.status_code == 401 and "TOTP code required" in r.text, r.text[:80])
+
+        fm._admin_login_failures.clear()
+        r = c.post("/admin/login", json={"username": "admin", "passphrase": cur_pass,
+                                         "totp_code": _bad_code()})
+        check("login with wrong code -> 401 invalid",
+              r.status_code == 401 and "Invalid TOTP code" in r.text, r.text[:80])
+        check("invalid code counts toward the brute-force guard",
+              sum(len(v) for v in fm._admin_login_failures.values()) >= 1,
+              str(fm._admin_login_failures))
+        fm._admin_login_failures.clear()
+
+        r = c.post("/admin/login", json={"username": "admin", "passphrase": cur_pass,
+                                         "totp_code": good.generate_code()})
+        check("login with valid code -> 200 + token",
+              r.status_code == 200 and "token" in r.json(), f"status={r.status_code}")
+
+        # One-time use: a code for the next window is accepted once, then a
+        # replay of the same time-step is rejected (no clock waits needed).
+        next_step_code = good.generate_code(time.time() + 30)
+        r = c.post("/admin/login", json={"username": "admin", "passphrase": cur_pass,
+                                         "totp_code": next_step_code})
+        check("login with next-window code -> 200", r.status_code == 200, f"status={r.status_code}")
+        fm._admin_login_failures.clear()
+        r = c.post("/admin/login", json={"username": "admin", "passphrase": cur_pass,
+                                         "totp_code": next_step_code})
+        check("replayed code -> rejected as already used",
+              r.status_code == 401 and "already used" in r.text, r.text[:90])
+        fm._admin_login_failures.clear()
+
+        # Bypass attempts must fail closed (extra fields are ignored by the
+        # model — none of them substitutes for the missing code).
+        r = c.post("/admin/login", json={"username": "admin", "passphrase": cur_pass,
+                                         "force": True, "override": True,
+                                         "admin_override": True, "skip_validation": True,
+                                         "allow_unverified": True, "bypass": True})
+        check("bypass fields without a code -> 401 (no override honored)",
+              r.status_code == 401 and "required" in r.text,
+              f"status={r.status_code} {r.text[:80]}")
+
+        # Disable round-trip: authenticated + code-gated, secret retained
+        r = c.post("/admin/totp/disable", headers=auth, json={"totp_code": good.generate_code()})
+        check("disable with code -> 200", r.status_code == 200,
+              f"status={r.status_code} {r.text[:80]}")
+        check("disable keeps the secret for re-enable",
+              fm.store.get_totp_secret() is not None and not fm.store.is_totp_enabled())
+
+        r = c.post("/admin/login", json={"username": "admin", "passphrase": cur_pass})
+        check("login without code works again after disable",
+              r.status_code == 200, f"status={r.status_code}")
+        fm._admin_login_failures.clear()
+
+        r = c.get("/admin/totp/setup", headers=auth)
+        check("re-setup after disable returns the same stored secret",
+              r.status_code == 200 and r.json().get("secret") == secret_b32,
+              f"status={r.status_code}")
+
+        record = json.loads(ADMIN_FILE.read_text(encoding="utf-8"))
+        check("admin record gained only the totp field",
+              set(record) == {"username", "pass_salt", "pass_hash", "wrap", "essential",
+                              "created_at", "last_login", "login_count", "totp"},
+              str(sorted(record)))
 
     print("\n" + ("ALL CHECKS PASSED" if not failures else f"{len(failures)} CHECK(S) FAILED"))
     return 1 if failures else 0

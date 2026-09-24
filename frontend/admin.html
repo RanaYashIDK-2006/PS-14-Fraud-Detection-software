@@ -625,6 +625,16 @@
                 placeholder="••••••••"
                 autocomplete="off"
             >
+            <input 
+                type="password" 
+                id="totp-input" 
+                class="passcode-input" 
+                placeholder="TOTP code (123456)"
+                maxlength="6"
+                autocomplete="one-time-code"
+                inputmode="numeric"
+                style="display: none;"
+            >
             <button id="passcode-btn" class="passcode-btn">Authenticate</button>
             <p id="passcode-error" class="passcode-error">Invalid passcode. Please try again.</p>
         </div>
@@ -651,6 +661,10 @@
                     <div class="sidebar-item active" data-tab="dashboard">
                         <span class="sidebar-item-icon">📊</span>
                         Dashboard
+                    </div>
+                    <div class="sidebar-item" data-tab="live">
+                        <span class="sidebar-item-icon">📡</span>
+                        Live Monitor
                     </div>
                     <div class="sidebar-item" data-tab="services">
                         <span class="sidebar-item-icon">🔧</span>
@@ -695,45 +709,107 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="card-icon">🚀</div>
-                                <span class="card-status healthy">Healthy</span>
+                                <span class="card-status healthy" id="d-system-badge">Checking…</span>
                             </div>
                             <div class="card-title">System Status</div>
                             <div class="card-value" id="system-status">—</div>
-                            <div class="card-label">All services operational</div>
+                            <div class="card-label" id="d-system-label">Querying services…</div>
                         </div>
                         
                         <div class="card">
                             <div class="card-header">
                                 <div class="card-icon">📊</div>
-                                <span class="card-status healthy">Active</span>
+                                <span class="card-status healthy" id="d-txn-badge">Live</span>
                             </div>
-                            <div class="card-title">Transactions</div>
+                            <div class="card-title">Features (24h)</div>
                             <div class="card-value" id="txn-count">—</div>
-                            <div class="card-label">Processed today</div>
+                            <div class="card-label" id="d-txn-label">by created_at · DB-2</div>
                         </div>
                         
                         <div class="card">
                             <div class="card-header">
                                 <div class="card-icon">⚠️</div>
-                                <span class="card-status warning">Review</span>
+                                <span class="card-status warning" id="d-alert-badge">Review</span>
                             </div>
-                            <div class="card-title">Alerts</div>
+                            <div class="card-title">Unresolved Alerts</div>
                             <div class="card-value" id="alert-count">—</div>
-                            <div class="card-label">Pending verification</div>
+                            <div class="card-label" id="d-alert-label">scores awaiting an outcome · DB-3</div>
                         </div>
                         
                         <div class="card">
                             <div class="card-header">
                                 <div class="card-icon">🔗</div>
-                                <span class="card-status healthy">Valid</span>
+                                <span class="card-status healthy" id="chain-badge">Checking…</span>
                             </div>
                             <div class="card-title">Audit Chain</div>
                             <div class="card-value" id="audit-entries">—</div>
-                            <div class="card-label">Chain entries</div>
+                            <div class="card-label" id="chain-label">Chain entries · live integrity</div>
                         </div>
                     </div>
                 </div>
                 
+                <!-- Live Monitor Tab -->
+                <div id="tab-live" class="tab-content" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title">Live Monitor</h2>
+                        <p class="content-subtitle">Auto-refreshes every 5 seconds · direct read-only queries, no writes</p>
+                    </div>
+
+                    <div class="cards-grid">
+                        <div class="card">
+                            <div class="card-header"><div class="card-icon">📥</div><span class="card-status healthy">DB-2</span></div>
+                            <div class="card-title">Features Ingested</div>
+                            <div class="card-value" id="live-features-total">—</div>
+                            <div class="card-label"><span id="live-features-24h">—</span> in the last 24h</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><div class="card-icon">⚡</div><span class="card-status healthy">DB-3</span></div>
+                            <div class="card-title">Risk Scores</div>
+                            <div class="card-value" id="live-scores-total">—</div>
+                            <div class="card-label"><span id="live-scores-24h">—</span> in 24h · <span id="live-bands">—</span></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><div class="card-icon">⚠️</div><span class="card-status warning">Queue</span></div>
+                            <div class="card-title">Unresolved Alerts</div>
+                            <div class="card-value" id="live-unresolved">—</div>
+                            <div class="card-label">scores awaiting a verification outcome</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><div class="card-icon">✅</div><span class="card-status healthy">DB-4</span></div>
+                            <div class="card-title">Verification Outcomes</div>
+                            <div class="card-value" id="live-outcomes">—</div>
+                            <div class="card-label">recorded outcomes · verify service</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><div class="card-icon">🔗</div><span class="card-status healthy" id="live-audit-badge">DB-5</span></div>
+                            <div class="card-title">Audit Entries</div>
+                            <div class="card-value" id="live-audit-entries">—</div>
+                            <div class="card-label" id="live-audit-state">hash-chained events</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><div class="card-icon">🕒</div><span class="card-status healthy">Poll</span></div>
+                            <div class="card-title">Last Update</div>
+                            <div class="card-value" id="live-updated" style="font-size: 18px;">—</div>
+                            <div class="card-label">next poll in 5s while this tab is open</div>
+                        </div>
+                    </div>
+
+                    <div class="data-table" style="margin-top: 24px;">
+                        <div class="table-header">
+                            <span class="table-title">Recent Chain Events</span>
+                            <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);" id="live-events-note">last 8 entries</span></div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr><th>Seq</th><th>Time</th><th>Type</th><th>Fraud ID</th><th>Hash</th></tr>
+                            </thead>
+                            <tbody id="live-events-body">
+                                <tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 24px;">Connecting…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Services Tab -->
                 <div id="tab-services" class="tab-content" style="display: none;">
                     <div class="content-header">
@@ -753,14 +829,42 @@
                         <p class="content-subtitle">Browse and query all databases</p>
                     </div>
                     
+                    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap;">
+                        <select id="db-explorer-select" style="padding: 10px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 13px; width: 200px;">
+                            <option value="identity">Identity (DB-1)</option>
+                            <option value="features">Features (DB-2)</option>
+                            <option value="risk">Risk (DB-3)</option>
+                            <option value="verify">Verify (DB-4)</option>
+                            <option value="audit" selected>Audit (DB-5)</option>
+                        </select>
+                        <span style="font-size: 12px; color: var(--text-dim);">Read-only browse · single-row edits are schema-checked and audit-logged · PII tables are hidden</span>
+                    </div>
+
                     <div class="db-explorer">
                         <div class="db-header">
-                            <span class="db-title">Tables</span>
+                            <span class="db-title" id="db-explorer-title">Tables · Audit (DB-5)</span>
                             <button class="table-btn" id="refresh-tables">Refresh</button>
                         </div>
                         <div class="db-grid" id="db-tables-grid">
                             <!-- Dynamically populated -->
                         </div>
+                    </div>
+
+                    <div class="data-table" id="db-browse-panel" style="display: none; margin-top: 24px;">
+                        <div class="table-header">
+                            <span class="table-title" id="db-browse-title">Table</span>
+                            <div class="table-actions">
+                                <button class="table-btn" id="db-browse-refresh">Refresh</button>
+                                <button class="table-btn" id="db-browse-back">← All tables</button>
+                            </div>
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table>
+                                <thead id="db-browse-head"></thead>
+                                <tbody id="db-browse-body"></tbody>
+                            </table>
+                        </div>
+                        <div id="db-browse-note" style="padding: 12px 24px; color: var(--text-dim); font-size: 12px;"></div>
                     </div>
                 </div>
                 
@@ -768,7 +872,7 @@
                 <div id="tab-queries" class="tab-content" style="display: none;">
                     <div class="content-header">
                         <h2 class="content-title">Query Editor</h2>
-                        <p class="content-subtitle">Execute read-only pre-defined queries against the database</p>
+                        <p class="content-subtitle">Run an allowlisted preset or read-only SQL against any database</p>
                     </div>
                     
                     <div class="query-editor">
@@ -811,9 +915,20 @@
                         </div>
                         
                         <div class="query-actions">
-                            <button class="query-btn" id="execute-query">Execute</button>
+                            <button class="query-btn" id="execute-query">Execute Preset</button>
                         </div>
-                        
+
+                        <div style="margin-top: 24px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 12px; flex-wrap: wrap;">
+                                <span style="font-size: 13px; font-weight: 600;">SQL · read-only</span>
+                                <button class="query-btn secondary" id="execute-sql">Run SQL</button>
+                            </div>
+                            <textarea id="sql-input" class="query-input" spellcheck="false" placeholder="SELECT band, COUNT(*) FROM risk_scores GROUP BY band"></textarea>
+                            <p style="font-size: 12px; color: var(--text-dim); margin-top: 6px;">
+                                SELECT/WITH only · single statement · connection opened mode=ro · restricted tables blocked · capped rows · every run audit-logged
+                            </p>
+                        </div>
+
                         <div class="query-results" id="query-results"></div>
                     </div>
                 </div>
@@ -822,13 +937,22 @@
                 <div id="tab-audit" class="tab-content" style="display: none;">
                     <div class="content-header">
                         <h2 class="content-title">Audit Trail</h2>
-                        <p class="content-subtitle">View the hash-chained audit log</p>
+                        <p class="content-subtitle">Authoritative chain status + hash-linked events, proxied from the Audit Service</p>
                     </div>
-                    
+
+                    <div class="card" style="margin-bottom: 16px; display: flex; align-items: center; gap: 16px;">
+                        <div class="card-icon" style="font-size: 24px;">🔗</div>
+                        <div>
+                            <div class="card-title" id="audit-chain-title">Chain status</div>
+                            <div style="font-size: 13px; color: var(--text-dim);" id="audit-chain-detail">Loading…</div>
+                        </div>
+                    </div>
+
                     <div class="data-table">
                         <div class="table-header">
                             <span class="table-title">Recent Events</span>
                             <div class="table-actions">
+                                <span style="font-size: 12px; color: var(--text-dim);" id="audit-total-note"></span>
                                 <button class="table-btn" id="refresh-audit">Refresh</button>
                             </div>
                         </div>
@@ -836,15 +960,16 @@
                             <thead>
                                 <tr>
                                     <th>Seq</th>
-                                    <th>Type</th>
-                                    <th>Actor</th>
-                                    <th>Hash</th>
                                     <th>Time</th>
+                                    <th>Type</th>
+                                    <th>Fraud ID</th>
+                                    <th>Payload</th>
+                                    <th>Entry Hash</th>
                                 </tr>
                             </thead>
                             <tbody id="audit-table-body">
                                 <tr>
-                                    <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 32px;">
+                                    <td colspan="6" style="text-align: center; color: var(--text-dim); padding: 32px;">
                                         Loading audit events...
                                     </td>
                                 </tr>
@@ -880,10 +1005,76 @@
                                 <span style="color: var(--text-dim);">Session Active</span>
                                 <span style="color: var(--success);">✓ Yes</span>
                             </div>
-                            <div style="display: flex; justify-content: space-between;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                                 <span style="color: var(--text-dim);">Login Time</span>
                                 <span id="login-time">—</span>
                             </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="color: var(--text-dim);">Total Logins</span>
+                                <span id="access-login-count">—</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="color: var(--text-dim);">Last Login (server)</span>
+                                <span id="access-last-login">—</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--text-dim);">TOTP Second Factor</span>
+                                <span id="access-totp">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="max-width: 500px; margin-top: 16px;">
+                        <div class="card-header">
+                            <div class="card-icon">📲</div>
+                        </div>
+                        <div class="card-title">Two-Factor Authentication (TOTP)</div>
+                        <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 16px;">
+                            Once enabled, every admin login requires the 6-digit code from your
+                            authenticator app in addition to the passcode.
+                        </p>
+                        <div style="
+                            padding: 12px 16px;
+                            background: var(--bg);
+                            border: 1px solid var(--border);
+                            border-radius: 8px;
+                            font-size: 13px;
+                            margin-bottom: 12px;
+                        ">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--text-dim);">Status</span>
+                                <span id="totp-status">—</span>
+                            </div>
+                        </div>
+                        <button id="totp-setup-btn" class="passcode-btn" style="display: none;">Set up TOTP</button>
+
+                        <div id="totp-setup-panel" style="display: none;">
+                            <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 8px;">
+                                1. In your authenticator app add a new account — scan the QR code
+                                or enter this key manually:<br>
+                                2. Enter the 6-digit code the app shows, to confirm.
+                            </p>
+                            <div style="
+                                padding: 10px 12px;
+                                background: var(--bg);
+                                border: 1px solid var(--border);
+                                border-radius: 8px;
+                                font-size: 13px;
+                                margin-bottom: 10px;
+                                word-break: break-all;
+                            ">
+                                <code id="totp-secret" style="user-select: all;">—</code><br>
+                                <a id="totp-link" href="#" style="font-size: 12px;">otpauth://…</a>
+                            </div>
+                            <input type="password" id="totp-setup-code" class="passcode-input" placeholder="123456" maxlength="6" autocomplete="one-time-code" inputmode="numeric" style="margin-bottom: 10px;">
+                            <button id="totp-verify-btn" class="passcode-btn">Verify &amp; enable</button>
+                            <p id="totp-setup-error" class="passcode-error">Invalid code. Please try again.</p>
+                        </div>
+
+                        <div id="totp-disable-panel" style="display: none;">
+                            <input type="password" id="totp-disable-code" class="passcode-input" placeholder="123456" maxlength="6" autocomplete="one-time-code" inputmode="numeric" style="margin-bottom: 10px;">
+                            <button id="totp-disable-btn" class="passcode-btn" style="background: #7f1d1d; border: none;">Disable TOTP</button>
+                            <p id="totp-disable-error" class="passcode-error">Invalid code. Please try again.</p>
                         </div>
                     </div>
                 </div>
@@ -896,23 +1087,87 @@
         let isAdminAuthenticated = false;
         let adminToken = null;
         let adminPass = null;
-        
-        // Check if already authenticated from index.html login
-        window.addEventListener('DOMContentLoaded', function() {
-            const storedToken = sessionStorage.getItem('admin_token');
-            const storedPass = sessionStorage.getItem('admin_pass');
-            
-            if (storedToken && storedPass) {
-                // Already authenticated - skip passcode gate
-                isAdminAuthenticated = true;
-                adminToken = storedToken;
-                adminPass = storedPass;
-                document.getElementById('passcode-gate').classList.add('hidden');
-                document.getElementById('admin-content').classList.add('visible');
-                document.getElementById('login-time').textContent = new Date().toLocaleString();
+        let loginMeta = null;
+        let currentTab = 'dashboard';
+        let liveTimer = null;
+        let dashboardTimer = null;
+        let dbCurrent = 'audit';
+        let browseTable = null;
+
+        const $ = (id) => document.getElementById(id);
+        const storeGet = (k) => sessionStorage.getItem(k);
+        const storeSet = (k, v) => sessionStorage.setItem(k, v);
+        const storeDel = (k) => sessionStorage.removeItem(k);
+
+        function authHeaders(extra = {}) {
+            const h = Object.assign({}, extra);
+            const t = adminToken || storeGet('admin_token');
+            if (t) h['Authorization'] = `Bearer ${t}`;
+            return h;
+        }
+
+        async function authFetch(url, opts = {}) {
+            const resp = await fetch(url, Object.assign({}, opts, { headers: authHeaders(opts.headers || {}) }));
+            if (resp.status === 401) {
+                forceReLogin('Session expired — please re-enter the passcode');
+                const err = new Error('session expired');
+                err.sessionExpired = true;
+                throw err;
+            }
+            return resp;
+        }
+
+        function forceReLogin(message) {
+            isAdminAuthenticated = false;
+            adminToken = null;
+            adminPass = null;
+            stopLive();
+            if (dashboardTimer) { clearInterval(dashboardTimer); dashboardTimer = null; }
+            storeDel('admin_token'); storeDel('admin_pass'); storeDel('admin_meta');
+            $('admin-content').classList.remove('visible');
+            $('passcode-gate').classList.remove('hidden');
+            $('totp-input').value = ''; $('totp-input').style.display = 'none';
+            const err = $('passcode-error');
+            err.textContent = message || 'Session expired — please re-enter the passcode';
+            err.style.display = 'block';
+        }
+
+        function enterConsole() {
+            isAdminAuthenticated = true;
+            $('passcode-gate').classList.add('hidden');
+            $('admin-content').classList.add('visible');
+            $('login-time').textContent = new Date().toLocaleString();
+            fillAccessMeta();
+            loadDashboard();
+            if (!dashboardTimer) {
+                dashboardTimer = setInterval(() => {
+                    if (isAdminAuthenticated) loadDashboard();
+                }, 30000);
+            }
+        }
+
+        // Validate any stored session BEFORE skipping the passcode gate — an
+        // expired token used to render a dead console full of stale
+        // placeholders instead of the login screen.
+        window.addEventListener('DOMContentLoaded', async function() {
+            const storedToken = storeGet('admin_token');
+            const storedPass = storeGet('admin_pass');
+            if (!storedToken || !storedPass) return;
+            adminToken = storedToken;
+            adminPass = storedPass;
+            try {
+                const resp = await fetch('/admin/essential', { headers: authHeaders() });
+                if (!resp.ok) throw new Error('invalid session');
+                loginMeta = JSON.parse(storeGet('admin_meta') || 'null');
                 const next = new URLSearchParams(window.location.search).get('next');
                 if (next && next.startsWith('/')) { window.location.replace(next); return; }
-                loadDashboard();
+                enterConsole();
+            } catch (e) {
+                adminToken = null;
+                adminPass = null;
+                storeDel('admin_token');
+                storeDel('admin_pass');
+                // gate stays visible
             }
         });
         
@@ -921,9 +1176,14 @@
         document.getElementById('passcode-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') verifyPasscode();
         });
+        document.getElementById('totp-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verifyPasscode();
+        });
         
         async function verifyPasscode() {
             const passcode = document.getElementById('passcode-input').value;
+            const codeEl = document.getElementById('totp-input');
+            const code = (codeEl.value || '').trim();
             const errorEl = document.getElementById('passcode-error');
             
             if (!passcode) {
@@ -933,30 +1193,46 @@
             }
             
             try {
-                // Authenticate via backend
+                // Authenticate via backend; the TOTP code rides along only
+                // once the gate has revealed the code field.
+                const payload = { username: 'admin', passphrase: passcode };
+                if (code) payload.totp_code = code;
                 const response = await fetch('/admin/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: 'admin', passphrase: passcode })
+                    body: JSON.stringify(payload)
                 });
                 const data = await response.json();
                 
                 if (response.ok) {
-                    isAdminAuthenticated = true;
                     adminToken = data.token;
                     adminPass = passcode;
-                    sessionStorage.setItem('admin_token', adminToken);
-                    sessionStorage.setItem('admin_pass', adminPass);
-                    document.getElementById('passcode-gate').classList.add('hidden');
-                    document.getElementById('admin-content').classList.add('visible');
-                    document.getElementById('login-time').textContent = new Date().toLocaleString();
+                    loginMeta = { login_count: data.login_count, last_login: data.last_login, totp_enabled: data.totp_enabled };
+                    storeSet('admin_token', adminToken);
+                    storeSet('admin_pass', adminPass);
+                    storeSet('admin_meta', JSON.stringify(loginMeta));
+                    errorEl.style.display = 'none';
+                    codeEl.value = ''; codeEl.style.display = 'none';
                     const next = new URLSearchParams(window.location.search).get('next');
                     if (next && next.startsWith('/')) { window.location.href = next; return; }
-                    loadDashboard();
+                    enterConsole();
                 } else {
-                    errorEl.textContent = data.detail || 'Invalid passcode';
-                    errorEl.style.display = 'block';
-                    document.getElementById('passcode-input').value = '';
+                    const detail = data.detail || 'Invalid passcode';
+                    if (detail === 'TOTP code required' || detail === 'Invalid TOTP code' || detail === 'TOTP code already used') {
+                        // TOTP is on: reveal the code field but KEEP the typed
+                        // passcode so the retry is only the 6-digit code.
+                        codeEl.style.display = 'block';
+                        codeEl.value = '';
+                        codeEl.focus();
+                        errorEl.textContent = detail === 'TOTP code required'
+                            ? 'Enter the 6-digit code from your authenticator app'
+                            : detail;
+                        errorEl.style.display = 'block';
+                    } else {
+                        errorEl.textContent = detail;
+                        errorEl.style.display = 'block';
+                        document.getElementById('passcode-input').value = '';
+                    }
                 }
             } catch (error) {
                 errorEl.textContent = 'Authentication failed';
@@ -968,6 +1244,7 @@
         document.querySelectorAll('.sidebar-item').forEach(item => {
             item.addEventListener('click', () => {
                 const tab = item.dataset.tab;
+                currentTab = tab;
                 
                 // Update active state
                 document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
@@ -977,7 +1254,8 @@
                 document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
                 document.getElementById(`tab-${tab}`).style.display = 'block';
                 
-                // Load tab data
+                // Live polling only runs while the Live tab is open
+                stopLive();
                 loadTabData(tab);
             });
         });
@@ -985,45 +1263,62 @@
         // Logout
         document.getElementById('logout-btn').addEventListener('click', async () => {
             try {
-                await fetch('/admin/logout', {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${adminToken}` }
-                });
+                await authFetch('/admin/logout', { method: 'POST' });
             } catch (e) {
-                // Ignore logout errors
+                // Session may already be gone — clear locally either way
             }
-            isAdminAuthenticated = false;
-            adminToken = null;
-            adminPass = null;
-            sessionStorage.removeItem('admin_token');
-            sessionStorage.removeItem('admin_pass');
-            document.getElementById('admin-content').classList.remove('visible');
-            document.getElementById('passcode-gate').classList.remove('hidden');
+            forceReLogin('Signed out — enter the passcode to continue');
             document.getElementById('passcode-input').value = '';
         });
         
-        // Load dashboard data
+        function setBadge(el, text, cls) {
+            el.textContent = text;
+            el.className = 'card-status ' + cls;
+        }
+
+        // Load dashboard data: /status for health+chain, /admin/api/live for
+        // the DB counters. The old hardcoded em-dashes are gone — every
+        // value here comes from a real query.
         async function loadDashboard() {
-            const token = adminToken || sessionStorage.getItem('admin_token');
             try {
-                const response = await fetch('/status', {
-                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-                });
-                const data = await response.json();
-                
-                document.getElementById('system-status').textContent = data.status || 'OK';
-                document.getElementById('txn-count').textContent = '—';
-                document.getElementById('alert-count').textContent = '—';
-                document.getElementById('audit-entries').textContent = data.audit?.entries || '—';
-                
-                // Load services
-                loadServices(data.services || {});
+                const [status, live] = await Promise.all([
+                    authFetch('/status').then(r => r.json()),
+                    authFetch('/admin/api/live').then(r => r.json()).catch(() => null),
+                ]);
+
+                const svcEntries = Object.entries(status);
+                const okCount = svcEntries.filter(([, s]) => s && s.status === 'ok').length;
+                const allOk = okCount === svcEntries.length && svcEntries.length > 0;
+                document.getElementById('system-status').textContent = allOk ? 'Operational' : 'Degraded';
+                document.getElementById('d-system-label').textContent = `${okCount}/${svcEntries.length} services healthy`;
+                setBadge(document.getElementById('d-system-badge'), allOk ? 'Healthy' : 'Degraded', allOk ? 'healthy' : 'warning');
+
+                if (live) {
+                    document.getElementById('txn-count').textContent = live.features_24h == null ? '—' : live.features_24h.toLocaleString();
+                    document.getElementById('alert-count').textContent = live.unresolved_alerts == null ? '—' : live.unresolved_alerts.toLocaleString();
+                }
+
+                const chain = (status.audit && status.audit.chain) || null;
+                document.getElementById('audit-entries').textContent = chain && chain.n_entries != null ? chain.n_entries.toLocaleString() : '—';
+                if (!chain || chain.ok == null) {
+                    setBadge(document.getElementById('chain-badge'), 'Unknown', 'warning');
+                    document.getElementById('chain-label').textContent = 'integrity unavailable';
+                } else if (chain.ok) {
+                    setBadge(document.getElementById('chain-badge'), 'Valid', 'healthy');
+                    document.getElementById('chain-label').textContent = 'hash chain verified end-to-end';
+                } else {
+                    setBadge(document.getElementById('chain-badge'), `Fork @ ${chain.first_bad_seq ?? '?'}`, 'offline');
+                    document.getElementById('chain-label').textContent = `chain broken at seq ${chain.first_bad_seq ?? '?'} of ${chain.n_entries ?? '?'}`;
+                }
+
+                loadServices(status);
             } catch (error) {
-                console.error('Failed to load dashboard:', error);
+                if (!error.sessionExpired) console.error('Failed to load dashboard:', error);
             }
         }
         
-        // Load services
+        // Load services (/status returns a flat {name: info} dict; health is
+        // reported as status === 'ok' — both bugs fixed here)
         function loadServices(services) {
             const grid = document.getElementById('services-grid');
             grid.innerHTML = '';
@@ -1033,13 +1328,13 @@
                 identity: { name: 'Identity Service', icon: '👤' },
                 privacy: { name: 'Privacy Layer', icon: '🔒' },
                 risk: { name: 'Risk Engine', icon: '⚡' },
-                verification: { name: 'Verification', icon: '✅' },
+                verify: { name: 'Verification', icon: '✅' },
                 audit: { name: 'Audit Service', icon: '📋' }
             };
             
             Object.entries(services).forEach(([key, service]) => {
                 const info = serviceNames[key] || { name: key, icon: '🔧' };
-                const isHealthy = service.status === 'healthy';
+                const isHealthy = service && service.status === 'ok';
                 
                 grid.innerHTML += `
                     <div class="card">
@@ -1054,7 +1349,7 @@
                             ${isHealthy ? 'Operational' : 'Unavailable'}
                         </div>
                         <div class="card-label">
-                            Latency: ${service.latency_ms ? service.latency_ms.toFixed(0) + 'ms' : '—'}
+                            Latency: ${service && service.latency_ms ? service.latency_ms.toFixed(0) + 'ms' : '—'}
                         </div>
                     </div>
                 `;
@@ -1064,198 +1359,453 @@
         // Load tab data
         async function loadTabData(tab) {
             switch (tab) {
+                case 'live':
+                    startLive();
+                    break;
+                case 'services':
+                    try { loadServices(await authFetch('/status').then(r => r.json())); }
+                    catch (e) { if (!e.sessionExpired) console.error(e); }
+                    break;
                 case 'database':
-                    await loadDatabaseTables();
+                    await loadDbSchema();
                     break;
                 case 'audit':
-                    await loadAuditEvents();
+                    await loadAuditOverview();
+                    break;
+                case 'access':
+                    fillAccessMeta();
+                    refreshTotp();
                     break;
             }
         }
         
-        // Load database tables
-        async function loadDatabaseTables() {
+        // Database explorer: schema for the selected DB, row browsing, and
+        // guarded single-row edits (all server-side validated + audited)
+        async function loadDbSchema() {
+            dbCurrent = document.getElementById('db-explorer-select').value;
             const grid = document.getElementById('db-tables-grid');
-            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); padding: 32px;">Loading tables...</div>';
-            const token = adminToken || sessionStorage.getItem('admin_token');
-            const pass = adminPass || sessionStorage.getItem('admin_pass');
+            document.getElementById('db-explorer-title').textContent = 'Tables · ' + document.getElementById('db-explorer-select').selectedOptions[0].textContent;
+            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); padding: 32px;">Loading tables…</div>';
+            if (browseTable) { browseTable = null; document.getElementById('db-browse-panel').style.display = 'none'; }
             try {
-                const response = await fetch('/admin/db-query', {
+                const resp = await authFetch('/admin/db-schema', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        db_name: 'audit',
-                        query: 'table_list',
-                        passphrase: pass
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ db_name: dbCurrent, passphrase: adminPass })
                 });
-                const data = await response.json();
-                
-                if (response.ok) {
-                    grid.innerHTML = '';
-                    (data.data || data.rows || []).forEach(row => {
-                        grid.innerHTML += `
-                            <div class="db-table-card" onclick="selectTable('${row.name}')">
-                                <div class="db-table-name">${row.name}</div>
-                                <div class="db-table-count">Click to query</div>
-                            </div>
-                        `;
-                    });
-                } else if (response.status === 401) {
-                    // Session expired — force re-login
-                    sessionStorage.removeItem('admin_token');
-                    sessionStorage.removeItem('admin_pass');
-                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--danger); padding: 32px;">Session expired — <a href="/admin-page" style="color: var(--accent);">re-login</a></div>';
-                } else {
-                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--danger); padding: 32px;">Failed to load tables</div>';
+                const data = await resp.json();
+                if (!resp.ok) {
+                    grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--danger); padding: 32px;">${esc(data.detail || 'Failed to load schema')}</div>`;
+                    return;
                 }
-            } catch (error) {
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--danger); padding: 32px;">Failed to load tables</div>';
+                grid.innerHTML = '';
+                if (!data.tables.length) {
+                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); padding: 32px;">No browsable tables (PII tables are hidden)</div>';
+                    return;
+                }
+                data.tables.forEach(t => {
+                    grid.innerHTML += `
+                        <div class="db-table-card" onclick="openTable('${t.name}')">
+                            <div class="db-table-name">${t.editable ? '' : '🔒 '}${t.name}</div>
+                            <div class="db-table-count">${Number(t.rows).toLocaleString()} rows · ${t.columns.length} cols${t.editable ? '' : ' · read-only'}</div>
+                        </div>`;
+                });
+            } catch (e) {
+                if (!e.sessionExpired) grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--danger); padding: 32px;">Failed to load tables</div>';
+            }
+        }
+
+        function esc(v) {
+            if (v === null || v === undefined) return '<span style="color: var(--text-dim)">NULL</span>';
+            const s = typeof v === 'object' ? JSON.stringify(v) : String(v);
+            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        async function openTable(name) {
+            browseTable = name;
+            await renderBrowse();
+        }
+
+        async function renderBrowse() {
+            const panel = document.getElementById('db-browse-panel');
+            panel.style.display = 'block';
+            document.getElementById('db-browse-title').textContent = `${dbCurrent} · ${browseTable}`;
+            document.getElementById('db-browse-head').innerHTML = '<tr><th colspan="99">Loading rows…</th></tr>';
+            document.getElementById('db-browse-body').innerHTML = '';
+            document.getElementById('db-browse-note').textContent = '';
+            try {
+                const resp = await authFetch('/admin/db-rows', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ db_name: dbCurrent, passphrase: adminPass, table: browseTable, limit: 50 })
+                });
+                const data = await resp.json();
+                if (!resp.ok) {
+                    document.getElementById('db-browse-head').innerHTML = '';
+                    document.getElementById('db-browse-body').innerHTML = `<tr><td colspan="99" style="color: var(--danger); padding: 20px;">${esc(data.detail || 'Failed to load rows')}</td></tr>`;
+                    return;
+                }
+                if (!data.data.length) {
+                    document.getElementById('db-browse-head').innerHTML = '';
+                    document.getElementById('db-browse-body').innerHTML = '<tr><td colspan="99" style="color: var(--text-dim); padding: 20px;">Table is empty</td></tr>';
+                    return;
+                }
+                const cols = Object.keys(data.data[0]);
+                document.getElementById('db-browse-head').innerHTML =
+                    '<tr>' + cols.map(c => `<th>${esc(c)}</th>`).join('') + (data.editable ? '<th></th>' : '') + '</tr>';
+                document.getElementById('db-browse-body').innerHTML = data.data.map(r => {
+                    return '<tr data-rowid="' + r._rowid + '">' + cols.map(c => {
+                        if (c === '_rowid') return `<td style="color: var(--text-dim); font-family: monospace;">${esc(r[c])}</td>`;
+                        return `<td data-col="${esc(c)}">${esc(r[c])}</td>`;
+                    }).join('') + (data.editable
+                        ? `<td><button class="table-btn" onclick="editRow(${r._rowid})">Edit</button></td>`
+                        : '') + '</tr>';
+                }).join('');
+                document.getElementById('db-browse-note').textContent = data.editable
+                    ? `${data.data.length} newest rows · Edit replaces non-key columns; every save is audit-logged with before/after values`
+                    : `${data.data.length} newest rows · this table is append-only (no edits)`;
+            } catch (e) {
+                if (!e.sessionExpired) {
+                    document.getElementById('db-browse-body').innerHTML = '<tr><td colspan="99" style="color: var(--danger); padding: 20px;">Failed to load rows</td></tr>';
+                }
+            }
+        }
+
+        async function editRow(rowid) {
+            const tr = document.querySelector(`#db-browse-body tr[data-rowid="${rowid}"]`);
+            if (!tr || tr.dataset.editing === '1') return;
+            tr.dataset.editing = '1';
+            tr.querySelectorAll('td[data-col]').forEach(td => {
+                const raw = td.textContent === 'NULL' ? '' : td.textContent;
+                td.innerHTML = `<input value="${raw.replace(/"/g, '&quot;')}" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text); padding: 4px 6px; font-size: 12px;">`;
+            });
+            const btn = tr.querySelector('button');
+            btn.textContent = '💾 Save';
+            btn.onclick = () => saveRow(rowid, tr);
+        }
+
+        async function saveRow(rowid, tr) {
+            const changes = {};
+            let n = 0;
+            tr.querySelectorAll('td[data-col]').forEach(td => {
+                const input = td.querySelector('input');
+                if (!input) return;
+                changes[td.dataset.col] = input.value;
+                n++;
+            });
+            if (!n) return;
+            try {
+                const resp = await authFetch('/admin/db-update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ db_name: dbCurrent, passphrase: adminPass, table: browseTable, rowid: rowid, changes: changes })
+                });
+                const data = await resp.json();
+                if (!resp.ok) {
+                    alert('Update rejected: ' + (data.detail || resp.status));
+                    return;
+                }
+                if (!data.audit_logged) {
+                    alert('Row updated, but the audit-log write failed — check the audit service.');
+                }
+                await renderBrowse();
+            } catch (e) {
+                if (!e.sessionExpired) alert('Update failed');
             }
         }
         
-        // Select table
-        function selectTable(tableName) {
-            // Map table names to available query options
-            const queryMap = {
-                'audit_events': 'recent_audit',
-                'audit_access_log': 'recent_audit',
-                'risk_scores': 'recent_scores',
-                'transaction_features': 'recent_features',
-                'verification_outcomes': 'unresolved_alerts'
-            };
-            const querySelect = document.getElementById('query-select');
-            if (queryMap[tableName]) {
-                querySelect.value = queryMap[tableName];
-            } else {
-                querySelect.value = 'table_list';
-            }
-            document.querySelector('[data-tab="queries"]').click();
+        function renderQueryRows(rows) {
+            if (!rows || !rows.length) return '<p style="color: var(--text-dim);">No results returned</p>';
+            const columns = Object.keys(rows[0]);
+            let html = '<table><thead><tr>' + columns.map(c => `<th>${esc(c)}</th>`).join('') + '</tr></thead><tbody>';
+            rows.forEach(r => {
+                html += '<tr>' + columns.map(c => `<td>${esc(r[c])}</td>`).join('') + '</tr>';
+            });
+            return html + '</tbody></table>';
         }
-        
-        // Execute query
+
+        // Execute an allowlisted preset
         document.getElementById('execute-query').addEventListener('click', async () => {
             const db = document.getElementById('db-select').value;
             const query = document.getElementById('query-select').value;
             const resultsDiv = document.getElementById('query-results');
-            const token = adminToken || sessionStorage.getItem('admin_token');
-            const pass = adminPass || sessionStorage.getItem('admin_pass');
-            
             resultsDiv.innerHTML = '<p style="color: var(--text-dim);">Executing query...</p>';
-            
             try {
-                const response = await fetch('/admin/db-query', {
+                const response = await authFetch('/admin/db-query', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        db_name: db,
-                        query: query,
-                        passphrase: pass
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ db_name: db, query: query, passphrase: adminPass })
                 });
                 const data = await response.json();
-                
-                if (response.ok) {
-                    const rows = data.data || data.rows || [];
-                    
-                    if (!rows || rows.length === 0) {
-                        resultsDiv.innerHTML = '<p style="color: var(--text-dim);">No results returned</p>';
-                        return;
-                    }
-                    
-                    // Build table
-                    const columns = Object.keys(rows[0]);
-                    let html = '<table><thead><tr>';
-                    columns.forEach(col => {
-                        html += `<th>${col}</th>`;
-                    });
-                    html += '</tr></thead><tbody>';
-                    
-                    rows.forEach(row => {
-                        html += '<tr>';
-                        columns.forEach(col => {
-                            html += `<td>${row[col] ?? 'NULL'}</td>`;
-                        });
-                        html += '</tr>';
-                    });
-                    
-                    html += '</tbody></table>';
-                    resultsDiv.innerHTML = html;
-                } else if (response.status === 401) {
-                    sessionStorage.removeItem('admin_token');
-                    sessionStorage.removeItem('admin_pass');
-                    resultsDiv.innerHTML = '<p style="color: var(--danger);">Session expired — <a href="/admin-page" style="color: var(--accent);">re-login</a></p>';
-                } else {
-                    resultsDiv.innerHTML = `<p style="color: var(--danger);">Error: ${data.error || 'Query failed'}</p>`;
+                if (!response.ok) {
+                    resultsDiv.innerHTML = `<p style="color: var(--danger);">Error: ${esc(data.detail || 'Query failed')}</p>`;
+                    return;
                 }
+                resultsDiv.innerHTML = renderQueryRows(data.data || data.rows);
             } catch (error) {
-                resultsDiv.innerHTML = `<p style="color: var(--danger);">Request failed: ${error.message}</p>`;
+                if (!error.sessionExpired) resultsDiv.innerHTML = `<p style="color: var(--danger);">Request failed: ${esc(error.message)}</p>`;
+            }
+        });
+
+        // Run read-only SQL
+        document.getElementById('execute-sql').addEventListener('click', async () => {
+            const db = document.getElementById('db-select').value;
+            const sql = document.getElementById('sql-input').value.trim();
+            const resultsDiv = document.getElementById('query-results');
+            if (!sql) {
+                resultsDiv.innerHTML = '<p style="color: var(--text-dim);">Enter a SELECT statement first</p>';
+                return;
+            }
+            resultsDiv.innerHTML = '<p style="color: var(--text-dim);">Running…</p>';
+            try {
+                const response = await authFetch('/admin/db-sql', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ db_name: db, passphrase: adminPass, sql: sql, limit: 200 })
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    resultsDiv.innerHTML = `<p style="color: var(--danger);">Error: ${esc(data.detail || 'query failed')}</p>`;
+                    return;
+                }
+                resultsDiv.innerHTML =
+                    `<p style="font-size: 12px; color: var(--text-dim); margin-bottom: 8px;">${data.rows} row(s)${data.truncated ? ' (truncated at limit)' : ''} · ${data.audit_logged ? 'audit-logged' : '⚠ audit-log write failed'}</p>` +
+                    renderQueryRows(data.data);
+            } catch (error) {
+                if (!error.sessionExpired) resultsDiv.innerHTML = `<p style="color: var(--danger);">Request failed: ${esc(error.message)}</p>`;
             }
         });
         
 
         
-        // Load audit events
-        async function loadAuditEvents() {
-            const tbody = document.getElementById('audit-table-body');
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim);">Loading audit events...</td></tr>';
-            const token = adminToken || sessionStorage.getItem('admin_token');
-            const pass = adminPass || sessionStorage.getItem('admin_pass');
-            try {
-                const response = await fetch('/admin/db-query', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        db_name: 'audit',
-                        query: 'recent_audit',
-                        limit: 50,
-                        passphrase: pass
-                    })
-                });
-                const data = await response.json();
-                const rows = data.data || data.rows || [];
-                
-                if (!rows || rows.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim);">No audit events found</td></tr>';
-                    return;
-                }
-                
-                tbody.innerHTML = '';
-                rows.forEach(row => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${row.seq}</td>
-                            <td>${row.event_type}</td>
-                            <td>${row.actor}</td>
-                            <td style="font-family: monospace; font-size: 12px;">${row.entry_hash?.substring(0, 16) ?? '—'}...</td>
-                            <td>${new Date(row.created_at).toLocaleString()}</td>
-                        </tr>
-                    `;
-                });
-            } catch (error) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--danger);">Failed to load audit events</td></tr>`;
+        // Audit trail: authoritative chain status + events from the audit service
+        function setChainStatus(it, errDetail) {
+            const title = document.getElementById('audit-chain-title');
+            const detail = document.getElementById('audit-chain-detail');
+            if (errDetail) {
+                title.textContent = '⚠ Audit service unreachable';
+                detail.textContent = errDetail + ' — chain status cannot be verified right now';
+                return;
+            }
+            if (it && it.ok) {
+                title.textContent = '✓ Chain verified';
+                detail.textContent = `${it.n_entries} entries · genesis ${(it.genesis_hash || '').substring(0, 14)}… · no broken links`;
+            } else if (it) {
+                title.textContent = '✗ Chain broken';
+                detail.textContent = `first bad entry at seq ${it.first_bad_seq ?? '?'} of ${it.n_entries ?? '?'} — entries from that point cannot be trusted`;
+            } else {
+                title.textContent = 'Chain status unknown';
+                detail.textContent = 'no data returned by the audit service';
             }
         }
-        
-        // Refresh buttons
-        document.getElementById('refresh-tables')?.addEventListener('click', loadDatabaseTables);
-        document.getElementById('refresh-audit')?.addEventListener('click', loadAuditEvents);
-        
-        // Auto-refresh dashboard every 30 seconds
-        setInterval(() => {
-            if (isAdminAuthenticated) {
-                loadDashboard();
+
+        async function loadAuditOverview() {
+            const tbody = document.getElementById('audit-table-body');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-dim); padding: 32px;">Loading audit events…</td></tr>';
+            try {
+                const resp = await authFetch('/admin/api/audit-overview?limit=50');
+                const data = await resp.json();
+                if (!resp.ok) {
+                    setChainStatus(null, resp.status === 503 ? (data.detail || 'service down') : 'failed to load');
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger); padding: 32px;">Audit service unavailable</td></tr>';
+                    return;
+                }
+                setChainStatus(data.integrity || null, null);
+                document.getElementById('audit-total-note').textContent = data.total != null ? `${data.total} entries total` : '';
+                const events = data.events || [];
+                if (!events.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-dim); padding: 32px;">No audit events found</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = events.map(ev => {
+                    let pay = '';
+                    try {
+                        pay = typeof ev.payload === 'object' ? JSON.stringify(ev.payload) : String(ev.payload ?? '');
+                    } catch (e) {
+                        pay = '[unserializable]';
+                    }
+                    const payTitle = pay;
+                    if (pay.length > 72) pay = pay.slice(0, 72) + '…';
+                    const t = ev.created_at ? new Date(ev.created_at).toLocaleString() : '—';
+                    return `<tr>
+                        <td>${ev.seq}</td>
+                        <td>${esc(t)}</td>
+                        <td>${esc(ev.event_type)}</td>
+                        <td>${esc(ev.fraud_id ?? '—')}</td>
+                        <td style="font-family: monospace; font-size: 12px; max-width: 380px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${esc(payTitle)}">${esc(pay)}</td>
+                        <td style="font-family: monospace; font-size: 12px;" title="${esc(ev.entry_hash ?? '')}">${esc((ev.entry_hash ?? '').substring(0, 16))}…</td>
+                    </tr>`;
+                }).join('');
+            } catch (error) {
+                if (!error.sessionExpired) {
+                    setChainStatus(null, 'request failed');
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger); padding: 32px;">Failed to load audit events</td></tr>';
+                }
             }
-        }, 30000);
+        }
+
+        // Live monitor: 5s polling, only while the Live tab is open
+        async function loadLive() {
+            if (!isAdminAuthenticated || currentTab !== 'live') return;
+            try {
+                const [live, status] = await Promise.all([
+                    authFetch('/admin/api/live').then(r => r.json()),
+                    authFetch('/status').then(r => r.json()).catch(() => null),
+                ]);
+                document.getElementById('live-features-total').textContent = live.features_total == null ? '—' : live.features_total.toLocaleString();
+                document.getElementById('live-features-24h').textContent = live.features_24h == null ? '—' : live.features_24h.toLocaleString();
+                document.getElementById('live-scores-total').textContent = live.scores_total == null ? '—' : live.scores_total.toLocaleString();
+                document.getElementById('live-scores-24h').textContent = live.scores_24h == null ? '—' : live.scores_24h.toLocaleString();
+                const bands = live.bands || {};
+                document.getElementById('live-bands').textContent = Object.keys(bands).length
+                    ? Object.entries(bands).map(([b, n]) => `${b}: ${n}`).join(' · ')
+                    : 'no bands yet';
+                document.getElementById('live-unresolved').textContent = live.unresolved_alerts == null ? '—' : live.unresolved_alerts.toLocaleString();
+                document.getElementById('live-outcomes').textContent = live.outcomes_total == null ? '—' : live.outcomes_total.toLocaleString();
+
+                const chain = status && status.audit && status.audit.chain;
+                document.getElementById('live-audit-entries').textContent = chain && chain.n_entries != null ? chain.n_entries.toLocaleString() : '—';
+                if (chain && chain.ok === false) {
+                    document.getElementById('live-audit-state').textContent = `broken at seq ${chain.first_bad_seq ?? '?'}`;
+                    setBadge(document.getElementById('live-audit-badge'), 'Fork', 'offline');
+                } else if (chain && chain.ok) {
+                    document.getElementById('live-audit-state').textContent = 'verified end-to-end';
+                    setBadge(document.getElementById('live-audit-badge'), 'OK', 'healthy');
+                } else {
+                    document.getElementById('live-audit-state').textContent = 'integrity unavailable';
+                    setBadge(document.getElementById('live-audit-badge'), '?', 'warning');
+                }
+
+                document.getElementById('live-updated').textContent = new Date().toLocaleTimeString();
+                const body = document.getElementById('live-events-body');
+                const evs = live.recent_events || [];
+                if (!evs.length) {
+                    body.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 24px;">No chain entries yet</td></tr>';
+                    return;
+                }
+                body.innerHTML = evs.map(ev => `<tr>
+                    <td>${ev.seq}</td>
+                    <td>${esc(ev.created_at ?? '—')}</td>
+                    <td>${esc(ev.event_type)}</td>
+                    <td>${esc(ev.fraud_id ?? '—')}</td>
+                    <td style="font-family: monospace; font-size: 12px;" title="${esc(ev.entry_hash ?? '')}">${esc((ev.entry_hash ?? '').substring(0, 16))}…</td>
+                </tr>`).join('');
+            } catch (error) {
+                if (!error.sessionExpired) document.getElementById('live-updated').textContent = 'error — retrying';
+            }
+        }
+
+        function startLive() {
+            stopLive();
+            loadLive();
+            liveTimer = setInterval(loadLive, 5000);
+        }
+
+        function stopLive() {
+            if (liveTimer) { clearInterval(liveTimer); liveTimer = null; }
+        }
+
+        // Access control: real session/login metadata from the login response
+        function fillAccessMeta() {
+            const meta = loginMeta || JSON.parse(storeGet('admin_meta') || 'null');
+            if (!meta) return;
+            if (meta.login_count != null) document.getElementById('access-login-count').textContent = meta.login_count;
+            if (meta.last_login) document.getElementById('access-last-login').textContent = meta.last_login;
+            document.getElementById('access-totp').textContent = meta.totp_enabled ? 'Enabled' : 'Not configured';
+        }
+
+        // ---- TOTP second-factor management (Access Control tab) ----
+        function setTotpStatus(enabled) {
+            $('access-totp').textContent = enabled ? 'Enabled' : 'Not configured';
+            $('totp-status').textContent = enabled ? 'Enabled' : 'Not configured';
+            if (loginMeta) {
+                loginMeta.totp_enabled = enabled;
+                storeSet('admin_meta', JSON.stringify(loginMeta));
+            }
+            $('totp-setup-btn').style.display = enabled ? 'none' : 'inline-block';
+            $('totp-setup-panel').style.display = 'none';
+            $('totp-disable-panel').style.display = enabled ? 'block' : 'none';
+            $('totp-setup-error').style.display = 'none';
+            $('totp-disable-error').style.display = 'none';
+        }
+
+        async function refreshTotp() {
+            try {
+                const r = await authFetch('/admin/totp/status');
+                if (r.ok) setTotpStatus((await r.json()).enabled === true);
+            } catch (e) { if (!e.sessionExpired) console.error(e); }
+        }
+
+        async function openTotpSetup() {
+            const err = $('totp-setup-error');
+            err.style.display = 'none';
+            try {
+                const r = await authFetch('/admin/totp/setup');
+                const d = await r.json();
+                if (!r.ok) { err.textContent = d.detail || 'Setup failed'; err.style.display = 'block'; return; }
+                $('totp-secret').textContent = d.secret;
+                $('totp-link').href = 'otpauth://totp/PS-14%3Aadmin?secret=' + d.secret +
+                    '&issuer=PS-14&digits=' + (d.digits || 6) + '&period=' + (d.period || 30);
+                $('totp-link').textContent = 'otpauth://totp/PS-14:admin (tap to add to app)';
+                $('totp-setup-panel').style.display = 'block';
+                $('totp-setup-btn').style.display = 'none';
+                $('totp-setup-code').value = '';
+                $('totp-setup-code').focus();
+            } catch (e) { if (!e.sessionExpired) { err.textContent = 'Setup failed'; err.style.display = 'block'; } }
+        }
+
+        async function confirmTotp() {
+            const err = $('totp-setup-error');
+            err.style.display = 'none';
+            const code = ($('totp-setup-code').value || '').trim();
+            if (!/^\d{6}$/.test(code)) { err.textContent = 'Enter the 6-digit code from your app'; err.style.display = 'block'; return; }
+            try {
+                const r = await authFetch('/admin/totp/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ totp_code: code })
+                });
+                const d = await r.json();
+                if (!r.ok) { err.textContent = d.detail || 'Invalid code'; err.style.display = 'block'; return; }
+                setTotpStatus(true);
+            } catch (e) { if (!e.sessionExpired) { err.textContent = 'Verification failed'; err.style.display = 'block'; } }
+        }
+
+        async function disableTotp() {
+            const err = $('totp-disable-error');
+            err.style.display = 'none';
+            const code = ($('totp-disable-code').value || '').trim();
+            if (!/^\d{6}$/.test(code)) { err.textContent = 'Enter the 6-digit code from your app'; err.style.display = 'block'; return; }
+            try {
+                const r = await authFetch('/admin/totp/disable', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ totp_code: code })
+                });
+                const d = await r.json();
+                if (!r.ok) { err.textContent = d.detail || 'Invalid code'; err.style.display = 'block'; return; }
+                $('totp-disable-code').value = '';
+                setTotpStatus(false);
+            } catch (e) { if (!e.sessionExpired) { err.textContent = 'Disabling failed'; err.style.display = 'block'; } }
+        }
+
+        $('totp-setup-btn').addEventListener('click', openTotpSetup);
+        $('totp-verify-btn').addEventListener('click', confirmTotp);
+        $('totp-disable-btn').addEventListener('click', disableTotp);
+        $('totp-setup-code').addEventListener('keypress', (e) => { if (e.key === 'Enter') confirmTotp(); });
+        $('totp-disable-code').addEventListener('keypress', (e) => { if (e.key === 'Enter') disableTotp(); });
+        
+        // Refresh buttons + wiring
+        document.getElementById('refresh-tables')?.addEventListener('click', loadDbSchema);
+        document.getElementById('refresh-audit')?.addEventListener('click', loadAuditOverview);
+        document.getElementById('db-browse-refresh')?.addEventListener('click', renderBrowse);
+        document.getElementById('db-browse-back')?.addEventListener('click', () => {
+            browseTable = null;
+            document.getElementById('db-browse-panel').style.display = 'none';
+            loadDbSchema();
+        });
+        document.getElementById('db-explorer-select')?.addEventListener('change', loadDbSchema);
+        // Dashboard auto-refresh lives in enterConsole() (30s timer, stopped on logout)
     </script>
 </body>
 </html>
