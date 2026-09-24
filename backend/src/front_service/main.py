@@ -1031,7 +1031,7 @@ def monitor_metrics(response: Response, request: Request) -> JSONResponse:
         resp = urllib.request.urlopen(req, timeout=3)  # nosec B310 - fixed localhost health URL
         risk_data = json.loads(resp.read())
         model_info["risk_engine_status"] = risk_data.get("status", "unknown")
-        model_info["risk_engine_model"] = risk_data.get("model", "unknown")
+        model_info["risk_engine_model"] = risk_data.get("model_readiness", "unknown")
     except Exception:
         model_info["risk_engine_status"] = "down"
 

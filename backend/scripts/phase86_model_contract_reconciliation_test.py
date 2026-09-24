@@ -124,16 +124,26 @@ if feature_list_path.exists():
     check("feature_list matches ALTMAN_NATIVE_FEATURES",
           tuple(features) == ALTMAN_NATIVE_FEATURES)
 
-# Check release manifest
+# Check release manifest — against the Phase-110 authoritative contract
+# (src/monitoring/manifest_contract.py), not ad-hoc literals.
+from src.monitoring.manifest_contract import (
+    CANONICAL_FEATURE_VERSION,
+    CANONICAL_MODEL_ID,
+    manifest_identifies_canonical_model,
+    validate_release_manifest,
+)
+
 release_path = Path(__file__).resolve().parent.parent.parent / "models" / "production" / "release_manifest.json"
 check("release_manifest.json exists", release_path.exists())
 if release_path.exists():
     with open(release_path) as f:
         release = json.load(f)
-    check("release model_id is altman_native",
-          release.get("model_id") == "altman_native")
-    check("release feature_version is altman_native_v1",
-          release.get("feature_version") == "altman_native_v1")
+    check("release manifest model_id identifies canonical altman_native",
+          manifest_identifies_canonical_model(release))
+    check("release manifest feature_version is canonical v1",
+          release.get("feature_version") == CANONICAL_FEATURE_VERSION)
+    check("release manifest satisfies manifest contract",
+          validate_release_manifest(release) == ())
 
 
 # ======================================================================
@@ -142,7 +152,7 @@ print("\n=== SECTION 5: Reconciliation Result ===")
 result = reconcile_model_contract()
 
 check("Reconciliation produced result", result is not None)
-check("model_id is altman_native", result.model_id == "altman_native")
+check("model_id is altman_native", result.model_id == CANONICAL_MODEL_ID)
 check("release_id is correct",
       result.release_id == "release-altman_native_E_hardneg_cert_20260904")
 check("runtime_feature_count is 21", result.runtime_feature_count == 21)
@@ -207,9 +217,12 @@ release_manifest_path = Path(__file__).resolve().parent.parent.parent / "models"
 if release_manifest_path.exists():
     with open(release_manifest_path) as f:
         rm = json.load(f)
-    check("Release manifest model_id matches", rm.get("model_id") == result.model_id)
-    check("Release manifest feature_version is altman_native_v1",
-          rm.get("feature_version") == "altman_native_v1")
+    check("Release manifest model_id matches canonical model version",
+          manifest_identifies_canonical_model(rm))
+    check("Release manifest feature_version is canonical v1",
+          rm.get("feature_version") == CANONICAL_FEATURE_VERSION)
+    check("Release manifest satisfies manifest contract",
+          validate_release_manifest(rm) == ())
     check("Release manifest has artifact_hash",
           len(rm.get("artifact_hash", "")) == 64)
     check("Release manifest has source_git_sha",

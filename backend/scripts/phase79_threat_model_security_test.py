@@ -20,6 +20,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+# Phase 110 — test-fixture isolation: section 9.2 writes `security_test`
+# fixture rows directly into DB-4 (frozen at 540 on the shared chain).
+# Bind settings.db_dir to a private temp directory BEFORE any src import
+# so this suite can never reach the shared production chain.  The risk /
+# audit tables are created on the temp store below where first needed.
+import tempfile
+os.environ["DB_DIR"] = tempfile.mkdtemp(prefix="ps14_phase79_")
+
 passed = 0
 failed = 0
 errors = []
@@ -395,6 +403,14 @@ print("\n=== SECTION 8: Idempotency / Replay Security ===")
 
 # 8.1: Same event_id returns same result
 from src.risk_engine.db import SessionLocal
+# Phase 110: with DB_DIR on a private temp dir DB-3 has no tables yet.
+try:
+    from src.risk_engine.db import engine as _risk_eng
+    from src.risk_engine.models import Base as _RiskBase
+    _RiskBase.metadata.create_all(bind=_risk_eng)
+except Exception:
+    pass
+
 from src.risk_engine.models import RiskScore
 
 test_event = f"FREPLAY{uuid.uuid4().hex[:9].upper()}"
@@ -426,6 +442,14 @@ print("\n=== SECTION 9: Audit Chain Integrity ===")
 from src.audit_service.writer import (
     _chain_lock, _write_audit_event, verify_chain, canonical, GENESIS_HASH,
 )
+# Phase 110: temp DB-4 needs its tables before the direct fixture writes.
+try:
+    from src.audit_service.models import Base as _AuditBase
+    from src.audit_service.db import engine as _audit_eng
+    _AuditBase.metadata.create_all(bind=_audit_eng)
+except Exception:
+    pass
+
 from src.audit_service.models import AuditEvent
 from src.audit_service.db import SessionLocal as AuditSession
 

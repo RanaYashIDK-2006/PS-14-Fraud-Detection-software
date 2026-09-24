@@ -18,6 +18,15 @@ from collections import Counter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+# Phase 110 — test-fixture isolation: every probe below appends crafted
+# fixture rows (single_test/queue_test/rapid_test/...) through the real
+# audit writer.  Until now those went into the SHARED production
+# db/audit.db (~15k rows per run — the largest remaining fixture leak).
+# Bind settings.db_dir to a private temp directory BEFORE any src import
+# so this suite can never reach the shared chain.
+import tempfile
+os.environ["DB_DIR"] = tempfile.mkdtemp(prefix="ps14_phase77_")
+
 passed = 0
 failed = 0
 errors = []
@@ -619,9 +628,13 @@ try:
     all_events = db8.query(AuditEvent).order_by(AuditEvent.seq).all()
     check("verify_chain: events in DB", len(all_events) > 0)
     result_all = verify_chain(all_events)
-    # With pre-fix duplicates, verify_chain should correctly fail
-    check("verify_chain: detects pre-fix chain corruption", not result_all["ok"],
-          result_all.get("reason", ""))
+    # Phase 77 now runs on an isolated chain (fixture isolation) written only
+    # through the repaired BEGIN IMMEDIATE append path, so it must be strictly
+    # valid. verify_chain's strictness against the frozen historical fork is
+    # proven in phase109's suite (still fails at 731 on the real chain) — no
+    # weakening here: this chain simply contains no legacy corruption.
+    check("verify_chain: isolated chain strictly valid (repaired writer)",
+          result_all["ok"], result_all.get("reason", ""))
 
     # Verify our Phase 77 test events form a valid sub-chain
     p77_rows = [r for r in all_events if r.fraud_id and test_prefix in r.fraud_id]

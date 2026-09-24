@@ -241,7 +241,7 @@ def main() -> int:
         health = h.json()
         check("health runtime_state READY", health.get("runtime_state") == "READY")
         check("health release_attested true", health.get("release_attested") is True)
-        check("health model ok", health.get("model") == "ok")
+        check("health model_readiness loaded", health.get("model_readiness") == "loaded")
         token = os.environ["INTERNAL_TOKEN"]
         att_resp = rc.get("/internal/release-attestation", headers={"X-Internal-Token": token})
         att_body = att_resp.json()

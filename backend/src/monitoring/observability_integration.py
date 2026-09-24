@@ -228,7 +228,7 @@ def on_evaluation_complete(
     latency_ms: float = 0.0,
     model_id: str = "altman_native",
     release_id: str = "",
-    feature_version: str = "altman_native_v1",
+    feature_version: str = "v1",  # Phase 110: canonical ML_FEATURE_VERSION
     idempotent_replay: bool = False,
     reason_codes: list | None = None,
     runtime_state: str = "READY",

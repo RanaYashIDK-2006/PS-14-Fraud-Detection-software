@@ -94,6 +94,14 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
 
+      - name: Audit-chain hygiene invariant
+        # Phase 110: frozen fixture snapshot + evidence-bound historical
+        # forks + duplicate/broken-link detection on the shared chain.
+        # Passes trivially on a fresh checkout (no shared chain to pollute).
+        run: python backend/scripts/audit_hygiene_check.py
+        env:
+          PYTHONIOENCODING: utf-8
+
       - name: Upload security artifacts
         uses: actions/upload-artifact@v4
         if: always()

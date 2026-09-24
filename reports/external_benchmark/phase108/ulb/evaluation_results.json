@@ -33,8 +33,8 @@
       ],
       [
         "models/production/release_registry.json",
-        "dde0835299d857dc0cfeccbe44acc5453254dbc1a5d1fb7b3721c73a8ef96cc7",
-        "dde0835299d857dc0cfeccbe44acc5453254dbc1a5d1fb7b3721c73a8ef96cc7"
+        "9ef1a224e0dbabc4b8f7cc851f13f8d9e07f7f59551f6ce528e2e879943d8d83",
+        "9ef1a224e0dbabc4b8f7cc851f13f8d9e07f7f59551f6ce528e2e879943d8d83"
       ],
       [
         "models/feature_contract.json",
@@ -771,7 +771,7 @@
   ],
   "phase": 108,
   "probe_mismatches": 0,
-  "result_hash": "7f926fa240ca04cd9464a4727705c2aaae84453b4f380c6067cc45b5d4d9b6d2",
+  "result_hash": "edfa328327bcd870d71178f62b38441705d1b24dc0a256e986688ac444e19fc9",
   "robustness_findings": [
     "NaN, +Inf and float-overflow payloads rejected (finite validator)",
     "negative amount and amount_ratio rejected (ge=0)",

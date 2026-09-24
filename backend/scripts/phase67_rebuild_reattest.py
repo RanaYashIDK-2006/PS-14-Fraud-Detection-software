@@ -175,7 +175,7 @@ def main():
         model_version=model_version,
         artifact_hash=art_hash["model_hash"] or "",
         artifact_files=art_hash["files"],
-        feature_version="altman_native_v1",
+        feature_version="v1",
         schema_version="v1",
         preprocessing_hash=art_hash["files"].get("scaler_native.joblib", ""),
         rule_hash=rule_hash,
@@ -200,7 +200,7 @@ def main():
         "model_version": model_version,
         "artifact_hash": art_hash["model_hash"] or "",
         "artifact_files": art_hash["files"],
-        "feature_version": "altman_native_v1",
+        "feature_version": "v1",
         "schema_version": "v1",
         "preprocessing_hash": art_hash["files"].get("scaler_native.joblib", ""),
         "rule_hash": rule_hash,
@@ -237,7 +237,7 @@ def main():
             model_version=model_version,
             artifact_hash=art_hash["model_hash"] or "",
             manifest_hash=manifest_obj.compute_manifest_hash(),
-            feature_version="altman_native_v1",
+            feature_version="v1",
             schema_version="v1",
             rule_hash=rule_hash,
             preprocessing_hash=art_hash["files"].get("scaler_native.joblib", ""),
@@ -245,6 +245,16 @@ def main():
         )
 
         ok_reg = reg.register(rec)
+        if not ok_reg:
+            # Re-run against an already-populated registry: accept only when
+            # the registered record IS this release identity (same id,
+            # artifacts, feature version). A conflicting duplicate fails.
+            existing = reg.get(release_id)
+            ok_reg = (
+                existing is not None
+                and existing.artifact_hash == rec.artifact_hash
+                and existing.feature_version == rec.feature_version
+            )
         check("Release registered", ok_reg)
 
         # Advance through lifecycle
@@ -362,7 +372,7 @@ def main():
         "model_version": model_version,
         "training_source": "IBM v2 (credit_card_transactions-ibm_v2.csv)",
         "training_seed": 42,
-        "feature_version": "altman_native_v1",
+        "feature_version": "v1",
         "n_features": n_features,
         "locked_threshold": locked_threshold,
         "artifact_hashes": art_hash["files"],
@@ -402,4 +412,14 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    # The production release manifest is a Phase-110 byte-identity invariant:
+    # phase67 regenerates it in-run, so capture and restore the exact bytes
+    # around the run, including when main() raises.
+    _orig_manifest = (
+        RELEASE_MANIFEST_PATH.read_bytes() if RELEASE_MANIFEST_PATH.exists() else None
+    )
+    try:
+        sys.exit(main())
+    finally:
+        if _orig_manifest is not None:
+            RELEASE_MANIFEST_PATH.write_bytes(_orig_manifest)

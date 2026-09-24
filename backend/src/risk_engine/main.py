@@ -1354,7 +1354,12 @@ def _health_impl():
         db_ok=db_ok, model_ok=model_ok,
         runtime_state=runtime_state.value,
         release_id=attestation.release_id if attestation else "",
-        model_id=model_version or "unknown",
+        # Phase 110: report the ATTESTED model identity (the certified model
+        # version bound into the verified ReleaseManifest).  Unattested
+        # boots stay honest with the training-derived fallback instead of
+        # claiming a verified identity they do not have.
+        model_id=(attestation.model_id if attestation is not None
+                  else (model_version or "unknown")),
         feature_version=FEATURE_VERSION,
     )
     _health["service"] = "risk-engine"

@@ -563,8 +563,8 @@ def main() -> int:
         check("34. runtime_state READY", h.get("runtime_state") == "READY")
         # 35. release_attested true
         check("35. release_attested true", h.get("release_attested") is True)
-        # 36. model ok
-        check("36. model ok", h.get("model") == "ok")
+        # 36. model ready (canonical HealthReport: model_readiness)
+        check("36. model ready", h.get("model_readiness") == "loaded")
     # Restore original manifest so downstream tests see the real manifest
     if _original_manifest_bytes is not None:
         _mp.write_bytes(_original_manifest_bytes)

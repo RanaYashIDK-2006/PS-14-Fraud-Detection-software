@@ -296,6 +296,11 @@ def main() -> None:
         schema_version="native48", rule_hash=live_rule_hash,
         gate_verdict="PROMOTION_ELIGIBLE", gate_timestamp=time.time(),
     )
+    # Phase 110: back up the production manifest — this suite overwrites it
+    # with a fixture below and must restore the exact original bytes at the
+    # end, so a crash can never leave fixture bytes (or a deleted manifest)
+    # behind in the production tree.
+    _orig_prod_manifest = mpath.read_bytes() if mpath.exists() else None
     live_man.save(mpath)
 
     async def boot():
@@ -307,7 +312,8 @@ def main() -> None:
         attL, stL, fusL, hL, _fL = asyncio.run(boot())
         check("F1 valid live boot -> READY", stL == RuntimeState.READY)
         check("F2 live boot attested", attL is not None and attL.release_id == "rel-49-live")
-        check("F3 live boot model ok", fusL is not None and hL["model"] == "ok")
+        check("F3 live boot model_readiness loaded",
+              fusL is not None and hL.get("model_readiness") == "loaded")
         check("F4 live health runtime_state READY", hL["runtime_state"] == "READY")
         check("F5 live attestation binds deployed artifacts",
               attL.artifact_hash == live_man.artifact_hash)
@@ -320,7 +326,8 @@ def main() -> None:
         check("F6 corrupted artifact restart -> FAILED", stC == RuntimeState.FAILED)
         check("F7 corrupted restart loads NO model", fusC is None)
         check("F8 corrupted restart leaves NO attestation", fC is None)
-        check("F9 corrupted restart health model=error", hC["model"] == "error")
+        check("F9 corrupted restart health model_readiness not_loaded",
+              hC.get("model_readiness") == "not_loaded")
         check("F10 corrupted restart failure is auditable",
               any("Artifact hash mismatch" in x for x in failsC), str(failsC[:1]))
         xl.write_bytes(orig)
@@ -384,8 +391,15 @@ def main() -> None:
         h = c.get("/health").json()
         check("H4 health reports runtime_state", "runtime_state" in h)
         check("H5 health reports release_attested flag", "release_attested" in h)
-        check("H6 legacy (no manifest) boot still healthy",
-              h["status"] == "ok" and h["model"] == "ok")
+        check("H6 legacy (no manifest) boot healthy, model loaded",
+              h["status"] == "ok" and h.get("model_readiness") == "loaded")
+
+    # Phase 110: restore the exact production-manifest bytes (H needed the
+    # file absent; the shared tree must end this suite byte-identical).
+    if _orig_prod_manifest is not None:
+        mpath.write_bytes(_orig_prod_manifest)
+    elif mpath.exists():
+        mpath.unlink()  # suite started with no manifest -> leave as found
 
     print(f"\n{'='*60}")
     print(f"Phase 49: {passed} passed, {failed} failed")

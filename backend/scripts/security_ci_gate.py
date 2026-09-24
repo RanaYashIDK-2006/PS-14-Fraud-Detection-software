@@ -1,6 +1,8 @@
 """CI Security Gate — runs security tests and fails if any finding exists.
 
 This script runs:
+0. audit_hygiene_check.py — shared audit-chain hygiene invariant (Phase 110:
+   frozen fixture snapshot, evidence-bound historical forks, duplicates)
 1. security_scan.py — code-level security scan
 2. penetration_test.py — 34 attack vectors
 3. risk_engine_test.py — core regression tests
@@ -60,8 +62,25 @@ def main():
     findings = []
     all_passed = True
 
-    # 1. Security scan
-    print(f"{BOLD}[1/3] Security Code Scan{RESET}")
+    # 1. Audit-chain hygiene invariant (Phase 110)
+    print(f"{BOLD}[1/4] Audit-Chain Hygiene Invariant{RESET}")
+    passed, output = run_test("audit_hygiene", "audit_hygiene_check.py")
+    if passed:
+        print(f"  {GREEN}✓ PASSED{RESET}")
+        for line in output.split("\n"):
+            if "->" in line:
+                print(f"    {line.strip()}")
+    else:
+        print(f"  {RED}✗ FAILED{RESET}")
+        all_passed = False
+        for line in output.split("\n"):
+            if "VIOLATION" in line:
+                findings.append(("AUDIT_HYGIENE", line.strip()))
+                print(f"    {RED}{line.strip()}{RESET}")
+    print()
+
+    # 2. Security scan
+    print(f"{BOLD}[2/4] Security Code Scan{RESET}")
     passed, output = run_test("security_scan", "security_scan.py")
     if passed:
         print(f"  {GREEN}✓ PASSED{RESET}")
@@ -81,7 +100,7 @@ def main():
     print()
 
     # 2. Penetration test
-    print(f"{BOLD}[2/3] Penetration Test (34 vectors){RESET}")
+    print(f"{BOLD}[3/4] Penetration Test (34 vectors){RESET}")
     passed, output = run_test("penetration", "penetration_test.py")
     if passed:
         print(f"  {GREEN}✓ PASSED{RESET}")
@@ -106,7 +125,7 @@ def main():
     print()
 
     # 3. Core regression tests
-    print(f"{BOLD}[3/3] Core Regression Tests{RESET}")
+    print(f"{BOLD}[4/4] Core Regression Tests{RESET}")
     passed, output = run_test("risk_engine", "risk_engine_test.py")
     if passed:
         print(f"  {GREEN}✓ risk_engine_test.py PASSED{RESET}")
