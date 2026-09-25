@@ -18,6 +18,7 @@ import os
 import sqlite3
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
@@ -149,9 +150,16 @@ def main() -> int:
                                    "--window-csv", str(td / "window_drifted.csv")])
     check("drifted window exits 2", rc_alert == 2, f"rc={rc_alert}")
     flush_audit_queue()
+    # flush returns once the queue is drained; the writer thread may still be
+    # mid-commit, so poll for the row instead of trusting a fixed grace period.
     rows = audit_rows()
+    deadline = time.monotonic() + 5.0
+    while len(rows) < before + 1 and time.monotonic() < deadline:
+        time.sleep(0.05)
+        rows = audit_rows()
     check("drift_alert appended to audit chain", len(rows) == before + 1
-          and rows[-1][1] == "drift_alert", str(rows[-1][:2]))
+          and rows[-1][1] == "drift_alert",
+          str(rows[-1][:2]) if rows else "no rows")
     linked = rows[-1][2] == (GENESIS_HASH if len(rows) == 1 else rows[-2][3])
     check("drift_alert hash-chained (prev == previous entry)", linked,
           f"{rows[-1][2][:12]}…")
