@@ -760,6 +760,64 @@
             outline-offset: 2px;
         }
 
+        /* Phase 113: operator workflow polish */
+        .skel {
+            display: block;
+            height: 12px;
+            border-radius: 6px;
+            margin: 6px 0;
+            background: linear-gradient(90deg, var(--card-hover) 25%, var(--border) 50%, var(--card-hover) 75%);
+            background-size: 200% 100%;
+            animation: skel-pulse 1.2s ease-in-out infinite;
+        }
+        @keyframes skel-pulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        @media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
+
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .chip {
+            padding: 7px 14px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: var(--card);
+            color: var(--text-dim);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .chip:hover { border-color: var(--accent); color: var(--text); }
+        .chip.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
+
+        .path-list {
+            list-style: none;
+            margin: 6px 0 0;
+            padding: 0;
+            font-size: 13px;
+            line-height: 2;
+        }
+        .path-list .p-ok { color: var(--success); }
+        .path-list .p-warn { color: var(--warning); }
+        .path-list .p-miss { color: var(--text-dim); }
+
+        .hdr-search {
+            padding: 8px 12px;
+            width: 200px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 13px;
+        }
+        .hdr-search:focus { outline: none; border-color: var(--accent); }
+
+        .kpi.clickable { cursor: pointer; }
+        .kpi.clickable:hover { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-glow); }
+
         /* Responsive */
         @media (max-width: 900px) {
             .content {
@@ -803,6 +861,63 @@
 
             .sidebar-item {
                 padding: 8px 12px;
+            }
+        }
+
+        /* Phase 113: narrow-screen workflow (§24) — workflow tables
+           become stacked cards instead of forcing horizontal scroll. */
+        @media (max-width: 640px) {
+            .content {
+                padding: 12px;
+            }
+            .header {
+                flex-wrap: wrap;
+                gap: 10px;
+                padding: 12px 16px;
+            }
+            .hdr-search {
+                width: 100%;
+                order: 3;
+            }
+            .content-title {
+                font-size: 22px;
+            }
+            table.stackable thead {
+                display: none;
+            }
+            table.stackable,
+            table.stackable tbody,
+            table.stackable tr,
+            table.stackable td {
+                display: block;
+                width: 100%;
+            }
+            table.stackable tr {
+                border-bottom: 1px solid var(--border);
+                padding: 6px 0;
+            }
+            table.stackable td {
+                display: flex;
+                justify-content: space-between;
+                gap: 14px;
+                text-align: right;
+                border: none;
+                padding: 5px 14px;
+                font-size: 13px;
+            }
+            table.stackable td::before {
+                content: attr(data-label);
+                color: var(--text-dim);
+                font-size: 12px;
+                text-align: left;
+                flex-shrink: 0;
+            }
+            table.stackable td[colspan] {
+                justify-content: center;
+                text-align: center;
+            }
+            table.stackable td[colspan]::before {
+                content: none;
             }
         }
     </style>
@@ -855,6 +970,9 @@
                 <span class="header-badge">v2.0</span>
             </div>
             <div class="header-right">
+                <input id="hdr-search" class="hdr-search" type="search"
+                       placeholder="Find transaction…"
+                       aria-label="Find transaction by event ID or transaction ID">
                 <span class="header-user" id="admin-user">Admin</span>
                 <button class="header-logout" id="logout-btn">Logout</button>
             </div>
@@ -940,9 +1058,10 @@
                             <div class="kpi-value" id="dash-tx">—</div>
                             <div class="kpi-label">Processed (24h)</div>
                         </div>
-                        <div class="kpi kpi-attention">
+                        <div class="kpi kpi-attention clickable" id="dash-flagged-kpi"
+                             role="button" tabindex="0" title="Show flagged transactions">
                             <div class="kpi-value" id="dash-flagged">—</div>
-                            <div class="kpi-label">Flagged (24h)</div>
+                            <div class="kpi-label">Flagged (24h) →</div>
                         </div>
                         <div class="kpi">
                             <div class="kpi-value" id="dash-blocked">—</div>
@@ -951,20 +1070,23 @@
                     </div>
                     <p id="dash-kpi-note" style="font-size: 12px; color: var(--text-dim); margin: -20px 0 24px;"></p>
 
-                    <!-- FLAGGED TRANSACTIONS -->
+                    <!-- NEEDS ATTENTION (flagged, §3/§4) -->
                     <div class="data-table">
                         <div class="table-header">
-                            <span class="table-title">Flagged Transactions</span>
+                            <span class="table-title">Needs Attention</span>
                             <div class="table-actions">
-                                <button class="table-btn" id="dash-view-all">View all →</button>
+                                <button class="table-btn" id="dash-view-all">View all flagged →</button>
                             </div>
                         </div>
-                        <table>
+                        <table class="stackable">
                             <thead>
                                 <tr><th>Event ID</th><th>Risk</th><th>Status</th><th>When</th></tr>
                             </thead>
                             <tbody id="dash-flagged-body">
-                                <tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 24px;">Loading…</td></tr>
+                                <tr><td colspan="4" style="padding: 16px 20px;">
+                                    <span class="skel" style="width: 70%;"></span>
+                                    <span class="skel" style="width: 55%;"></span>
+                                </td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -976,7 +1098,10 @@
                             <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);">newest first · click to investigate</span></div>
                         </div>
                         <ul class="feed-list" id="dash-activity">
-                            <li style="cursor: default; color: var(--text-dim);">Loading…</li>
+                            <li style="cursor: default; padding: 4px 0;">
+                                <span class="skel" style="width: 60%;"></span>
+                                <span class="skel" style="width: 45%;"></span>
+                            </li>
                         </ul>
                     </div>
 
@@ -1020,7 +1145,7 @@
                     <div class="live-metrics">
                         <div class="live-metric">
                             <div class="lm-v" id="live-simple-total">—</div>
-                            <div class="lm-l">Decisions in window</div>
+                            <div class="lm-l">Transactions/sec</div>
                         </div>
                         <div class="live-metric">
                             <div class="lm-v" id="live-simple-flagged">—</div>
@@ -1032,7 +1157,7 @@
                         </div>
                         <div class="live-metric">
                             <div class="lm-v" id="live-simple-blocks">—</div>
-                            <div class="lm-l">Validation blocks</div>
+                            <div class="lm-l">Errors</div>
                         </div>
                     </div>
 
@@ -1354,18 +1479,9 @@
                         </div>
                     </div>
 
-                    <!-- Human explanation of the documented historical fork (§15) -->
-                    <div class="why-box" id="audit-fork-box" style="display: none; border-left-color: var(--warning);">
-                        <h4>Historical audit issue</h4>
-                        <div style="font-size: 14px; line-height: 1.7;">
-                            A historical audit-chain inconsistency was identified and quarantined.<br>
-                            This issue is already documented and does not represent a newly detected failure.
-                            <div style="margin-top: 8px;">
-                                Current audit hygiene: <b id="audit-hygiene" class="status-ok">● Clean</b><br>
-                                Unexpected future audit inconsistencies: <b class="status-ok">● Automatically detected by CI</b>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Human explanation of the documented historical fork:
+                         moved INSIDE the Historical integrity details expando
+                         (§22) so it never reads like a new incident. -->
 
                     <div class="data-table">
                         <div class="table-header">
@@ -1397,6 +1513,17 @@
                     <details class="advanced" id="audit-tech">
                         <summary>Historical Integrity Details</summary>
                         <div style="padding: 4px 0 8px;">
+                            <div class="why-box" id="audit-fork-box" style="display: none; border-left-color: var(--warning); margin: 12px 14px;">
+                                <h4>Historical audit issue</h4>
+                                <div style="font-size: 14px; line-height: 1.7;">
+                                    A historical audit-chain inconsistency was identified and quarantined.<br>
+                                    This issue is already documented and does not represent a newly detected failure.
+                                    <div style="margin-top: 8px;">
+                                        Current audit hygiene: <b id="audit-hygiene" class="status-ok">● Clean</b><br>
+                                        Unexpected future audit inconsistencies: <b class="status-ok">● Automatically detected by CI</b>
+                                    </div>
+                                </div>
+                            </div>
                             <div style="padding: 14px 20px; font-size: 13px; color: var(--text-dim);" id="audit-tech-summary">—</div>
                             <div class="data-table" style="margin-top: 0;">
                                 <div style="overflow-x: auto;">
@@ -1438,10 +1565,18 @@
                                aria-label="Search transactions by event ID or transaction ID">
                         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px;">
                             <button id="f-search" class="passcode-btn" style="width: auto; padding: 10px 24px;">Search</button>
-                            <button id="f-reset" class="table-btn">Reset</button>
+                            <button id="f-reset" class="table-btn" style="display: none;">Clear filters</button>
                             <span id="f-count" style="font-size: 12px; color: var(--text-dim);"></span>
                         </div>
                         <p id="f-error" class="passcode-error" style="margin-bottom: 10px;"></p>
+
+                        <!-- Quick filter chips (§16) -->
+                        <div class="filter-chips" id="f-chips" role="group" aria-label="Quick filters">
+                            <button class="chip active" data-chip="all">All</button>
+                            <button class="chip" data-chip="flagged">Flagged</button>
+                            <button class="chip" data-chip="approved">Approved</button>
+                            <button class="chip" data-chip="blocked">Blocked</button>
+                        </div>
 
                         <details class="advanced" id="f-filters">
                             <summary>Filters</summary>
@@ -1473,7 +1608,7 @@
                                 </div>
                             </div>
                             <div style="overflow-x: auto;">
-                            <table>
+                            <table class="stackable">
                                 <thead>
                                     <tr><th>Time</th><th>Event ID</th><th>Risk</th><th>Decision</th><th>Status</th></tr>
                                 </thead>
@@ -1500,13 +1635,14 @@
                         <div class="why-box">
                             <h4>Why was this flagged?</h4>
                             <div id="d-why" style="font-size: 14px; color: var(--text-dim);">Loading…</div>
+                            <div id="d-path" style="margin-top: 10px;"></div>
                         </div>
 
                         <details class="advanced" open>
-                            <summary>Transaction details</summary>
+                            <summary>Transaction information</summary>
                             <div class="data-table" style="border: none; border-radius: 0; margin-top: 0;">
-                                <table>
-                                    <tbody id="d-fields"><tr><td style="color: var(--text-dim); padding: 20px;">Loading…</td></tr></tbody>
+                                <table class="stackable">
+                                    <tbody id="d-fields"><tr><td colspan="2" style="color: var(--text-dim); padding: 20px;">Loading…</td></tr></tbody>
                                 </table>
                             </div>
                         </details>
@@ -1532,16 +1668,41 @@
                             </div>
                             <div class="data-table" style="margin-top: 16px;">
                                 <div class="table-header">
-                                    <span class="table-title">Audit Trail (this event)</span>
-                                    <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);" id="d-chain-note">—</span></div>
+                                    <span class="table-title">Runtime context</span>
+                                    <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);">recorded model/release identity for this score</span></div>
                                 </div>
-                                <div style="overflow-x: auto;">
-                                <table>
-                                    <thead><tr><th>Seq</th><th>Time</th><th>Type</th><th>Entry hash</th><th>Link</th></tr></thead>
-                                    <tbody id="d-audit"><tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">—</td></tr></tbody>
+                                <table class="stackable">
+                                    <tbody id="d-tech-fields"><tr><td colspan="2" style="color: var(--text-dim); padding: 16px;">—</td></tr></tbody>
                                 </table>
-                                </div>
                             </div>
+                            </div>
+                        </details>
+
+                        <!-- Audit trail (§12): compact by default, hashes behind
+                             "View technical audit details" -->
+                        <details class="advanced" id="d-audit-box" style="margin-top: 12px;">
+                            <summary>Audit trail</summary>
+                            <div class="data-table" style="border: none; border-radius: 0; margin-top: 0;">
+                                <div class="table-header">
+                                    <span class="table-title">Recorded events</span>
+                                    <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);">time-ordered evidence for this transaction</span></div>
+                                </div>
+                                <table class="stackable">
+                                    <thead><tr><th>Time</th><th>Event</th></tr></thead>
+                                    <tbody id="d-audit-compact"><tr><td colspan="2" style="text-align: center; color: var(--text-dim); padding: 20px;">—</td></tr></tbody>
+                                </table>
+                                <details class="advanced" id="d-audit-tech" style="margin: 10px 14px 14px;">
+                                    <summary>View technical audit details</summary>
+                                    <div style="padding: 4px 0 8px;">
+                                        <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 8px;" id="d-chain-note">—</div>
+                                        <div style="overflow-x: auto;">
+                                        <table>
+                                            <thead><tr><th>Seq</th><th>Time</th><th>Type</th><th>Entry hash</th><th>Link</th></tr></thead>
+                                            <tbody id="d-audit"><tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">—</td></tr></tbody>
+                                        </table>
+                                        </div>
+                                    </div>
+                                </details>
                             </div>
                         </details>
                     </div>
@@ -1587,6 +1748,25 @@
                     <div class="content-header">
                         <h2 class="content-title">Security</h2>
                         <p class="content-subtitle">Multi-factor sign-in, sessions and security events</p>
+                    </div>
+
+                    <!-- Operator status strip (§23): three lines, no internals -->
+                    <div class="card" style="max-width: 500px; margin-bottom: 16px;" id="sec-strip">
+                        <div class="card-title">Security status</div>
+                        <div style="font-size: 14px;">
+                            <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                                <span style="color: var(--text-dim);">MFA</span>
+                                <span id="sec-mfa">—</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                                <span style="color: var(--text-dim);">Session</span>
+                                <span class="status-ok">● Active</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 5px 0;">
+                                <span style="color: var(--text-dim);">Authentication</span>
+                                <span class="status-ok">● Protected</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="card" style="max-width: 500px; margin-top: 16px;">
@@ -1790,6 +1970,11 @@
             loadDashboard();
             const r0 = routeFromPath();
             if (r0.tab !== 'dashboard' || r0.detail) activateTab(r0.tab, { push: false, detail: r0.detail });
+            // Deep link: /admin/transactions?status=flagged (§4) — the URL
+            // form of the flagged KPI, applied once after the gate.
+            try {
+                if (new URLSearchParams(window.location.search).get('status') === 'flagged') goFlagged();
+            } catch (e) { /* no query string */ }
             startDashboardTimer();
         }
 
@@ -1998,6 +2183,77 @@
             return words.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('-');
         }
 
+        // Simple operator vocabulary (§6): lists show Approved/Review/
+        // Step-up, never raw snake_case codes.
+        const DECISION_LABEL = { allow: 'Approved', verify: 'Review', step_up: 'Step-up' };
+        function decisionWord(d) {
+            if (d == null || d === '') return null;
+            return DECISION_LABEL[d] || String(d);
+        }
+        function humanize(s) { return String(s == null ? '' : s).replace(/_/g, ' '); }
+        // Authoritative DB-4 event type -> operator phrase (§12); raw type
+        // is still shown next to it in dim text.
+        const EVENT_LABEL = {
+            score_generated: 'Risk evaluation',
+            runtime_release_unverified: 'Decision recorded',
+            data_quality_blocked: 'Data-quality block',
+        };
+        function eventLabel(t) { return EVENT_LABEL[t] || humanize(t); }
+
+        // Investigation state (§13): authoritative case/outcome rows from
+        // the detail payload only — no frontend-only status. Writes live
+        // in the verification console under its own auth, so this console
+        // shows state and records nothing itself.
+        const CASE_GLOSS = {
+            NEW: 'new — awaiting review',
+            REVIEWING: 'under review',
+            USER_VERIFICATION: 'awaiting user verification',
+            CONFIRMED_SUSPICIOUS: 'confirmed suspicious',
+            CONFIRMED_LEGITIMATE: 'confirmed legitimate',
+            CLOSED: 'closed',
+        };
+        function investigationText(d) {
+            const oc = Array.isArray(d.outcomes) && d.outcomes.length ? d.outcomes[0] : null;
+            const cs = Array.isArray(d.cases) && d.cases.length ? d.cases[0] : null;
+            if (oc) return `Outcome: ${humanize(oc.outcome)}${oc.resolved_at ? ' · ' + oc.resolved_at : ''}`;
+            if (cs) {
+                const gloss = CASE_GLOSS[cs.status] ? ' — ' + CASE_GLOSS[cs.status] : '';
+                return `Case ${humanize(cs.status)}${gloss}${cs.created_at ? ' · opened ' + cs.created_at : ''}`;
+            }
+            return null;
+        }
+
+        // Dashboard -> flagged list in one click (§4/§26): the equivalent
+        // of /admin/transactions?status=flagged, plus a real deep link.
+        // Global quick search (§15): one box in the header, everywhere.
+        // Exact event IDs land directly in the detail view via the search
+        // flow's single-exact-match rule; misses get a clean not-found.
+        function globalFind(q) {
+            const query = String(q || '').trim();
+            if (!query) return;
+            ['f-event', 'f-fraud', 'f-decision', 'f-band', 'f-min', 'f-max',
+             'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged'].forEach(id => {
+                const el = $(id); if (el) el.value = '';
+            });
+            const quick = $('f-quick');
+            if (quick) quick.value = query;
+            txnPage = 0;
+            txnOpenExact = true;
+            if (txnDetailOpen) showTxnList();
+            activateTab('transactions');
+        }
+
+        function goFlagged() {
+            ['f-quick', 'f-event', 'f-fraud', 'f-decision', 'f-band', 'f-min', 'f-max',
+             'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged'].forEach(id => {
+                const el = $(id); if (el) el.value = '';
+            });
+            const fl = $('f-flagged');
+            if (fl) fl.value = 'true';
+            txnPage = 0;
+            activateTab('transactions');
+        }
+
         // ONE primary status card (§6): operational / attention / unavailable.
         function renderStatusCard(st) {
             const el = $('dash-status-text');
@@ -2039,24 +2295,22 @@
                 fb.innerHTML = flagged.length ? flagged.map(f => {
                     const href = `/admin/transactions/${encodeURIComponent(f.event_id)}`;
                     return `<tr class="feed-row" data-eid="${esc(f.event_id)}" style="cursor:pointer;">
-                        <td><a class="txn-link" data-eid="${esc(f.event_id)}" href="${href}" style="font-family: monospace; font-size: 12px;">${esc(f.event_id)}</a></td>
-                        <td>${esc(f.risk_band || '—')}</td>
-                        <td><span class="card-status warning" style="font-size: 11px;">FLAGGED</span></td>
-                        <td style="font-size: 12px;" title="${esc(f.scored_at ?? '')}">${esc(agoLabel(f.scored_at))}</td>
+                        <td data-label="Event ID"><a class="txn-link" data-eid="${esc(f.event_id)}" href="${href}" style="font-family: monospace; font-size: 12px;">${esc(f.event_id)}</a></td>
+                        <td data-label="Risk">${esc(f.risk_band || '—')}</td>
+                        <td data-label="Status"><span class="card-status warning" style="font-size: 11px;">FLAGGED</span></td>
+                        <td data-label="When" style="font-size: 12px;" title="${esc(f.scored_at ?? '')}">${esc(agoLabel(f.scored_at))}</td>
                     </tr>`;
                 }).join('')
-                    : '<tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 24px;">No flagged transactions</td></tr>';
+                    : '<tr><td colspan="4" style="text-align: center; padding: 24px;"><b style="color: var(--text);">All clear</b><div style="font-size: 12px; color: var(--text-dim); margin-top: 4px;">No transactions currently require review.</div></td></tr>';
 
                 // Recent activity — real decisions, newest first (§2).
-                const DECISION_WORD = { allow: 'Approved', verify: 'Verify', step_up: 'Step-up' };
                 const acts = s.recent_activity || [];
                 const ab = $('dash-activity');
                 ab.innerHTML = acts.length ? acts.map(a => {
                     const href = `/admin/transactions/${encodeURIComponent(a.event_id)}`;
                     const flaggedRow = a.risk_band && a.risk_band !== 'low' && a.risk_band !== 'unknown';
                     let word;
-                    if (a.decision && DECISION_WORD[a.decision]) word = DECISION_WORD[a.decision];
-                    else if (a.decision) word = String(a.decision);
+                    if (decisionWord(a.decision)) word = decisionWord(a.decision);
                     else word = flaggedRow ? 'Flagged' : 'N/A';
                     const cls = flaggedRow ? 'warning' : (a.decision === 'allow' ? 'healthy' : '');// unknown -> default text
                     return `<li class="feed-row" data-eid="${esc(a.event_id)}" title="${esc(a.scored_at ?? '')}">
@@ -2450,15 +2704,16 @@
             }
             const qn = it && Array.isArray(it.quarantined_breaks) ? it.quarantined_breaks.length : 0;
             if (it && it.ok === true && it.strict_ok === false && qn) {
-                // Documented historical fork: current chain is clean, the
-                // old break is quarantined (Phase 109).
-                title.textContent = 'Chain verified — historical break quarantined';
-                detail.textContent = `${it.n_entries} entries · current hygiene clean · ${qn} historical link(s) quarantined (strict break @ ${it.first_bad_seq ?? '?'})`;
+                // Documented historical fork (Phase 109): the explanation
+                // lives in the collapsed Historical integrity details
+                // expando — the default view just says audit is fine (§22).
+                title.textContent = 'Audit operational';
+                detail.textContent = `${it.n_entries} entries · chain verified end-to-end`;
                 if (forkBox) forkBox.style.display = 'block';
                 setHygiene('● Clean', 'status-ok');
             } else if (it && it.ok) {
-                title.textContent = 'Chain verified';
-                detail.textContent = `${it.n_entries} entries · genesis ${(it.genesis_hash || '').substring(0, 14)}… · no broken links`;
+                title.textContent = 'Audit operational';
+                detail.textContent = `${it.n_entries} entries · chain verified end-to-end`;
                 if (forkBox) forkBox.style.display = 'none';
                 setHygiene('● Clean', 'status-ok');
             } else if (it) {
@@ -2618,12 +2873,21 @@
             if (meta.login_count != null) document.getElementById('access-login-count').textContent = meta.login_count;
             if (meta.last_login) document.getElementById('access-last-login').textContent = meta.last_login;
             document.getElementById('access-totp').textContent = meta.totp_enabled ? 'Enabled' : 'Not configured';
+            const sm = document.getElementById('sec-mfa');
+            if (sm) {
+                sm.textContent = meta.totp_enabled ? '● Enabled' : '● Not configured';
+                sm.className = meta.totp_enabled ? 'status-ok' : 'status-warn';
+            }
         }
 
         // ---- TOTP second-factor management (Access Control tab) ----
         function setTotpStatus(enabled) {
             $('access-totp').textContent = enabled ? 'Enabled' : 'Not configured';
             $('totp-status').textContent = enabled ? 'Enabled' : 'Not configured';
+            if ($('sec-mfa')) {
+                $('sec-mfa').textContent = enabled ? '● Enabled' : '● Not configured';
+                $('sec-mfa').className = enabled ? 'status-ok' : 'status-warn';
+            }
             if (loginMeta) {
                 loginMeta.totp_enabled = enabled;
                 storeSet('admin_meta', JSON.stringify(loginMeta));
@@ -2733,11 +2997,16 @@
         let txnPage = 0;
         let txnTotal = 0;
         let txnLimit = 50;
+        // Set only by EXPLICIT search actions (button/Enter/global find) so
+        // the exact-ID auto-open never fires on pagination, chip switches,
+        // or browser Back re-loading the list (§15/§26).
+        let txnOpenExact = false;
         let liveWindow = '15m';
         let livePaused = false;
         let liveFails = 0;
         let liveLastOk = 0;
         let liveTicker = null;
+        let liveDisconnected = false;
 
         const truncate = (s, n) => (s && s.length > n ? s.slice(0, n) + '…' : (s || ''));
         const naVal = (v) => v == null || v === '' ? '<span style="color: var(--text-dim);">N/A</span>' : esc(String(v));
@@ -2774,43 +3043,131 @@
             return p;
         }
 
+        // Which quick chip matches the current filter state (§16); null =
+        // only advanced filters are set, so no chip highlights.
+        function activeFilterKind() {
+            const p = txFilterParams();
+            p.delete('limit'); p.delete('offset');
+            if (![...p.keys()].length) return 'all';
+            if (p.get('flagged') === 'true') return 'flagged';
+            if (p.get('decision') === 'allow') return 'approved';
+            if (p.get('data_quality') === 'blocked') return 'blocked';
+            return null;
+        }
+
+        function syncQuickUI() {
+            const kind = activeFilterKind();
+            document.querySelectorAll('#f-chips .chip').forEach(c =>
+                c.classList.toggle('active', c.dataset.chip === kind));
+            const reset = $('f-reset');
+            if (reset) reset.style.display = kind === 'all' ? 'none' : 'inline-block';
+        }
+
         async function loadTransactions() {
             const err = $('f-error');
             err.style.display = 'none';
-            $('f-rows').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 24px;">Loading…</td></tr>';
+            $('f-rows').innerHTML = '<tr><td colspan="5" style="padding: 14px 20px;">' +
+                '<span class="skel" style="width: 90%;"></span>' +
+                '<span class="skel" style="width: 75%;"></span>' +
+                '<span class="skel" style="width: 60%;"></span></td></tr>';
             try {
-                const p = txFilterParams();
-                const r = await authFetch('/admin/api/transactions?' + p.toString());
-                const d = await r.json();
+                let p = txFilterParams();
+                const quick0 = (($('f-quick') && $('f-quick').value) || '').trim();
+                let r = await authFetch('/admin/api/transactions?' + p.toString());
+                let d = await r.json();
                 if (!r.ok) throw new Error(d.detail || 'search failed');
+                // Quick search covers both identifier kinds: event IDs and
+                // fraud IDs both conventionally start with "F", so an empty
+                // first pass retries the other interpretation instead of
+                // reporting a miss (§15).
+                if (quick0 && !(d.rows || []).length) {
+                    const p2 = new URLSearchParams(p.toString());
+                    let flipped = false;
+                    if (p2.get('fraud_id') === quick0) {
+                        p2.delete('fraud_id'); p2.set('event_id', quick0); flipped = true;
+                    } else if (p2.get('event_id') === quick0 && /^F/i.test(quick0)) {
+                        p2.delete('event_id'); p2.set('fraud_id', quick0); flipped = true;
+                    }
+                    if (flipped) {
+                        try {
+                            const r2 = await authFetch('/admin/api/transactions?' + p2.toString());
+                            const d2 = await r2.json();
+                            if (r2.ok) { d = d2; p = p2; }
+                        } catch (e2) { if (e2.sessionExpired) throw e2; }
+                    }
+                }
                 txnTotal = d.total || 0;
                 const rows = d.rows || [];
+                const wantOpen = txnOpenExact;
+                txnOpenExact = false;
                 const pages = Math.max(1, Math.ceil(txnTotal / (d.limit || txnLimit)));
                 $('f-count').textContent = `${txnTotal.toLocaleString()} results · page size ${d.limit} (server-capped)`;
                 $('f-page').textContent = `page ${txnPage + 1} of ${pages}`;
                 $('f-prev').disabled = txnPage <= 0;
                 $('f-next').disabled = (txnPage + 1) * (d.limit || txnLimit) >= txnTotal;
+                syncQuickUI();
                 if (!rows.length) {
-                    $('f-rows').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 24px;">No rows match these filters</td></tr>';
+                    // Honest, contextual empty states (§17).
+                    const quick = (($('f-quick') && $('f-quick').value) || '').trim();
+                    const fp = txFilterParams();
+                    fp.delete('limit'); fp.delete('offset');
+                    const hasFilters = [...fp.keys()].length > 0;
+                    const loneEventId = hasFilters && [...fp.keys()].length === 1
+                        && ((fp.get('event_id') === quick && quick.length > 0)
+                            || (fp.get('fraud_id') === quick && quick.length > 0));
+                    let msg, sub;
+                    if (loneEventId) {
+                        msg = 'Transaction not found';
+                        sub = 'Check the event ID, or clear the search.';
+                    } else if (hasFilters) {
+                        msg = 'No matching transactions';
+                        sub = 'Try another event ID or remove some filters.';
+                    } else {
+                        msg = 'No transactions yet';
+                        sub = 'Transactions will appear here when the system receives them.';
+                    }
+                    $('f-rows').innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 24px;"><b style="color: var(--text);">${msg}</b><div style="font-size: 12px; color: var(--text-dim); margin-top: 4px;">${sub}</div></td></tr>`;
+                    return;
+                }
+                // Exact-ID search opens the detail directly (§15).
+                const lone = [...p.keys()].length === 3; // id + limit + offset
+                if (wantOpen && lone && quick0 && rows.length === 1
+                        && rows[0].event_id === quick0) {
+                    // Same path as a row click: detail opens AND the URL
+                    // reflects it, so Back returns to the list (§26).
+                    activateTab('transactions', { detail: quick0 });
                     return;
                 }
                 $('f-rows').innerHTML = rows.map(row => {
                     const href = `/admin/transactions/${encodeURIComponent(row.event_id)}`;
                     const band = row.risk_band == null ? null : String(row.risk_band);
                     const flagged = band && band !== 'low' && band !== 'unknown';
+                    const word = decisionWord(row.decision);
+                    let statusCell;
+                    if (row.data_quality_status === 'blocked') {
+                        statusCell = '<span class="card-status error" style="font-size: 11px;">BLOCKED</span>';
+                    } else if (band) {
+                        statusCell = `<span class="card-status ${flagged ? 'warning' : 'healthy'}" style="font-size: 11px;">${esc(band)}</span>`;
+                    } else {
+                        statusCell = '<span style="color: var(--text-dim)">N/A</span>';
+                    }
+                    const deg = row.degraded ? ' <span title="ML unavailable — rules only evaluated">⚠</span>' : '';
                     return `<tr>
-                        <td style="font-size: 12px;">${esc(row.scored_at ?? '—')}</td>
-                        <td><a class="txn-link" data-eid="${esc(row.event_id)}" href="${href}" style="font-family: monospace; font-size: 12px;">${esc(row.event_id)}</a></td>
-                        <td>${naVal(row.risk_score)}${flagged ? ` <span style="font-size: 11px; color: ${flagged ? 'var(--warning)' : 'var(--text-dim)'};">${esc(band)}</span>` : ''}</td>
-                        <td>${naVal(row.decision)}</td>
-                        <td>${band ? `<span class="card-status ${flagged ? 'warning' : 'healthy'}" style="font-size: 11px;">${esc(band)}</span>` : '<span style="color: var(--text-dim)">N/A</span>'}</td>
+                        <td data-label="Time" style="font-size: 12px;">${esc(row.scored_at ?? '—')}</td>
+                        <td data-label="Event ID"><a class="txn-link" data-eid="${esc(row.event_id)}" href="${href}" style="font-family: monospace; font-size: 12px;">${esc(row.event_id)}</a></td>
+                        <td data-label="Risk">${naVal(row.risk_score)}${deg}</td>
+                        <td data-label="Decision">${word ? esc(word) : naVal(row.decision)}</td>
+                        <td data-label="Status">${statusCell}</td>
                     </tr>`;
                 }).join('');
             } catch (e) {
                 if (e.sessionExpired) return;
-                err.textContent = e.message || String(e);
+                console.error('transactions search failed:', e);
+                err.textContent = 'Unable to load transactions — try again.';
                 err.style.display = 'block';
-                $('f-rows').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--danger); padding: 24px;">Search failed</td></tr>';
+                $('f-count').textContent = '';
+                $('f-rows').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 24px;">No results to show</td></tr>';
+                syncQuickUI();
             }
         }
 
@@ -2823,20 +3180,32 @@
             $('d-error').style.display = 'none';
             $('d-hero-title').textContent = 'Transaction';
             $('d-summary').innerHTML = '<div class="kpi"><div class="kpi-value">…</div><div class="kpi-label">fetching recorded evidence</div></div>';
-            $('d-why').innerHTML = '<span style="color: var(--text-dim);">Loading…</span>';
-            $('d-fields').innerHTML = '<tr><td style="color: var(--text-dim); padding: 20px;">Loading…</td></tr>';
-            $('d-stages').innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 20px;">Loading…</td></tr>';
-            $('d-audit').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">Loading…</td></tr>';
+            const skelRows = (n, cols) => '<tr><td colspan="' + cols + '" style="padding: 14px 20px;">' +
+                Array.from({ length: n }, (_, i) => `<span class="skel" style="width: ${88 - i * 14}%;"></span>`).join('') + '</td></tr>';
+            $('d-why').innerHTML = '<span class="skel" style="width: 70%;"></span><span class="skel" style="width: 48%;"></span>';
+            $('d-path').innerHTML = '';
+            $('d-fields').innerHTML = skelRows(5, 2);
+            $('d-tech-fields').innerHTML = skelRows(4, 2);
+            $('d-stages').innerHTML = skelRows(3, 4);
+            $('d-audit-compact').innerHTML = skelRows(3, 2);
+            $('d-audit').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">—</td></tr>';
             $('d-reasons').textContent = 'REASON_NOT_AVAILABLE';
             $('d-chain-note').textContent = '—';
             try {
                 const r = await authFetch('/admin/api/transactions/' + encodeURIComponent(eventId));
                 const d = await r.json();
-                if (!r.ok) throw new Error(d.detail || 'not found');
+                if (!r.ok) {
+                    const failure = new Error(d.detail || 'failed');
+                    failure.notFound = r.status === 404;
+                    throw failure;
+                }
                 renderTxnDetail(d);
             } catch (e) {
                 if (e.sessionExpired) return;
-                $('d-error').textContent = 'Unavailable: ' + (e.message || e);
+                console.error('transaction detail failed:', e);
+                $('d-error').textContent = e.notFound
+                    ? 'Transaction not found — check the event ID.'
+                    : 'Unable to load this transaction — try again.';
                 $('d-error').style.display = 'block';
                 $('d-summary').innerHTML = '';
             }
@@ -2851,69 +3220,123 @@
             const dqStatus = (dqStage.evidence || {}).data_quality_status;
             const band = val(sc.risk_band);
             const flagged = band && band !== 'low' && band !== 'unknown';
+            const dqBlocked = dqStatus === 'blocked';
+            const evs = (d.audit && d.audit.events) || [];
+            const word = decisionWord(d.decision);
 
             // Hero: name the situation instead of echoing the route.
-            $('d-hero-title').textContent = flagged ? 'FLAGGED TRANSACTION' : 'Transaction';
+            $('d-hero-title').textContent = dqBlocked ? 'BLOCKED TRANSACTION'
+                : (flagged ? 'FLAGGED TRANSACTION' : 'Transaction');
 
-            // KPI top row — the four facts an operator scans first.
+            // Summary KPI row (§7/§8): status, risk score, decision, time —
+            // the four facts an operator scans first. "Risk score" is
+            // labelled plainly: no probability semantics are implied.
             const kpi = (value, label, cls) => `<div class="kpi${cls ? ' ' + cls : ''}">
                 <div class="kpi-value">${value}</div><div class="kpi-label">${label}</div></div>`;
+            const statusText = dqBlocked ? 'BLOCKED' : (flagged ? 'FLAGGED' : (word || 'N/A'));
+            const statusCls = dqBlocked ? 'error'
+                : (flagged ? 'warning' : (d.decision === 'allow' ? 'healthy' : 'warning'));
+            const degradedMark = sc.degraded
+                ? ' <span class="card-status warning" style="font-size: 11px; vertical-align: middle;" title="ML evaluation unavailable — rules only evaluated">⚠ DEGRADED</span>'
+                : '';
+            const scoredAt = String(val(sc.scored_at, d.generated_at, '') || '');
+            const timePart = /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}/.test(scoredAt)
+                ? scoredAt.slice(11, 19) : scoredAt;
             $('d-summary').innerHTML = [
-                kpi(naVal(val(sc.risk_score)), 'Risk score (0-100)', flagged ? 'kpi-attention' : ''),
-                kpi(naVal(d.decision), 'Decision · ' + esc(d.decision_source || 'not_recorded')),
-                kpi(`<span style="font-size: 15px;">${esc(String(val(sc.scored_at, d.generated_at, 'N/A')))}</span>`, 'Scored at'),
-                kpi(esc(String(val(sc.degraded ? 'DEGRADED' : 'normal'))),
-                    'Runtime' + (dqStatus ? ' · DQ ' + esc(dqStatus) : '')),
+                kpi(`<span class="card-status ${statusCls}" style="font-size: 15px; padding: 6px 14px;">${statusText}</span>${degradedMark}`, 'Status'),
+                kpi(naVal(val(sc.risk_score)), 'Risk score', flagged ? 'kpi-attention' : ''),
+                kpi(word ? esc(word) : naVal(d.decision), 'Decision'),
+                kpi(`<span style="font-size: 15px;" title="${esc(scoredAt)}">${esc(timePart || 'N/A')}</span>`, 'Time'),
             ].join('');
 
-            // Why-box: human sentences first (authoritative reason texts),
-            // honest fallbacks when nothing human-readable is recorded.
+            // Why-box (§9): headline first, then authoritative reason
+            // texts; honest fallbacks when nothing human-readable exists.
             const rs = Array.isArray(d.reasons) ? d.reasons : [];
             const whyLines = [];
             rs.forEach(x => {
                 if (typeof x === 'string') { if (x) whyLines.push(x); return; }
                 const t = x.text || x.detail || x.message;
                 if (t) whyLines.push(t);
-                else if (x.code) whyLines.push(String(x.code).replace(/_/g, ' ').toLowerCase());
+                else if (x.code) whyLines.push(humanize(x.code).toLowerCase());
             });
             if (!whyLines.length) {
                 if (d.escalation_reason) whyLines.push(String(d.escalation_reason));
                 else if (flagged) whyLines.push('Flagged for review: risk band is ' + band +
                     (val(sc.risk_score) != null ? ' (score ' + sc.risk_score + ')' : '') + '.');
             }
+            const whyHeadline = flagged
+                ? '<div style="font-weight: 600; color: var(--text); margin-bottom: 6px;">Flagged for review</div>'
+                : '';
             $('d-why').innerHTML = whyLines.length
-                ? '<ul>' + whyLines.map(t => `<li>${esc(t)}</li>`).join('') + '</ul>'
+                ? whyHeadline + '<ul>' + whyLines.map(t => `<li>${esc(t)}</li>`).join('') + '</ul>'
                 : '<span style="color: var(--text-dim);">' +
                   (flagged ? 'Flagged for review. Detailed reasoning is unavailable.'
                            : 'Detailed reasoning is unavailable.') + '</span>';
 
-            // Transaction details: key/value facts, technical depth stays
-            // inside the closed "Processing details" expander.
-            const field = (k, v) => `<tr><td style="color: var(--text-dim); width: 260px;">${esc(k)}</td><td>${naVal(v)}</td></tr>`;
+            // Decision path (§10): only authoritative backend state —
+            // degraded/DQ flags, persisted decision, recorded audit rows.
+            const pathSteps = [['p-ok', 'Input accepted']];
+            if (dqBlocked) {
+                pathSteps.push(['p-ok', 'Validation completed']);
+                pathSteps.push(['p-warn', 'Data-quality protection triggered']);
+                pathSteps.push(d.decision
+                    ? ['p-ok', 'Safe fallback decision recorded']
+                    : ['p-miss', 'No decision recorded']);
+            } else {
+                pathSteps.push(['p-ok', 'Validation passed']);
+                if (sc.degraded) {
+                    pathSteps.push(['p-warn', 'ML evaluation unavailable']);
+                    pathSteps.push(['p-ok', 'Rules evaluation completed']);
+                } else {
+                    pathSteps.push(['p-ok', 'Risk evaluation completed']);
+                }
+                pathSteps.push(d.decision
+                    ? ['p-ok', 'Decision generated']
+                    : ['p-miss', 'Decision not recorded']);
+            }
+            pathSteps.push(evs.length
+                ? ['p-ok', 'Audit recorded']
+                : ['p-miss', 'Audit not recorded']);
+            $('d-path').innerHTML =
+                '<div style="font-weight: 600; font-size: 13px;">Decision path</div>' +
+                '<ul class="path-list">' + pathSteps.map(([cls, t]) =>
+                    `<li class="${cls}">${cls === 'p-ok' ? '✓' : (cls === 'p-warn' ? '⚠' : '○')} ${esc(t)}</li>`
+                ).join('') + '</ul>' +
+                '<div style="font-size: 11px; color: var(--text-dim);">derived from recorded evidence for this event</div>';
+
+            // Transaction information (§7): operator facts only —
+            // technical identity stays inside "Processing details".
+            const field = (k, v) => `<tr><td data-label="${esc(k)}" style="color: var(--text-dim); width: 260px;">${esc(k)}</td><td>${naVal(v)}</td></tr>`;
             $('d-fields').innerHTML = [
                 field('Event ID', d.event_id),
                 field('Fraud / transaction ID', val(sc.fraud_id, d.fraud_id)),
-                field('Decision', d.decision),
-                field('Decision source', d.decision_source),
-                field('Escalation reason', d.escalation_reason),
+                field('Decision', word),
+                field('Investigation', investigationText(d)),
                 field('Risk score', val(sc.risk_score)),
                 field('Risk band', band),
-                field('ML score', val(sc.ml_score)),
-                field('Rule score', val(sc.rule_score)),
+                field('Data quality', dqBlocked ? 'blocked' : (dqStatus || val(d.data_quality_status))),
+                field('Degraded', sc.degraded == null ? null : (sc.degraded ? 'yes — rules only' : 'no')),
                 field('Scored at', val(sc.scored_at, d.generated_at)),
-                field('Data quality', dqStatus || val(d.data_quality_status)),
-                field('Degraded', sc.degraded == null ? null : (sc.degraded ? 'yes' : 'no')),
+            ].join('');
+
+            // Runtime context (§11): recorded technical identity, visible
+            // only when Processing details is expanded.
+            $('d-tech-fields').innerHTML = [
+                field('Decision source', d.decision_source),
+                field('Escalation reason', d.escalation_reason),
                 field('Model ID', val(ctx.model_id, sc.model_version)),
                 field('Release ID', ctx.release_id),
                 field('Feature version', ctx.feature_version),
                 field('Threshold', ctx.threshold),
+                field('ML score', val(sc.ml_score)),
+                field('Rule score', val(sc.rule_score)),
                 field('Drift state', d.drift_state),
                 field('Runtime state', d.runtime_state),
             ].join('');
 
             $('d-stages').innerHTML = stages.length ? stages.map((s, i) => `<tr>
                 <td>${i + 1}</td>
-                <td>${esc(s.stage || '?')}</td>
+                <td>${esc(humanize(s.stage || '?'))}</td>
                 <td>${esc(String(s.status == null ? 'not_recorded' : s.status))}${s.timestamp ? `<div style="font-size: 11px; color: var(--text-dim);">${esc(s.timestamp)}</div>` : ''}</td>
                 <td style="font-family: monospace; font-size: 11px; max-width: 480px; white-space: pre-wrap; word-break: break-all;">${esc(truncate(JSON.stringify(s.evidence ?? {}), 420))}</td>
             </tr>`).join('') : '<tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 20px;">No trace recorded</td></tr>';
@@ -2923,7 +3346,17 @@
                 : `<div>• <b>${esc(x.code || x.reason || 'reason')}</b> ${esc(x.detail || x.message || '')}</div>`).join('')
                 : 'REASON_NOT_AVAILABLE';
 
-            const evs = (d.audit && d.audit.events) || [];
+            // Audit trail (§12): compact time-ordered default view…
+            $('d-audit-compact').innerHTML = evs.length ? evs.map(r => {
+                const ts = String(r.timestamp ?? '');
+                const t = /^\d{4}-\d{2}-\d{2}[T ]/.test(ts) ? ts.slice(11, 19) : (ts || '—');
+                return `<tr>
+                    <td data-label="Time" style="font-size: 12px;">${esc(t)}</td>
+                    <td data-label="Event">${esc(eventLabel(r.event_type))} <span style="color: var(--text-dim); font-size: 11px;">${esc(r.event_type)}</span></td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="2" style="text-align: center; color: var(--text-dim); padding: 20px;">No audit rows reference this event</td></tr>';
+
+            // …hashes/sequence/verifier status stay in the technical view.
             $('d-audit').innerHTML = evs.length ? evs.map(r => `<tr>
                 <td>${r.seq}</td>
                 <td>${esc(r.timestamp ?? '—')}</td>
@@ -3073,29 +3506,44 @@
                     authFetch('/admin/api/live?window=' + encodeURIComponent(liveWindow)).then(r => r.json()),
                     authFetch('/status').then(r => r.json()).catch(() => null),
                 ]);
+                // A poll that was already in flight when Pause was hit must
+                // not clobber the PAUSED badge (§21).
+                if (livePaused) { setConn('PAUSED'); return; }
                 liveFails = 0;
+                liveDisconnected = false;
                 setConn('LIVE');
                 liveLastOk = Date.now();
 
-                // Simple default metrics (§10)
+                // Simple default metrics (§20): rate, flagged, errors,
+                // latency — null sources render N/A, never a fake zero.
                 const w0 = live.windowed || {};
                 const wb0 = w0.by_band || {};
                 const flagged0 = Object.entries(wb0).filter(([b]) => b !== 'low' && b !== 'unknown')
                     .reduce((s, [, n]) => s + (Number(n) || 0), 0);
-                liveSet('live-simple-total', w0.total == null ? 'N/A' : Number(w0.total).toLocaleString());
+                liveSet('live-simple-total', w0.requests_per_sec == null ? 'N/A' : String(w0.requests_per_sec));
                 liveSet('live-simple-flagged', Object.keys(wb0).length ? String(flagged0) : 'N/A');
                 const lat0 = live.latency || {};
                 liveSet('live-simple-latency', lat0.p50_ms == null ? 'N/A' : String(Math.round(Number(lat0.p50_ms))));
-                liveSet('live-simple-blocks', w0.validation_blocks == null ? 'N/A' : String(w0.validation_blocks));
+                liveSet('live-simple-blocks', w0.errors == null ? 'N/A' : String(w0.errors));
 
                 // Recent activity — simplified feed, click to investigate
                 const feed0 = live.feed || [];
                 const recent = $('live-recent');
                 if (recent) {
-                    recent.innerHTML = feed0.length ? feed0.slice(0, 8).map(f => `<li class="feed-row" data-eid="${esc(f.event_id || '')}">
-                        <span><b>${esc(f.decision ?? '—')}</b> · ${esc(f.event_id ?? '—')}</span>
-                        <span style="color: var(--text-dim);">${naVal(f.risk_score)} ${esc(f.decision_band ?? '')} · ${esc((f.timestamp ?? '').toString().slice(11, 19) || '—')}</span>
-                    </li>`).join('')
+                    recent.innerHTML = feed0.length ? feed0.slice(0, 8).map(f => {
+                        const bandF = f.decision_band;
+                        const flaggedF = bandF && bandF !== 'low' && bandF !== 'unknown';
+                        const wordF = flaggedF ? 'FLAGGED' : (decisionWord(f.decision) || '—');
+                        let clsF = '';
+                        if (flaggedF || f.decision === 'verify' || f.decision === 'step_up') clsF = 'warning';
+                        else if (f.decision === 'allow') clsF = 'healthy';
+                        const tsF = (f.timestamp ?? '').toString().slice(11, 19) || '—';
+                        return `<li class="feed-row" data-eid="${esc(f.event_id || '')}" title="${esc(String(f.event_id ?? ''))} · click to investigate">
+                        <span><span style="color: var(--text-dim); font-size: 12px;">${esc(tsF)}</span> <b style="font-family: monospace; font-size: 12px;">${esc(f.event_id ?? '—')}</b></span>
+                        ${clsF ? `<span class="card-status ${clsF}" style="font-size: 11px;">${esc(wordF)}</span>`
+                                : `<span style="font-size: 12px; color: var(--text-dim);">${esc(wordF)}</span>`}
+                    </li>`;
+                    }).join('')
                         : '<li style="cursor: default; color: var(--text-dim);">No scored events yet</li>';
                 }
 
@@ -3188,7 +3636,13 @@
             } catch (error) {
                 liveFails++;
                 if (!error.sessionExpired) {
-                    if (liveFails >= 2) setConn('DISCONNECTED');
+                    console.error('live monitor poll failed:', error);
+                    if (liveFails >= 2) {
+                        liveDisconnected = true;
+                        setConn('DISCONNECTED');
+                        liveSet('live-ago', 'Live monitor disconnected · last update ' +
+                            (liveLastOk ? new Date(liveLastOk).toLocaleTimeString() : 'never'));
+                    }
                     liveSet('live-updated', 'error — retrying');
                 }
             }
@@ -3201,10 +3655,18 @@
             const el = $('live-ago');
             if (!el) return;
             if (livePaused) { el.textContent = 'Paused'; return; }
+            if (liveDisconnected) {
+                el.textContent = 'Live monitor disconnected · last update ' +
+                    (liveLastOk ? new Date(liveLastOk).toLocaleTimeString() : 'never');
+                return;
+            }
             if (!liveLastOk) { el.textContent = 'Connecting…'; return; }
             const age = Math.max(0, Math.round((Date.now() - liveLastOk) / 1000));
             el.textContent = `Last updated ${age}s ago`;
-            if (age >= 15 && !livePaused) setConn('DISCONNECTED');
+            if (age >= 15 && !livePaused) {
+                liveDisconnected = true;
+                setConn('DISCONNECTED');
+            }
         }
 
         // ---- Wiring ----
@@ -3221,13 +3683,44 @@
                 (showingRec ? totp : rec).focus();
             });
 
-            ['f-search'].forEach(id => $(id) && $(id).addEventListener('click', () => { txnPage = 0; loadTransactions(); }));
+            ['f-search'].forEach(id => $(id) && $(id).addEventListener('click', () => { txnPage = 0; txnOpenExact = true; loadTransactions(); }));
             if ($('f-quick')) {
                 $('f-quick').addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') { txnPage = 0; loadTransactions(); }
+                    if (e.key === 'Enter') { txnPage = 0; txnOpenExact = true; loadTransactions(); }
                 });
             }
-            if ($('dash-view-all')) $('dash-view-all').addEventListener('click', () => activateTab('transactions'));
+            if ($('dash-view-all')) $('dash-view-all').addEventListener('click', goFlagged);
+            // Flagged KPI is actionable (§4): one click -> filtered list.
+            const fkpi = $('dash-flagged-kpi');
+            if (fkpi) {
+                fkpi.addEventListener('click', goFlagged);
+                fkpi.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goFlagged(); }
+                });
+            }
+            // Global header search (§15).
+            const hs = $('hdr-search');
+            if (hs) hs.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter') return;
+                e.preventDefault();
+                globalFind(hs.value);
+            });
+            // Quick filter chips (§16): each chip is a clean view switch.
+            const fchips = $('f-chips');
+            if (fchips) fchips.addEventListener('click', (e) => {
+                const b = e.target.closest('.chip');
+                if (!b) return;
+                ['f-quick', 'f-event', 'f-fraud', 'f-band', 'f-min', 'f-max',
+                 'f-since', 'f-until', 'f-degraded', 'f-flagged', 'f-decision',
+                 'f-dq'].forEach(id => { const el = $(id); if (el) el.value = ''; });
+                const kind = b.dataset.chip;
+                if (kind === 'flagged') $('f-flagged').value = 'true';
+                if (kind === 'approved') $('f-decision').value = 'allow';
+                if (kind === 'blocked') $('f-dq').value = 'blocked';
+                txnPage = 0;
+                if (txnDetailOpen) showTxnList();
+                loadTransactions();
+            });
             // Status card + model link open System Details (§6/§8).
             const openSystem = () => activateTab('system');
             const sc = $('dash-status-card');

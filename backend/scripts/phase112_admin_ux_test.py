@@ -122,8 +122,8 @@ seg = shell[i_dash:i_live]
 ok("All systems operational" in shell and "Attention required" in shell
    and "System unavailable" in shell,
    "ONE status card renders all three states")
-ok(seg.find("Flagged Transactions") < seg.find('id="dash-line-database"'),
-   "flagged transactions sit above the system block")
+ok(seg.find("Needs Attention") < seg.find('id="dash-line-database"'),
+   "flagged 'Needs Attention' list sits above the system block")
 ok(seg.find('id="dash-activity"') > seg.find('id="dash-flagged-body"'),
    "RECENT ACTIVITY section follows the flagged list")
 ok("No recent transactions" in shell,
