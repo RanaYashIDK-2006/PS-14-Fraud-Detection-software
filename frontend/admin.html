@@ -863,7 +863,7 @@
         <div class="main">
             <nav class="sidebar">
                 <div class="sidebar-section">
-                    <div class="sidebar-label">Operations</div>
+                    <div class="sidebar-label">Admin</div>
                     <div class="sidebar-item active" data-tab="dashboard">
                         <span class="sidebar-item-icon">📊</span>
                         Dashboard
@@ -876,6 +876,10 @@
                         <span class="sidebar-item-icon">📡</span>
                         Live Monitor
                     </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-label">System</div>
                     <div class="sidebar-item" data-tab="audit">
                         <span class="sidebar-item-icon">📋</span>
                         Audit
@@ -896,25 +900,45 @@
                         <span class="sidebar-item-icon">🖥️</span>
                         System Details
                     </div>
+                    <div class="sidebar-item" data-tab="database">
+                        <span class="sidebar-item-icon">🗄️</span>
+                        Database Tools
+                    </div>
+                    <div class="sidebar-item" data-tab="queries">
+                        <span class="sidebar-item-icon">🧮</span>
+                        Query Editor
+                    </div>
                 </div>
             </nav>
             
             <main class="content">
-                <!-- Dashboard Tab -->
+                <!-- Dashboard Tab — ONE status card, counts, flagged list,
+                     recent activity, system lines.  Technical detail lives
+                     in Advanced → System Details (§2/§3/§6). -->
                 <div id="tab-dashboard" class="tab-content">
                     <div class="content-header">
                         <div>
                             <h2 class="content-title">Admin Dashboard</h2>
-                            <p class="content-subtitle">What is happening right now, and what needs attention</p>
+                            <p class="content-subtitle">Is the system okay, and is there anything to investigate?</p>
                         </div>
-                        <span class="card-status healthy" id="dash-online" style="font-size: 13px;">● …</span>
                     </div>
 
-                    <!-- LEVEL 2: operations KPIs -->
+                    <!-- ONE primary status card — click opens System Details -->
+                    <div class="card" id="dash-status-card" role="button" tabindex="0"
+                         style="max-width: 760px; cursor: pointer; margin-bottom: 16px;"
+                         title="Open System Details">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <div class="card-title" id="dash-status-text" style="font-size: 17px;">● …</div>
+                            <span style="font-size: 12px; color: var(--text-dim);">View system details →</span>
+                        </div>
+                        <div id="dash-warnings" style="display: none; margin-top: 8px; font-size: 13px; color: var(--warning);"></div>
+                    </div>
+
+                    <!-- TRANSACTIONS -->
                     <div class="kpi-row">
                         <div class="kpi">
                             <div class="kpi-value" id="dash-tx">—</div>
-                            <div class="kpi-label">Transactions (24h)</div>
+                            <div class="kpi-label">Processed (24h)</div>
                         </div>
                         <div class="kpi kpi-attention">
                             <div class="kpi-value" id="dash-flagged">—</div>
@@ -927,17 +951,17 @@
                     </div>
                     <p id="dash-kpi-note" style="font-size: 12px; color: var(--text-dim); margin: -20px 0 24px;"></p>
 
-                    <!-- LEVEL 1: things needing attention -->
+                    <!-- FLAGGED TRANSACTIONS -->
                     <div class="data-table">
                         <div class="table-header">
-                            <span class="table-title">Recent Flagged Transactions</span>
+                            <span class="table-title">Flagged Transactions</span>
                             <div class="table-actions">
                                 <button class="table-btn" id="dash-view-all">View all →</button>
                             </div>
                         </div>
                         <table>
                             <thead>
-                                <tr><th>Event ID</th><th>Risk</th><th>Status</th><th>Time</th></tr>
+                                <tr><th>Event ID</th><th>Risk</th><th>Status</th><th>When</th></tr>
                             </thead>
                             <tbody id="dash-flagged-body">
                                 <tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 24px;">Loading…</td></tr>
@@ -945,29 +969,30 @@
                         </table>
                     </div>
 
-                    <!-- LEVEL 2: simple system status -->
+                    <!-- RECENT ACTIVITY -->
+                    <div class="data-table" style="margin-top: 16px;">
+                        <div class="table-header">
+                            <span class="table-title">Recent Activity</span>
+                            <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);">newest first · click to investigate</span></div>
+                        </div>
+                        <ul class="feed-list" id="dash-activity">
+                            <li style="cursor: default; color: var(--text-dim);">Loading…</li>
+                        </ul>
+                    </div>
+
+                    <!-- SYSTEM -->
                     <div class="card" style="margin-top: 16px; max-width: 760px;">
                         <div class="card-title">System</div>
                         <div id="dash-system-lines" style="font-size: 14px; line-height: 2.1;">
-                            <div id="dash-line-system">● …</div>
-                            <div id="dash-line-model">● …</div>
                             <div id="dash-line-database">● …</div>
+                            <div id="dash-line-model">● …</div>
+                            <div id="dash-line-audit">● …</div>
                         </div>
-                        <div id="dash-warnings" style="display: none; margin-top: 8px; font-size: 13px; color: var(--warning);"></div>
+                        <div style="margin-top: 8px; font-size: 13px; color: var(--text-dim); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                            <span>Model: <b id="dash-model-name" style="color: var(--text);">—</b></span>
+                            <button class="table-btn" id="dash-view-model" style="font-size: 12px;">View model details →</button>
+                        </div>
                     </div>
-
-                    <!-- LEVEL 3: collapsible technical detail (§5) -->
-                    <details class="advanced" id="dash-details">
-                        <summary>System Details</summary>
-                        <div class="data-table" style="margin-top: 12px;">
-                            <table>
-                                <thead><tr><th>Field</th><th>Value</th></tr></thead>
-                                <tbody id="dash-details-body">
-                                    <tr><td colspan="2" style="text-align: center; color: var(--text-dim); padding: 20px;">Loading…</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </details>
                 </div>
                 
                 <!-- Live Monitor Tab -->
@@ -1141,16 +1166,29 @@
                     </details>
                 </div>
 
-                <!-- System Details (Advanced) — absorbs the old Services,
-                     Database and Query tabs plus the model identity cards. -->
+                <!-- System Details (Advanced): services, runtime status,
+                     model identity. -->
                 <div id="tab-system" class="tab-content" style="display: none;">
                     <div class="content-header">
                         <h2 class="content-title">System Details</h2>
-                        <p class="content-subtitle">Technical detail: model identity, services, databases, queries</p>
+                        <p class="content-subtitle">Authoritative runtime status and production identity</p>
                     </div>
 
                     <div class="cards-grid" id="services-grid">
                         <!-- Dynamically populated -->
+                    </div>
+
+                    <div class="data-table" style="margin-top: 16px;">
+                        <div class="table-header">
+                            <span class="table-title">Runtime Status</span>
+                            <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);">live values from the status cache</span></div>
+                        </div>
+                        <table>
+                            <thead><tr><th>Field</th><th>Value</th></tr></thead>
+                            <tbody id="sys-status-body">
+                                <tr><td colspan="2" style="text-align: center; color: var(--text-dim); padding: 20px;">Loading…</td></tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <div class="content-header" style="margin-top: 28px;">
@@ -1188,10 +1226,13 @@
                             PROMOTION: <b style="color: var(--text);">PROMOTION_GATE_REQUIRED</b>
                         </div>
                     </div>
+                </div>
 
-                    <div class="content-header" style="margin-top: 28px;">
-                        <h2 class="content-title" style="font-size: 17px;">Database Explorer</h2>
-                        <p class="content-subtitle">Browse and query all databases</p>
+                <!-- Database Tools (Advanced) -->
+                <div id="tab-database" class="tab-content" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title">Database Tools</h2>
+                        <p class="content-subtitle">Browse all databases · read-only by default</p>
                     </div>
                     
                     <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap;">
@@ -1231,9 +1272,12 @@
                         </div>
                         <div id="db-browse-note" style="padding: 12px 24px; color: var(--text-dim); font-size: 12px;"></div>
                     </div>
+                </div>
 
-                    <div class="content-header" style="margin-top: 28px;">
-                        <h2 class="content-title" style="font-size: 17px;">Query Editor</h2>
+                <!-- Query Editor (Advanced) -->
+                <div id="tab-queries" class="tab-content" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title">Query Editor</h2>
                         <p class="content-subtitle">Run an allowlisted preset or read-only SQL against any database</p>
                     </div>
                     
@@ -1924,6 +1968,52 @@
             el.className = 'card-status ' + cls;
         }
 
+        // Relative time for operator lists: "2 min ago" (§2).  Scored
+        // timestamps are naive UTC — parse them as UTC.
+        function agoLabel(ts) {
+            if (!ts) return '—';
+            const s = String(ts).trim();
+            const iso = /\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}/.test(s)
+                ? (s.includes('T') || s.includes('Z') || s.includes('+')
+                    ? s : s.replace(' ', 'T') + 'Z')
+                : null;
+            if (!iso) return s;
+            const t = new Date(iso).getTime();
+            if (isNaN(t)) return s;
+            const sec = Math.max(0, Math.round((Date.now() - t) / 1000));
+            if (sec < 60) return 'just now';
+            const min = Math.round(sec / 60);
+            if (min < 60) return `${min} min ago`;
+            const hr = Math.round(min / 60);
+            if (hr < 24) return `${hr} h ago`;
+            return `${Math.round(hr / 24)} d ago`;
+        }
+
+        // Short human model label: altman_native -> "Altman-Native" (§8).
+        function modelLabel(mdl) {
+            const raw = mdl.governance_model_id || mdl.model_id || '';
+            if (!raw) return 'N/A';
+            const words = String(raw).split(/[_\-]/).filter(Boolean);
+            if (!words.length) return String(raw);
+            return words.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('-');
+        }
+
+        // ONE primary status card (§6): operational / attention / unavailable.
+        function renderStatusCard(st) {
+            const el = $('dash-status-text');
+            if (!el) return;
+            if (st.state === 'unavailable') {
+                el.textContent = '✕ System unavailable';
+                el.style.color = 'var(--danger)';
+            } else if (st.state === 'attention') {
+                el.textContent = '⚠ Attention required';
+                el.style.color = 'var(--warning)';
+            } else {
+                el.textContent = '● All systems operational';
+                el.style.color = 'var(--success)';
+            }
+        }
+
         // Load dashboard data from the compact operator summary — one small
         // request answers "is it working / what's flagged / what needs attention"
         // instead of the heavy live-monitor payload.
@@ -1931,12 +2021,8 @@
             try {
                 const s = await authFetch('/admin/api/summary').then(r => r.json());
 
-                // Status badge: honest state, warnings only when needed.
                 const st = s.status || {};
-                const online = $('dash-online');
-                const operational = st.state === 'operational';
-                online.textContent = operational ? '● Operational' : '● Needs attention';
-                online.className = 'card-status ' + (operational ? 'healthy' : 'warning');
+                renderStatusCard(st);
 
                 const c = s.counts || {};
                 const fmt = v => v == null ? 'N/A' : Number(v).toLocaleString();
@@ -1944,76 +2030,102 @@
                 $('dash-flagged').textContent = fmt(c.flagged_24h);
                 $('dash-blocked').textContent = fmt(c.blocked_24h);
                 $('dash-kpi-note').textContent = c.newest_scored_at
-                    ? `newest scored at ${c.newest_scored_at}`
+                    ? `newest scored at ${agoLabel(c.newest_scored_at)}`
                     : 'no scores recorded yet';
 
-                // Recent flagged transactions — the main focus.
+                // Flagged transactions — the main thing to investigate.
                 const flagged = s.recent_flagged || [];
                 const fb = $('dash-flagged-body');
                 fb.innerHTML = flagged.length ? flagged.map(f => {
                     const href = `/admin/transactions/${encodeURIComponent(f.event_id)}`;
                     return `<tr class="feed-row" data-eid="${esc(f.event_id)}" style="cursor:pointer;">
                         <td><a class="txn-link" data-eid="${esc(f.event_id)}" href="${href}" style="font-family: monospace; font-size: 12px;">${esc(f.event_id)}</a></td>
-                        <td>${naVal(f.risk_score)} <span style="color: var(--text-dim); font-size: 11px;">${esc(f.risk_band || '')}</span></td>
                         <td>${esc(f.risk_band || '—')}</td>
-                        <td style="font-size: 12px;">${esc(f.scored_at ?? '—')}</td>
+                        <td><span class="card-status warning" style="font-size: 11px;">FLAGGED</span></td>
+                        <td style="font-size: 12px;" title="${esc(f.scored_at ?? '')}">${esc(agoLabel(f.scored_at))}</td>
                     </tr>`;
                 }).join('')
-                    : '<tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 24px;">No flagged transactions in the recorded data</td></tr>';
+                    : '<tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 24px;">No flagged transactions</td></tr>';
 
-                // Simple system lines.
-                const svcLine = st.services_total
-                    ? `● System: ${operational ? 'Operational' : 'Attention needed'} — ${st.services_ok}/${st.services_total} services healthy`
-                    : '● System: status unavailable';
-                $('dash-line-system').textContent = svcLine;
-                const mdl = (s.details && s.details.model) || {};
+                // Recent activity — real decisions, newest first (§2).
+                const DECISION_WORD = { allow: 'Approved', verify: 'Verify', step_up: 'Step-up' };
+                const acts = s.recent_activity || [];
+                const ab = $('dash-activity');
+                ab.innerHTML = acts.length ? acts.map(a => {
+                    const href = `/admin/transactions/${encodeURIComponent(a.event_id)}`;
+                    const flaggedRow = a.risk_band && a.risk_band !== 'low' && a.risk_band !== 'unknown';
+                    let word;
+                    if (a.decision && DECISION_WORD[a.decision]) word = DECISION_WORD[a.decision];
+                    else if (a.decision) word = String(a.decision);
+                    else word = flaggedRow ? 'Flagged' : 'N/A';
+                    const cls = flaggedRow ? 'warning' : (a.decision === 'allow' ? 'healthy' : '');// unknown -> default text
+                    return `<li class="feed-row" data-eid="${esc(a.event_id)}" title="${esc(a.scored_at ?? '')}">
+                        <span><b style="font-family: monospace; font-size: 12px;">${esc(a.event_id)}</b></span>
+                        <span style="${cls ? 'color: var(--' + (cls === 'warning' ? 'warning' : 'success') + ');' : 'color: var(--text-dim);'}">${esc(word)} · ${esc(agoLabel(a.scored_at))}</span>
+                    </li>`;
+                }).join('')
+                    : '<li style="cursor: default; color: var(--text-dim);">No recent transactions</li>';
+
+                // System lines: database / model / audit (§2).
+                const d = s.details || {};
+                const dbState = d.db;
+                $('dash-line-database').textContent = (dbState === 'ok' || dbState === 'healthy')
+                    ? '● Database connected'
+                    : '● Database ' + (dbState == null ? 'status unavailable' : dbState);
+                const mdl = d.model || {};
                 const modelOk = mdl.model_readiness === 'loaded' && mdl.runtime_state === 'READY';
                 $('dash-line-model').textContent = modelOk
-                    ? '● Model: operational'
-                    : '● Model: ' + (mdl.runtime_state || mdl.model_readiness || 'unavailable');
-                const dbState = s.details && s.details.db;
-                $('dash-line-database').textContent = (dbState === 'ok' || dbState === 'healthy')
-                    ? '● Database: connected'
-                    : '● Database: ' + (dbState == null ? 'status unavailable' : dbState);
+                    ? '● Model operational'
+                    : '● Model ' + (mdl.runtime_state || mdl.model_readiness || 'unavailable');
+                $('dash-line-audit').textContent = d.audit === 'ok'
+                    ? '● Audit operational'
+                    : '● Audit ' + (d.audit == null ? 'status unavailable' : d.audit);
+                $('dash-model-name').textContent = modelLabel(mdl);
 
                 const warns = st.warnings || [];
                 const wb = $('dash-warnings');
                 wb.style.display = warns.length ? 'block' : 'none';
                 wb.innerHTML = warns.map(w => `• ${esc(w)}`).join('<br>');
 
-                // Collapsible technical detail (§5).
-                const d = s.details || {};
-                const chain = s.chain || {};
-                const qn = (chain.quarantined_breaks || []).length;
-                const chainText = chain.ok === false
-                    ? `broken at seq ${chain.first_bad_seq ?? '?'}`
-                    : (chain.ok === true
-                        ? (qn ? `verified · ${qn} historical link(s) quarantined` : 'verified end-to-end')
-                        : 'unavailable');
-                const rows = [
-                    ['Liveness', d.liveness],
-                    ['Readiness', d.readiness],
-                    ['Model readiness', d.model_readiness],
-                    ['Runtime state', d.runtime_state],
-                    ['Database', d.db],
-                    ['Audit chain', d.audit],
-                    ['Release attested', d.release_attested == null ? null : (d.release_attested ? 'yes' : 'NO')],
-                    ['Uptime (s)', d.uptime_seconds],
-                    ['Audit entries', chain.n_entries],
-                    ['Audit chain status', chainText],
-                    ['Model ID', mdl.model_id],
-                    ['Release ID', mdl.release_id],
-                    ['Governance model', mdl.governance_model_id],
-                    ['Governance release', mdl.governance_release_id],
-                    ['Feature version', mdl.feature_version],
-                    ['Threshold', mdl.threshold],
-                    ['Summary generated', s.ts],
-                ];
-                $('dash-details-body').innerHTML = rows.map(([k, v]) =>
-                    `<tr><td style="color: var(--text-dim);">${esc(k)}</td><td>${naVal(v)}</td></tr>`).join('');
+                // Technical detail is rendered on the System Details page
+                // when it is visited (§3/§7) — not on the dashboard.
+                window.__p112Summary = s;
+                if (currentTab === 'system') renderSystemStatus(s);
             } catch (error) {
-                if (!error.sessionExpired) console.error('Failed to load dashboard:', error);
+                if (!error.sessionExpired) {
+                    renderStatusCard({ state: 'unavailable' });
+                    console.error('Failed to load dashboard:', error);
+                }
             }
+        }
+
+        // System Details (Advanced): authoritative runtime status table (§7).
+        function renderSystemStatus(s) {
+            const body = $('sys-status-body');
+            if (!body || !s) return;
+            const d = s.details || {};
+            const chain = s.chain || {};
+            const qn = (chain.quarantined_breaks || []).length;
+            const chainText = chain.ok === false
+                ? `broken at seq ${chain.first_bad_seq ?? '?'}`
+                : (chain.ok === true
+                    ? (qn ? `verified · ${qn} historical link(s) quarantined` : 'verified end-to-end')
+                    : 'unavailable');
+            const rows = [
+                ['Liveness', d.liveness],
+                ['Readiness', d.readiness],
+                ['Model readiness', d.model_readiness],
+                ['Runtime state', d.runtime_state],
+                ['Database', d.db],
+                ['Audit status', d.audit],
+                ['Release attested', d.release_attested == null ? null : (d.release_attested ? 'yes' : 'NO')],
+                ['Uptime (s)', d.uptime_seconds],
+                ['Audit entries', chain.n_entries],
+                ['Audit chain', chainText],
+                ['Summary generated', s.ts],
+            ];
+            body.innerHTML = rows.map(([k, v]) =>
+                `<tr><td style="color: var(--text-dim);">${esc(k)}</td><td>${naVal(v)}</td></tr>`).join('');
         }
         
         // Load services (/status returns a flat {name: info} dict; health is
@@ -2062,12 +2174,24 @@
                     startLive();
                     break;
                 case 'system':
-                    // One secondary area: services, model identity,
-                    // database explorer, query editor.
+                    // Advanced: authoritative runtime status + model identity.
                     try { loadServices(await authFetch('/status').then(r => r.json())); }
                     catch (e) { if (!e.sessionExpired) console.error(e); }
                     loadSettingsPanel();
+                    if (window.__p112Summary) renderSystemStatus(window.__p112Summary);
+                    else {
+                        try {
+                            const s = await authFetch('/admin/api/summary').then(r => r.json());
+                            window.__p112Summary = s;
+                            renderSystemStatus(s);
+                        } catch (e) { if (!e.sessionExpired) console.error(e); }
+                    }
+                    break;
+                case 'database':
                     await loadDbSchema();
+                    break;
+                case 'queries':
+                    // Query editor is static wiring — nothing to load.
                     break;
                 case 'audit':
                     await loadAuditOverview();
@@ -3104,6 +3228,16 @@
                 });
             }
             if ($('dash-view-all')) $('dash-view-all').addEventListener('click', () => activateTab('transactions'));
+            // Status card + model link open System Details (§6/§8).
+            const openSystem = () => activateTab('system');
+            const sc = $('dash-status-card');
+            if (sc) {
+                sc.addEventListener('click', openSystem);
+                sc.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSystem(); }
+                });
+            }
+            if ($('dash-view-model')) $('dash-view-model').addEventListener('click', openSystem);
             // Settings prefs: browser-local, applied immediately.
             const prefApply = () => {
                 savePrefs();

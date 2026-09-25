@@ -88,34 +88,56 @@ for path in ("/admin", "/admin/transactions", "/admin/transactions/evt-1",
 shell = c.get("/admin").text
 ok(len(shell) > 20000, f"shell serves the full console ({len(shell)} bytes)")
 
-# 6-item Operations nav + one Advanced area (Phase 112 part 2)
-nav_ops = re.findall(r'<div class="sidebar-item[^"]*" data-tab="([^"]+)"', shell)
-ok(nav_ops[:6] == ["dashboard", "transactions", "live", "audit",
-                   "access", "settings"],
-   f"Operations nav is 6 items in order ({nav_ops})")
-ok(nav_ops.count("system") == 1, "one Advanced 'System Details' entry")
+# Three-group nav hierarchy (Phase 112 §5): ADMIN / SYSTEM / ADVANCED
+nav_ops = re.findall(r'<div class="sidebar-item[^"]*" data-tab="([a-z]+)"', shell)
+labels = re.findall(r'<div class="sidebar-label">([^<]+)</div>', shell)
+ok(labels == ["Admin", "System", "Advanced"],
+   f"nav groups are ADMIN/SYSTEM/ADVANCED ({labels})")
+ok(nav_ops[:3] == ["dashboard", "transactions", "live"],
+   f"ADMIN group is Dashboard/Transactions/Live Monitor ({nav_ops[:3]})")
+ok(nav_ops[3:6] == ["audit", "access", "settings"],
+   f"SYSTEM group is Audit/Security/Settings ({nav_ops[3:6]})")
+ok(nav_ops[6:9] == ["system", "database", "queries"],
+   f"ADVANCED group is System Details/Database Tools/Query Editor ({nav_ops[6:9]})")
+ok(len(nav_ops) == 9, f"exactly 9 nav items ({len(nav_ops)})")
 ok(shell.count('id="tab-system"') == 1
-   and shell.count('id="tab-services"') == 0
-   and shell.count('id="tab-database"') == 0
-   and shell.count('id="tab-queries"') == 0,
-   "services/database/queries tabs merged into one System Details tab")
-ok('id="tab-services"' not in shell and "data-tab=\"services\"" not in shell,
-   "no dangling sidebar/JS references to the removed service tabs")
+   and shell.count('id="tab-database"') == 1
+   and shell.count('id="tab-queries"') == 1
+   and shell.count('id="tab-services"') == 0,
+   "advanced tools live on their own Advanced tabs, no legacy services tab")
+ok("Database Tools" in shell and "Query Editor" in shell,
+   "DB explorer + query editor reachable only from the Advanced group")
 
 # ── [3] dashboard structure ───────────────────────────────────────────
-for eid in ("dash-tx", "dash-flagged", "dash-blocked", "dash-kpi-note",
-            "dash-flagged-body", "dash-view-all", "dash-online",
-            "dash-line-system", "dash-line-model", "dash-line-database",
-            "dash-warnings", "dash-details", "dash-details-body"):
+for eid in ("dash-status-card", "dash-status-text", "dash-tx",
+            "dash-flagged", "dash-blocked", "dash-kpi-note",
+            "dash-flagged-body", "dash-view-all", "dash-activity",
+            "dash-line-model", "dash-line-database", "dash-line-audit",
+            "dash-model-name", "dash-view-model", "dash-warnings"):
     ok(f'id="{eid}"' in shell, f"dashboard element present: {eid}")
 
 i_dash = shell.find('id="tab-dashboard"')
 i_live = shell.find('id="tab-live"')
 seg = shell[i_dash:i_live]
-ok(seg.find("Recent Flagged Transactions") < seg.find('id="dash-line-system"'),
-   "flagged transactions sit above the technical system block")
-ok('<details class="advanced" id="dash-details">' in seg,
-   "technical dashboard detail is a collapsed expando")
+ok("All systems operational" in shell and "Attention required" in shell
+   and "System unavailable" in shell,
+   "ONE status card renders all three states")
+ok(seg.find("Flagged Transactions") < seg.find('id="dash-line-database"'),
+   "flagged transactions sit above the system block")
+ok(seg.find('id="dash-activity"') > seg.find('id="dash-flagged-body"'),
+   "RECENT ACTIVITY section follows the flagged list")
+ok("No recent transactions" in shell,
+   "honest empty state: 'No recent transactions'")
+ok("View model details" in shell and "View all" in shell,
+   "drill-through links present")
+ok("dash-details" not in shell and "dash-details-body" not in shell,
+   "no technical expando left on the dashboard")
+# Information overload: hashes/mappings never on the default dashboard
+for overload in ("sha256", "SHA-256", "entry_hash", "prev_hash",
+                 "map_raw_to_native", "21 domain", "48 native",
+                 "PromotionToken", "predecessor"):
+    ok(overload not in seg,
+       f"dashboard free of engineering detail: {overload}")
 ok(seg.count("system-status") == 0 and seg.count("chain-badge") == 0,
    "old dashboard id soup removed")
 
@@ -130,13 +152,14 @@ r = c.get("/admin/api/summary")
 d = r.json() if r.status_code == 200 else {}
 ok(r.status_code == 200, f"summary -> 200 ({r.status_code})")
 ok({"ts", "refresh_interval_s", "status", "counts", "recent_flagged",
-    "chain", "details"} <= set(d), f"summary keys ({sorted(d)})")
+    "recent_activity", "chain", "details"} <= set(d),
+   f"summary keys ({sorted(d)})")
 ok(d.get("refresh_interval_s") == 30, "advertised dashboard refresh = 30s")
 st = d.get("status") or {}
-ok(st.get("state") in ("operational", "attention")
+ok(st.get("state") in ("operational", "attention", "unavailable")
    and isinstance(st.get("warnings"), list)
    and isinstance(st.get("services_ok"), int),
-   "status block: state + warnings + service counters")
+   "status block: 3-state verdict + warnings + service counters")
 cnt = d.get("counts") or {}
 for k in ("transactions_24h", "flagged_24h", "blocked_24h", "newest_scored_at"):
     ok(k in cnt, f"counts carry {k}")
@@ -147,6 +170,16 @@ ok(cnt.get("transactions_24h") in (None, 0),
    f"absent risk DB yields null/0, not a made-up number ({cnt.get('transactions_24h')})")
 ok(isinstance(d.get("recent_flagged"), list) and len(d["recent_flagged"]) <= 8,
    f"recent_flagged bounded to 8 rows ({len(d.get('recent_flagged') or [])})")
+act = d.get("recent_activity")
+ok(isinstance(act, list) and len(act) <= 6,
+   f"recent_activity bounded to 6 rows ({len(act) if isinstance(act, list) else act})")
+if isinstance(act, list) and act:
+    ok(all(set(a) >= {"event_id", "risk_band", "decision", "scored_at"}
+           for a in act),
+       "activity rows carry event/band/decision/time")
+    ok(all(a.get("decision") is None or a["decision"] in
+           ("allow", "verify", "step_up") for a in act),
+       "activity decisions are authoritative values or null (never invented)")
 chain = d.get("chain") or {}
 ok({"ok", "strict_ok", "n_entries", "first_bad_seq",
     "quarantined_breaks"} <= set(chain),
@@ -339,7 +372,8 @@ missing = sorted(r for r in refs if r not in ids_in_html)
 ok(not missing, f"every JS-referenced id exists ({missing})")
 for gone in ("system-status", "d-system-label", "d-system-badge",
              "txn-count", "alert-count", "audit-entries", "chain-badge",
-             "chain-label", "tab-services", "tab-database", "tab-queries"):
+             "chain-label", "tab-services", "dash-online",
+             "dash-line-system", "dash-details"):
     ok(gone not in ids_in_html, f"removed id stays removed: {gone}")
 
 # All script blocks are non-trivial and balanced enough to be JS (a full
@@ -349,13 +383,17 @@ ok(len(blocks) == 2 and all(len(b) > 1000 for b in blocks),
 ok(js.count("{") == js.count("}"),
    f"script braces balance ({js.count('{')} vs {js.count('}')})")
 
-# Progressive disclosure: every technical area is behind <details>.
-for det in ("dash-details", "f-filters", "d-processing", "live-details",
+# Progressive disclosure: every technical area is behind <details> or an
+# Advanced nav item (§4/§5) — nothing technical sits on the dashboard.
+for det in ("f-filters", "d-processing", "live-details",
             "audit-tech", "security-details"):
     ok(re.search(rf'<details[^>]*id="{det}"', served) is not None,
        f"advanced area collapsed by default: {det}")
-ok(len(re.findall(r"<details\b", served)) >= 7,
+ok(len(re.findall(r"<details\b", served)) >= 5,
    "console uses expando disclosure throughout")
+for adv_tab in ("tab-database", "tab-queries", "tab-system"):
+    ok(f'id="{adv_tab}"' in served,
+       f"engineering tooling quarantined behind an Advanced tab: {adv_tab}")
 
 # Settings is minimal + browser-local; identity moved to System Details.
 i_set = shell.find('id="tab-settings"')
@@ -366,15 +404,30 @@ ok("Stored in this browser only" in seg, "prefs are browser-local, no server sta
 ok('id="s-model"' not in seg and 'id="s-threshold"' not in seg,
    "model/threshold identity no longer lives on the settings page")
 i_sys = shell.find('id="tab-system"')
-seg = shell[i_sys:shell.find('id="tab-audit"')]
+i_db = shell.find('id="tab-database"')
+i_q = shell.find('id="tab-queries"')
+i_aud = shell.find('id="tab-audit"')
+seg_sys = shell[i_sys:i_db]
+seg_db = shell[i_db:i_q]
+seg_q = shell[i_q:i_aud]
 for eid in ("s-model", "s-release", "s-gov-model", "s-gov-release", "s-fv",
             "s-threshold", "s-runtime", "s-artifacts", "services-grid",
-            "db-explorer-select", "db-select", "sql-input", "query-results"):
-    ok(f'id="{eid}"' in seg, f"System Details carries: {eid}")
+            "sys-status-body"):
+    ok(f'id="{eid}"' in seg_sys, f"System Details carries: {eid}")
+ok('id="db-explorer-select"' in seg_db and 'id="db-tables-grid"' in seg_db,
+   "Database Tools carries the DB explorer")
+ok('id="db-select"' in seg_q and 'id="sql-input"' in seg_q
+   and 'id="query-results"' in seg_q,
+   "Query Editor carries the preset/SQL editor")
+for eid in ("db-explorer-select", "db-select", "sql-input"):
+    ok(eid not in seg_sys, f"tooling not inside System Details: {eid}")
+seg = seg_sys
 ok("SYSTEM_READY_PENDING_ELIGIBLE_DATASET" in seg
    and "BLOCKED_PENDING_ELIGIBLE_DATASET" in seg
    and "PROMOTION_GATE_REQUIRED" in seg,
    "authoritative validation state shown in System Details")
+ok("Runtime Status" in seg and "Liveness" in shell,
+   "System Details holds the authoritative runtime status table")
 
 # Accessibility: focus styles + labelled search field.
 ok("focus-visible" in shell, "keyboard focus outlines styled")

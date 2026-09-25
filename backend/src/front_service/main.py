@@ -2832,6 +2832,40 @@ def admin_api_summary(request: Request) -> dict:
         "scored_at": r["scored_at"],
     } for r in recent_src]
 
+    # Recent activity (bounded): the newest scored transactions regardless
+    # of band, with their decision resolved from DB-4 exactly the way the
+    # search endpoint resolves it for a page (one bounded pass, newest
+    # event wins).  Absent decision stays null -> UI shows N/A.
+    act_src = _ro_rows(
+        "risk",
+        "SELECT event_id, fraud_id, risk_band, scored_at FROM risk_scores "
+        "ORDER BY scored_at DESC, event_id LIMIT 6") or []
+    decisions: dict[str, str] = {}
+    fids = sorted({r["fraud_id"] for r in act_src if r.get("fraud_id")})
+    if fids:
+        marks = ",".join("?" * len(fids))
+        erows = _ro_rows(
+            "audit",
+            "SELECT event_id, payload_summary FROM audit_events "
+            f"WHERE fraud_id IN ({marks}) AND event_type IN "
+            "('score_generated', 'runtime_release_unverified') "
+            "ORDER BY seq DESC LIMIT 40",
+            tuple(fids)) or []
+        for er in erows:
+            try:
+                p = json.loads(er["payload_summary"])
+            except (TypeError, ValueError):
+                continue
+            eid = p.get("event_id")
+            if eid and eid not in decisions and isinstance(p.get("decision"), str):
+                decisions[eid] = p["decision"]
+    recent_activity = [{
+        "event_id": r["event_id"],
+        "risk_band": r["risk_band"],
+        "decision": decisions.get(r["event_id"]),  # None -> UI shows N/A
+        "scored_at": r["scored_at"],
+    } for r in act_src]
+
     # Simple system status: warnings ONLY when something needs attention.
     svc = [(k, v) for k, v in status_data.items() if isinstance(v, dict)]
     ok_count = sum(1 for _, v in svc if v.get("status") == "ok")
@@ -2849,11 +2883,24 @@ def admin_api_summary(request: Request) -> dict:
     if chain.get("ok") is False:
         warnings.append("Audit system requires attention")
 
+    # Three honest states: operational / attention / unavailable (every
+    # known service down).  A cold cache (no services collected yet) is
+    # reported as attention, never as a green light.
+    if svc and ok_count == 0:
+        state = "unavailable"
+        warnings = warnings or ["no services responding"]
+    elif warnings or not svc:
+        if not svc and not warnings:
+            warnings = ["status not yet collected"]
+        state = "attention"
+    else:
+        state = "operational"
+
     return {
         "ts": now.isoformat(),
         "refresh_interval_s": 30,
         "status": {
-            "state": "operational" if not warnings else "attention",
+            "state": state,
             "warnings": warnings,
             "services_ok": ok_count,
             "services_total": len(svc),
@@ -2865,6 +2912,7 @@ def admin_api_summary(request: Request) -> dict:
             "newest_scored_at": (newest[0].get("newest") if newest else None),
         },
         "recent_flagged": recent_flagged,
+        "recent_activity": recent_activity,
         "chain": {
             "ok": chain.get("ok"),
             "strict_ok": chain.get("strict_ok"),
