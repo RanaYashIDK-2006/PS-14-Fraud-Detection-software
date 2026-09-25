@@ -28,6 +28,8 @@ import hmac
 import json
 import os
 import re
+import secrets
+import string
 import subprocess
 import sys
 import urllib.request
@@ -49,6 +51,11 @@ import sqlite3
 from src.settings import settings
 from src.middleware.totp import TOTPAuthenticator
 from src.middleware import apply_security_middleware
+
+# Phase 111: authoritative read-only context for the investigation UI
+# (threshold/model/release/feature identity + reason-code explanations).
+from src.monitoring import manifest_contract as MC
+from src.risk_engine.reason_codes import REASON_CODE_TEXT
 
 from .admin_store import AdminStore
 
@@ -209,6 +216,12 @@ SERVICES: dict[str, str] = {
 }
 
 ADMIN_SESSION_MINUTES = 60
+# Phase 111: sliding idle timeout — a session untouched this long is
+# revoked even though its absolute TTL has not elapsed.
+ADMIN_SESSION_IDLE_MINUTES = 15
+TOTP_RECOVERY_CODE_COUNT = 8
+# Bounded live-monitor windows; nothing else is accepted (validated above).
+_ADMIN_LIVE_WINDOWS = {"5m": 300, "15m": 900, "1h": 3600}
 # Shared session store (SQLite-backed, multi-worker safe).
 # Replaces the old process-local _ADMIN_SESSIONS dict.
 from src.session_store import SessionStore
@@ -258,6 +271,41 @@ def _session_key(record: dict) -> bytes:
     return hashlib.sha256(b"ps14-admin-session:" + record["pass_hash"].encode()).digest()
 
 
+def _admin_audit(fraud_id: str, event_type: str, payload: dict) -> None:
+    """Append an admin-action event to DB-4 (best-effort, Phase 111).
+
+    Never blocks the admin operation: a DB-4 outage must not lock the
+    operator out (fail-open logging, matching the risk engine's startup
+    audit pattern). `payload` must never carry secrets, passcodes, TOTP
+    codes, recovery codes, or session tokens.
+    """
+    try:
+        from src.audit_service.writer import append_audit_event
+        append_audit_event(fraud_id, event_type, payload)
+    except Exception as exc:  # noqa: BLE001
+        print(f"[front-service] admin audit {event_type} failed: {exc}",
+              file=sys.stderr)
+
+
+def _touch_admin_session(session_id: str, data: dict) -> None:
+    """Idle-timeout enforcement + throttled last-seen bookkeeping.
+
+    A session untouched for ADMIN_SESSION_IDLE_MINUTES is revoked on its
+    next use (401) even though the absolute TTL has not elapsed. The
+    last-seen write is throttled to one per minute per session.
+    """
+    now = time.time()
+    last = float(data.get("last_seen", 0) or 0)
+    if last and (now - last) > ADMIN_SESSION_IDLE_MINUTES * 60:
+        _admin_sessions.revoke(session_id)
+        raise HTTPException(status_code=401,
+                            detail="admin session idle timeout")
+    if now - last > 60:
+        data = dict(data)
+        data["last_seen"] = now
+        _admin_sessions.update_data(session_id, data)
+
+
 def _require_admin(
     request: Request,
     authorization: str | None = Header(default=None),
@@ -283,6 +331,7 @@ def _require_admin(
         session_data = _admin_sessions.get(payload.get("jti", ""))
         if session_data is None:
             raise HTTPException(status_code=401, detail="admin session expired or revoked")
+        _touch_admin_session(payload.get("jti", ""), session_data)
         return payload, bytes.fromhex(session_data["blob_key_hex"])
     session_id = request.cookies.get("admin_session")
     if not session_id:
@@ -292,6 +341,7 @@ def _require_admin(
     session_data = _admin_sessions.get(session_id)
     if session_data is None:
         raise HTTPException(status_code=401, detail="admin session expired or revoked")
+    _touch_admin_session(session_id, session_data)
     payload = {"sub": session_data.get("sub", "admin"), "role": "admin", "jti": session_id}
     return payload, bytes.fromhex(session_data["blob_key_hex"])
 
@@ -318,6 +368,8 @@ class LoginRequest(BaseModel):
     username: str = Field(min_length=1, max_length=100)
     passphrase: str = Field(min_length=1, max_length=200)
     totp_code: str | None = Field(None, min_length=6, max_length=6)  # Optional TOTP code
+    # Phase 111: single-use recovery code (accepted instead of a TOTP code)
+    recovery_code: str | None = Field(None, min_length=8, max_length=64)
 
 
 class RotateRequest(BaseModel):
@@ -332,6 +384,10 @@ class TOTPSetupRequest(BaseModel):
 
 class TOTPVerifyRequest(BaseModel):
     totp_code: str
+
+
+class SessionRevokeRequest(BaseModel):
+    jti: str = Field(min_length=8, max_length=64)
 
 
 # ---------------------------------------------------------------------- routes
@@ -412,6 +468,10 @@ async def _ping_service(name: str, url: str, client: httpx.AsyncClient) -> tuple
             "latency_ms": latency_ms,
             "uptime_s": uptime_s,
             "started_at": body.get("started_at"),
+            # Phase 111: keep the full authoritative /health body so the
+            # admin console renders runtime/model/attestation from the
+            # source instead of re-deriving it in the frontend.
+            "health": body,
         }
     except Exception:
         return name, {"status": "down"}
@@ -449,8 +509,12 @@ async def _refresh_status_cache() -> None:
                     body = r.json()
                     chain = {
                         "ok": bool(body.get("ok")),
+                        "strict_ok": body.get("strict_ok"),
                         "n_entries": body.get("n_entries"),
                         "first_bad_seq": body.get("first_bad_seq"),
+                        "quarantined_breaks": body.get("quarantined_breaks") or [],
+                        "finding_ids": body.get("finding_ids") or [],
+                        "reason": body.get("reason"),
                         "genesis_hash": (body.get("genesis_hash") or "")[:14],
                     }
                     _CHAIN_CACHE["ts"] = datetime.now(timezone.utc)
@@ -520,8 +584,12 @@ async def status(response: Response) -> JSONResponse:
                     body = r.json()
                     chain = {
                         "ok": bool(body.get("ok")),
+                        "strict_ok": body.get("strict_ok"),
                         "n_entries": body.get("n_entries"),
                         "first_bad_seq": body.get("first_bad_seq"),
+                        "quarantined_breaks": body.get("quarantined_breaks") or [],
+                        "finding_ids": body.get("finding_ids") or [],
+                        "reason": body.get("reason"),
                         "genesis_hash": (body.get("genesis_hash") or "")[:14],
                     }
                     _CHAIN_CACHE["ts"] = datetime.now(timezone.utc)
@@ -661,6 +729,7 @@ def _require_admin_session(request: Request):
         session_data = _admin_sessions.get(payload.get("jti", ""))
         if session_data is None:
             raise HTTPException(status_code=401, detail="admin session expired or revoked")
+        _touch_admin_session(payload.get("jti", ""), session_data)
         return
     # Cookie path: requires SameSite=Strict + custom header for POST
     session_id = request.cookies.get("admin_session")
@@ -673,7 +742,7 @@ def _require_admin_session(request: Request):
     session_data = _admin_sessions.get(session_id)
     if session_data is None:
         raise HTTPException(status_code=401, detail="admin session expired or revoked")
-
+    _touch_admin_session(session_id, session_data)
 
 @app.get("/security-scan")
 def security_scan_report(request: Request) -> JSONResponse:
@@ -1250,25 +1319,60 @@ def admin_login(req: LoginRequest, request: Request) -> dict:
 
     if req.username != record["username"] or not store.verify_passphrase(req.passphrase):
         _record_admin_login_failure(client_ip)
+        _admin_audit(req.username, "admin_login_failed",
+                     {"reason": "invalid_credentials", "ip": client_ip})
         raise HTTPException(status_code=401, detail="invalid credentials")
     
-    # Check TOTP if enabled — check flag FIRST to avoid decrypting stale data
+    # MFA: TOTP code, or a single-use recovery code (Phase 111). The flag is
+    # checked FIRST to avoid decrypting stale data.
+    mfa_method = "passcode"
     if store.is_totp_enabled():
         totp_secret = store.get_totp_secret()
-        if totp_secret:
+        mfa_ok = False
+        if req.totp_code and totp_secret:
+            totp = TOTPAuthenticator(totp_secret)
+            step = totp.verify_step(req.totp_code)
+            if step is not None and store.consume_totp_step(step):
+                mfa_ok = True
+                mfa_method = "totp"
+            elif step is None:
+                # Invalid code — fall through; a recovery code may follow.
+                pass
+            elif not req.recovery_code:
+                # One-time use: a time-step already spent on a login is a
+                # replay (with a recovery code supplied we let it try).
+                _record_admin_login_failure(client_ip)
+                _admin_audit(req.username, "admin_mfa_failed",
+                             {"reason": "totp_replay", "ip": client_ip})
+                raise HTTPException(status_code=401,
+                                    detail="TOTP code already used")
+        if not mfa_ok and req.recovery_code:
+            if store.consume_recovery_code(req.recovery_code):
+                mfa_ok = True
+                mfa_method = "recovery"
+                _admin_audit(req.username, "admin_recovery_used",
+                             {"remaining": store.recovery_code_count()})
+            else:
+                _record_admin_login_failure(client_ip)
+                _admin_audit(req.username, "admin_mfa_failed",
+                             {"reason": "invalid_recovery_code",
+                              "ip": client_ip})
+                raise HTTPException(status_code=401,
+                                    detail="Invalid recovery code")
+        if not mfa_ok:
             if not req.totp_code:
                 # A missing code is a UI retry (the gate only learns TOTP is on
                 # from this 401), so it does not count toward lockout.
                 raise HTTPException(status_code=401, detail="TOTP code required")
-            totp = TOTPAuthenticator(totp_secret)
-            step = totp.verify_step(req.totp_code)
-            if step is None:
+            if totp_secret:
                 _record_admin_login_failure(client_ip)
-                raise HTTPException(status_code=401, detail="Invalid TOTP code")
-            # One-time use: a time-step already spent on a login is a replay.
-            if not store.consume_totp_step(step):
-                _record_admin_login_failure(client_ip)
-                raise HTTPException(status_code=401, detail="TOTP code already used")
+                _admin_audit(req.username, "admin_mfa_failed",
+                             {"reason": "invalid_totp_code",
+                              "ip": client_ip})
+                raise HTTPException(status_code=401,
+                                    detail="Invalid TOTP code")
+            # Enabled flag with no decryptable secret = stale record; the
+            # passcode path stands (pre-existing behavior).
     
     blob_key = store.unwrap_blob_key(req.passphrase)
     if blob_key is None:
@@ -1279,8 +1383,13 @@ def admin_login(req: LoginRequest, request: Request) -> dict:
     jti = uuid.uuid4().hex
     token = jwt.encode({"sub": record["username"], "role": "admin", "jti": jti,
                         "exp": expires}, _session_key(record), algorithm="HS256")
-    _admin_sessions.put(jti, {"blob_key_hex": blob_key.hex(), "sub": record["username"]}, expires)
+    _admin_sessions.put(jti, {"blob_key_hex": blob_key.hex(),
+                              "sub": record["username"],
+                              "last_seen": time.time()}, expires)
     record = store.load()  # refreshed login_count / last_login
+    _admin_audit(record["username"], "admin_login_success",
+                 {"method": mfa_method,
+                  "session_minutes": ADMIN_SESSION_MINUTES})
     resp = JSONResponse({
         "token": token,
         "expires_in_minutes": ADMIN_SESSION_MINUTES,
@@ -1290,13 +1399,16 @@ def admin_login(req: LoginRequest, request: Request) -> dict:
         "totp_enabled": store.is_totp_enabled(),
     })
     # Set cookie with SameSite=Strict for CSRF protection on browser-based admin.
-    # HttpOnly=False so the frontend JS can read it if needed.
+    # Phase 111: HttpOnly — the JS never reads this cookie (it authenticates
+    # with the Bearer token), so hiding it from scripts is pure defense in
+    # depth. `secure` follows the actual scheme so plain-HTTP local dev keeps
+    # working while any HTTPS deployment gets the flag automatically.
     resp.set_cookie(
         "admin_session", jti,
         max_age=ADMIN_SESSION_MINUTES * 60,
         samesite="strict",
-        httponly=False,
-        secure=False,  # Set True behind TLS in production
+        httponly=True,
+        secure=(request.url.scheme == "https"),
     )
     return resp
 
@@ -1316,106 +1428,245 @@ def admin_logout(_session: tuple[dict, bytes] = Depends(_require_admin)) -> dict
 
 @app.get("/admin/totp/setup")
 def admin_totp_setup(_session: tuple[dict, bytes] = Depends(_require_admin)) -> dict:
-    """Get TOTP setup information (QR code URL and secret)."""
+    """Begin or resume TOTP enrollment (session-gated, Phase 111).
+
+    An already-ENABLED factor is never re-disclosed (409 — use
+    /admin/totp/rotate instead). A pending (unverified) enrollment re-returns
+    its secret so the UI can resume. QR rendering is intentionally omitted
+    (documented Phase 111 deviation): the otpauth:// URI + base32 secret are
+    shown for copy-paste into any authenticator app.
+    """
+    if store.is_totp_enabled():
+        raise HTTPException(status_code=409,
+                            detail="TOTP already enrolled (use rotate to change it)")
+    sub = _session[0].get("sub", "admin")
     totp_secret = store.get_totp_secret()
     if totp_secret:
         totp = TOTPAuthenticator(totp_secret)
+        b32 = totp.get_secret_base32()
         return {
-            "enabled": store.is_totp_enabled(),
-            "secret": totp.get_secret_base32(),
-            "period": totp.period,
-            "digits": totp.digits,
+            "enabled": False, "pending": True, "secret": b32,
+            "otpauth_uri": _otpauth_uri(b32, sub, totp.digits, totp.period),
+            "period": totp.period, "digits": totp.digits,
             "time_remaining": totp.get_time_remaining(),
+            "qr": "omitted",  # documented deviation — copy the URI instead
         }
     # Generate new secret for setup and store it as PENDING (not yet enabled)
     new_secret = TOTPAuthenticator.generate_secret()
     store.set_totp_secret(new_secret, enabled=False)
     totp = TOTPAuthenticator(new_secret)
+    b32 = totp.get_secret_base32()
     return {
-        "enabled": False,
-        "secret": totp.get_secret_base32(),
-        "period": totp.period,
-        "digits": totp.digits,
+        "enabled": False, "pending": True, "secret": b32,
+        "otpauth_uri": _otpauth_uri(b32, sub, totp.digits, totp.period),
+        "period": totp.period, "digits": totp.digits,
         "time_remaining": totp.get_time_remaining(),
-        "message": "Scan this secret with your authenticator app, then verify with /admin/totp/verify",
+        "qr": "omitted",
+        "message": ("Add the otpauth URI (or base32 secret) to your "
+                    "authenticator app, then confirm with a code"),
     }
 
 
 @app.post("/admin/totp/verify")
 def admin_totp_verify(req: TOTPVerifyRequest,
                      _session: tuple[dict, bytes] = Depends(_require_admin)) -> dict:
-    """Verify TOTP code and enable 2FA."""
-    # Get or create secret
+    """Verify TOTP code, enable 2FA, and issue one-time recovery codes.
+
+    Recovery codes are returned exactly ONCE here (never retrievable
+    afterwards) and persisted only as SHA-256 hashes.
+    """
     totp_secret = store.get_totp_secret()
     if not totp_secret:
         # This shouldn't happen if setup was called first
         raise HTTPException(status_code=400, detail="TOTP setup not initiated")
-    
+    if store.is_totp_enabled():
+        raise HTTPException(status_code=409, detail="TOTP already enrolled")
+
     totp = TOTPAuthenticator(totp_secret)
     if not totp.verify_code(req.totp_code):
+        _admin_audit(_session[0].get("sub", "admin"), "admin_mfa_failed",
+                     {"action": "verify"})
         raise HTTPException(status_code=401, detail="Invalid TOTP code")
-    
-    # Enable TOTP
+
+    # Enable TOTP (fresh record — resets the consumed-step guard) …
     store.set_totp_secret(totp_secret)
+    # … then issue recovery codes (set_totp_secret replaces the totp dict,
+    # so this ordering is required).
+    codes = _generate_recovery_codes()
+    store.set_recovery_codes(codes)
+    _admin_audit(_session[0].get("sub", "admin"), "admin_totp_enrolled",
+                 {"recovery_codes_issued": len(codes)})
     return {
         "ok": True,
         "message": "TOTP enabled successfully",
         "time_remaining": totp.get_time_remaining(),
+        "recovery_codes": codes,
+        "recovery_note": ("Shown once — store them now; each code works "
+                          "exactly once."),
     }
 
 
 @app.post("/admin/totp/disable")
 def admin_totp_disable(req: TOTPVerifyRequest,
                       _session: tuple[dict, bytes] = Depends(_require_admin)) -> dict:
-    """Disable TOTP (requires valid code)."""
+    """Disable TOTP (requires a valid current code = re-authentication).
+
+    Also drops every recovery code and revokes every OTHER session so a
+    stale session cannot keep the removed factor's trust level.
+    """
     totp_secret = store.get_totp_secret()
     if not totp_secret:
         raise HTTPException(status_code=400, detail="TOTP not enabled")
-    
+
     totp = TOTPAuthenticator(totp_secret)
     if not totp.verify_code(req.totp_code):
+        _admin_audit(_session[0].get("sub", "admin"), "admin_mfa_failed",
+                     {"action": "disable"})
         raise HTTPException(status_code=401, detail="Invalid TOTP code")
-    
-    # Disable TOTP by removing the secret
+
+    # Disable TOTP by clearing the flag (the secret itself is retained for
+    # re-enable, matching the documented retention behavior).
     record = store.load()
     if record and "totp" in record:
         record["totp"]["enabled"] = False
         store.save(record)
-    
-    return {"ok": True, "message": "TOTP disabled"}
+    store.clear_recovery_codes()
+    revoked = _admin_sessions.revoke_others(_session[0].get("jti", ""))
+    _admin_audit(_session[0].get("sub", "admin"), "admin_totp_disabled",
+                 {"other_sessions_revoked": revoked})
+    return {"ok": True, "message": "TOTP disabled",
+            "other_sessions_revoked": revoked}
 
 
 @app.get("/admin/totp/status")
 def admin_totp_status(_session: tuple[dict, bytes] = Depends(_require_admin)) -> dict:
-    """Check TOTP status and get current code (for testing)."""
+    """TOTP state — never returns the secret or recovery codes."""
     totp_secret = store.get_totp_secret()
+    recovery_left = store.recovery_code_count()
     if not totp_secret:
-        return {"enabled": False, "message": "TOTP not configured"}
-    
+        return {"enabled": False, "has_pending": False,
+                "recovery_codes_remaining": 0,
+                "message": "TOTP not configured"}
+
     totp = TOTPAuthenticator(totp_secret)
+    enabled = store.is_totp_enabled()
     return {
-        "enabled": store.is_totp_enabled(),
+        "enabled": enabled,
+        "has_pending": not enabled,
+        "recovery_codes_remaining": recovery_left,
         "time_remaining": totp.get_time_remaining(),
         "period": totp.period,
     }
+
+
+def _generate_recovery_codes(n: int = TOTP_RECOVERY_CODE_COUNT) -> list[str]:
+    """High-entropy one-time codes (16 chars of A-Z2-9, shown once)."""
+    alphabet = string.ascii_uppercase + string.digits
+    return ["".join(secrets.choice(alphabet) for _ in range(16))
+            for _ in range(n)]
+
+
+def _otpauth_uri(secret_b32: str, sub: str, digits: int, period: int) -> str:
+    issuer = "PS-14"
+    safe_sub = re.sub(r"[^A-Za-z0-9_-]", "", sub) or "admin"
+    return (f"otpauth://totp/{issuer}%3A{safe_sub}?secret={secret_b32}"
+            f"&issuer={issuer}&digits={digits}&period={period}")
+
+
+@app.post("/admin/totp/rotate")
+def admin_totp_rotate(req: TOTPVerifyRequest,
+                      _session: tuple[dict, bytes] = Depends(_require_admin)) -> dict:
+    """Rotate the TOTP secret + recovery codes; revoke every OTHER session.
+
+    Requires a valid CURRENT code (re-authentication). The new secret and
+    recovery codes are returned exactly once.
+    """
+    if not store.is_totp_enabled():
+        raise HTTPException(status_code=400, detail="TOTP not enabled")
+    current_secret = store.get_totp_secret()
+    if not current_secret:
+        raise HTTPException(status_code=400, detail="TOTP not configured")
+    current = TOTPAuthenticator(current_secret)
+    if not current.verify_code(req.totp_code):
+        _admin_audit(_session[0].get("sub", "admin"), "admin_mfa_failed",
+                     {"action": "rotate"})
+        raise HTTPException(status_code=401, detail="Invalid TOTP code")
+    sub = _session[0].get("sub", "admin")
+    new_secret = TOTPAuthenticator.generate_secret()
+    store.set_totp_secret(new_secret, enabled=True)  # fresh dict: drops steps
+    codes = _generate_recovery_codes()
+    store.set_recovery_codes(codes)
+    revoked = _admin_sessions.revoke_others(_session[0].get("jti", ""))
+    _admin_audit(sub, "admin_totp_rotated", {"other_sessions_revoked": revoked})
+    fresh = TOTPAuthenticator(new_secret)
+    b32 = fresh.get_secret_base32()
+    return {
+        "ok": True,
+        "secret": b32,
+        "otpauth_uri": _otpauth_uri(b32, sub, fresh.digits, fresh.period),
+        "digits": fresh.digits, "period": fresh.period,
+        "time_remaining": fresh.get_time_remaining(),
+        "recovery_codes": codes,
+        "other_sessions_revoked": revoked,
+        "message": "TOTP secret rotated; other sessions revoked",
+    }
+
+
+@app.get("/admin/sessions")
+def admin_sessions(_session: tuple[dict, bytes] = Depends(_require_admin)) -> dict:
+    """Active admin sessions (Phase 111 Security tab). Tokens are the
+    session identifiers themselves — never pair them with credentials."""
+    items = _admin_sessions.list_recent(50)
+    current = _session[0].get("jti")
+    sessions = []
+    for it in items:
+        d = it.get("data") or {}
+        sessions.append({
+            "jti": it["jti"],
+            "sub": d.get("sub", "admin"),
+            "created_at": it.get("created_at"),
+            "expires_at": it.get("expires_at"),
+            "last_seen": d.get("last_seen"),
+            "is_current": it["jti"] == current,
+        })
+    return {"sessions": sessions,
+            "idle_timeout_minutes": ADMIN_SESSION_IDLE_MINUTES,
+            "absolute_timeout_minutes": ADMIN_SESSION_MINUTES}
+
+
+@app.post("/admin/sessions/revoke")
+def admin_session_revoke(req: SessionRevokeRequest,
+                         _session: tuple[dict, bytes] = Depends(_require_admin)) -> dict:
+    """Revoke one admin session (idempotent, audited)."""
+    existed = _admin_sessions.get(req.jti) is not None
+    _admin_sessions.revoke(req.jti)
+    _admin_audit(_session[0].get("sub", "admin"), "admin_session_revoked",
+                 {"target": req.jti, "existed": existed,
+                  "self": req.jti == _session[0].get("jti")})
+    return {"ok": True, "revoked": existed}
+
+
+@app.get("/admin/api/security-events")
+def admin_api_security_events(request: Request, limit: int = 40) -> dict:
+    """Recent admin/auth/security/runtime audit events (DB-4), bounded."""
+    _require_admin_session(request)
+    limit = max(1, min(limit, 200))
+    events = _ro_rows(
+        "audit",
+        "SELECT seq, event_type, fraud_id, created_at, entry_hash "
+        "FROM audit_events WHERE event_type LIKE 'admin_%' "
+        "OR event_type LIKE '%security%' OR event_type LIKE 'runtime_%' "
+        "ORDER BY seq DESC LIMIT ?", (limit,)) or []
+    return {"events": events, "limit": limit}
 
 
 @app.get("/admin/totp/current-code")
-def admin_totp_current_code(_session: tuple[dict, bytes] = Depends(_require_admin)) -> dict:
-    """Get current TOTP code — disabled in production (defeats 2FA)."""
-    _ps14_mode = os.environ.get("PS14_MODE", "production").lower()
-    if _ps14_mode == "production":
-        raise HTTPException(status_code=403, detail="TOTP code endpoint disabled in production")
-    totp_secret = store.get_totp_secret()
-    if not totp_secret:
-        raise HTTPException(status_code=400, detail="TOTP not configured")
-    
-    totp = TOTPAuthenticator(totp_secret)
-    return {
-        "code": totp.generate_code(),
-        "time_remaining": totp.get_time_remaining(),
-        "period": totp.period,
-    }
+def admin_totp_current_code_removed() -> dict:
+    """Removed in Phase 111: this endpoint returned the live TOTP code,
+    which defeats the second factor for any session holder. Recovery codes
+    (shown once at enrollment) replace its legitimate testing use."""
+    raise HTTPException(status_code=410, detail="endpoint removed")
+
 
 
 # ---------------------------------------------------------------------- admin DB access
@@ -1961,70 +2212,747 @@ def admin_db_update(
     }
 
 
+def _ro_scalar(db_name: str, sql: str, params: tuple = ()) -> int | None:
+    """Single scalar from a mode=ro SQLite handle; None when absent/broken."""
+    path = _DBS[db_name]
+    if not path.exists():
+        return None
+    try:
+        conn = _open_ro(path)
+        try:
+            row = conn.execute(sql, params).fetchone()
+            return int(row[0]) if row is not None else None
+        finally:
+            conn.close()
+    except Exception:
+        return None
+
+
+def _ro_rows(db_name: str, sql: str, params: tuple = ()) -> list[dict] | None:
+    """Rows from a mode=ro SQLite handle; None when absent/broken."""
+    path = _DBS[db_name]
+    if not path.exists():
+        return None
+    try:
+        conn = _open_ro(path)
+        try:
+            return [dict(r) for r in conn.execute(sql, params).fetchall()]
+        finally:
+            conn.close()
+    except Exception:
+        return None
+
+
+# ── Phase 111: transaction search contract ────────────────────────────
+_TX_EVENT_ID_RE = re.compile(r"^[A-Za-z0-9_.:\-]{1,128}$")
+_TX_FRAUD_ID_RE = re.compile(r"^F[A-Za-z0-9_\-]{3,64}$")
+_TX_BANDS = {"low", "medium", "high", "critical", "unknown"}
+_TX_DECISIONS = {"allow", "verify", "step_up"}
+
+
+def _tx_parse_ts(value: str, name: str) -> str:
+    """Normalize a user timestamp to the DB's stored format (bounded)."""
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"):
+        try:
+            return datetime.strptime(value, fmt).strftime("%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            continue
+    raise HTTPException(
+        status_code=400,
+        detail=f"invalid {name} timestamp (use YYYY-MM-DD[ HH:MM:SS])")
+
+
+def _admin_shell() -> Response:
+    """Serve the admin SPA shell.
+
+    The shell itself carries NO data — login UI only; every /admin/api,
+    /admin/db-*, /admin/totp-* and session route is server-side gated
+    (authorization is never delegated to frontend route hiding).
+    """
+    resp = FileResponse(STATIC / "admin.html")
+    resp.headers["Cache-Control"] = "private, no-store"
+    return resp
+
+
+@app.get("/admin", include_in_schema=False)
+def admin_shell_root() -> Response:
+    return _admin_shell()
+
+
+@app.get("/admin/transactions", include_in_schema=False)
+def admin_shell_transactions() -> Response:
+    return _admin_shell()
+
+
+@app.get("/admin/transactions/{event_id}", include_in_schema=False)
+def admin_shell_transaction(event_id: str) -> Response:
+    return _admin_shell()
+
+
+@app.get("/admin/audit", include_in_schema=False)
+def admin_shell_audit() -> Response:
+    return _admin_shell()
+
+
+@app.get("/admin/security", include_in_schema=False)
+def admin_shell_security() -> Response:
+    return _admin_shell()
+
+
+@app.get("/admin/settings", include_in_schema=False)
+def admin_shell_settings() -> Response:
+    return _admin_shell()
+
+
+@app.get("/admin/api/transactions")
+def admin_api_transactions(
+    _session: tuple[dict, bytes] = Depends(_require_admin),
+    event_id: str | None = None,
+    fraud_id: str | None = None,
+    band: str | None = None,
+    decision: str | None = None,
+    min_score: int | None = None,
+    max_score: int | None = None,
+    since: str | None = None,
+    until: str | None = None,
+    degraded: bool | None = None,
+    data_quality: str | None = None,
+    flagged: bool | None = None,
+    limit: int = 50,
+    offset: int = 0,
+) -> dict:
+    """Server-side filtered, paginated, bounded search over DB-3 scores.
+
+    Every filter maps to stored columns EXCEPT `decision`/`data_quality`,
+    which resolve against authoritative DB-4 records (the score_generated
+    payload `decision` key added in Phase 111 / data_quality_blocked
+    events). Rows written before the decision key existed have no
+    persisted decision and are unmatchable — reported as such, never
+    guessed. Result size is clamped and offsets are bounded.
+    """
+    limit = max(1, min(int(limit), 200))
+    if offset < 0 or offset > 10_000:
+        raise HTTPException(status_code=400,
+                            detail="offset out of range (0-10000)")
+    if event_id and not _TX_EVENT_ID_RE.fullmatch(event_id):
+        raise HTTPException(status_code=400, detail="malformed event_id")
+    if fraud_id and not _TX_FRAUD_ID_RE.fullmatch(fraud_id):
+        raise HTTPException(status_code=400, detail="malformed fraud_id")
+    if band and band not in _TX_BANDS:
+        raise HTTPException(
+            status_code=400,
+            detail="band must be low|medium|high|critical|unknown")
+    if decision and decision not in _TX_DECISIONS:
+        raise HTTPException(status_code=400,
+                            detail="decision must be allow|verify|step_up")
+    if data_quality and data_quality not in ("passed", "blocked"):
+        raise HTTPException(status_code=400,
+                            detail="data_quality must be passed|blocked")
+    for name, val in (("min_score", min_score), ("max_score", max_score)):
+        if val is not None and not (0 <= val <= 100):
+            raise HTTPException(status_code=400,
+                                detail=f"{name} must be within 0-100")
+    if min_score is not None and max_score is not None and min_score > max_score:
+        raise HTTPException(status_code=400, detail="min_score > max_score")
+    w_since = _tx_parse_ts(since, "since") if since else None
+    w_until = _tx_parse_ts(until, "until") if until else None
+    if w_since and w_until and w_since > w_until:
+        raise HTTPException(status_code=400, detail="since > until")
+
+    where: list[str] = []
+    params: list = []
+    if event_id:
+        where.append("event_id = ?")
+        params.append(event_id)
+    if fraud_id:
+        where.append("fraud_id = ?")
+        params.append(fraud_id)
+    if band:
+        where.append("risk_band = ?")
+        params.append(band)
+    if flagged:
+        where.append("risk_band != 'low'")
+    if min_score is not None:
+        where.append("risk_score >= ?")
+        params.append(min_score)
+    if max_score is not None:
+        where.append("risk_score <= ?")
+        params.append(max_score)
+    if w_since:
+        where.append("scored_at >= ?")
+        params.append(w_since)
+    if w_until:
+        where.append("scored_at <= ?")
+        params.append(w_until)
+    if degraded is not None:
+        where.append("degraded = ?")
+        params.append(1 if degraded else 0)
+
+    def _audit_id_set(sql: str, extra: list) -> list[str]:
+        """Resolve a DB-4-derived fraud_id allow/deny set (capped)."""
+        hits = _ro_rows("audit", sql, tuple(extra)) or []
+        if len(hits) > 5000:
+            raise HTTPException(
+                status_code=400,
+                detail="filter too broad — narrow the time range")
+        return sorted({h["fraud_id"] for h in hits})
+
+    decision_ids: list[str] | None = None
+    if decision:
+        sql = ("SELECT fraud_id, payload_summary FROM audit_events "
+               "WHERE event_type IN ('score_generated', "
+               "'runtime_release_unverified') AND payload_summary LIKE ?")
+        extra: list = [f'%"decision": "{decision}"%']
+        if w_since:
+            sql += " AND created_at >= ?"
+            extra.append(w_since)
+        if w_until:
+            sql += " AND created_at <= ?"
+            extra.append(w_until)
+        sql += " LIMIT 5001"
+        decision_ids = _audit_id_set(sql, extra)
+
+    dq_ids: list[str] | None = None
+    if data_quality:
+        sql = "SELECT fraud_id FROM audit_events WHERE event_type = 'data_quality_blocked'"
+        extra = []
+        if w_since:
+            sql += " AND created_at >= ?"
+            extra.append(w_since)
+        if w_until:
+            sql += " AND created_at <= ?"
+            extra.append(w_until)
+        sql += " LIMIT 5001"
+        dq_ids = _audit_id_set(sql, extra)
+
+    total_override: int | None = None
+    if decision_ids is not None:
+        if not decision_ids:
+            return {"rows": [], "total": 0, "limit": limit, "offset": offset,
+                    "decision_source": "audit_payload",
+                    "filters": {"decision": decision}}
+        marks = ",".join("?" * len(decision_ids))
+        where.append(f"fraud_id IN ({marks})")
+        params.extend(decision_ids)
+    if data_quality == "blocked":
+        if not dq_ids:
+            return {"rows": [], "total": 0, "limit": limit, "offset": offset,
+                    "filters": {"data_quality": data_quality}}
+        marks = ",".join("?" * len(dq_ids))
+        where.append(f"fraud_id IN ({marks})")
+        params.extend(dq_ids)
+    elif data_quality == "passed":
+        if dq_ids:
+            marks = ",".join("?" * len(dq_ids))
+            where.append(f"fraud_id NOT IN ({marks})")
+            params.extend(dq_ids)
+
+    where_sql = " AND ".join(where) if where else "1=1"
+    total = _ro_scalar("risk",
+                       f"SELECT COUNT(*) FROM risk_scores WHERE {where_sql}",
+                       tuple(params)) or 0
+    rows_out = _ro_rows(
+        "risk",
+        f"SELECT event_id, fraud_id, risk_score, risk_band, reason_codes, "
+        f"model_version, ml_score, rule_score, degraded, scored_at "
+        f"FROM risk_scores WHERE {where_sql} "
+        f"ORDER BY scored_at DESC, event_id LIMIT ? OFFSET ?",
+        tuple(params) + (limit, offset)) or []
+
+    # Enrich the PAGE (not the world): one bounded DB-4 pass for decisions,
+    # releases and data-quality status of exactly these rows.
+    decisions: dict[str, str] = {}
+    releases: dict[str, str] = {}
+    dq_fraud: set[str] = set()
+    fids = sorted({r["fraud_id"] for r in rows_out if r.get("fraud_id")})
+    if fids:
+        marks = ",".join("?" * len(fids))
+        erows = _ro_rows(
+            "audit",
+            "SELECT fraud_id, event_type, payload_summary FROM audit_events "
+            f"WHERE fraud_id IN ({marks}) AND event_type IN "
+            "('score_generated', 'runtime_release_unverified', "
+            "'data_quality_blocked') ORDER BY seq DESC LIMIT 400",
+            tuple(fids)) or []
+        for er in erows:
+            if er["event_type"] == "data_quality_blocked":
+                dq_fraud.add(er["fraud_id"])
+                continue
+            try:
+                p = json.loads(er["payload_summary"])
+            except (TypeError, ValueError):
+                continue
+            eid = p.get("event_id")
+            if not eid or eid in decisions:
+                continue
+            if isinstance(p.get("decision"), str):
+                decisions[eid] = p["decision"]
+            if isinstance(p.get("runtime_release_id"), str):
+                releases[eid] = p["runtime_release_id"]
+
+    def _codes(raw: str | None) -> list[str]:
+        try:
+            v = json.loads(raw) if raw else []
+            return v if isinstance(v, list) else []
+        except (TypeError, ValueError):
+            return []
+
+    out_rows = []
+    for r in rows_out:
+        codes = _codes(r.get("reason_codes"))
+        out_rows.append({
+            "event_id": r["event_id"],
+            "fraud_id": r["fraud_id"],
+            "risk_score": r["risk_score"],
+            "risk_band": r["risk_band"],
+            "decision": decisions.get(r["event_id"]),  # None -> UI shows N/A
+            "reason_codes": codes,
+            "ml_score": r["ml_score"],
+            "rule_score": r["rule_score"],
+            "degraded": bool(r["degraded"]),
+            "data_quality_status": (
+                "blocked" if "DATA_QUALITY_BLOCKED" in codes
+                else ("unknown" if r["fraud_id"] in dq_fraud else "passed")),
+            "model_id": r["model_version"],
+            "release_id": releases.get(r["event_id"]),  # None -> UI shows N/A
+            "scored_at": r["scored_at"],
+        })
+    out_rows = _apply_pii_mask(out_rows)
+
+    _admin_audit(_session[0].get("sub", "admin"), "admin_tx_search",
+                 {"filters": {k: v for k, v in {
+                     "event_id": event_id, "fraud_id": fraud_id,
+                     "band": band, "decision": decision,
+                     "flagged": flagged, "data_quality": data_quality,
+                 }.items() if v is not None},
+                  "total": total, "limit": limit, "offset": offset})
+    return {
+        "rows": out_rows,
+        "total": total,
+        "limit": limit,
+        "offset": offset,
+        "has_more": offset + len(out_rows) < total,
+        "decision_source": ("audit_payload" if decision else None),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@app.get("/admin/api/transactions/{event_id}")
+def admin_api_transaction_detail(
+    event_id: str,
+    _session: tuple[dict, bytes] = Depends(_require_admin),
+) -> dict:
+    """Full investigation view for one event (DB-3 + DB-4 + canonical ctx).
+
+    Every displayed value is RECORDED evidence: persisted score fields,
+    DB-4 payload keys, and manifest_contract canonical context. Missing
+    values render as not_recorded / REASON_NOT_AVAILABLE — never guessed.
+    """
+    if not _TX_EVENT_ID_RE.fullmatch(event_id or ""):
+        raise HTTPException(status_code=400, detail="malformed event_id")
+    from src.audit_service.writer import canonical as _canonical
+    from src.monitoring.phase109_audit_fork_repair import evaluate_chain
+
+    score_rows = _ro_rows(
+        "risk",
+        "SELECT score_id, event_id, fraud_id, risk_score, risk_band, "
+        "reason_codes, model_version, ml_score, rule_score, degraded, "
+        "scored_at FROM risk_scores WHERE event_id = ? LIMIT 1",
+        (event_id,)) or []
+    if not score_rows:
+        _admin_audit(_session[0].get("sub", "admin"), "admin_tx_view",
+                     {"event_id": event_id, "result": "not_found"})
+        raise HTTPException(status_code=404, detail="event not found")
+    score = score_rows[0]
+    fraud_id = score["fraud_id"]
+
+    audit_rows = _ro_rows(
+        "audit",
+        "SELECT seq, event_id, fraud_id, event_type, prev_hash, entry_hash, "
+        "payload_summary, created_at FROM audit_events "
+        "WHERE fraud_id = ? AND payload_summary LIKE ? "
+        "ORDER BY seq LIMIT 200",
+        (fraud_id, f'%"event_id": "{event_id}"%')) or []
+
+    audit_view = []
+    primary_payload = None
+    for r in audit_rows:
+        try:
+            parsed = json.loads(r["payload_summary"])
+        except (TypeError, ValueError):
+            parsed = None
+        self_ok = False
+        if parsed is not None:
+            recomputed = hashlib.sha256(
+                (r["prev_hash"] + _canonical(parsed)).encode()).hexdigest()
+            self_ok = hmac.compare_digest(recomputed, r["entry_hash"])
+        audit_view.append({
+            "seq": r["seq"], "event_id": r["event_id"],
+            "event_type": r["event_type"], "timestamp": r["created_at"],
+            "prev_hash": r["prev_hash"], "entry_hash": r["entry_hash"],
+            "self_consistent": self_ok,
+        })
+        if (primary_payload is None and parsed is not None
+                and r["event_type"] in ("score_generated",
+                                        "runtime_release_unverified")):
+            primary_payload = parsed
+
+    reason_codes: list[str] = []
+    try:
+        reason_codes = json.loads(score["reason_codes"] or "[]")
+        if not isinstance(reason_codes, list):
+            reason_codes = []
+    except (TypeError, ValueError):
+        reason_codes = []
+    dq_blocked = ("DATA_QUALITY_BLOCKED" in reason_codes
+                  or any(r["event_type"] == "data_quality_blocked"
+                         for r in audit_rows))
+    decision = (primary_payload or {}).get("decision")
+    decision_source = ("audit_payload" if isinstance(decision, str)
+                       else "not_persisted")
+
+    all_rows = _ro_rows(
+        "audit",
+        "SELECT seq, event_id, fraud_id, event_type, prev_hash, entry_hash, "
+        "payload_summary, created_at FROM audit_events ORDER BY seq") or []
+    chain_eval = evaluate_chain(all_rows)
+
+    mismatches: list[str] = []
+    if primary_payload:
+        for pkey, skey in (("event_id", "event_id"),
+                           ("risk_score", "risk_score"),
+                           ("risk_band", "risk_band"),
+                           ("rule_score", "rule_score"),
+                           ("degraded", "degraded")):
+            if primary_payload.get(pkey) != score[skey]:
+                mismatches.append(f"{pkey} != score.{skey}")
+        if round(float(primary_payload.get("ml_score", 0) or 0), 4) != \
+                round(float(score["ml_score"] or 0), 4):
+            mismatches.append("ml_score mismatch (4dp)")
+    else:
+        mismatches.append("no DB-4 decision payload for this event")
+
+    outcomes = _ro_rows(
+        "risk",
+        "SELECT outcome, case_id, resolved_at FROM verification_outcomes "
+        "WHERE event_id = ? LIMIT 20", (event_id,)) or []
+    cases = _ro_rows(
+        "risk",
+        "SELECT case_id, status, priority, confidence, created_at "
+        "FROM investigator_cases WHERE event_id = ? LIMIT 20",
+        (event_id,)) or []
+
+    reasons = [{"code": c,
+                "text": REASON_CODE_TEXT.get(c, "REASON_NOT_AVAILABLE")}
+               for c in reason_codes]
+    p = primary_payload or {}
+
+    def _stage(name: str, status, evidence: dict, ts=None) -> dict:
+        return {"stage": name, "status": status, "timestamp": ts,
+                "evidence": evidence}
+
+    stages = [
+        _stage("input_validation",
+               "blocked" if dq_blocked else "passed",
+               {"data_quality_status": "blocked" if dq_blocked else "passed",
+                "source": "recorded reason codes / data_quality_blocked event"}),
+        _stage("idempotency", "persisted",
+               {"score_id": score["score_id"],
+                "note": "database-level idempotent insert keyed by event_id"}),
+        _stage("drift_check", p.get("drift_state", "not_recorded"),
+               {"drift_state": p.get("drift_state")}),
+        _stage("runtime_state", p.get("runtime_state", "not_recorded"),
+               {"runtime_state": p.get("runtime_state"),
+                "runtime_release_id": p.get("runtime_release_id"),
+                "runtime_manifest_hash": p.get("runtime_manifest_hash"),
+                "runtime_attestation_hash": p.get("runtime_attestation_hash")}),
+        _stage("feature_enforcement", "not_recorded",
+               {"feature_version": p.get("feature_version"),
+                "degraded": bool(score["degraded"]),
+                "note": ("per-stage enforcement verdict is not persisted; "
+                         "the degraded flag is recorded")}),
+        _stage("inference_rules", "scored",
+               {"model_version": score["model_version"],
+                "ml_score": score["ml_score"],
+                "rule_score": score["rule_score"],
+                "rule_version": p.get("rule_version")}),
+        _stage("decision_band", decision or "not_recorded",
+               {"risk_score": score["risk_score"],
+                "threshold": MC.CANONICAL_THRESHOLD,
+                "risk_band": score["risk_band"],
+                "decision": decision,
+                "escalation_reason": p.get("escalation_reason"),
+                "reasons": reasons}),
+        _stage("persistence", "persisted",
+               {"db": "DB-3 risk_scores", "score_id": score["score_id"],
+                "scored_at": score["scored_at"]}),
+        _stage("audit", "recorded",
+               {"db": "DB-4 audit_events",
+                "seqs": [r["seq"] for r in audit_view],
+                "entry_hash": (audit_view[0]["entry_hash"]
+                               if audit_view else None)}),
+    ]
+
+    _admin_audit(_session[0].get("sub", "admin"), "admin_tx_view",
+                 {"event_id": event_id, "result": "found",
+                  "risk_band": score["risk_band"]})
+
+    return {
+        "event_id": event_id,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "score": {
+            "score_id": score["score_id"],
+            "event_id": score["event_id"],
+            "fraud_id": score["fraud_id"],
+            "risk_score": score["risk_score"],
+            "risk_band": score["risk_band"],
+            "ml_score": score["ml_score"],
+            "rule_score": score["rule_score"],
+            "degraded": bool(score["degraded"]),
+            "model_version": score["model_version"],
+            "scored_at": score["scored_at"],
+            "reason_codes": reason_codes,
+        },
+        "decision": decision,
+        "decision_source": decision_source,
+        "escalation_reason": p.get("escalation_reason"),
+        "drift_state": p.get("drift_state"),
+        "runtime_state": p.get("runtime_state"),
+        "reasons": reasons,
+        "stages": stages,
+        "audit": {
+            "events": audit_view,
+            "reconcile": {"consistent": not mismatches,
+                          "mismatches": mismatches},
+        },
+        "chain": {
+            "ok": chain_eval.get("ok"),
+            "strict_ok": chain_eval.get("strict_ok"),
+            "first_bad_seq": chain_eval.get("first_bad_seq"),
+            "quarantined_breaks": chain_eval.get("quarantined_breaks"),
+            "finding_ids": chain_eval.get("finding_ids"),
+            "n_entries": chain_eval.get("n_entries"),
+            "event_label": ("AUDIT_CHAIN_VALID"
+                            if audit_view and all(r["self_consistent"]
+                                                  for r in audit_view)
+                            else "AUDIT_CHAIN_INVALID"),
+            "chain_label": ("AUDIT_CHAIN_VALID" if chain_eval.get("ok")
+                            else "AUDIT_CHAIN_INVALID"),
+            "strict_label": ("AUDIT_CHAIN_VALID" if chain_eval.get("strict_ok")
+                             else "AUDIT_CHAIN_INVALID"),
+        },
+        "outcomes": outcomes,
+        "cases": cases,
+        "context": {
+            "threshold": MC.CANONICAL_THRESHOLD,
+            "model_id": MC.CANONICAL_MODEL_VERSION,
+            "release_id": MC.CANONICAL_LEGACY_RELEASE_ID,
+            "feature_version": MC.CANONICAL_FEATURE_VERSION,
+            "recorded_model_version": score["model_version"],
+        },
+    }
+
+
 @app.get("/admin/api/live")
-def admin_api_live(request: Request) -> dict:
+def admin_api_live(request: Request, window: str = "15m") -> dict:
     """Live monitor counters: direct mode=ro reads plus recent chain events.
 
-    Read-only by construction; degrades to null counters for absent files
-    instead of failing the whole feed.
+    `window` is one of the bounded set {5m, 15m, 1h} (default 15m) and only
+    drives the `windowed` block; the global/24h counters stay for the
+    dashboard. Read-only by construction. Absent sources return null — the
+    console renders N/A, never a fabricated zero.
     """
     _require_admin_session(request)
+    if window not in _ADMIN_LIVE_WINDOWS:
+        raise HTTPException(status_code=400,
+                            detail="window must be one of: 5m, 15m, 1h")
 
-    def scalar(db_name: str, sql: str, params: tuple = ()) -> int | None:
-        path = _DBS[db_name]
-        if not path.exists():
-            return None
+    now = datetime.now(timezone.utc)
+    since = (now - timedelta(hours=24)).strftime("%Y-%m-%d %H:%M:%S")
+    w_since = (now - timedelta(
+        seconds=_ADMIN_LIVE_WINDOWS[window])).strftime("%Y-%m-%d %H:%M:%S")
+    band_rows = _ro_rows(
+        "risk",
+        "SELECT risk_band, COUNT(*) AS n FROM risk_scores "
+        "GROUP BY risk_band ORDER BY risk_band") or []
+
+    # ── windowed block (Phase 111) ─────────────────────────────────
+    w_by_band = _ro_rows(
+        "risk",
+        "SELECT risk_band, COUNT(*) AS n FROM risk_scores "
+        "WHERE scored_at >= ? GROUP BY risk_band",
+        (w_since,)) or []
+    w_total = _ro_scalar("risk",
+                         "SELECT COUNT(*) FROM risk_scores "
+                         "WHERE scored_at >= ?", (w_since,))
+    w_degraded = _ro_scalar("risk",
+                            "SELECT COUNT(*) FROM risk_scores "
+                            "WHERE scored_at >= ? AND degraded = 1",
+                            (w_since,))
+    w_dq = _ro_scalar("audit",
+                      "SELECT COUNT(*) FROM audit_events "
+                      "WHERE event_type = 'data_quality_blocked' "
+                      "AND created_at >= ?", (w_since,))
+    n_gen = _ro_scalar("audit",
+                       "SELECT COUNT(*) FROM audit_events "
+                       "WHERE event_type = 'score_generated' "
+                       "AND created_at >= ?", (w_since,)) or 0
+    gen_rows = _ro_rows(
+        "audit",
+        "SELECT payload_summary FROM audit_events "
+        "WHERE event_type = 'score_generated' AND created_at >= ? "
+        "ORDER BY seq DESC LIMIT 2000", (w_since,)) or []
+    by_decision: dict[str, int] = {}
+    decision_samples = 0
+    for gr in gen_rows:
         try:
-            conn = _open_ro(path)
-            try:
-                row = conn.execute(sql, params).fetchone()
-                return int(row[0]) if row is not None else None
-            finally:
-                conn.close()
-        except Exception:
-            return None
+            gp = json.loads(gr["payload_summary"])
+        except (TypeError, ValueError):
+            continue
+        if isinstance(gp.get("decision"), str):
+            by_decision[gp["decision"]] = by_decision.get(gp["decision"], 0) + 1
+            decision_samples += 1
 
-    def rows(db_name: str, sql: str, params: tuple = ()) -> list[dict] | None:
-        path = _DBS[db_name]
-        if not path.exists():
-            return None
+    # ── live feed: newest 50 risk_scores + DB-4 enrichment ─────────
+    feed_src = _ro_rows(
+        "risk",
+        "SELECT event_id, fraud_id, risk_score, risk_band, reason_codes, "
+        "model_version, ml_score, rule_score, degraded, scored_at "
+        "FROM risk_scores ORDER BY scored_at DESC, event_id LIMIT 50") or []
+    decisions_by_event: dict[str, str] = {}
+    releases_by_event: dict[str, str] = {}
+    dq_fraud: set[str] = set()
+    fids = sorted({r["fraud_id"] for r in feed_src if r.get("fraud_id")})
+    if fids:
+        marks = ",".join("?" * len(fids))
+        erows = _ro_rows(
+            "audit",
+            "SELECT fraud_id, event_type, payload_summary FROM audit_events "
+            f"WHERE fraud_id IN ({marks}) AND event_type IN "
+            "('score_generated', 'runtime_release_unverified', "
+            "'data_quality_blocked') ORDER BY seq DESC LIMIT 400",
+            tuple(fids)) or []
+        for er in erows:
+            if er["event_type"] == "data_quality_blocked":
+                dq_fraud.add(er["fraud_id"])
+                continue
+            try:
+                ep = json.loads(er["payload_summary"])
+            except (TypeError, ValueError):
+                continue
+            eid = ep.get("event_id")
+            if not eid or eid in decisions_by_event:
+                continue
+            if isinstance(ep.get("decision"), str):
+                decisions_by_event[eid] = ep["decision"]
+            if isinstance(ep.get("runtime_release_id"), str):
+                releases_by_event[eid] = ep["runtime_release_id"]
+
+    def _feed_codes(raw: str | None) -> list[str]:
         try:
-            conn = _open_ro(path)
-            try:
-                return [dict(r) for r in conn.execute(sql, params).fetchall()]
-            finally:
-                conn.close()
-        except Exception:
-            return None
+            v = json.loads(raw) if raw else []
+            return v if isinstance(v, list) else []
+        except (TypeError, ValueError):
+            return []
 
-    since = (datetime.now(timezone.utc) - timedelta(hours=24)).strftime("%Y-%m-%d %H:%M:%S")
-    band_rows = rows("risk", "SELECT risk_band, COUNT(*) AS n FROM risk_scores GROUP BY risk_band ORDER BY risk_band") or []
+    feed = []
+    for r in feed_src:
+        codes = _feed_codes(r.get("reason_codes"))
+        feed.append({
+            "timestamp": r["scored_at"],
+            "event_id": r["event_id"],
+            "risk_score": r["risk_score"],
+            "decision": decisions_by_event.get(r["event_id"]),  # None -> N/A
+            "decision_band": r["risk_band"],
+            "degraded": bool(r["degraded"]),
+            "data_quality_status": (
+                "blocked" if "DATA_QUALITY_BLOCKED" in codes
+                else ("unknown" if r["fraud_id"] in dq_fraud else "passed")),
+            "model_id": r["model_version"],
+            "release_id": releases_by_event.get(r["event_id"]),  # -> N/A
+        })
+
+    # ── latency: real in-process samples only (None when empty) ────
+    lats = sorted(_monitor_latencies)
+    latency = {
+        "p50_ms": lats[len(lats) // 2] if lats else None,
+        "p95_ms": lats[int(len(lats) * 0.95)] if lats else None,
+        "p99_ms": (lats[min(len(lats) - 1, int(len(lats) * 0.99))]
+                   if lats else None),
+        "samples": len(lats),
+    }
+
+    # ── model / runtime: authoritative sources only ────────────────
+    status_data = _STATUS_CACHE.get("data") or {}
+    risk_health = (status_data.get("risk") or {}).get("health") or {}
+    model_block = {
+        "model_id": risk_health.get("model_id") or MC.CANONICAL_MODEL_VERSION,
+        "release_id": (risk_health.get("release_id")
+                       or MC.CANONICAL_LEGACY_RELEASE_ID),
+        "feature_version": (risk_health.get("feature_version")
+                            or MC.CANONICAL_FEATURE_VERSION),
+        "threshold": MC.CANONICAL_THRESHOLD,
+        "runtime_state": risk_health.get("runtime_state"),  # None -> N/A
+        "model_readiness": risk_health.get("model_readiness"),
+        "release_attested": risk_health.get("release_attested"),
+        # Phase 111: the governance layer sits alongside the deployed
+        # (grandfathered manifest) identity above, so the read-only Model
+        # & Release panel can show both documented conventions instead of
+        # making an operator guess which layer "release_id" belongs to.
+        "governance_model_id": MC.CANONICAL_MODEL_ID,
+        "governance_release_id": MC.CANONICAL_RELEASE_ID,
+        "source": "risk /health via status cache + manifest_contract",
+    }
+
     return {
-        "ts": datetime.now(timezone.utc).isoformat(),
-        "features_total": scalar("features", "SELECT COUNT(*) FROM transaction_features"),
-        "features_24h": scalar(
+        "ts": now.isoformat(),
+        "window": window,
+        "window_since": w_since,
+        "refresh_interval_s": 5,
+        "features_total": _ro_scalar("features",
+                                     "SELECT COUNT(*) FROM transaction_features"),
+        "features_24h": _ro_scalar(
             "features",
             "SELECT COUNT(*) FROM transaction_features WHERE created_at >= ?",
             (since,),
         ),
-        "scores_total": scalar("risk", "SELECT COUNT(*) FROM risk_scores"),
-        "scores_24h": scalar(
+        "scores_total": _ro_scalar("risk", "SELECT COUNT(*) FROM risk_scores"),
+        "scores_24h": _ro_scalar(
             "risk",
             "SELECT COUNT(*) FROM risk_scores WHERE scored_at >= ?",
             (since,),
         ),
         "bands": {r["risk_band"]: r["n"] for r in band_rows},
-        "unresolved_alerts": scalar(
+        "unresolved_alerts": _ro_scalar(
             "risk",
             "SELECT COUNT(*) FROM risk_scores "
             "WHERE event_id NOT IN (SELECT event_id FROM verification_outcomes)",
         ),
-        "outcomes_total": scalar("verify", "SELECT COUNT(*) FROM verification_outcomes"),
-        "recent_events": rows(
+        "outcomes_total": _ro_scalar("verify",
+                                     "SELECT COUNT(*) FROM verification_outcomes"),
+        "recent_events": _ro_rows(
             "audit",
             "SELECT seq, event_type, fraud_id, created_at, entry_hash "
             "FROM audit_events ORDER BY seq DESC LIMIT 8",
         ) or [],
+        "windowed": {
+            "window": window,
+            "since": w_since,
+            "total": w_total,
+            "by_band": {r["risk_band"]: r["n"] for r in w_by_band},
+            "degraded": w_degraded,
+            "by_decision": by_decision,
+            "decision_samples": decision_samples,
+            "decision_available": n_gen,
+            "decision_truncated": n_gen > 2000,
+            "validation_blocks": w_dq,
+            "errors": None,            # no persisted source -> N/A
+            "requests_per_sec": None,  # no persisted source -> N/A
+        },
+        "latency": latency,
+        "model": model_block,
+        "chain": (status_data.get("audit") or {}).get("chain"),
+        "feed": feed,
     }
 
 

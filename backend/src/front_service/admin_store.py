@@ -17,6 +17,7 @@ strongest scheme available from the already-installed `cryptography` lib.
 from __future__ import annotations
 
 import base64
+import hashlib
 import hmac
 import json
 import os
@@ -207,6 +208,69 @@ class AdminStore:
         if step <= last_step:
             return False
         totp_data["last_step"] = step
+        record["totp"] = totp_data
+        self.save(record)
+        return True
+
+    @staticmethod
+    def _normalize_recovery_code(code: str) -> str:
+        """Drop separators/case so `xxxx-xxxx` == `XXXXXXXX`."""
+        return code.replace("-", "").replace(" ", "").upper()
+
+    def set_recovery_codes(self, codes: list[str]) -> None:
+        """Store one-time recovery codes as SHA-256 hashes (shown once).
+
+        Codes are 16 chars of A-Z2-9 entropy (~77 bits), so a plain SHA-256
+        digest is not brute-forceable; only the hashes are persisted.
+        """
+        record = self.load()
+        if record is None:
+            return
+        totp_data = record.get("totp") or {}
+        totp_data["recovery"] = [
+            hashlib.sha256(self._normalize_recovery_code(c).encode()).hexdigest()
+            for c in codes
+        ]
+        record["totp"] = totp_data
+        self.save(record)
+
+    def clear_recovery_codes(self) -> None:
+        """Drop all stored recovery-code hashes (disable/rotate)."""
+        record = self.load()
+        if record is None:
+            return
+        totp_data = record.get("totp")
+        if totp_data is not None and "recovery" in totp_data:
+            del totp_data["recovery"]
+            record["totp"] = totp_data
+            self.save(record)
+
+    def recovery_code_count(self) -> int:
+        record = self.load()
+        if record is None:
+            return 0
+        return len((record.get("totp") or {}).get("recovery") or [])
+
+    def consume_recovery_code(self, code: str) -> bool:
+        """Single-use check: constant-time over all stored hashes, then
+        the matched hash is removed so a code can never be replayed."""
+        record = self.load()
+        if record is None:
+            return False
+        totp_data = record.get("totp") or {}
+        stored = totp_data.get("recovery") or []
+        if not stored:
+            return False
+        digest = hashlib.sha256(
+            self._normalize_recovery_code(code).encode()).hexdigest()
+        matched = -1
+        for i, h in enumerate(stored):
+            if hmac.compare_digest(h, digest):
+                matched = i
+        if matched < 0:
+            return False
+        stored.pop(matched)
+        totp_data["recovery"] = stored
         record["totp"] = totp_data
         self.save(record)
         return True

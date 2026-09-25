@@ -635,6 +635,16 @@
                 inputmode="numeric"
                 style="display: none;"
             >
+            <input
+                type="password"
+                id="recovery-input"
+                class="passcode-input"
+                placeholder="Recovery code"
+                maxlength="32"
+                autocomplete="off"
+                style="display: none;"
+            >
+            <a href="#" id="recovery-toggle" style="display: none; font-size: 12px; color: var(--text-dim); text-align: center; margin-top: 8px; text-decoration: underline;">Use a recovery code instead</a>
             <button id="passcode-btn" class="passcode-btn">Authenticate</button>
             <p id="passcode-error" class="passcode-error">Invalid passcode. Please try again.</p>
         </div>
@@ -670,6 +680,10 @@
                         <span class="sidebar-item-icon">🔧</span>
                         Services
                     </div>
+                    <div class="sidebar-item" data-tab="settings">
+                        <span class="sidebar-item-icon">🧾</span>
+                        Model &amp; Release
+                    </div>
                 </div>
                 
                 <div class="sidebar-section">
@@ -681,6 +695,10 @@
                     <div class="sidebar-item" data-tab="queries">
                         <span class="sidebar-item-icon">🔍</span>
                         Query Editor
+                    </div>
+                    <div class="sidebar-item" data-tab="transactions">
+                        <span class="sidebar-item-icon">🔎</span>
+                        Transactions
                     </div>
                 </div>
                 
@@ -755,6 +773,17 @@
                         <p class="content-subtitle">Auto-refreshes every 5 seconds · direct read-only queries, no writes</p>
                     </div>
 
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 4px;">
+                        <span id="live-conn" class="card-status healthy">LIVE</span>
+                        <span style="font-size: 12px; color: var(--text-dim);" id="live-window-label">window 15m · refresh 5s</span>
+                        <select id="live-window" style="padding: 6px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 12px;">
+                            <option value="5m">last 5 minutes</option>
+                            <option value="15m" selected>last 15 minutes</option>
+                            <option value="1h">last 1 hour</option>
+                        </select>
+                        <button id="live-pause" class="table-btn">Pause</button>
+                    </div>
+
                     <div class="cards-grid">
                         <div class="card">
                             <div class="card-header"><div class="card-icon">📥</div><span class="card-status healthy">DB-2</span></div>
@@ -792,6 +821,60 @@
                             <div class="card-value" id="live-updated" style="font-size: 18px;">—</div>
                             <div class="card-label">next poll in 5s while this tab is open</div>
                         </div>
+                    </div>
+
+                    <div class="cards-grid" style="margin-top: 16px;">
+                        <div class="card">
+                            <div class="card-header"><div class="card-icon">📈</div><span class="card-status healthy" id="lm-window-badge">15m</span></div>
+                            <div class="card-title">Windowed Decisions</div>
+                            <div class="card-value" id="lm-total">—</div>
+                            <div class="card-label" id="lm-rps">N/A</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><div class="card-icon">🚩</div><span class="card-status warning">Flagged</span></div>
+                            <div class="card-title">Non-low Band</div>
+                            <div class="card-value" id="lm-flagged">—</div>
+                            <div class="card-label" id="lm-bands">—</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><div class="card-icon">🧮</div><span class="card-status healthy">Latency</span></div>
+                            <div class="card-title">p50 / p95 / p99 (ms)</div>
+                            <div class="card-value" id="lm-latency" style="font-size: 18px;">—</div>
+                            <div class="card-label" id="lm-latency-samples">in-process samples</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><div class="card-icon">🛑</div><span class="card-status healthy">Quality</span></div>
+                            <div class="card-title">Blocks / Degraded / Errors</div>
+                            <div class="card-value" id="lm-blocks" style="font-size: 18px;">—</div>
+                            <div class="card-label" id="lm-degraded">—</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><div class="card-icon">⚙️</div><span class="card-status healthy">Runtime</span></div>
+                            <div class="card-title">Model / Release</div>
+                            <div class="card-value" id="lm-model" style="font-size: 14px;">—</div>
+                            <div class="card-label" id="lm-release">—</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><div class="card-icon">🎚️</div><span class="card-status healthy">Contract</span></div>
+                            <div class="card-title">Threshold / Feature</div>
+                            <div class="card-value" id="lm-threshold" style="font-size: 18px;">—</div>
+                            <div class="card-label" id="lm-fv">—</div>
+                        </div>
+                    </div>
+
+                    <div class="data-table" style="margin-top: 24px;">
+                        <div class="table-header">
+                            <span class="table-title">Risk Activity Feed</span>
+                            <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);" id="live-feed-note">newest first · click an event to investigate</span></div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr><th>Time</th><th>Event ID</th><th>Score</th><th>Band</th><th>Decision</th><th>Degraded</th><th>Data Quality</th></tr>
+                            </thead>
+                            <tbody id="live-feed-body">
+                                <tr><td colspan="7" style="text-align: center; color: var(--text-dim); padding: 24px;">Connecting…</td></tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <div class="data-table" style="margin-top: 24px;">
@@ -978,6 +1061,134 @@
                     </div>
                 </div>
                 
+                <!-- Transactions Tab (Phase 111) -->
+                <div id="tab-transactions" class="tab-content" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title">Transactions</h2>
+                        <p class="content-subtitle">Flagged-transaction investigation · server-side filtered, bounded results</p>
+                    </div>
+
+                    <div id="txn-search-panel">
+                        <div class="card" style="margin-bottom: 16px;">
+                            <div class="card-title">Search &amp; Filters</div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; font-size: 13px;">
+                                <label style="color: var(--text-dim);">Event ID<input id="f-event" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;" placeholder="evt-…"></label>
+                                <label style="color: var(--text-dim);">Fraud ID<input id="f-fraud" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;" placeholder="fraud-…"></label>
+                                <label style="color: var(--text-dim);">Decision<select id="f-decision" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">any</option><option>allow</option><option>verify</option><option>step_up</option></select></label>
+                                <label style="color: var(--text-dim);">Band<select id="f-band" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">any</option><option>low</option><option>medium</option><option>high</option><option>critical</option></select></label>
+                                <label style="color: var(--text-dim);">Min score<input id="f-min" type="number" min="0" max="1" step="0.01" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"></label>
+                                <label style="color: var(--text-dim);">Max score<input id="f-max" type="number" min="0" max="1" step="0.01" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"></label>
+                                <label style="color: var(--text-dim);">Since<input id="f-since" type="datetime-local" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"></label>
+                                <label style="color: var(--text-dim);">Until<input id="f-until" type="datetime-local" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"></label>
+                                <label style="color: var(--text-dim);">Degraded<select id="f-degraded" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">any</option><option value="true">only degraded</option><option value="false">only non-degraded</option></select></label>
+                                <label style="color: var(--text-dim);">Data quality<select id="f-dq" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">any</option><option value="blocked">blocked</option><option value="passed">passed</option></select></label>
+                                <label style="color: var(--text-dim);">Flagged only<select id="f-flagged" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">no</option><option value="true">yes (non-low band)</option></select></label>
+                                <label style="color: var(--text-dim);">Page size<select id="f-limit" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option>25</option><option selected>50</option><option>100</option></select></label>
+                            </div>
+                            <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center;">
+                                <button id="f-search" class="passcode-btn" style="width: auto; padding: 8px 20px;">Search</button>
+                                <button id="f-reset" class="table-btn">Reset</button>
+                                <span id="f-count" style="font-size: 12px; color: var(--text-dim);"></span>
+                            </div>
+                            <p id="f-error" class="passcode-error" style="margin-top: 8px;"></p>
+                        </div>
+
+                        <div class="data-table">
+                            <div class="table-header">
+                                <span class="table-title">Results</span>
+                                <div class="table-actions">
+                                    <button id="f-prev" class="table-btn">Prev</button>
+                                    <span id="f-page" style="font-size: 12px; color: var(--text-dim);">page 1</span>
+                                    <button id="f-next" class="table-btn">Next</button>
+                                </div>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr><th>Scored at</th><th>Event ID</th><th>Fraud ID</th><th>Score</th><th>Band</th><th>Decision</th><th>Degraded</th><th>Data Quality</th></tr>
+                                </thead>
+                                <tbody id="f-rows">
+                                    <tr><td colspan="8" style="text-align: center; color: var(--text-dim); padding: 24px;">Set filters and press Search</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="txn-detail-panel" style="display: none;">
+                        <div class="content-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h2 class="content-title">Transaction Investigation</h2>
+                                <p class="content-subtitle" id="d-event-id" style="font-family: monospace;">—</p>
+                            </div>
+                            <button id="d-back" class="table-btn">← Back to results</button>
+                        </div>
+                        <p id="d-error" class="passcode-error"></p>
+                        <div class="cards-grid" id="d-summary"></div>
+                        <div class="data-table" style="margin-top: 16px;">
+                            <div class="table-header">
+                                <span class="table-title">Decision Trace</span>
+                                <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);">recorded evidence only · stages without persisted evidence show not_recorded</span></div>
+                            </div>
+                            <table>
+                                <thead><tr><th>#</th><th>Stage</th><th>Status</th><th>Evidence</th></tr></thead>
+                                <tbody id="d-stages"><tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 20px;">—</td></tr></tbody>
+                            </table>
+                        </div>
+                        <div class="card" style="margin-top: 16px;">
+                            <div class="card-title">Decision Reasons</div>
+                            <div id="d-reasons" style="font-size: 13px; color: var(--text-dim);">REASON_NOT_AVAILABLE</div>
+                        </div>
+                        <div class="data-table" style="margin-top: 16px;">
+                            <div class="table-header">
+                                <span class="table-title">Audit Trail (this event)</span>
+                                <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);" id="d-chain-note">—</span></div>
+                            </div>
+                            <table>
+                                <thead><tr><th>Seq</th><th>Time</th><th>Type</th><th>Entry hash</th><th>Link</th></tr></thead>
+                                <tbody id="d-audit"><tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">—</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab (Phase 111, read-only) -->
+                <div id="tab-settings" class="tab-content" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title">Model &amp; Release</h2>
+                        <p class="content-subtitle">Read-only production identity · no promotion, threshold, or model controls exist in this console</p>
+                    </div>
+                    <div class="cards-grid">
+                        <div class="card"><div class="card-header"><div class="card-icon">🧠</div><span class="card-status healthy">Model</span></div>
+                            <div class="card-title">Model ID (attested)</div><div class="card-value" id="s-model" style="font-size: 15px;">—</div>
+                            <div class="card-label" id="s-recorded">—</div></div>
+                        <div class="card"><div class="card-header"><div class="card-icon">📦</div><span class="card-status healthy">Release</span></div>
+                            <div class="card-title">Release ID (attested)</div><div class="card-value" id="s-release" style="font-size: 13px;">—</div>
+                            <div class="card-label" id="s-attestation">attestation —</div></div>
+                        <div class="card"><div class="card-header"><div class="card-icon">🏛️</div><span class="card-status healthy">Governance</span></div>
+                            <div class="card-title">Canonical model_id</div><div class="card-value" id="s-gov-model" style="font-size: 15px;">—</div>
+                            <div class="card-label" id="s-gov-release">—</div></div>
+                        <div class="card"><div class="card-header"><div class="card-icon">📐</div><span class="card-status healthy">Contract</span></div>
+                            <div class="card-title">Feature Version</div><div class="card-value" id="s-fv">—</div>
+                            <div class="card-label">21 domain features → map_raw_to_native → 48 native</div></div>
+                        <div class="card"><div class="card-header"><div class="card-icon">🎚️</div><span class="card-status healthy">Threshold</span></div>
+                            <div class="card-title">Production Threshold</div><div class="card-value" id="s-threshold">—</div>
+                            <div class="card-label">immutable · promotion gated</div></div>
+                        <div class="card"><div class="card-header"><div class="card-icon">🚦</div><span class="card-status healthy">Runtime</span></div>
+                            <div class="card-title">Runtime State</div><div class="card-value" id="s-runtime" style="font-size: 15px;">—</div>
+                            <div class="card-label" id="s-readiness">—</div></div>
+                        <div class="card"><div class="card-header"><div class="card-icon">✅</div><span class="card-status healthy">Artifacts</span></div>
+                            <div class="card-title">Release Attestation</div><div class="card-value" id="s-artifacts" style="font-size: 15px;">—</div>
+                            <div class="card-label" id="s-artifacts-note">manifest hash-bound to model artifacts</div></div>
+                    </div>
+                    <div class="card" style="margin-top: 16px; max-width: 760px;">
+                        <div class="card-title">Validation State (authoritative)</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.8;">
+                            SYSTEM_READINESS: <b style="color: var(--text);">SYSTEM_READY_PENDING_ELIGIBLE_DATASET</b><br>
+                            REAL_WORLD_VALIDATION: <b style="color: var(--text);">BLOCKED_PENDING_ELIGIBLE_DATASET</b><br>
+                            PROMOTION: <b style="color: var(--text);">PROMOTION_GATE_REQUIRED</b>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Access Control Tab -->
                 <div id="tab-access" class="tab-content" style="display: none;">
                     <div class="content-header">
@@ -1076,6 +1287,37 @@
                             <button id="totp-disable-btn" class="passcode-btn" style="background: #7f1d1d; border: none;">Disable TOTP</button>
                             <p id="totp-disable-error" class="passcode-error">Invalid code. Please try again.</p>
                         </div>
+                        <button id="totp-rotate-open" class="table-btn" style="display: none; margin-top: 10px;">Rotate TOTP secret</button>
+                        <div id="totp-rotate-panel" style="display: none; margin-top: 10px;">
+                            <input type="password" id="totp-rotate-code" class="passcode-input" placeholder="123456" maxlength="6" autocomplete="one-time-code" inputmode="numeric" style="margin-bottom: 10px;">
+                            <button id="totp-rotate-btn" class="passcode-btn">Confirm rotation</button>
+                            <p id="totp-rotate-error" class="passcode-error">Invalid code. Please try again.</p>
+                        </div>
+                        <div id="totp-recovery-panel" style="display: none; margin-top: 12px; padding: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;">
+                            <div style="font-size: 13px; font-weight: 600; margin-bottom: 6px;">Recovery codes — shown once, store them offline</div>
+                            <div id="totp-recovery-codes" style="font-family: monospace; font-size: 12px; line-height: 1.9; user-select: all;"></div>
+                            <div style="font-size: 12px; color: var(--text-dim); margin-top: 6px;">Each code works once at the login gate.</div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="max-width: 760px; margin-top: 16px;">
+                        <div class="card-header"><div class="card-icon">🖥️</div><span class="card-status healthy" id="sessions-badge">Sessions</span></div>
+                        <div class="card-title">Active Admin Sessions</div>
+                        <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 12px;" id="sessions-note">—</p>
+                        <table>
+                            <thead><tr><th>Session</th><th>Created</th><th>Last seen</th><th>Expires</th><th></th></tr></thead>
+                            <tbody id="sessions-body"><tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 16px;">Loading…</td></tr></tbody>
+                        </table>
+                    </div>
+
+                    <div class="card" style="max-width: 760px; margin-top: 16px;">
+                        <div class="card-header"><div class="card-icon">🛡️</div><span class="card-status healthy">DB-4</span></div>
+                        <div class="card-title">Security Events</div>
+                        <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 12px;">Recent admin / MFA / auth audit events — secrets are never recorded</p>
+                        <table>
+                            <thead><tr><th>Time</th><th>Event</th><th>Detail</th></tr></thead>
+                            <tbody id="security-events-body"><tr><td colspan="3" style="text-align: center; color: var(--text-dim); padding: 16px;">Loading…</td></tr></tbody>
+                        </table>
                     </div>
                 </div>
             </main>
@@ -1139,6 +1381,8 @@
             $('login-time').textContent = new Date().toLocaleString();
             fillAccessMeta();
             loadDashboard();
+            const r0 = routeFromPath();
+            if (r0.tab !== 'dashboard' || r0.detail) activateTab(r0.tab, { push: false, detail: r0.detail });
             if (!dashboardTimer) {
                 dashboardTimer = setInterval(() => {
                     if (isAdminAuthenticated) loadDashboard();
@@ -1196,7 +1440,10 @@
                 // Authenticate via backend; the TOTP code rides along only
                 // once the gate has revealed the code field.
                 const payload = { username: 'admin', passphrase: passcode };
-                if (code) payload.totp_code = code;
+                const recEl = $('recovery-input');
+                const rec = (recEl && recEl.style.display !== 'none') ? (recEl.value || '').trim() : '';
+                if (rec) payload.recovery_code = rec;
+                else if (code) payload.totp_code = code;
                 const response = await fetch('/admin/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1213,6 +1460,8 @@
                     storeSet('admin_meta', JSON.stringify(loginMeta));
                     errorEl.style.display = 'none';
                     codeEl.value = ''; codeEl.style.display = 'none';
+                    if ($('recovery-input')) { $('recovery-input').value = ''; $('recovery-input').style.display = 'none'; }
+                    if ($('recovery-toggle')) $('recovery-toggle').style.display = 'none';
                     const next = new URLSearchParams(window.location.search).get('next');
                     if (next && next.startsWith('/')) { window.location.href = next; return; }
                     enterConsole();
@@ -1222,6 +1471,7 @@
                         // TOTP is on: reveal the code field but KEEP the typed
                         // passcode so the retry is only the 6-digit code.
                         codeEl.style.display = 'block';
+                        $('recovery-toggle').style.display = 'block';
                         codeEl.value = '';
                         codeEl.focus();
                         errorEl.textContent = detail === 'TOTP code required'
@@ -1231,7 +1481,7 @@
                     } else {
                         errorEl.textContent = detail;
                         errorEl.style.display = 'block';
-                        document.getElementById('passcode-input').value = '';
+                        if (!/try again in|recovery/i.test(detail)) document.getElementById('passcode-input').value = '';
                     }
                 }
             } catch (error) {
@@ -1240,24 +1490,53 @@
             }
         }
         
-        // Tab navigation
+        // Tab navigation + URL routing (Phase 111): /admin/transactions,
+        // /admin/transactions/{event_id}, /admin/audit, /admin/security and
+        // /admin/settings serve this shell; the path selects the tab.
+        const TAB_ROUTES = {
+            '/admin': 'dashboard',
+            '/admin/transactions': 'transactions',
+            '/admin/audit': 'audit',
+            '/admin/security': 'access',
+            '/admin/settings': 'settings',
+        };
+        const ROUTE_TABS = Object.fromEntries(Object.entries(TAB_ROUTES).map(([p, t]) => [t, p]));
+
+        function activateTab(tab, opts = {}) {
+            const push = opts.push !== false;
+            const detail = opts.detail || null;
+            if (!document.getElementById(`tab-${tab}`)) tab = 'dashboard';
+            currentTab = tab;
+            document.querySelectorAll('.sidebar-item').forEach(i =>
+                i.classList.toggle('active', i.dataset.tab === tab));
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.getElementById(`tab-${tab}`).style.display = 'block';
+            if (detail) openTxnDetail(detail);
+            else if (tab === 'transactions') showTxnList();
+            stopLive();
+            loadTabData(tab);
+            if (push) {
+                const path = detail ? `/admin/transactions/${encodeURIComponent(detail)}`
+                                    : (ROUTE_TABS[tab] || '/admin');
+                if (window.location.pathname !== path) history.pushState({ tab, detail }, '', path);
+            }
+        }
+
+        function routeFromPath() {
+            const p = window.location.pathname;
+            const m = p.match(/^\/admin\/transactions\/(.+)$/);
+            if (m && m[1]) return { tab: 'transactions', detail: decodeURIComponent(m[1]) };
+            return { tab: TAB_ROUTES[p] || 'dashboard', detail: null };
+        }
+
+        window.addEventListener('popstate', () => {
+            if (!isAdminAuthenticated) return;
+            const r = routeFromPath();
+            activateTab(r.tab, { push: false, detail: r.detail });
+        });
+
         document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const tab = item.dataset.tab;
-                currentTab = tab;
-                
-                // Update active state
-                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-                
-                // Show tab content
-                document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
-                document.getElementById(`tab-${tab}`).style.display = 'block';
-                
-                // Live polling only runs while the Live tab is open
-                stopLive();
-                loadTabData(tab);
-            });
+            item.addEventListener('click', () => activateTab(item.dataset.tab));
         });
         
         // Logout
@@ -1304,8 +1583,11 @@
                     setBadge(document.getElementById('chain-badge'), 'Unknown', 'warning');
                     document.getElementById('chain-label').textContent = 'integrity unavailable';
                 } else if (chain.ok) {
-                    setBadge(document.getElementById('chain-badge'), 'Valid', 'healthy');
-                    document.getElementById('chain-label').textContent = 'hash chain verified end-to-end';
+                    const qn = (chain.quarantined_breaks || []).length;
+                    setBadge(document.getElementById('chain-badge'), qn ? 'Valid (quarantined)' : 'Valid', qn ? 'warning' : 'healthy');
+                    document.getElementById('chain-label').textContent = qn
+                        ? `verified · ${qn} historical link(s) quarantined (strict break @ ${chain.first_bad_seq ?? '?'})`
+                        : 'hash chain verified end-to-end';
                 } else {
                     setBadge(document.getElementById('chain-badge'), `Fork @ ${chain.first_bad_seq ?? '?'}`, 'offline');
                     document.getElementById('chain-label').textContent = `chain broken at seq ${chain.first_bad_seq ?? '?'} of ${chain.n_entries ?? '?'}`;
@@ -1375,6 +1657,14 @@
                 case 'access':
                     fillAccessMeta();
                     refreshTotp();
+                    loadSessions();
+                    loadSecurityEvents();
+                    break;
+                case 'transactions':
+                    if (!txnDetailOpen) loadTransactions();
+                    break;
+                case 'settings':
+                    loadSettingsPanel();
                     break;
             }
         }
@@ -1727,12 +2017,21 @@
             $('totp-disable-panel').style.display = enabled ? 'block' : 'none';
             $('totp-setup-error').style.display = 'none';
             $('totp-disable-error').style.display = 'none';
+            if ($('totp-rotate-open')) $('totp-rotate-open').style.display = enabled ? 'inline-block' : 'none';
+            if ($('totp-rotate-panel')) $('totp-rotate-panel').style.display = 'none';
+            if ($('totp-rotate-error')) $('totp-rotate-error').style.display = 'none';
+            if (!enabled && $('totp-recovery-panel')) $('totp-recovery-panel').style.display = 'none';
         }
 
         async function refreshTotp() {
             try {
                 const r = await authFetch('/admin/totp/status');
-                if (r.ok) setTotpStatus((await r.json()).enabled === true);
+                if (r.ok) {
+                    const d = await r.json();
+                    setTotpStatus(d.enabled === true);
+                    if (d.enabled) $('totp-status').textContent =
+                        'Enabled · ' + (d.recovery_codes_remaining ?? 0) + ' recovery codes';
+                }
             } catch (e) { if (!e.sessionExpired) console.error(e); }
         }
 
@@ -1768,6 +2067,7 @@
                 const d = await r.json();
                 if (!r.ok) { err.textContent = d.detail || 'Invalid code'; err.style.display = 'block'; return; }
                 setTotpStatus(true);
+                showRecoveryCodes(d.recovery_codes || []);
             } catch (e) { if (!e.sessionExpired) { err.textContent = 'Verification failed'; err.style.display = 'block'; } }
         }
 
@@ -1806,6 +2106,466 @@
         });
         document.getElementById('db-explorer-select')?.addEventListener('change', loadDbSchema);
         // Dashboard auto-refresh lives in enterConsole() (30s timer, stopped on logout)
+    </script>
+
+    <script>
+        // ============================================================
+        // Phase 111 additions: routed investigation pages, live
+        // monitor windows, sessions/security panels, MFA recovery.
+        // ============================================================
+        let txnDetailOpen = false;
+        let txnPage = 0;
+        let txnTotal = 0;
+        let txnLimit = 50;
+        let liveWindow = '15m';
+        let livePaused = false;
+        let liveFails = 0;
+
+        const truncate = (s, n) => (s && s.length > n ? s.slice(0, n) + '…' : (s || ''));
+        const naVal = (v) => v == null || v === '' ? '<span style="color: var(--text-dim);">N/A</span>' : esc(String(v));
+
+        // ---- Transactions search (server-side, bounded) ----
+        function showTxnList() {
+            txnDetailOpen = false;
+            $('txn-search-panel').style.display = '';
+            $('txn-detail-panel').style.display = 'none';
+        }
+
+        function txFilterParams() {
+            const p = new URLSearchParams();
+            const set = (k, v) => { if (v !== '' && v != null) p.set(k, v); };
+            set('event_id', $('f-event').value.trim());
+            set('fraud_id', $('f-fraud').value.trim());
+            set('decision', $('f-decision').value);
+            set('band', $('f-band').value);
+            set('min_score', $('f-min').value);
+            set('max_score', $('f-max').value);
+            if ($('f-since').value) set('since', new Date($('f-since').value).toISOString());
+            if ($('f-until').value) set('until', new Date($('f-until').value).toISOString());
+            set('degraded', $('f-degraded').value);
+            set('data_quality', $('f-dq').value);
+            set('flagged', $('f-flagged').value);
+            txnLimit = parseInt($('f-limit').value, 10) || 50;
+            p.set('limit', String(txnLimit));
+            p.set('offset', String(txnPage * txnLimit));
+            return p;
+        }
+
+        async function loadTransactions() {
+            const err = $('f-error');
+            err.style.display = 'none';
+            $('f-rows').innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-dim); padding: 24px;">Loading…</td></tr>';
+            try {
+                const p = txFilterParams();
+                const r = await authFetch('/admin/api/transactions?' + p.toString());
+                const d = await r.json();
+                if (!r.ok) throw new Error(d.detail || 'search failed');
+                txnTotal = d.total || 0;
+                const rows = d.rows || [];
+                const pages = Math.max(1, Math.ceil(txnTotal / (d.limit || txnLimit)));
+                $('f-count').textContent = `${txnTotal.toLocaleString()} results · page size ${d.limit} (server-capped)`;
+                $('f-page').textContent = `page ${txnPage + 1} of ${pages}`;
+                $('f-prev').disabled = txnPage <= 0;
+                $('f-next').disabled = (txnPage + 1) * (d.limit || txnLimit) >= txnTotal;
+                if (!rows.length) {
+                    $('f-rows').innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-dim); padding: 24px;">No rows match these filters</td></tr>';
+                    return;
+                }
+                $('f-rows').innerHTML = rows.map(row => {
+                    const href = `/admin/transactions/${encodeURIComponent(row.event_id)}`;
+                    return `<tr>
+                        <td>${esc(row.scored_at ?? '—')}</td>
+                        <td><a class="txn-link" data-eid="${esc(row.event_id)}" href="${href}" style="font-family: monospace; font-size: 12px;">${esc(row.event_id)}</a></td>
+                        <td style="font-size: 12px;">${esc(row.fraud_id ?? '—')}</td>
+                        <td>${naVal(row.risk_score)}</td>
+                        <td>${naVal(row.risk_band)}</td>
+                        <td>${naVal(row.decision)}</td>
+                        <td>${row.degraded ? '⚠ yes' : 'no'}</td>
+                        <td>${esc(row.data_quality_status ?? '—')}</td>
+                    </tr>`;
+                }).join('');
+            } catch (e) {
+                if (e.sessionExpired) return;
+                err.textContent = e.message || String(e);
+                err.style.display = 'block';
+                $('f-rows').innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--danger); padding: 24px;">Search failed</td></tr>';
+            }
+        }
+
+        // ---- Transaction investigation detail ----
+        async function openTxnDetail(eventId) {
+            txnDetailOpen = true;
+            $('txn-search-panel').style.display = 'none';
+            $('txn-detail-panel').style.display = 'block';
+            $('d-event-id').textContent = eventId;
+            $('d-error').style.display = 'none';
+            $('d-summary').innerHTML = '<div class="card"><div class="card-value" style="font-size: 15px;">Loading…</div><div class="card-label">fetching recorded evidence</div></div>';
+            $('d-stages').innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 20px;">Loading…</td></tr>';
+            $('d-audit').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">Loading…</td></tr>';
+            $('d-reasons').textContent = 'REASON_NOT_AVAILABLE';
+            $('d-chain-note').textContent = '—';
+            try {
+                const r = await authFetch('/admin/api/transactions/' + encodeURIComponent(eventId));
+                const d = await r.json();
+                if (!r.ok) throw new Error(d.detail || 'not found');
+                renderTxnDetail(d);
+            } catch (e) {
+                if (e.sessionExpired) return;
+                $('d-error').textContent = 'Unavailable: ' + (e.message || e);
+                $('d-error').style.display = 'block';
+                $('d-summary').innerHTML = '';
+            }
+        }
+
+        function renderTxnDetail(d) {
+            const sc = (d.score && typeof d.score === 'object') ? d.score : d;
+            const ctx = d.context || {};
+            const val = (...xs) => { for (const x of xs) if (x !== undefined && x !== null && x !== '') return x; return null; };
+            const stages = Array.isArray(d.stages) ? d.stages : [];
+            const dqStage = stages.find(s => s.stage === 'input_validation') || {};
+            const dqStatus = (dqStage.evidence || {}).data_quality_status;
+            const card = (title, badge, value, label) => `<div class="card">
+                <div class="card-header"><span class="card-status ${badge}">${title}</span></div>
+                <div class="card-value" style="font-size: 16px;">${value}</div>
+                <div class="card-label">${label}</div></div>`;
+            $('d-summary').innerHTML = [
+                card('Decision', d.decision ? 'warning' : 'healthy', naVal(d.decision),
+                     'source: ' + esc(d.decision_source || 'not_recorded') + (d.escalation_reason ? ' · ' + esc(d.escalation_reason) : '')),
+                card('Risk score', 'healthy', naVal(val(sc.risk_score)),
+                     'band ' + esc(val(sc.risk_band, '?')) + ' · threshold ' + esc(String(val(ctx.threshold, 'N/A')))),
+                card('ML / Rules', 'healthy',
+                     esc(String(val(sc.ml_score, 'N/A'))) + ' / ' + esc(String(val(sc.rule_score, 'N/A'))),
+                     'recorded ml_score / rule_score · N/A when not persisted'),
+                card('Degraded / DQ', sc.degraded ? 'offline' : 'healthy',
+                     (sc.degraded ? 'DEGRADED' : 'normal') + ' / ' + esc(dqStatus || 'unknown'),
+                     'data-quality stage: ' + esc(dqStatus || 'unknown')),
+                card('Model / Release', 'healthy', esc(String(val(ctx.model_id, sc.model_version, 'N/A'))),
+                     esc(String(val(ctx.release_id, 'N/A'))) + ' · fv ' + esc(String(val(ctx.feature_version, 'N/A')))),
+                card('Scored at', 'healthy', `<span style="font-size: 13px;">${esc(String(val(sc.scored_at, d.generated_at, 'N/A')))}</span>`,
+                     'score_id ' + esc(String(val(sc.score_id, 'N/A')))),
+            ].join('');
+
+            $('d-stages').innerHTML = stages.length ? stages.map((s, i) => `<tr>
+                <td>${i + 1}</td>
+                <td>${esc(s.stage || '?')}</td>
+                <td>${esc(String(s.status == null ? 'not_recorded' : s.status))}${s.timestamp ? `<div style="font-size: 11px; color: var(--text-dim);">${esc(s.timestamp)}</div>` : ''}</td>
+                <td style="font-family: monospace; font-size: 11px; max-width: 480px; white-space: pre-wrap; word-break: break-all;">${esc(truncate(JSON.stringify(s.evidence ?? {}), 420))}</td>
+            </tr>`).join('') : '<tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 20px;">No trace recorded</td></tr>';
+
+            const rs = Array.isArray(d.reasons) ? d.reasons : [];
+            $('d-reasons').innerHTML = rs.length ? rs.map(x => typeof x === 'string'
+                ? `<div>• ${esc(x)}</div>`
+                : `<div>• <b>${esc(x.code || x.reason || 'reason')}</b> ${esc(x.detail || x.message || '')}</div>`).join('')
+                : 'REASON_NOT_AVAILABLE';
+
+            const evs = (d.audit && d.audit.events) || [];
+            $('d-audit').innerHTML = evs.length ? evs.map(r => `<tr>
+                <td>${r.seq}</td>
+                <td>${esc(r.timestamp ?? '—')}</td>
+                <td>${esc(r.event_type)}</td>
+                <td style="font-family: monospace; font-size: 11px;" title="${esc(r.entry_hash ?? '')}">${esc(truncate(r.entry_hash, 16))}</td>
+                <td>${r.self_consistent ? '✓' : '✗'}</td>
+            </tr>`).join('') : '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">No audit rows reference this event</td></tr>';
+
+            const ch = d.chain || {};
+            let note = `${ch.event_label || 'AUDIT_CHAIN_UNKNOWN'} · strict: ${ch.strict_label || 'N/A'}`;
+            const q = Array.isArray(ch.quarantined_breaks) ? ch.quarantined_breaks.length : 0;
+            if (ch.strict_ok === false && q) note += ` · ${q} historical link(s) quarantined — evidence preserved (Phase 109)`;
+            const rec = d.audit && d.audit.reconcile;
+            if (rec && rec.consistent === false && Array.isArray(rec.mismatches) && rec.mismatches.length) {
+                note += ` · reconcile: ${rec.mismatches.slice(0, 2).join('; ')}` +
+                        (rec.mismatches.length > 2 ? ` (+${rec.mismatches.length - 2} more)` : '');
+            }
+            $('d-chain-note').textContent = note;
+        }
+
+        // ---- Read-only model/release panel ----
+        async function loadSettingsPanel() {
+            try {
+                const live = await authFetch('/admin/api/live?window=5m').then(r => r.json());
+                const m = live.model || {};
+                $('s-model').textContent = m.model_id || 'N/A';
+                $('s-recorded').textContent = 'deployed manifest · ' + (m.source || '—');
+                $('s-gov-model').textContent = m.governance_model_id || 'N/A';
+                $('s-gov-release').textContent = 'release_id ' + (m.governance_release_id || 'N/A');
+                $('s-release').textContent = m.release_id || 'N/A';
+                $('s-attestation').textContent = 'attestation ' + (m.release_attested == null ? 'N/A' : (m.release_attested ? 'verified' : 'NOT VERIFIED'));
+                $('s-fv').textContent = m.feature_version || 'N/A';
+                $('s-threshold').textContent = m.threshold == null ? 'N/A' : String(m.threshold);
+                $('s-runtime').textContent = m.runtime_state || 'N/A';
+                $('s-readiness').textContent = 'model readiness: ' + (m.model_readiness || 'N/A');
+                $('s-artifacts').textContent = m.release_attested == null ? 'N/A' : (m.release_attested ? 'Attested' : 'Not attested');
+                $('s-artifacts-note').textContent = 'release manifest hash-bound to model artifacts';
+            } catch (e) {
+                if (e.sessionExpired) return;
+                ['s-model', 's-release', 's-fv', 's-threshold', 's-runtime', 's-artifacts',
+                 's-gov-model', 's-gov-release'].forEach(id => $(id).textContent = 'N/A');
+            }
+        }
+
+        // ---- Active sessions + security events ----
+        async function loadSessions() {
+            try {
+                const r = await authFetch('/admin/sessions');
+                const d = await r.json();
+                if (!r.ok) throw new Error(d.detail || 'failed');
+                $('sessions-note').textContent =
+                    `idle timeout ${d.idle_timeout_minutes} min · absolute ${d.absolute_timeout_minutes} min · revoking is audited`;
+                const rows = d.sessions || [];
+                $('sessions-body').innerHTML = rows.length ? rows.map(s => `<tr>
+                    <td style="font-family: monospace; font-size: 12px;">${esc(String(s.jti).substring(0, 12))}…${s.is_current ? ' <b>(this session)</b>' : ''}</td>
+                    <td>${esc(s.created_at ?? '—')}</td>
+                    <td>${esc(s.last_seen == null ? '—' : new Date(s.last_seen * 1000).toLocaleString())}</td>
+                    <td>${esc(s.expires_at == null ? '—' : (typeof s.expires_at === 'number' ? new Date(s.expires_at * 1000).toLocaleString() : s.expires_at))}</td>
+                    <td><button class="table-btn" onclick="revokeSession('${esc(String(s.jti))}')"${s.is_current ? ' title="revokes this session (you will be signed out)"' : ''}>Revoke</button></td>
+                </tr>`).join('') : '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 16px;">No sessions</td></tr>';
+            } catch (e) {
+                if (e.sessionExpired) return;
+                $('sessions-body').innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--danger); padding: 16px;">${esc(e.message || 'failed')}</td></tr>`;
+            }
+        }
+
+        async function revokeSession(jti) {
+            try {
+                const r = await authFetch('/admin/sessions/revoke', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ jti }),
+                });
+                const d = await r.json().catch(() => ({}));
+                if (!r.ok) { alert(d.detail || 'Revoke failed'); return; }
+                loadSessions();
+            } catch (e) {
+                if (!e.sessionExpired) alert('Revoke failed');
+            }
+        }
+
+        async function loadSecurityEvents() {
+            try {
+                const r = await authFetch('/admin/api/security-events?limit=40');
+                const d = await r.json();
+                if (!r.ok) throw new Error(d.detail || 'failed');
+                const evs = d.events || [];
+                $('security-events-body').innerHTML = evs.length ? evs.map(e => `<tr>
+                    <td>${esc(e.created_at ?? '—')}</td>
+                    <td>${esc(e.event_type)}</td>
+                    <td style="font-size: 12px;">${esc(e.fraud_id ?? '—')} · <span style="font-family: monospace;">${esc(truncate(e.entry_hash, 12))}</span></td>
+                </tr>`).join('') : '<tr><td colspan="3" style="text-align: center; color: var(--text-dim); padding: 16px;">No admin/security events yet</td></tr>';
+            } catch (e) {
+                if (e.sessionExpired) return;
+                $('security-events-body').innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--danger); padding: 16px;">${esc(e.message || 'failed')}</td></tr>`;
+            }
+        }
+
+        // ---- MFA recovery codes + rotation ----
+        function showRecoveryCodes(codes, secret) {
+            const p = $('totp-recovery-panel');
+            const box = $('totp-recovery-codes');
+            let html = '';
+            if (secret) html += `<div style="margin-bottom: 6px;">New secret: <code style="user-select: all;">${esc(secret)}</code></div>`;
+            html += (codes || []).map(c => esc(c)).join('<br>') || '—';
+            box.innerHTML = html;
+            p.style.display = 'block';
+        }
+
+        async function rotateTotp() {
+            const err = $('totp-rotate-error');
+            err.style.display = 'none';
+            const code = ($('totp-rotate-code').value || '').trim();
+            if (!/^\d{6}$/.test(code)) { err.textContent = 'Enter the 6-digit code from your app'; err.style.display = 'block'; return; }
+            try {
+                const r = await authFetch('/admin/totp/rotate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ totp_code: code }),
+                });
+                const d = await r.json();
+                if (!r.ok) { err.textContent = d.detail || 'Rotation failed'; err.style.display = 'block'; return; }
+                $('totp-rotate-code').value = '';
+                $('totp-rotate-panel').style.display = 'none';
+                setTotpStatus(true);
+                refreshTotp();
+                showRecoveryCodes(d.recovery_codes || [], d.secret);
+            } catch (e) {
+                if (!e.sessionExpired) { err.textContent = 'Rotation failed'; err.style.display = 'block'; }
+            }
+        }
+
+        // ---- Live monitor v2: windows, pause, metrics, feed, connection ----
+        function liveSet(id, v) { const el = $(id); if (el) el.textContent = v; }
+        function setConn(state) {
+            const c = $('live-conn');
+            if (!c) return;
+            c.textContent = state;
+            c.className = 'card-status ' + (state === 'LIVE' ? 'healthy' : (state === 'PAUSED' ? 'warning' : 'offline'));
+        }
+
+        async function loadLive() {
+            if (!isAdminAuthenticated || currentTab !== 'live') return;
+            if (livePaused) { setConn('PAUSED'); return; }
+            try {
+                const [live, status] = await Promise.all([
+                    authFetch('/admin/api/live?window=' + encodeURIComponent(liveWindow)).then(r => r.json()),
+                    authFetch('/status').then(r => r.json()).catch(() => null),
+                ]);
+                liveFails = 0;
+                setConn('LIVE');
+
+                // Legacy dashboard cards
+                liveSet('live-features-total', live.features_total == null ? '—' : live.features_total.toLocaleString());
+                liveSet('live-features-24h', live.features_24h == null ? '—' : live.features_24h.toLocaleString());
+                liveSet('live-scores-total', live.scores_total == null ? '—' : live.scores_total.toLocaleString());
+                liveSet('live-scores-24h', live.scores_24h == null ? '—' : live.scores_24h.toLocaleString());
+                const lb = live.bands || {};
+                liveSet('live-bands', Object.keys(lb).length
+                    ? Object.entries(lb).map(([b, n]) => `${b}: ${n}`).join(' · ')
+                    : 'no bands yet');
+                liveSet('live-unresolved', live.unresolved_alerts == null ? '—' : live.unresolved_alerts.toLocaleString());
+                liveSet('live-outcomes', live.outcomes_total == null ? '—' : live.outcomes_total.toLocaleString());
+
+                const chain = status && status.audit && status.audit.chain;
+                liveSet('live-audit-entries', chain && chain.n_entries != null ? chain.n_entries.toLocaleString() : '—');
+                if (chain && chain.ok === false) {
+                    liveSet('live-audit-state', `broken at seq ${chain.first_bad_seq ?? '?'}`);
+                    setBadge($('live-audit-badge'), 'Fork', 'offline');
+                } else if (chain && chain.ok) {
+                    const q = (chain.quarantined_breaks || []).length;
+                    liveSet('live-audit-state', q
+                        ? `verified · ${q} historical link(s) quarantined (strict break at ${chain.first_bad_seq ?? '?'})`
+                        : 'verified end-to-end');
+                    setBadge($('live-audit-badge'), q ? 'Quarantined' : 'OK', q ? 'warning' : 'healthy');
+                } else {
+                    liveSet('live-audit-state', 'integrity unavailable');
+                    setBadge($('live-audit-badge'), '?', 'warning');
+                }
+
+                // Windowed metrics (Phase 111)
+                const w = live.windowed || {};
+                liveSet('lm-window-badge', w.window || liveWindow);
+                liveSet('lm-total', w.total == null ? 'N/A' : Number(w.total).toLocaleString());
+                liveSet('lm-rps', w.requests_per_sec == null
+                    ? 'requests/sec N/A (no source)'
+                    : 'requests/sec ' + w.requests_per_sec);
+                const wb = w.by_band || {};
+                const flagged = Object.entries(wb).filter(([b]) => b !== 'low' && b !== 'unknown')
+                    .reduce((s, [, n]) => s + (Number(n) || 0), 0);
+                liveSet('lm-flagged', Object.keys(wb).length ? String(flagged) : 'N/A');
+                liveSet('lm-bands', Object.keys(wb).length
+                    ? Object.entries(wb).map(([b, n]) => `${b}: ${n}`).join(' · ')
+                    : 'no bands in window');
+                const lat = live.latency || {};
+                const fmt = v => v == null ? 'N/A' : String(Math.round(Number(v) * 10) / 10);
+                liveSet('lm-latency', `${fmt(lat.p50_ms)} / ${fmt(lat.p95_ms)} / ${fmt(lat.p99_ms)}`);
+                liveSet('lm-latency-samples', lat.samples
+                    ? `${lat.samples} in-process samples · display only`
+                    : 'no samples yet (N/A)');
+                liveSet('lm-blocks', w.validation_blocks == null ? 'N/A' : String(w.validation_blocks));
+                liveSet('lm-degraded', `degraded ${w.degraded == null ? 'N/A' : w.degraded} · errors ${w.errors == null ? 'N/A' : w.errors}`);
+                const mdl = live.model || {};
+                liveSet('lm-model', mdl.model_id || 'N/A');
+                liveSet('lm-release', mdl.release_id || 'N/A');
+                liveSet('lm-threshold', mdl.threshold == null ? 'N/A' : String(mdl.threshold));
+                liveSet('lm-fv', mdl.feature_version ? `feature version ${mdl.feature_version} · ${mdl.runtime_state || 'N/A'}` : 'N/A');
+
+                // Risk activity feed
+                const feed = live.feed || [];
+                const fb = $('live-feed-body');
+                if (fb) {
+                    fb.innerHTML = feed.length ? feed.map(f => `<tr class="feed-row" data-eid="${esc(f.event_id || '')}" style="cursor:pointer;">
+                        <td>${esc(f.timestamp ?? '—')}</td>
+                        <td style="font-family: monospace; font-size: 12px;">${esc(f.event_id ?? '—')}</td>
+                        <td>${naVal(f.risk_score)}</td>
+                        <td>${naVal(f.decision_band)}</td>
+                        <td>${naVal(f.decision)}</td>
+                        <td>${f.degraded ? '⚠ yes' : 'no'}</td>
+                        <td>${esc(f.data_quality_status ?? '—')}</td>
+                    </tr>`).join('')
+                        : '<tr><td colspan="7" style="text-align: center; color: var(--text-dim); padding: 24px;">No scored events yet</td></tr>';
+                }
+                const wl = $('live-window-label');
+                if (wl) wl.textContent = `window ${w.window || liveWindow}${w.since ? ' (since ' + w.since + ')' : ''} · refresh 5s`;
+
+                // Recent chain events table
+                liveSet('live-updated', new Date().toLocaleTimeString());
+                const body = $('live-events-body');
+                const evs = live.recent_events || [];
+                body.innerHTML = evs.length ? evs.map(ev => `<tr>
+                    <td>${ev.seq}</td>
+                    <td>${esc(ev.created_at ?? '—')}</td>
+                    <td>${esc(ev.event_type)}</td>
+                    <td>${esc(ev.fraud_id ?? '—')}</td>
+                    <td style="font-family: monospace; font-size: 12px;" title="${esc(ev.entry_hash ?? '')}">${esc(truncate(ev.entry_hash, 16))}</td>
+                </tr>`).join('')
+                    : '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 24px;">No chain entries yet</td></tr>';
+            } catch (error) {
+                liveFails++;
+                if (!error.sessionExpired) {
+                    if (liveFails >= 2) setConn('DISCONNECTED');
+                    liveSet('live-updated', 'error — retrying');
+                }
+            }
+        }
+
+        // ---- Wiring ----
+        document.addEventListener('DOMContentLoaded', () => {
+            const rt = $('recovery-toggle');
+            if (rt) rt.addEventListener('click', (e) => {
+                e.preventDefault();
+                const rec = $('recovery-input');
+                const totp = $('totp-input');
+                const showingRec = rec.style.display !== 'none';
+                rec.style.display = showingRec ? 'none' : 'block';
+                if (totp.style.display !== 'none' || !showingRec) totp.style.display = showingRec ? 'block' : 'none';
+                rt.textContent = showingRec ? 'Use a recovery code instead' : 'Use the authenticator app instead';
+                (showingRec ? totp : rec).focus();
+            });
+
+            ['f-search'].forEach(id => $(id) && $(id).addEventListener('click', () => { txnPage = 0; loadTransactions(); }));
+            $('f-reset') && $('f-reset').addEventListener('click', () => {
+                ['f-event', 'f-fraud', 'f-min', 'f-max', 'f-since', 'f-until'].forEach(id => $(id).value = '');
+                ['f-decision', 'f-band', 'f-degraded', 'f-dq', 'f-flagged'].forEach(id => $(id).value = '');
+                txnPage = 0;
+                loadTransactions();
+            });
+            $('f-prev') && $('f-prev').addEventListener('click', () => { if (txnPage > 0) { txnPage--; loadTransactions(); } });
+            $('f-next') && $('f-next').addEventListener('click', () => { txnPage++; loadTransactions(); });
+            $('d-back') && $('d-back').addEventListener('click', () => activateTab('transactions'));
+            $('totp-rotate-open') && $('totp-rotate-open').addEventListener('click', () => {
+                $('totp-rotate-panel').style.display = 'block';
+                $('totp-rotate-code').focus();
+            });
+            $('totp-rotate-btn') && $('totp-rotate-btn').addEventListener('click', rotateTotp);
+            $('totp-rotate-code') && $('totp-rotate-code').addEventListener('keypress', (e) => { if (e.key === 'Enter') rotateTotp(); });
+
+            const lw = $('live-window');
+            if (lw) lw.addEventListener('change', () => {
+                liveWindow = lw.value;
+                if (!livePaused) loadLive();
+            });
+            const lp = $('live-pause');
+            if (lp) lp.addEventListener('click', () => {
+                livePaused = !livePaused;
+                lp.textContent = livePaused ? 'Resume' : 'Pause';
+                if (livePaused) { stopLive(); setConn('PAUSED'); }
+                else startLive();
+            });
+
+            // Row/link navigation: feed rows and result links open the
+            // investigation view; plain left-clicks are intercepted, modified
+            // clicks fall through to the server route.
+            document.addEventListener('click', (e) => {
+                const t = e.target;
+                if (!t || !t.closest) return;
+                const link = t.closest('.txn-link');
+                if (link && !e.metaKey && !e.ctrlKey && !e.shiftKey && e.button === 0) {
+                    e.preventDefault();
+                    activateTab('transactions', { detail: link.dataset.eid });
+                    return;
+                }
+                const row = t.closest('.feed-row');
+                if (row && row.dataset.eid) activateTab('transactions', { detail: row.dataset.eid });
+            });
+        });
     </script>
 </body>
 </html>

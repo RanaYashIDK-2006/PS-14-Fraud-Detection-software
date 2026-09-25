@@ -211,6 +211,85 @@ class SessionStore:
         conn.commit()
         return cursor.rowcount
 
+    def update_data(self, jti: str, data: dict) -> None:
+        """Update a session's data blob in place (e.g. last-seen touch)."""
+        self._ensure_redis()
+        if self._redis:
+            try:
+                key = f"{self._redis_prefix}{jti}"
+                if self._redis.exists(key):
+                    ttl = self._redis.ttl(key)
+                    self._redis.set(key, json.dumps(data, default=str),
+                                    ex=ttl if ttl and ttl > 0 else None)
+                    return
+            except Exception:
+                pass
+        conn = self._conn()
+        conn.execute(
+            "UPDATE sessions SET data = ? WHERE jti = ? AND session_type = ?",
+            (json.dumps(data, default=str), jti, self.session_type),
+        )
+        conn.commit()
+
+    def revoke_others(self, keep_jti: str) -> int:
+        """Revoke every session of this type except `keep_jti`.
+
+        Used after sensitive MFA changes (disable/rotate) so any other
+        possibly-compromised session dies immediately while the operator's
+        current session survives. Returns the number revoked.
+        """
+        self._ensure_redis()
+        if self._redis:
+            try:
+                idx_key = f"{self._redis_prefix}idx"
+                others = [j for j in self._redis.hgetall(idx_key) if j != keep_jti]
+                if others:
+                    pipe = self._redis.pipeline()
+                    for j in others:
+                        pipe.delete(f"{self._redis_prefix}{j}")
+                        pipe.hdel(idx_key, j)
+                    pipe.execute()
+                return len(others)
+            except Exception:
+                pass
+        conn = self._conn()
+        cursor = conn.execute(
+            "UPDATE sessions SET revoked = 1 WHERE session_type = ? "
+            "AND revoked = 0 AND jti != ?",
+            (self.session_type, keep_jti),
+        )
+        conn.commit()
+        return cursor.rowcount
+
+    def list_recent(self, limit: int = 50) -> list[dict]:
+        """Active (non-revoked, non-expired) sessions, newest first."""
+        self._ensure_redis()
+        if self._redis:
+            try:
+                idx_key = f"{self._redis_prefix}idx"
+                out: list[dict] = []
+                for jti, exp_iso in self._redis.hgetall(idx_key).items():
+                    if datetime.fromisoformat(exp_iso) <= datetime.now(timezone.utc):
+                        continue
+                    raw = self._redis.get(f"{self._redis_prefix}{jti}")
+                    out.append({"jti": jti,
+                                "data": json.loads(raw) if raw else {},
+                                "expires_at": exp_iso, "created_at": None})
+                out.sort(key=lambda r: r["expires_at"], reverse=True)
+                return out[:limit]
+            except Exception:
+                pass
+        conn = self._conn()
+        now = datetime.now(timezone.utc).isoformat()
+        rows = conn.execute(
+            "SELECT jti, data, expires_at, created_at FROM sessions "
+            "WHERE session_type = ? AND revoked = 0 AND expires_at > ? "
+            "ORDER BY created_at DESC LIMIT ?",
+            (self.session_type, now, limit),
+        ).fetchall()
+        return [{"jti": r[0], "data": json.loads(r[1]),
+                 "expires_at": r[2], "created_at": r[3]} for r in rows]
+
     def cleanup_expired(self) -> int:
         """Delete expired sessions. Returns count deleted."""
         self._ensure_redis()

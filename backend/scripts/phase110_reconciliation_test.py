@@ -464,6 +464,9 @@ def main() -> int:
         "phase71_architecture_gap_audit.py",
         "phase72_observability_integration_test.py",
         "train_altman_native.py",  # writes historical training records only
+        # Phase 111 pins the same rejection-registry value as part of its
+        # canonical-constants section (mirrors manifest_contract.py above).
+        "phase111_admin_console_test.py",
     }
     offenders = set()
     for root in (BACKEND / "src", BACKEND / "scripts", REPO_ROOT):

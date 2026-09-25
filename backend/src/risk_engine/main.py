@@ -239,6 +239,16 @@ async def lifespan(_app: FastAPI):
     if not settings.use_postgres:
         import src.verification_service.models  # noqa: F401 — register VerificationOutcome table
         m.Base.metadata.create_all(bind=engine)
+        # Phase 111 (additive, non-destructive): admin monitor windows and
+        # transaction search filter on scored_at. IF NOT EXISTS keeps this
+        # idempotent across temp/test databases; failure never blocks boot.
+        try:
+            with engine.begin() as conn:
+                conn.exec_driver_sql(
+                    "CREATE INDEX IF NOT EXISTS ix_risk_scores_scored_at "
+                    "ON risk_scores (scored_at)")
+        except Exception:  # noqa: BLE001
+            pass
     # Phase 49: verify the release BEFORE loading it.  The ReleaseManifest
     # (Phase 48) signed at promotion time is the authority; the artifact
     # bytes on disk must match it exactly or the model is NOT loaded and
@@ -987,6 +997,11 @@ def evaluate(
         req.fraud_id, "score_generated",
         {
             "event_id": req.event_id, "risk_score": score, "risk_band": band,
+            # Phase 111: record the authoritative decision alongside the
+            # score so investigation UIs read a persisted value instead of
+            # re-deriving policy (append-only payload addition; historical
+            # payloads are untouched and simply report no decision).
+            "decision": decision,
             "reason_codes": reason_codes, "ml_score": round(ml_score, 4),
             "rule_score": rule["score"], "model_version": model_version,
             "feature_version": FEATURE_VERSION, "rule_version": RULE_VERSION,
@@ -1245,6 +1260,7 @@ def evaluate_batch(
                             "event_id": req.event_id,
                             "risk_score": r["risk_score"],
                             "risk_band": r["risk_band"],
+                            "decision": r["decision"],  # Phase 111: persisted decision
                             "reason_codes": r["reason_codes"],
                             "ml_score": r["ml_score"],
                             "rule_score": r["rule_score"],
