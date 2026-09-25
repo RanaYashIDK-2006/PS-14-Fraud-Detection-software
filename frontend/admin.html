@@ -599,6 +599,167 @@
             background: currentColor;
         }
         
+        /* Phase 112: operator-first components */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .kpi {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+        }
+
+        .kpi-value {
+            font-size: 34px;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .kpi-attention .kpi-value {
+            color: var(--warning);
+        }
+
+        .kpi-label {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-top: 6px;
+        }
+
+        details.advanced {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        details.advanced > summary {
+            padding: 14px 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dim);
+            list-style: none;
+            user-select: none;
+        }
+
+        details.advanced > summary::before {
+            content: "▸ ";
+        }
+
+        details.advanced[open] > summary::before {
+            content: "▾ ";
+        }
+
+        details.advanced > summary:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: -2px;
+        }
+
+        details.advanced > .data-table,
+        details.advanced > table-wrap {
+            border: none;
+            border-radius: 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .status-ok { color: var(--success); }
+        .status-warn { color: var(--warning); }
+        .status-bad { color: var(--danger); }
+
+        .search-box {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            margin-bottom: 14px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .why-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: 10px;
+            padding: 18px 22px;
+            margin-bottom: 16px;
+        }
+
+        .why-box h4 {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .why-box ul {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text);
+        }
+
+        .feed-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .feed-list li {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 9px 20px;
+            border-top: 1px solid var(--border);
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .feed-list li:first-child { border-top: none; }
+        .feed-list li:hover { background: var(--card-hover); }
+
+        .live-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .live-metric {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 18px;
+        }
+
+        .live-metric .lm-v {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .live-metric .lm-l {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        a:focus-visible, button:focus-visible, input:focus-visible,
+        select:focus-visible, [tabindex]:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
         /* Responsive */
         @media (max-width: 900px) {
             .content {
@@ -607,6 +768,41 @@
             
             .cards-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .kpi-row {
+                grid-template-columns: 1fr;
+            }
+
+            .main {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-width: 0;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding: 12px;
+            }
+
+            .sidebar-section {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+                margin-bottom: 0;
+            }
+
+            .sidebar-label {
+                width: 100%;
+                margin-bottom: 4px;
+            }
+
+            .sidebar-item {
+                padding: 8px 12px;
             }
         }
     </style>
@@ -667,50 +863,38 @@
         <div class="main">
             <nav class="sidebar">
                 <div class="sidebar-section">
-                    <div class="sidebar-label">Overview</div>
+                    <div class="sidebar-label">Operations</div>
                     <div class="sidebar-item active" data-tab="dashboard">
                         <span class="sidebar-item-icon">📊</span>
                         Dashboard
-                    </div>
-                    <div class="sidebar-item" data-tab="live">
-                        <span class="sidebar-item-icon">📡</span>
-                        Live Monitor
-                    </div>
-                    <div class="sidebar-item" data-tab="services">
-                        <span class="sidebar-item-icon">🔧</span>
-                        Services
-                    </div>
-                    <div class="sidebar-item" data-tab="settings">
-                        <span class="sidebar-item-icon">🧾</span>
-                        Model &amp; Release
-                    </div>
-                </div>
-                
-                <div class="sidebar-section">
-                    <div class="sidebar-label">Data</div>
-                    <div class="sidebar-item" data-tab="database">
-                        <span class="sidebar-item-icon">🗄️</span>
-                        Database Explorer
-                    </div>
-                    <div class="sidebar-item" data-tab="queries">
-                        <span class="sidebar-item-icon">🔍</span>
-                        Query Editor
                     </div>
                     <div class="sidebar-item" data-tab="transactions">
                         <span class="sidebar-item-icon">🔎</span>
                         Transactions
                     </div>
-                </div>
-                
-                <div class="sidebar-section">
-                    <div class="sidebar-label">Security</div>
+                    <div class="sidebar-item" data-tab="live">
+                        <span class="sidebar-item-icon">📡</span>
+                        Live Monitor
+                    </div>
                     <div class="sidebar-item" data-tab="audit">
                         <span class="sidebar-item-icon">📋</span>
-                        Audit Trail
+                        Audit
                     </div>
                     <div class="sidebar-item" data-tab="access">
                         <span class="sidebar-item-icon">🔑</span>
-                        Access Control
+                        Security
+                    </div>
+                    <div class="sidebar-item" data-tab="settings">
+                        <span class="sidebar-item-icon">⚙️</span>
+                        Settings
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Advanced</div>
+                    <div class="sidebar-item" data-tab="system">
+                        <span class="sidebar-item-icon">🖥️</span>
+                        System Details
                     </div>
                 </div>
             </nav>
@@ -719,72 +903,130 @@
                 <!-- Dashboard Tab -->
                 <div id="tab-dashboard" class="tab-content">
                     <div class="content-header">
-                        <h2 class="content-title">Dashboard</h2>
-                        <p class="content-subtitle">System overview and key metrics</p>
+                        <div>
+                            <h2 class="content-title">Admin Dashboard</h2>
+                            <p class="content-subtitle">What is happening right now, and what needs attention</p>
+                        </div>
+                        <span class="card-status healthy" id="dash-online" style="font-size: 13px;">● …</span>
                     </div>
-                    
-                    <div class="cards-grid">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-icon">🚀</div>
-                                <span class="card-status healthy" id="d-system-badge">Checking…</span>
-                            </div>
-                            <div class="card-title">System Status</div>
-                            <div class="card-value" id="system-status">—</div>
-                            <div class="card-label" id="d-system-label">Querying services…</div>
+
+                    <!-- LEVEL 2: operations KPIs -->
+                    <div class="kpi-row">
+                        <div class="kpi">
+                            <div class="kpi-value" id="dash-tx">—</div>
+                            <div class="kpi-label">Transactions (24h)</div>
                         </div>
-                        
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-icon">📊</div>
-                                <span class="card-status healthy" id="d-txn-badge">Live</span>
-                            </div>
-                            <div class="card-title">Features (24h)</div>
-                            <div class="card-value" id="txn-count">—</div>
-                            <div class="card-label" id="d-txn-label">by created_at · DB-2</div>
+                        <div class="kpi kpi-attention">
+                            <div class="kpi-value" id="dash-flagged">—</div>
+                            <div class="kpi-label">Flagged (24h)</div>
                         </div>
-                        
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-icon">⚠️</div>
-                                <span class="card-status warning" id="d-alert-badge">Review</span>
-                            </div>
-                            <div class="card-title">Unresolved Alerts</div>
-                            <div class="card-value" id="alert-count">—</div>
-                            <div class="card-label" id="d-alert-label">scores awaiting an outcome · DB-3</div>
-                        </div>
-                        
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-icon">🔗</div>
-                                <span class="card-status healthy" id="chain-badge">Checking…</span>
-                            </div>
-                            <div class="card-title">Audit Chain</div>
-                            <div class="card-value" id="audit-entries">—</div>
-                            <div class="card-label" id="chain-label">Chain entries · live integrity</div>
+                        <div class="kpi">
+                            <div class="kpi-value" id="dash-blocked">—</div>
+                            <div class="kpi-label">Blocked (24h)</div>
                         </div>
                     </div>
+                    <p id="dash-kpi-note" style="font-size: 12px; color: var(--text-dim); margin: -20px 0 24px;"></p>
+
+                    <!-- LEVEL 1: things needing attention -->
+                    <div class="data-table">
+                        <div class="table-header">
+                            <span class="table-title">Recent Flagged Transactions</span>
+                            <div class="table-actions">
+                                <button class="table-btn" id="dash-view-all">View all →</button>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr><th>Event ID</th><th>Risk</th><th>Status</th><th>Time</th></tr>
+                            </thead>
+                            <tbody id="dash-flagged-body">
+                                <tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 24px;">Loading…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- LEVEL 2: simple system status -->
+                    <div class="card" style="margin-top: 16px; max-width: 760px;">
+                        <div class="card-title">System</div>
+                        <div id="dash-system-lines" style="font-size: 14px; line-height: 2.1;">
+                            <div id="dash-line-system">● …</div>
+                            <div id="dash-line-model">● …</div>
+                            <div id="dash-line-database">● …</div>
+                        </div>
+                        <div id="dash-warnings" style="display: none; margin-top: 8px; font-size: 13px; color: var(--warning);"></div>
+                    </div>
+
+                    <!-- LEVEL 3: collapsible technical detail (§5) -->
+                    <details class="advanced" id="dash-details">
+                        <summary>System Details</summary>
+                        <div class="data-table" style="margin-top: 12px;">
+                            <table>
+                                <thead><tr><th>Field</th><th>Value</th></tr></thead>
+                                <tbody id="dash-details-body">
+                                    <tr><td colspan="2" style="text-align: center; color: var(--text-dim); padding: 20px;">Loading…</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </details>
                 </div>
                 
                 <!-- Live Monitor Tab -->
                 <div id="tab-live" class="tab-content" style="display: none;">
                     <div class="content-header">
-                        <h2 class="content-title">Live Monitor</h2>
-                        <p class="content-subtitle">Auto-refreshes every 5 seconds · direct read-only queries, no writes</p>
+                        <div>
+                            <h2 class="content-title">Live Monitor</h2>
+                            <p class="content-subtitle" id="live-ago">Connecting…</p>
+                        </div>
+                        <span id="live-conn" class="card-status healthy" style="font-size: 13px;">● …</span>
                     </div>
 
-                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 4px;">
-                        <span id="live-conn" class="card-status healthy">LIVE</span>
-                        <span style="font-size: 12px; color: var(--text-dim);" id="live-window-label">window 15m · refresh 5s</span>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px;">
+                        <label for="live-window" style="font-size: 12px; color: var(--text-dim);">Window</label>
                         <select id="live-window" style="padding: 6px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 12px;">
                             <option value="5m">last 5 minutes</option>
                             <option value="15m" selected>last 15 minutes</option>
                             <option value="1h">last 1 hour</option>
                         </select>
                         <button id="live-pause" class="table-btn">Pause</button>
+                        <span style="font-size: 12px; color: var(--text-dim);" id="live-window-label">window 15m · refresh 5s</span>
                     </div>
 
-                    <div class="cards-grid">
+                    <!-- Simple default metrics (§10) -->
+                    <div class="live-metrics">
+                        <div class="live-metric">
+                            <div class="lm-v" id="live-simple-total">—</div>
+                            <div class="lm-l">Decisions in window</div>
+                        </div>
+                        <div class="live-metric">
+                            <div class="lm-v" id="live-simple-flagged">—</div>
+                            <div class="lm-l">Flagged in window</div>
+                        </div>
+                        <div class="live-metric">
+                            <div class="lm-v" id="live-simple-latency">—</div>
+                            <div class="lm-l">p50 latency (ms)</div>
+                        </div>
+                        <div class="live-metric">
+                            <div class="lm-v" id="live-simple-blocks">—</div>
+                            <div class="lm-l">Validation blocks</div>
+                        </div>
+                    </div>
+
+                    <!-- Recent activity, simplified feed (§10) -->
+                    <div class="data-table">
+                        <div class="table-header">
+                            <span class="table-title">Recent Activity</span>
+                            <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);">newest first · click to investigate</span></div>
+                        </div>
+                        <ul class="feed-list" id="live-recent">
+                            <li style="cursor: default; color: var(--text-dim);">Connecting…</li>
+                        </ul>
+                    </div>
+
+                    <!-- Detailed metrics, opt-in (§10) -->
+                    <details class="advanced" id="live-details">
+                        <summary>Show detailed metrics</summary>
+                        <div style="padding: 4px 0 8px;">
+                    <div class="cards-grid" style="margin-top: 12px;">
                         <div class="card">
                             <div class="card-header"><div class="card-icon">📥</div><span class="card-status healthy">DB-2</span></div>
                             <div class="card-title">Features Ingested</div>
@@ -867,6 +1109,7 @@
                             <span class="table-title">Risk Activity Feed</span>
                             <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);" id="live-feed-note">newest first · click an event to investigate</span></div>
                         </div>
+                        <div style="overflow-x: auto;">
                         <table>
                             <thead>
                                 <tr><th>Time</th><th>Event ID</th><th>Score</th><th>Band</th><th>Decision</th><th>Degraded</th><th>Data Quality</th></tr>
@@ -875,6 +1118,7 @@
                                 <tr><td colspan="7" style="text-align: center; color: var(--text-dim); padding: 24px;">Connecting…</td></tr>
                             </tbody>
                         </table>
+                        </div>
                     </div>
 
                     <div class="data-table" style="margin-top: 24px;">
@@ -882,6 +1126,7 @@
                             <span class="table-title">Recent Chain Events</span>
                             <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);" id="live-events-note">last 8 entries</span></div>
                         </div>
+                        <div style="overflow-x: auto;">
                         <table>
                             <thead>
                                 <tr><th>Seq</th><th>Time</th><th>Type</th><th>Fraud ID</th><th>Hash</th></tr>
@@ -890,25 +1135,62 @@
                                 <tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 24px;">Connecting…</td></tr>
                             </tbody>
                         </table>
+                        </div>
                     </div>
+                        </div>
+                    </details>
                 </div>
 
-                <!-- Services Tab -->
-                <div id="tab-services" class="tab-content" style="display: none;">
+                <!-- System Details (Advanced) — absorbs the old Services,
+                     Database and Query tabs plus the model identity cards. -->
+                <div id="tab-system" class="tab-content" style="display: none;">
                     <div class="content-header">
-                        <h2 class="content-title">Services</h2>
-                        <p class="content-subtitle">Monitor all PS-14 services</p>
+                        <h2 class="content-title">System Details</h2>
+                        <p class="content-subtitle">Technical detail: model identity, services, databases, queries</p>
                     </div>
-                    
+
                     <div class="cards-grid" id="services-grid">
                         <!-- Dynamically populated -->
                     </div>
-                </div>
-                
-                <!-- Database Tab -->
-                <div id="tab-database" class="tab-content" style="display: none;">
-                    <div class="content-header">
-                        <h2 class="content-title">Database Explorer</h2>
+
+                    <div class="content-header" style="margin-top: 28px;">
+                        <h2 class="content-title" style="font-size: 17px;">Model &amp; Release</h2>
+                        <p class="content-subtitle">Read-only production identity · no promotion, threshold, or model controls exist in this console</p>
+                    </div>
+                    <div class="cards-grid">
+                        <div class="card"><div class="card-header"><div class="card-icon">🧠</div><span class="card-status healthy">Model</span></div>
+                            <div class="card-title">Model ID (attested)</div><div class="card-value" id="s-model" style="font-size: 15px;">—</div>
+                            <div class="card-label" id="s-recorded">—</div></div>
+                        <div class="card"><div class="card-header"><div class="card-icon">📦</div><span class="card-status healthy">Release</span></div>
+                            <div class="card-title">Release ID (attested)</div><div class="card-value" id="s-release" style="font-size: 13px;">—</div>
+                            <div class="card-label" id="s-attestation">attestation —</div></div>
+                        <div class="card"><div class="card-header"><div class="card-icon">🏛️</div><span class="card-status healthy">Governance</span></div>
+                            <div class="card-title">Canonical model_id</div><div class="card-value" id="s-gov-model" style="font-size: 15px;">—</div>
+                            <div class="card-label" id="s-gov-release">—</div></div>
+                        <div class="card"><div class="card-header"><div class="card-icon">📐</div><span class="card-status healthy">Contract</span></div>
+                            <div class="card-title">Feature Version</div><div class="card-value" id="s-fv">—</div>
+                            <div class="card-label">21 domain features → map_raw_to_native → 48 native</div></div>
+                        <div class="card"><div class="card-header"><div class="card-icon">🎚️</div><span class="card-status healthy">Threshold</span></div>
+                            <div class="card-title">Production Threshold</div><div class="card-value" id="s-threshold">—</div>
+                            <div class="card-label">immutable · promotion gated</div></div>
+                        <div class="card"><div class="card-header"><div class="card-icon">🚦</div><span class="card-status healthy">Runtime</span></div>
+                            <div class="card-title">Runtime State</div><div class="card-value" id="s-runtime" style="font-size: 15px;">—</div>
+                            <div class="card-label" id="s-readiness">—</div></div>
+                        <div class="card"><div class="card-header"><div class="card-icon">✅</div><span class="card-status healthy">Artifacts</span></div>
+                            <div class="card-title">Release Attestation</div><div class="card-value" id="s-artifacts" style="font-size: 15px;">—</div>
+                            <div class="card-label" id="s-artifacts-note">manifest hash-bound to model artifacts</div></div>
+                    </div>
+                    <div class="card" style="margin-top: 16px; max-width: 760px;">
+                        <div class="card-title">Validation State (authoritative)</div>
+                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.8;">
+                            SYSTEM_READINESS: <b style="color: var(--text);">SYSTEM_READY_PENDING_ELIGIBLE_DATASET</b><br>
+                            REAL_WORLD_VALIDATION: <b style="color: var(--text);">BLOCKED_PENDING_ELIGIBLE_DATASET</b><br>
+                            PROMOTION: <b style="color: var(--text);">PROMOTION_GATE_REQUIRED</b>
+                        </div>
+                    </div>
+
+                    <div class="content-header" style="margin-top: 28px;">
+                        <h2 class="content-title" style="font-size: 17px;">Database Explorer</h2>
                         <p class="content-subtitle">Browse and query all databases</p>
                     </div>
                     
@@ -949,12 +1231,9 @@
                         </div>
                         <div id="db-browse-note" style="padding: 12px 24px; color: var(--text-dim); font-size: 12px;"></div>
                     </div>
-                </div>
-                
-                <!-- Query Editor Tab -->
-                <div id="tab-queries" class="tab-content" style="display: none;">
-                    <div class="content-header">
-                        <h2 class="content-title">Query Editor</h2>
+
+                    <div class="content-header" style="margin-top: 28px;">
+                        <h2 class="content-title" style="font-size: 17px;">Query Editor</h2>
                         <p class="content-subtitle">Run an allowlisted preset or read-only SQL against any database</p>
                     </div>
                     
@@ -1019,21 +1298,34 @@
                 <!-- Audit Tab -->
                 <div id="tab-audit" class="tab-content" style="display: none;">
                     <div class="content-header">
-                        <h2 class="content-title">Audit Trail</h2>
-                        <p class="content-subtitle">Authoritative chain status + hash-linked events, proxied from the Audit Service</p>
+                        <h2 class="content-title">Audit</h2>
+                        <p class="content-subtitle">Recent audit events and chain health</p>
                     </div>
 
                     <div class="card" style="margin-bottom: 16px; display: flex; align-items: center; gap: 16px;">
                         <div class="card-icon" style="font-size: 24px;">🔗</div>
                         <div>
-                            <div class="card-title" id="audit-chain-title">Chain status</div>
+                            <div class="card-title" id="audit-chain-title">Audit Status</div>
                             <div style="font-size: 13px; color: var(--text-dim);" id="audit-chain-detail">Loading…</div>
+                        </div>
+                    </div>
+
+                    <!-- Human explanation of the documented historical fork (§15) -->
+                    <div class="why-box" id="audit-fork-box" style="display: none; border-left-color: var(--warning);">
+                        <h4>Historical audit issue</h4>
+                        <div style="font-size: 14px; line-height: 1.7;">
+                            A historical audit-chain inconsistency was identified and quarantined.<br>
+                            This issue is already documented and does not represent a newly detected failure.
+                            <div style="margin-top: 8px;">
+                                Current audit hygiene: <b id="audit-hygiene" class="status-ok">● Clean</b><br>
+                                Unexpected future audit inconsistencies: <b class="status-ok">● Automatically detected by CI</b>
+                            </div>
                         </div>
                     </div>
 
                     <div class="data-table">
                         <div class="table-header">
-                            <span class="table-title">Recent Events</span>
+                            <span class="table-title">Recent Audit Events</span>
                             <div class="table-actions">
                                 <span style="font-size: 12px; color: var(--text-dim);" id="audit-total-note"></span>
                                 <button class="table-btn" id="refresh-audit">Refresh</button>
@@ -1042,58 +1334,92 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Seq</th>
                                     <th>Time</th>
-                                    <th>Type</th>
-                                    <th>Fraud ID</th>
-                                    <th>Payload</th>
-                                    <th>Entry Hash</th>
+                                    <th>Event</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody id="audit-table-body">
                                 <tr>
-                                    <td colspan="6" style="text-align: center; color: var(--text-dim); padding: 32px;">
+                                    <td colspan="3" style="text-align: center; color: var(--text-dim); padding: 32px;">
                                         Loading audit events...
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Technical evidence, opt-in (§14) -->
+                    <details class="advanced" id="audit-tech">
+                        <summary>Historical Integrity Details</summary>
+                        <div style="padding: 4px 0 8px;">
+                            <div style="padding: 14px 20px; font-size: 13px; color: var(--text-dim);" id="audit-tech-summary">—</div>
+                            <div class="data-table" style="margin-top: 0;">
+                                <div style="overflow-x: auto;">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Seq</th>
+                                            <th>Time</th>
+                                            <th>Type</th>
+                                            <th>Fraud ID</th>
+                                            <th>Payload</th>
+                                            <th>Entry Hash</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="audit-tech-body">
+                                        <tr>
+                                            <td colspan="6" style="text-align: center; color: var(--text-dim); padding: 32px;">
+                                                Loading audit events...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
                 </div>
                 
                 <!-- Transactions Tab (Phase 111) -->
                 <div id="tab-transactions" class="tab-content" style="display: none;">
                     <div class="content-header">
                         <h2 class="content-title">Transactions</h2>
-                        <p class="content-subtitle">Flagged-transaction investigation · server-side filtered, bounded results</p>
+                        <p class="content-subtitle">Search and investigate flagged transactions</p>
                     </div>
 
                     <div id="txn-search-panel">
-                        <div class="card" style="margin-bottom: 16px;">
-                            <div class="card-title">Search &amp; Filters</div>
+                        <input id="f-quick" class="search-box" type="search"
+                               placeholder="Search transactions..."
+                               aria-label="Search transactions by event ID or transaction ID">
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px;">
+                            <button id="f-search" class="passcode-btn" style="width: auto; padding: 10px 24px;">Search</button>
+                            <button id="f-reset" class="table-btn">Reset</button>
+                            <span id="f-count" style="font-size: 12px; color: var(--text-dim);"></span>
+                        </div>
+                        <p id="f-error" class="passcode-error" style="margin-bottom: 10px;"></p>
+
+                        <details class="advanced" id="f-filters">
+                            <summary>Filters</summary>
+                            <div style="padding: 16px 20px;">
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; font-size: 13px;">
                                 <label style="color: var(--text-dim);">Event ID<input id="f-event" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;" placeholder="evt-…"></label>
-                                <label style="color: var(--text-dim);">Fraud ID<input id="f-fraud" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;" placeholder="fraud-…"></label>
+                                <label style="color: var(--text-dim);">Transaction / Fraud ID<input id="f-fraud" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;" placeholder="F…"></label>
                                 <label style="color: var(--text-dim);">Decision<select id="f-decision" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">any</option><option>allow</option><option>verify</option><option>step_up</option></select></label>
-                                <label style="color: var(--text-dim);">Band<select id="f-band" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">any</option><option>low</option><option>medium</option><option>high</option><option>critical</option></select></label>
-                                <label style="color: var(--text-dim);">Min score<input id="f-min" type="number" min="0" max="1" step="0.01" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"></label>
-                                <label style="color: var(--text-dim);">Max score<input id="f-max" type="number" min="0" max="1" step="0.01" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"></label>
+                                <label style="color: var(--text-dim);">Status (band)<select id="f-band" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">any</option><option>low</option><option>medium</option><option>high</option><option>critical</option></select></label>
+                                <label style="color: var(--text-dim);">Min score<input id="f-min" type="number" min="0" max="100" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"></label>
+                                <label style="color: var(--text-dim);">Max score<input id="f-max" type="number" min="0" max="100" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"></label>
                                 <label style="color: var(--text-dim);">Since<input id="f-since" type="datetime-local" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"></label>
                                 <label style="color: var(--text-dim);">Until<input id="f-until" type="datetime-local" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"></label>
                                 <label style="color: var(--text-dim);">Degraded<select id="f-degraded" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">any</option><option value="true">only degraded</option><option value="false">only non-degraded</option></select></label>
                                 <label style="color: var(--text-dim);">Data quality<select id="f-dq" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">any</option><option value="blocked">blocked</option><option value="passed">passed</option></select></label>
                                 <label style="color: var(--text-dim);">Flagged only<select id="f-flagged" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">no</option><option value="true">yes (non-low band)</option></select></label>
-                                <label style="color: var(--text-dim);">Page size<select id="f-limit" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option>25</option><option selected>50</option><option>100</option></select></label>
+                                <label style="color: var(--text-dim);">Rows per page<select id="f-limit" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option>25</option><option selected>50</option><option>100</option></select></label>
                             </div>
-                            <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center;">
-                                <button id="f-search" class="passcode-btn" style="width: auto; padding: 8px 20px;">Search</button>
-                                <button id="f-reset" class="table-btn">Reset</button>
-                                <span id="f-count" style="font-size: 12px; color: var(--text-dim);"></span>
                             </div>
-                            <p id="f-error" class="passcode-error" style="margin-top: 8px;"></p>
-                        </div>
+                        </details>
 
-                        <div class="data-table">
+                        <div class="data-table" style="margin-top: 16px;">
                             <div class="table-header">
                                 <span class="table-title">Results</span>
                                 <div class="table-actions">
@@ -1102,137 +1428,121 @@
                                     <button id="f-next" class="table-btn">Next</button>
                                 </div>
                             </div>
+                            <div style="overflow-x: auto;">
                             <table>
                                 <thead>
-                                    <tr><th>Scored at</th><th>Event ID</th><th>Fraud ID</th><th>Score</th><th>Band</th><th>Decision</th><th>Degraded</th><th>Data Quality</th></tr>
+                                    <tr><th>Time</th><th>Event ID</th><th>Risk</th><th>Decision</th><th>Status</th></tr>
                                 </thead>
                                 <tbody id="f-rows">
-                                    <tr><td colspan="8" style="text-align: center; color: var(--text-dim); padding: 24px;">Set filters and press Search</td></tr>
+                                    <tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 24px;">Search for a transaction, or press Search to browse</td></tr>
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
 
                     <div id="txn-detail-panel" style="display: none;">
-                        <div class="content-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="content-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                             <div>
-                                <h2 class="content-title">Transaction Investigation</h2>
+                                <h2 class="content-title" id="d-hero-title">Transaction</h2>
                                 <p class="content-subtitle" id="d-event-id" style="font-family: monospace;">—</p>
                             </div>
                             <button id="d-back" class="table-btn">← Back to results</button>
                         </div>
                         <p id="d-error" class="passcode-error"></p>
-                        <div class="cards-grid" id="d-summary"></div>
-                        <div class="data-table" style="margin-top: 16px;">
-                            <div class="table-header">
-                                <span class="table-title">Decision Trace</span>
-                                <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);">recorded evidence only · stages without persisted evidence show not_recorded</span></div>
+
+                        <div class="kpi-row" id="d-summary"></div>
+
+                        <div class="why-box">
+                            <h4>Why was this flagged?</h4>
+                            <div id="d-why" style="font-size: 14px; color: var(--text-dim);">Loading…</div>
+                        </div>
+
+                        <details class="advanced" open>
+                            <summary>Transaction details</summary>
+                            <div class="data-table" style="border: none; border-radius: 0; margin-top: 0;">
+                                <table>
+                                    <tbody id="d-fields"><tr><td style="color: var(--text-dim); padding: 20px;">Loading…</td></tr></tbody>
+                                </table>
                             </div>
-                            <table>
-                                <thead><tr><th>#</th><th>Stage</th><th>Status</th><th>Evidence</th></tr></thead>
-                                <tbody id="d-stages"><tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 20px;">—</td></tr></tbody>
-                            </table>
-                        </div>
-                        <div class="card" style="margin-top: 16px;">
-                            <div class="card-title">Decision Reasons</div>
-                            <div id="d-reasons" style="font-size: 13px; color: var(--text-dim);">REASON_NOT_AVAILABLE</div>
-                        </div>
-                        <div class="data-table" style="margin-top: 16px;">
-                            <div class="table-header">
-                                <span class="table-title">Audit Trail (this event)</span>
-                                <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);" id="d-chain-note">—</span></div>
+                        </details>
+
+                        <details class="advanced" id="d-processing">
+                            <summary>Processing details</summary>
+                            <div style="padding: 4px 0 8px;">
+                            <div class="data-table" style="margin-top: 12px;">
+                                <div class="table-header">
+                                    <span class="table-title">Decision Trace</span>
+                                    <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);">recorded evidence only · stages without persisted evidence show not_recorded</span></div>
+                                </div>
+                                <div style="overflow-x: auto;">
+                                <table>
+                                    <thead><tr><th>#</th><th>Stage</th><th>Status</th><th>Evidence</th></tr></thead>
+                                    <tbody id="d-stages"><tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 20px;">—</td></tr></tbody>
+                                </table>
+                                </div>
                             </div>
-                            <table>
-                                <thead><tr><th>Seq</th><th>Time</th><th>Type</th><th>Entry hash</th><th>Link</th></tr></thead>
-                                <tbody id="d-audit"><tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">—</td></tr></tbody>
-                            </table>
-                        </div>
+                            <div class="card" style="margin-top: 16px;">
+                                <div class="card-title">Decision Reasons (raw codes)</div>
+                                <div id="d-reasons" style="font-size: 13px; color: var(--text-dim);">REASON_NOT_AVAILABLE</div>
+                            </div>
+                            <div class="data-table" style="margin-top: 16px;">
+                                <div class="table-header">
+                                    <span class="table-title">Audit Trail (this event)</span>
+                                    <div class="table-actions"><span style="font-size: 12px; color: var(--text-dim);" id="d-chain-note">—</span></div>
+                                </div>
+                                <div style="overflow-x: auto;">
+                                <table>
+                                    <thead><tr><th>Seq</th><th>Time</th><th>Type</th><th>Entry hash</th><th>Link</th></tr></thead>
+                                    <tbody id="d-audit"><tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">—</td></tr></tbody>
+                                </table>
+                                </div>
+                            </div>
+                            </div>
+                        </details>
                     </div>
                 </div>
 
-                <!-- Settings Tab (Phase 111, read-only) -->
+                <!-- Settings Tab (Phase 112, minimal operator prefs) -->
                 <div id="tab-settings" class="tab-content" style="display: none;">
                     <div class="content-header">
-                        <h2 class="content-title">Model &amp; Release</h2>
-                        <p class="content-subtitle">Read-only production identity · no promotion, threshold, or model controls exist in this console</p>
+                        <h2 class="content-title">Settings</h2>
+                        <p class="content-subtitle">Console preferences only · model, threshold and promotion identity lives in System Details</p>
                     </div>
-                    <div class="cards-grid">
-                        <div class="card"><div class="card-header"><div class="card-icon">🧠</div><span class="card-status healthy">Model</span></div>
-                            <div class="card-title">Model ID (attested)</div><div class="card-value" id="s-model" style="font-size: 15px;">—</div>
-                            <div class="card-label" id="s-recorded">—</div></div>
-                        <div class="card"><div class="card-header"><div class="card-icon">📦</div><span class="card-status healthy">Release</span></div>
-                            <div class="card-title">Release ID (attested)</div><div class="card-value" id="s-release" style="font-size: 13px;">—</div>
-                            <div class="card-label" id="s-attestation">attestation —</div></div>
-                        <div class="card"><div class="card-header"><div class="card-icon">🏛️</div><span class="card-status healthy">Governance</span></div>
-                            <div class="card-title">Canonical model_id</div><div class="card-value" id="s-gov-model" style="font-size: 15px;">—</div>
-                            <div class="card-label" id="s-gov-release">—</div></div>
-                        <div class="card"><div class="card-header"><div class="card-icon">📐</div><span class="card-status healthy">Contract</span></div>
-                            <div class="card-title">Feature Version</div><div class="card-value" id="s-fv">—</div>
-                            <div class="card-label">21 domain features → map_raw_to_native → 48 native</div></div>
-                        <div class="card"><div class="card-header"><div class="card-icon">🎚️</div><span class="card-status healthy">Threshold</span></div>
-                            <div class="card-title">Production Threshold</div><div class="card-value" id="s-threshold">—</div>
-                            <div class="card-label">immutable · promotion gated</div></div>
-                        <div class="card"><div class="card-header"><div class="card-icon">🚦</div><span class="card-status healthy">Runtime</span></div>
-                            <div class="card-title">Runtime State</div><div class="card-value" id="s-runtime" style="font-size: 15px;">—</div>
-                            <div class="card-label" id="s-readiness">—</div></div>
-                        <div class="card"><div class="card-header"><div class="card-icon">✅</div><span class="card-status healthy">Artifacts</span></div>
-                            <div class="card-title">Release Attestation</div><div class="card-value" id="s-artifacts" style="font-size: 15px;">—</div>
-                            <div class="card-label" id="s-artifacts-note">manifest hash-bound to model artifacts</div></div>
-                    </div>
-                    <div class="card" style="margin-top: 16px; max-width: 760px;">
-                        <div class="card-title">Validation State (authoritative)</div>
-                        <div style="font-size: 13px; color: var(--text-dim); line-height: 1.8;">
-                            SYSTEM_READINESS: <b style="color: var(--text);">SYSTEM_READY_PENDING_ELIGIBLE_DATASET</b><br>
-                            REAL_WORLD_VALIDATION: <b style="color: var(--text);">BLOCKED_PENDING_ELIGIBLE_DATASET</b><br>
-                            PROMOTION: <b style="color: var(--text);">PROMOTION_GATE_REQUIRED</b>
+                    <div class="card" style="max-width: 640px;">
+                        <div class="card-title">Display</div>
+                        <div style="display: grid; gap: 12px; font-size: 13px; margin-top: 8px;">
+                            <label style="color: var(--text-dim); display: flex; justify-content: space-between; align-items: center; gap: 12px;">Dashboard refresh interval
+                                <select id="pref-dash-refresh" style="padding: 8px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text);">
+                                    <option value="15">15s</option>
+                                    <option value="30" selected>30s</option>
+                                    <option value="60">60s</option>
+                                </select>
+                            </label>
+                            <label style="color: var(--text-dim); display: flex; justify-content: space-between; align-items: center; gap: 12px;">Live monitor refresh interval
+                                <select id="pref-live-refresh" style="padding: 8px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text);">
+                                    <option value="5" selected>5s</option>
+                                    <option value="10">10s</option>
+                                    <option value="30">30s</option>
+                                </select>
+                            </label>
+                            <label style="color: var(--text-dim); display: flex; justify-content: space-between; align-items: center; gap: 12px;">Default rows per page
+                                <select id="pref-rows" style="padding: 8px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text);">
+                                    <option value="25">25</option>
+                                    <option value="50" selected>50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </label>
                         </div>
+                        <p style="font-size: 12px; color: var(--text-dim); margin-top: 14px;">Stored in this browser only — no server state. Read-only console: there are no model, threshold or promotion controls.</p>
                     </div>
                 </div>
 
-                <!-- Access Control Tab -->
+                <!-- Security Tab (Phase 112: MFA first, detail behind expando) -->
                 <div id="tab-access" class="tab-content" style="display: none;">
                     <div class="content-header">
-                        <h2 class="content-title">Access Control</h2>
-                        <p class="content-subtitle">Manage admin credentials and access</p>
-                    </div>
-                    
-                    <div class="card" style="max-width: 500px;">
-                        <div class="card-header">
-                            <div class="card-icon">🔑</div>
-                        </div>
-                        <div class="card-title">Admin Credentials</div>
-                        <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 16px;">
-                            Current admin session is active. To change credentials, 
-                            update the ADMIN_PASS environment variable and restart the service.
-                        </p>
-                        <div style="
-                            padding: 12px 16px;
-                            background: var(--bg);
-                            border: 1px solid var(--border);
-                            border-radius: 8px;
-                            font-size: 13px;
-                        ">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <span style="color: var(--text-dim);">Session Active</span>
-                                <span style="color: var(--success);">✓ Yes</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <span style="color: var(--text-dim);">Login Time</span>
-                                <span id="login-time">—</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <span style="color: var(--text-dim);">Total Logins</span>
-                                <span id="access-login-count">—</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <span style="color: var(--text-dim);">Last Login (server)</span>
-                                <span id="access-last-login">—</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span style="color: var(--text-dim);">TOTP Second Factor</span>
-                                <span id="access-totp">—</span>
-                            </div>
-                        </div>
+                        <h2 class="content-title">Security</h2>
+                        <p class="content-subtitle">Multi-factor sign-in, sessions and security events</p>
                     </div>
 
                     <div class="card" style="max-width: 500px; margin-top: 16px;">
@@ -1257,8 +1567,15 @@
                                 <span id="totp-status">—</span>
                             </div>
                         </div>
-                        <button id="totp-setup-btn" class="passcode-btn" style="display: none;">Set up TOTP</button>
+                        <button id="mfa-manage-btn" class="table-btn" style="margin-top: 4px;">Manage MFA</button>
 
+                        <div id="mfa-manage" style="display: none; margin-top: 12px;">
+                        <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 10px;">
+                            1. Select <b>Set up TOTP</b> and scan the QR code with your authenticator app.<br>
+                            2. Enter the 6-digit code the app shows, to confirm.<br>
+                            3. Store the recovery codes shown once, offline.
+                        </p>
+                        <button id="totp-setup-btn" class="passcode-btn">Set up TOTP</button>
                         <div id="totp-setup-panel" style="display: none;">
                             <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 8px;">
                                 1. In your authenticator app add a new account — scan the QR code
@@ -1298,9 +1615,53 @@
                             <div id="totp-recovery-codes" style="font-family: monospace; font-size: 12px; line-height: 1.9; user-select: all;"></div>
                             <div style="font-size: 12px; color: var(--text-dim); margin-top: 6px;">Each code works once at the login gate.</div>
                         </div>
+                        </div><!-- /mfa-manage -->
                     </div>
 
-                    <div class="card" style="max-width: 760px; margin-top: 16px;">
+                    <!-- Advanced security detail, opt-in (§16) -->
+                    <details class="advanced" id="security-details" style="max-width: 760px; margin-top: 16px;">
+                        <summary>Advanced security details</summary>
+                        <div style="padding: 4px 0 8px;">
+                    <div class="card" style="margin-bottom: 16px;">
+                        <div class="card-header">
+                            <div class="card-icon">🔑</div>
+                        </div>
+                        <div class="card-title">Admin Credentials</div>
+                        <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 16px;">
+                            Current admin session is active. To change credentials,
+                            update the ADMIN_PASS environment variable and restart the service.
+                        </p>
+                        <div style="
+                            padding: 12px 16px;
+                            background: var(--bg);
+                            border: 1px solid var(--border);
+                            border-radius: 8px;
+                            font-size: 13px;
+                        ">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="color: var(--text-dim);">Session Active</span>
+                                <span style="color: var(--success);">✓ Yes</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="color: var(--text-dim);">Login Time</span>
+                                <span id="login-time">—</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="color: var(--text-dim);">Total Logins</span>
+                                <span id="access-login-count">—</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span style="color: var(--text-dim);">Last Login (server)</span>
+                                <span id="access-last-login">—</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--text-dim);">TOTP Second Factor</span>
+                                <span id="access-totp">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-bottom: 16px;">
                         <div class="card-header"><div class="card-icon">🖥️</div><span class="card-status healthy" id="sessions-badge">Sessions</span></div>
                         <div class="card-title">Active Admin Sessions</div>
                         <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 12px;" id="sessions-note">—</p>
@@ -1319,6 +1680,8 @@
                             <tbody id="security-events-body"><tr><td colspan="3" style="text-align: center; color: var(--text-dim); padding: 16px;">Loading…</td></tr></tbody>
                         </table>
                     </div>
+                        </div>
+                    </details>
                 </div>
             </main>
         </div>
@@ -1383,11 +1746,15 @@
             loadDashboard();
             const r0 = routeFromPath();
             if (r0.tab !== 'dashboard' || r0.detail) activateTab(r0.tab, { push: false, detail: r0.detail });
-            if (!dashboardTimer) {
-                dashboardTimer = setInterval(() => {
-                    if (isAdminAuthenticated) loadDashboard();
-                }, 30000);
-            }
+            startDashboardTimer();
+        }
+
+        function startDashboardTimer() {
+            if (dashboardTimer) { clearInterval(dashboardTimer); dashboardTimer = null; }
+            const secs = (typeof readPrefs === 'function') ? readPrefs().dashRefresh : 30;
+            dashboardTimer = setInterval(() => {
+                if (isAdminAuthenticated) loadDashboard();
+            }, Math.max(5, secs) * 1000);
         }
 
         // Validate any stored session BEFORE skipping the passcode gate — an
@@ -1517,8 +1884,10 @@
             loadTabData(tab);
             if (push) {
                 const path = detail ? `/admin/transactions/${encodeURIComponent(detail)}`
-                                    : (ROUTE_TABS[tab] || '/admin');
-                if (window.location.pathname !== path) history.pushState({ tab, detail }, '', path);
+                                    : (ROUTE_TABS[tab] || null);
+                // Tabs without a server route (Live Monitor, System
+                // Details) keep the current URL instead of faking one.
+                if (path && window.location.pathname !== path) history.pushState({ tab, detail }, '', path);
             }
         }
 
@@ -1555,45 +1924,93 @@
             el.className = 'card-status ' + cls;
         }
 
-        // Load dashboard data: /status for health+chain, /admin/api/live for
-        // the DB counters. The old hardcoded em-dashes are gone — every
-        // value here comes from a real query.
+        // Load dashboard data from the compact operator summary — one small
+        // request answers "is it working / what's flagged / what needs attention"
+        // instead of the heavy live-monitor payload.
         async function loadDashboard() {
             try {
-                const [status, live] = await Promise.all([
-                    authFetch('/status').then(r => r.json()),
-                    authFetch('/admin/api/live').then(r => r.json()).catch(() => null),
-                ]);
+                const s = await authFetch('/admin/api/summary').then(r => r.json());
 
-                const svcEntries = Object.entries(status);
-                const okCount = svcEntries.filter(([, s]) => s && s.status === 'ok').length;
-                const allOk = okCount === svcEntries.length && svcEntries.length > 0;
-                document.getElementById('system-status').textContent = allOk ? 'Operational' : 'Degraded';
-                document.getElementById('d-system-label').textContent = `${okCount}/${svcEntries.length} services healthy`;
-                setBadge(document.getElementById('d-system-badge'), allOk ? 'Healthy' : 'Degraded', allOk ? 'healthy' : 'warning');
+                // Status badge: honest state, warnings only when needed.
+                const st = s.status || {};
+                const online = $('dash-online');
+                const operational = st.state === 'operational';
+                online.textContent = operational ? '● Operational' : '● Needs attention';
+                online.className = 'card-status ' + (operational ? 'healthy' : 'warning');
 
-                if (live) {
-                    document.getElementById('txn-count').textContent = live.features_24h == null ? '—' : live.features_24h.toLocaleString();
-                    document.getElementById('alert-count').textContent = live.unresolved_alerts == null ? '—' : live.unresolved_alerts.toLocaleString();
-                }
+                const c = s.counts || {};
+                const fmt = v => v == null ? 'N/A' : Number(v).toLocaleString();
+                $('dash-tx').textContent = fmt(c.transactions_24h);
+                $('dash-flagged').textContent = fmt(c.flagged_24h);
+                $('dash-blocked').textContent = fmt(c.blocked_24h);
+                $('dash-kpi-note').textContent = c.newest_scored_at
+                    ? `newest scored at ${c.newest_scored_at}`
+                    : 'no scores recorded yet';
 
-                const chain = (status.audit && status.audit.chain) || null;
-                document.getElementById('audit-entries').textContent = chain && chain.n_entries != null ? chain.n_entries.toLocaleString() : '—';
-                if (!chain || chain.ok == null) {
-                    setBadge(document.getElementById('chain-badge'), 'Unknown', 'warning');
-                    document.getElementById('chain-label').textContent = 'integrity unavailable';
-                } else if (chain.ok) {
-                    const qn = (chain.quarantined_breaks || []).length;
-                    setBadge(document.getElementById('chain-badge'), qn ? 'Valid (quarantined)' : 'Valid', qn ? 'warning' : 'healthy');
-                    document.getElementById('chain-label').textContent = qn
-                        ? `verified · ${qn} historical link(s) quarantined (strict break @ ${chain.first_bad_seq ?? '?'})`
-                        : 'hash chain verified end-to-end';
-                } else {
-                    setBadge(document.getElementById('chain-badge'), `Fork @ ${chain.first_bad_seq ?? '?'}`, 'offline');
-                    document.getElementById('chain-label').textContent = `chain broken at seq ${chain.first_bad_seq ?? '?'} of ${chain.n_entries ?? '?'}`;
-                }
+                // Recent flagged transactions — the main focus.
+                const flagged = s.recent_flagged || [];
+                const fb = $('dash-flagged-body');
+                fb.innerHTML = flagged.length ? flagged.map(f => {
+                    const href = `/admin/transactions/${encodeURIComponent(f.event_id)}`;
+                    return `<tr class="feed-row" data-eid="${esc(f.event_id)}" style="cursor:pointer;">
+                        <td><a class="txn-link" data-eid="${esc(f.event_id)}" href="${href}" style="font-family: monospace; font-size: 12px;">${esc(f.event_id)}</a></td>
+                        <td>${naVal(f.risk_score)} <span style="color: var(--text-dim); font-size: 11px;">${esc(f.risk_band || '')}</span></td>
+                        <td>${esc(f.risk_band || '—')}</td>
+                        <td style="font-size: 12px;">${esc(f.scored_at ?? '—')}</td>
+                    </tr>`;
+                }).join('')
+                    : '<tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 24px;">No flagged transactions in the recorded data</td></tr>';
 
-                loadServices(status);
+                // Simple system lines.
+                const svcLine = st.services_total
+                    ? `● System: ${operational ? 'Operational' : 'Attention needed'} — ${st.services_ok}/${st.services_total} services healthy`
+                    : '● System: status unavailable';
+                $('dash-line-system').textContent = svcLine;
+                const mdl = (s.details && s.details.model) || {};
+                const modelOk = mdl.model_readiness === 'loaded' && mdl.runtime_state === 'READY';
+                $('dash-line-model').textContent = modelOk
+                    ? '● Model: operational'
+                    : '● Model: ' + (mdl.runtime_state || mdl.model_readiness || 'unavailable');
+                const dbState = s.details && s.details.db;
+                $('dash-line-database').textContent = (dbState === 'ok' || dbState === 'healthy')
+                    ? '● Database: connected'
+                    : '● Database: ' + (dbState == null ? 'status unavailable' : dbState);
+
+                const warns = st.warnings || [];
+                const wb = $('dash-warnings');
+                wb.style.display = warns.length ? 'block' : 'none';
+                wb.innerHTML = warns.map(w => `• ${esc(w)}`).join('<br>');
+
+                // Collapsible technical detail (§5).
+                const d = s.details || {};
+                const chain = s.chain || {};
+                const qn = (chain.quarantined_breaks || []).length;
+                const chainText = chain.ok === false
+                    ? `broken at seq ${chain.first_bad_seq ?? '?'}`
+                    : (chain.ok === true
+                        ? (qn ? `verified · ${qn} historical link(s) quarantined` : 'verified end-to-end')
+                        : 'unavailable');
+                const rows = [
+                    ['Liveness', d.liveness],
+                    ['Readiness', d.readiness],
+                    ['Model readiness', d.model_readiness],
+                    ['Runtime state', d.runtime_state],
+                    ['Database', d.db],
+                    ['Audit chain', d.audit],
+                    ['Release attested', d.release_attested == null ? null : (d.release_attested ? 'yes' : 'NO')],
+                    ['Uptime (s)', d.uptime_seconds],
+                    ['Audit entries', chain.n_entries],
+                    ['Audit chain status', chainText],
+                    ['Model ID', mdl.model_id],
+                    ['Release ID', mdl.release_id],
+                    ['Governance model', mdl.governance_model_id],
+                    ['Governance release', mdl.governance_release_id],
+                    ['Feature version', mdl.feature_version],
+                    ['Threshold', mdl.threshold],
+                    ['Summary generated', s.ts],
+                ];
+                $('dash-details-body').innerHTML = rows.map(([k, v]) =>
+                    `<tr><td style="color: var(--text-dim);">${esc(k)}</td><td>${naVal(v)}</td></tr>`).join('');
             } catch (error) {
                 if (!error.sessionExpired) console.error('Failed to load dashboard:', error);
             }
@@ -1644,11 +2061,12 @@
                 case 'live':
                     startLive();
                     break;
-                case 'services':
+                case 'system':
+                    // One secondary area: services, model identity,
+                    // database explorer, query editor.
                     try { loadServices(await authFetch('/status').then(r => r.json())); }
                     catch (e) { if (!e.sessionExpired) console.error(e); }
-                    break;
-                case 'database':
+                    loadSettingsPanel();
                     await loadDbSchema();
                     break;
                 case 'audit':
@@ -1664,9 +2082,31 @@
                     if (!txnDetailOpen) loadTransactions();
                     break;
                 case 'settings':
-                    loadSettingsPanel();
+                    loadPrefsPanel();
                     break;
             }
+        }
+
+        // Settings tab: console preferences (browser-local only)
+        function loadPrefsPanel() {
+            const prefs = readPrefs();
+            if ($('pref-dash-refresh')) $('pref-dash-refresh').value = String(prefs.dashRefresh);
+            if ($('pref-live-refresh')) $('pref-live-refresh').value = String(prefs.liveRefresh);
+            if ($('pref-rows')) $('pref-rows').value = String(prefs.rowsPerPage);
+        }
+
+        function readPrefs() {
+            let p = {};
+            try { p = JSON.parse(storeGet('admin_prefs') || '{}') || {}; } catch (e) { p = {}; }
+            return {
+                dashRefresh: parseInt(p.dashRefresh, 10) || 30,
+                liveRefresh: parseInt(p.liveRefresh, 10) || 5,
+                rowsPerPage: parseInt(p.rowsPerPage, 10) || 50,
+            };
+        }
+
+        function savePrefs() {
+            storeSet('admin_prefs', JSON.stringify(readPrefs()));
         }
         
         // Database explorer: schema for the selected DB, row browsing, and
@@ -1872,42 +2312,90 @@
         function setChainStatus(it, errDetail) {
             const title = document.getElementById('audit-chain-title');
             const detail = document.getElementById('audit-chain-detail');
+            const forkBox = document.getElementById('audit-fork-box');
+            const hygiene = document.getElementById('audit-hygiene');
+            const setHygiene = (text, cls) => {
+                if (hygiene) { hygiene.textContent = text; hygiene.className = cls; }
+            };
             if (errDetail) {
-                title.textContent = '⚠ Audit service unreachable';
-                detail.textContent = errDetail + ' — chain status cannot be verified right now';
+                title.textContent = 'Audit service unreachable';
+                detail.textContent = '● ' + errDetail + ' — chain status cannot be verified right now';
+                if (forkBox) forkBox.style.display = 'none';
+                setHygiene('● Unavailable', 'status-warn');
                 return;
             }
-            if (it && it.ok) {
-                title.textContent = '✓ Chain verified';
+            const qn = it && Array.isArray(it.quarantined_breaks) ? it.quarantined_breaks.length : 0;
+            if (it && it.ok === true && it.strict_ok === false && qn) {
+                // Documented historical fork: current chain is clean, the
+                // old break is quarantined (Phase 109).
+                title.textContent = 'Chain verified — historical break quarantined';
+                detail.textContent = `${it.n_entries} entries · current hygiene clean · ${qn} historical link(s) quarantined (strict break @ ${it.first_bad_seq ?? '?'})`;
+                if (forkBox) forkBox.style.display = 'block';
+                setHygiene('● Clean', 'status-ok');
+            } else if (it && it.ok) {
+                title.textContent = 'Chain verified';
                 detail.textContent = `${it.n_entries} entries · genesis ${(it.genesis_hash || '').substring(0, 14)}… · no broken links`;
+                if (forkBox) forkBox.style.display = 'none';
+                setHygiene('● Clean', 'status-ok');
             } else if (it) {
-                title.textContent = '✗ Chain broken';
+                title.textContent = 'Chain broken';
                 detail.textContent = `first bad entry at seq ${it.first_bad_seq ?? '?'} of ${it.n_entries ?? '?'} — entries from that point cannot be trusted`;
+                if (forkBox) forkBox.style.display = 'block';
+                setHygiene('● Broken', 'status-bad');
             } else {
                 title.textContent = 'Chain status unknown';
                 detail.textContent = 'no data returned by the audit service';
+                if (forkBox) forkBox.style.display = 'none';
+                setHygiene('● Unknown', 'status-warn');
             }
         }
 
         async function loadAuditOverview() {
             const tbody = document.getElementById('audit-table-body');
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-dim); padding: 32px;">Loading audit events…</td></tr>';
+            const tech = document.getElementById('audit-tech-body');
+            const techSum = document.getElementById('audit-tech-summary');
+            const loading = '<tr><td colspan="3" style="text-align: center; color: var(--text-dim); padding: 32px;">Loading audit events…</td></tr>';
+            tbody.innerHTML = loading;
+            tech.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-dim); padding: 32px;">Loading…</td></tr>';
             try {
                 const resp = await authFetch('/admin/api/audit-overview?limit=50');
                 const data = await resp.json();
                 if (!resp.ok) {
                     setChainStatus(null, resp.status === 503 ? (data.detail || 'service down') : 'failed to load');
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger); padding: 32px;">Audit service unavailable</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--danger); padding: 32px;">Audit service unavailable</td></tr>';
+                    tech.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger); padding: 32px;">Audit service unavailable</td></tr>';
+                    if (techSum) techSum.textContent = '—';
                     return;
                 }
                 setChainStatus(data.integrity || null, null);
                 document.getElementById('audit-total-note').textContent = data.total != null ? `${data.total} entries total` : '';
                 const events = data.events || [];
+                const bad = events.filter(e => e.self_consistent === false).length;
+                if (techSum) {
+                    techSum.textContent = `${events.length} most recent entries · ` +
+                        (bad ? `${bad} FAILED local hash verification` : 'all verified against their recorded prev-hash');
+                }
                 if (!events.length) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-dim); padding: 32px;">No audit events found</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-dim); padding: 32px;">No audit events found</td></tr>';
+                    tech.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-dim); padding: 32px;">No audit events found</td></tr>';
                     return;
                 }
+                // Simple table: Time / Event / Status
                 tbody.innerHTML = events.map(ev => {
+                    const t = ev.created_at ? new Date(ev.created_at).toLocaleString() : '—';
+                    const okRow = ev.self_consistent === true;
+                    const mark = ev.self_consistent == null
+                        ? '<span style="color: var(--text-dim);">—</span>'
+                        : (okRow ? '<span class="status-ok">✓ verified</span>'
+                                 : '<span class="status-bad">✗ mismatch</span>');
+                    return `<tr>
+                        <td style="font-size: 12px;">${esc(t)}</td>
+                        <td>${esc(ev.event_type)} <span style="color: var(--text-dim); font-size: 11px;">#${ev.seq}</span></td>
+                        <td style="font-size: 12px;">${mark}</td>
+                    </tr>`;
+                }).join('');
+                // Technical table: full evidence, opt-in expander
+                tech.innerHTML = events.map(ev => {
                     let pay = '';
                     try {
                         pay = typeof ev.payload === 'object' ? JSON.stringify(ev.payload) : String(ev.payload ?? '');
@@ -1929,7 +2417,8 @@
             } catch (error) {
                 if (!error.sessionExpired) {
                     setChainStatus(null, 'request failed');
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger); padding: 32px;">Failed to load audit events</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--danger); padding: 32px;">Failed to load audit events</td></tr>';
+                    tech.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--danger); padding: 32px;">Failed to load audit events</td></tr>';
                 }
             }
         }
@@ -1988,11 +2477,14 @@
         function startLive() {
             stopLive();
             loadLive();
-            liveTimer = setInterval(loadLive, 5000);
+            const secs = (typeof readPrefs === 'function') ? readPrefs().liveRefresh : 5;
+            liveTimer = setInterval(loadLive, Math.max(2, secs) * 1000);
+            if (!liveTicker) liveTicker = setInterval(liveTick, 1000);
         }
 
         function stopLive() {
             if (liveTimer) { clearInterval(liveTimer); liveTimer = null; }
+            if (liveTicker) { clearInterval(liveTicker); liveTicker = null; }
         }
 
         // Access control: real session/login metadata from the login response
@@ -2120,6 +2612,8 @@
         let liveWindow = '15m';
         let livePaused = false;
         let liveFails = 0;
+        let liveLastOk = 0;
+        let liveTicker = null;
 
         const truncate = (s, n) => (s && s.length > n ? s.slice(0, n) + '…' : (s || ''));
         const naVal = (v) => v == null || v === '' ? '<span style="color: var(--text-dim);">N/A</span>' : esc(String(v));
@@ -2134,6 +2628,11 @@
         function txFilterParams() {
             const p = new URLSearchParams();
             const set = (k, v) => { if (v !== '' && v != null) p.set(k, v); };
+            // Quick search box: one free-text field that feeds the exact
+            // identifier filters (event ID first, then fraud ID).
+            const quick = ($('f-quick') ? $('f-quick').value.trim() : '');
+            if (quick && /^F/i.test(quick)) set('fraud_id', quick);
+            else if (quick) set('event_id', quick);
             set('event_id', $('f-event').value.trim());
             set('fraud_id', $('f-fraud').value.trim());
             set('decision', $('f-decision').value);
@@ -2154,7 +2653,7 @@
         async function loadTransactions() {
             const err = $('f-error');
             err.style.display = 'none';
-            $('f-rows').innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-dim); padding: 24px;">Loading…</td></tr>';
+            $('f-rows').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 24px;">Loading…</td></tr>';
             try {
                 const p = txFilterParams();
                 const r = await authFetch('/admin/api/transactions?' + p.toString());
@@ -2168,27 +2667,26 @@
                 $('f-prev').disabled = txnPage <= 0;
                 $('f-next').disabled = (txnPage + 1) * (d.limit || txnLimit) >= txnTotal;
                 if (!rows.length) {
-                    $('f-rows').innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-dim); padding: 24px;">No rows match these filters</td></tr>';
+                    $('f-rows').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 24px;">No rows match these filters</td></tr>';
                     return;
                 }
                 $('f-rows').innerHTML = rows.map(row => {
                     const href = `/admin/transactions/${encodeURIComponent(row.event_id)}`;
+                    const band = row.risk_band == null ? null : String(row.risk_band);
+                    const flagged = band && band !== 'low' && band !== 'unknown';
                     return `<tr>
-                        <td>${esc(row.scored_at ?? '—')}</td>
+                        <td style="font-size: 12px;">${esc(row.scored_at ?? '—')}</td>
                         <td><a class="txn-link" data-eid="${esc(row.event_id)}" href="${href}" style="font-family: monospace; font-size: 12px;">${esc(row.event_id)}</a></td>
-                        <td style="font-size: 12px;">${esc(row.fraud_id ?? '—')}</td>
-                        <td>${naVal(row.risk_score)}</td>
-                        <td>${naVal(row.risk_band)}</td>
+                        <td>${naVal(row.risk_score)}${flagged ? ` <span style="font-size: 11px; color: ${flagged ? 'var(--warning)' : 'var(--text-dim)'};">${esc(band)}</span>` : ''}</td>
                         <td>${naVal(row.decision)}</td>
-                        <td>${row.degraded ? '⚠ yes' : 'no'}</td>
-                        <td>${esc(row.data_quality_status ?? '—')}</td>
+                        <td>${band ? `<span class="card-status ${flagged ? 'warning' : 'healthy'}" style="font-size: 11px;">${esc(band)}</span>` : '<span style="color: var(--text-dim)">N/A</span>'}</td>
                     </tr>`;
                 }).join('');
             } catch (e) {
                 if (e.sessionExpired) return;
                 err.textContent = e.message || String(e);
                 err.style.display = 'block';
-                $('f-rows').innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--danger); padding: 24px;">Search failed</td></tr>';
+                $('f-rows').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--danger); padding: 24px;">Search failed</td></tr>';
             }
         }
 
@@ -2199,7 +2697,10 @@
             $('txn-detail-panel').style.display = 'block';
             $('d-event-id').textContent = eventId;
             $('d-error').style.display = 'none';
-            $('d-summary').innerHTML = '<div class="card"><div class="card-value" style="font-size: 15px;">Loading…</div><div class="card-label">fetching recorded evidence</div></div>';
+            $('d-hero-title').textContent = 'Transaction';
+            $('d-summary').innerHTML = '<div class="kpi"><div class="kpi-value">…</div><div class="kpi-label">fetching recorded evidence</div></div>';
+            $('d-why').innerHTML = '<span style="color: var(--text-dim);">Loading…</span>';
+            $('d-fields').innerHTML = '<tr><td style="color: var(--text-dim); padding: 20px;">Loading…</td></tr>';
             $('d-stages').innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 20px;">Loading…</td></tr>';
             $('d-audit').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">Loading…</td></tr>';
             $('d-reasons').textContent = 'REASON_NOT_AVAILABLE';
@@ -2224,25 +2725,66 @@
             const stages = Array.isArray(d.stages) ? d.stages : [];
             const dqStage = stages.find(s => s.stage === 'input_validation') || {};
             const dqStatus = (dqStage.evidence || {}).data_quality_status;
-            const card = (title, badge, value, label) => `<div class="card">
-                <div class="card-header"><span class="card-status ${badge}">${title}</span></div>
-                <div class="card-value" style="font-size: 16px;">${value}</div>
-                <div class="card-label">${label}</div></div>`;
+            const band = val(sc.risk_band);
+            const flagged = band && band !== 'low' && band !== 'unknown';
+
+            // Hero: name the situation instead of echoing the route.
+            $('d-hero-title').textContent = flagged ? 'FLAGGED TRANSACTION' : 'Transaction';
+
+            // KPI top row — the four facts an operator scans first.
+            const kpi = (value, label, cls) => `<div class="kpi${cls ? ' ' + cls : ''}">
+                <div class="kpi-value">${value}</div><div class="kpi-label">${label}</div></div>`;
             $('d-summary').innerHTML = [
-                card('Decision', d.decision ? 'warning' : 'healthy', naVal(d.decision),
-                     'source: ' + esc(d.decision_source || 'not_recorded') + (d.escalation_reason ? ' · ' + esc(d.escalation_reason) : '')),
-                card('Risk score', 'healthy', naVal(val(sc.risk_score)),
-                     'band ' + esc(val(sc.risk_band, '?')) + ' · threshold ' + esc(String(val(ctx.threshold, 'N/A')))),
-                card('ML / Rules', 'healthy',
-                     esc(String(val(sc.ml_score, 'N/A'))) + ' / ' + esc(String(val(sc.rule_score, 'N/A'))),
-                     'recorded ml_score / rule_score · N/A when not persisted'),
-                card('Degraded / DQ', sc.degraded ? 'offline' : 'healthy',
-                     (sc.degraded ? 'DEGRADED' : 'normal') + ' / ' + esc(dqStatus || 'unknown'),
-                     'data-quality stage: ' + esc(dqStatus || 'unknown')),
-                card('Model / Release', 'healthy', esc(String(val(ctx.model_id, sc.model_version, 'N/A'))),
-                     esc(String(val(ctx.release_id, 'N/A'))) + ' · fv ' + esc(String(val(ctx.feature_version, 'N/A')))),
-                card('Scored at', 'healthy', `<span style="font-size: 13px;">${esc(String(val(sc.scored_at, d.generated_at, 'N/A')))}</span>`,
-                     'score_id ' + esc(String(val(sc.score_id, 'N/A')))),
+                kpi(naVal(val(sc.risk_score)), 'Risk score (0-100)', flagged ? 'kpi-attention' : ''),
+                kpi(naVal(d.decision), 'Decision · ' + esc(d.decision_source || 'not_recorded')),
+                kpi(`<span style="font-size: 15px;">${esc(String(val(sc.scored_at, d.generated_at, 'N/A')))}</span>`, 'Scored at'),
+                kpi(esc(String(val(sc.degraded ? 'DEGRADED' : 'normal'))),
+                    'Runtime' + (dqStatus ? ' · DQ ' + esc(dqStatus) : '')),
+            ].join('');
+
+            // Why-box: human sentences first (authoritative reason texts),
+            // honest fallbacks when nothing human-readable is recorded.
+            const rs = Array.isArray(d.reasons) ? d.reasons : [];
+            const whyLines = [];
+            rs.forEach(x => {
+                if (typeof x === 'string') { if (x) whyLines.push(x); return; }
+                const t = x.text || x.detail || x.message;
+                if (t) whyLines.push(t);
+                else if (x.code) whyLines.push(String(x.code).replace(/_/g, ' ').toLowerCase());
+            });
+            if (!whyLines.length) {
+                if (d.escalation_reason) whyLines.push(String(d.escalation_reason));
+                else if (flagged) whyLines.push('Flagged for review: risk band is ' + band +
+                    (val(sc.risk_score) != null ? ' (score ' + sc.risk_score + ')' : '') + '.');
+            }
+            $('d-why').innerHTML = whyLines.length
+                ? '<ul>' + whyLines.map(t => `<li>${esc(t)}</li>`).join('') + '</ul>'
+                : '<span style="color: var(--text-dim);">' +
+                  (flagged ? 'Flagged for review. Detailed reasoning is unavailable.'
+                           : 'Detailed reasoning is unavailable.') + '</span>';
+
+            // Transaction details: key/value facts, technical depth stays
+            // inside the closed "Processing details" expander.
+            const field = (k, v) => `<tr><td style="color: var(--text-dim); width: 260px;">${esc(k)}</td><td>${naVal(v)}</td></tr>`;
+            $('d-fields').innerHTML = [
+                field('Event ID', d.event_id),
+                field('Fraud / transaction ID', val(sc.fraud_id, d.fraud_id)),
+                field('Decision', d.decision),
+                field('Decision source', d.decision_source),
+                field('Escalation reason', d.escalation_reason),
+                field('Risk score', val(sc.risk_score)),
+                field('Risk band', band),
+                field('ML score', val(sc.ml_score)),
+                field('Rule score', val(sc.rule_score)),
+                field('Scored at', val(sc.scored_at, d.generated_at)),
+                field('Data quality', dqStatus || val(d.data_quality_status)),
+                field('Degraded', sc.degraded == null ? null : (sc.degraded ? 'yes' : 'no')),
+                field('Model ID', val(ctx.model_id, sc.model_version)),
+                field('Release ID', ctx.release_id),
+                field('Feature version', ctx.feature_version),
+                field('Threshold', ctx.threshold),
+                field('Drift state', d.drift_state),
+                field('Runtime state', d.runtime_state),
             ].join('');
 
             $('d-stages').innerHTML = stages.length ? stages.map((s, i) => `<tr>
@@ -2252,7 +2794,6 @@
                 <td style="font-family: monospace; font-size: 11px; max-width: 480px; white-space: pre-wrap; word-break: break-all;">${esc(truncate(JSON.stringify(s.evidence ?? {}), 420))}</td>
             </tr>`).join('') : '<tr><td colspan="4" style="text-align: center; color: var(--text-dim); padding: 20px;">No trace recorded</td></tr>';
 
-            const rs = Array.isArray(d.reasons) ? d.reasons : [];
             $('d-reasons').innerHTML = rs.length ? rs.map(x => typeof x === 'string'
                 ? `<div>• ${esc(x)}</div>`
                 : `<div>• <b>${esc(x.code || x.reason || 'reason')}</b> ${esc(x.detail || x.message || '')}</div>`).join('')
@@ -2410,6 +2951,29 @@
                 ]);
                 liveFails = 0;
                 setConn('LIVE');
+                liveLastOk = Date.now();
+
+                // Simple default metrics (§10)
+                const w0 = live.windowed || {};
+                const wb0 = w0.by_band || {};
+                const flagged0 = Object.entries(wb0).filter(([b]) => b !== 'low' && b !== 'unknown')
+                    .reduce((s, [, n]) => s + (Number(n) || 0), 0);
+                liveSet('live-simple-total', w0.total == null ? 'N/A' : Number(w0.total).toLocaleString());
+                liveSet('live-simple-flagged', Object.keys(wb0).length ? String(flagged0) : 'N/A');
+                const lat0 = live.latency || {};
+                liveSet('live-simple-latency', lat0.p50_ms == null ? 'N/A' : String(Math.round(Number(lat0.p50_ms))));
+                liveSet('live-simple-blocks', w0.validation_blocks == null ? 'N/A' : String(w0.validation_blocks));
+
+                // Recent activity — simplified feed, click to investigate
+                const feed0 = live.feed || [];
+                const recent = $('live-recent');
+                if (recent) {
+                    recent.innerHTML = feed0.length ? feed0.slice(0, 8).map(f => `<li class="feed-row" data-eid="${esc(f.event_id || '')}">
+                        <span><b>${esc(f.decision ?? '—')}</b> · ${esc(f.event_id ?? '—')}</span>
+                        <span style="color: var(--text-dim);">${naVal(f.risk_score)} ${esc(f.decision_band ?? '')} · ${esc((f.timestamp ?? '').toString().slice(11, 19) || '—')}</span>
+                    </li>`).join('')
+                        : '<li style="cursor: default; color: var(--text-dim);">No scored events yet</li>';
+                }
 
                 // Legacy dashboard cards
                 liveSet('live-features-total', live.features_total == null ? '—' : live.features_total.toLocaleString());
@@ -2506,6 +3070,19 @@
             }
         }
 
+        // Honest connection state: "last updated Ns ago" ticks between
+        // polls; a stalled feed degrades to DISCONNECTED instead of
+        // freezing on a stale LIVE badge.
+        function liveTick() {
+            const el = $('live-ago');
+            if (!el) return;
+            if (livePaused) { el.textContent = 'Paused'; return; }
+            if (!liveLastOk) { el.textContent = 'Connecting…'; return; }
+            const age = Math.max(0, Math.round((Date.now() - liveLastOk) / 1000));
+            el.textContent = `Last updated ${age}s ago`;
+            if (age >= 15 && !livePaused) setConn('DISCONNECTED');
+        }
+
         // ---- Wiring ----
         document.addEventListener('DOMContentLoaded', () => {
             const rt = $('recovery-toggle');
@@ -2521,15 +3098,49 @@
             });
 
             ['f-search'].forEach(id => $(id) && $(id).addEventListener('click', () => { txnPage = 0; loadTransactions(); }));
+            if ($('f-quick')) {
+                $('f-quick').addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') { txnPage = 0; loadTransactions(); }
+                });
+            }
+            if ($('dash-view-all')) $('dash-view-all').addEventListener('click', () => activateTab('transactions'));
+            // Settings prefs: browser-local, applied immediately.
+            const prefApply = () => {
+                savePrefs();
+                startDashboardTimer();
+                if (currentTab === 'live' && !livePaused) startLive();
+            };
+            ['pref-dash-refresh', 'pref-live-refresh', 'pref-rows'].forEach(id => {
+                const el = $(id);
+                if (!el) return;
+                el.addEventListener('change', () => {
+                    const p = readPrefs();
+                    if (id === 'pref-dash-refresh') p.dashRefresh = parseInt(el.value, 10) || 30;
+                    if (id === 'pref-live-refresh') p.liveRefresh = parseInt(el.value, 10) || 5;
+                    if (id === 'pref-rows') {
+                        p.rowsPerPage = parseInt(el.value, 10) || 50;
+                        if ($('f-limit')) $('f-limit').value = String(p.rowsPerPage);
+                    }
+                    storeSet('admin_prefs', JSON.stringify(p));
+                    prefApply();
+                });
+            });
             $('f-reset') && $('f-reset').addEventListener('click', () => {
                 ['f-event', 'f-fraud', 'f-min', 'f-max', 'f-since', 'f-until'].forEach(id => $(id).value = '');
                 ['f-decision', 'f-band', 'f-degraded', 'f-dq', 'f-flagged'].forEach(id => $(id).value = '');
+                if ($('f-quick')) $('f-quick').value = '';
                 txnPage = 0;
                 loadTransactions();
             });
             $('f-prev') && $('f-prev').addEventListener('click', () => { if (txnPage > 0) { txnPage--; loadTransactions(); } });
             $('f-next') && $('f-next').addEventListener('click', () => { txnPage++; loadTransactions(); });
             $('d-back') && $('d-back').addEventListener('click', () => activateTab('transactions'));
+            $('mfa-manage-btn') && $('mfa-manage-btn').addEventListener('click', () => {
+                const p = $('mfa-manage');
+                const opening = p.style.display === 'none';
+                p.style.display = opening ? 'block' : 'none';
+                $('mfa-manage-btn').textContent = opening ? 'Hide MFA settings' : 'Manage MFA';
+            });
             $('totp-rotate-open') && $('totp-rotate-open').addEventListener('click', () => {
                 $('totp-rotate-panel').style.display = 'block';
                 $('totp-rotate-code').focus();
@@ -2546,7 +3157,7 @@
             if (lp) lp.addEventListener('click', () => {
                 livePaused = !livePaused;
                 lp.textContent = livePaused ? 'Resume' : 'Pause';
-                if (livePaused) { stopLive(); setConn('PAUSED'); }
+                if (livePaused) { stopLive(); setConn('PAUSED'); if ($('live-ago')) $('live-ago').textContent = 'Paused'; }
                 else startLive();
             });
 

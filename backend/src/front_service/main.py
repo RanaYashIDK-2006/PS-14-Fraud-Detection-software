@@ -2753,6 +2753,144 @@ def admin_api_transaction_detail(
     }
 
 
+def _runtime_model_block() -> dict:
+    """Authoritative model/runtime identity for API payloads.
+
+    Deployed (attested manifest) identity alongside the governance-layer
+    constants — one source shared by the live monitor and the Phase 112
+    operator summary so the two panels can never drift apart.
+    """
+    status_data = _STATUS_CACHE.get("data") or {}
+    risk_health = (status_data.get("risk") or {}).get("health") or {}
+    return {
+        "model_id": risk_health.get("model_id") or MC.CANONICAL_MODEL_VERSION,
+        "release_id": (risk_health.get("release_id")
+                       or MC.CANONICAL_LEGACY_RELEASE_ID),
+        "feature_version": (risk_health.get("feature_version")
+                            or MC.CANONICAL_FEATURE_VERSION),
+        "threshold": MC.CANONICAL_THRESHOLD,
+        "runtime_state": risk_health.get("runtime_state"),  # None -> N/A
+        "model_readiness": risk_health.get("model_readiness"),
+        "release_attested": risk_health.get("release_attested"),
+        # Phase 111: the governance layer sits alongside the deployed
+        # (grandfathered manifest) identity above, so the read-only model
+        # panel can show both documented conventions instead of making an
+        # operator guess which layer "release_id" belongs to.
+        "governance_model_id": MC.CANONICAL_MODEL_ID,
+        "governance_release_id": MC.CANONICAL_RELEASE_ID,
+        "source": "risk /health via status cache + manifest_contract",
+    }
+
+
+@app.get("/admin/api/summary")
+def admin_api_summary(request: Request) -> dict:
+    """Compact operator-dashboard payload (Phase 112): one small request.
+
+    Answers the dashboard questions — is the system working, are
+    transactions arriving, what is flagged, what needs attention — without
+    pulling the heavy live-monitor payload (feed rows, decision scans).
+    Counts are bounded read-only queries; status/details come from the
+    background-refreshed status cache. Absent sources return null so the
+    console renders N/A, never a fabricated zero.
+    """
+    _require_admin_session(request)
+    now = datetime.now(timezone.utc)
+    since = (now - timedelta(hours=24)).strftime("%Y-%m-%d %H:%M:%S")
+
+    status_data = _STATUS_CACHE.get("data") or {}
+    risk_health = (status_data.get("risk") or {}).get("health") or {}
+    chain = _CHAIN_CACHE.get("data") or {}
+
+    # 24h counts — real queries, bounded window.
+    tx_24h = _ro_scalar("risk",
+                        "SELECT COUNT(*) FROM risk_scores WHERE scored_at >= ?",
+                        (since,))
+    flagged_24h = _ro_scalar(
+        "risk",
+        "SELECT COUNT(*) FROM risk_scores "
+        "WHERE scored_at >= ? AND risk_band NOT IN ('low', 'unknown')",
+        (since,))
+    blocked_24h = _ro_scalar(
+        "audit",
+        "SELECT COUNT(*) FROM audit_events "
+        "WHERE event_type = 'data_quality_blocked' AND created_at >= ?",
+        (since,))
+    newest = _ro_rows("risk",
+                      "SELECT MAX(scored_at) AS newest FROM risk_scores") or []
+
+    # Recent flagged rows (bounded, newest first). "Flagged" matches the
+    # live monitor's metric: non-low, non-unknown band.
+    recent_src = _ro_rows(
+        "risk",
+        "SELECT event_id, risk_score, risk_band, scored_at FROM risk_scores "
+        "WHERE risk_band NOT IN ('low', 'unknown') "
+        "ORDER BY scored_at DESC, event_id LIMIT 8") or []
+    recent_flagged = [{
+        "event_id": r["event_id"],
+        "risk_score": r["risk_score"],
+        "risk_band": r["risk_band"],
+        "scored_at": r["scored_at"],
+    } for r in recent_src]
+
+    # Simple system status: warnings ONLY when something needs attention.
+    svc = [(k, v) for k, v in status_data.items() if isinstance(v, dict)]
+    ok_count = sum(1 for _, v in svc if v.get("status") == "ok")
+    warnings: list[str] = []
+    if svc and ok_count < len(svc):
+        warnings.append(f"{len(svc) - ok_count} service(s) not responding")
+    db_state = risk_health.get("db") or (
+        (risk_health.get("database") or {}).get("status"))
+    if db_state is not None and db_state != "ok" \
+            and db_state != "healthy":
+        warnings.append("Database connection issue")
+    if (risk_health.get("model_readiness") not in (None, "loaded")
+            or risk_health.get("runtime_state") not in (None, "READY")):
+        warnings.append("Model unavailable")
+    if chain.get("ok") is False:
+        warnings.append("Audit system requires attention")
+
+    return {
+        "ts": now.isoformat(),
+        "refresh_interval_s": 30,
+        "status": {
+            "state": "operational" if not warnings else "attention",
+            "warnings": warnings,
+            "services_ok": ok_count,
+            "services_total": len(svc),
+        },
+        "counts": {
+            "transactions_24h": tx_24h,
+            "flagged_24h": flagged_24h,
+            "blocked_24h": blocked_24h,
+            "newest_scored_at": (newest[0].get("newest") if newest else None),
+        },
+        "recent_flagged": recent_flagged,
+        "chain": {
+            "ok": chain.get("ok"),
+            "strict_ok": chain.get("strict_ok"),
+            "n_entries": chain.get("n_entries"),
+            "first_bad_seq": chain.get("first_bad_seq"),
+            "quarantined_breaks": chain.get("quarantined_breaks") or [],
+        },
+        "details": {
+            # Phase 110/111 technical fields, kept available behind the
+            # dashboard's collapsible "System Details" (they simply must
+            # not dominate the default view).
+            "liveness": risk_health.get("liveness"),
+            "readiness": risk_health.get("readiness"),
+            "model_readiness": risk_health.get("model_readiness"),
+            "runtime_state": risk_health.get("runtime_state"),
+            "db": db_state,
+            "audit": ("ok" if chain.get("ok") is True
+                      else ("attention" if chain.get("ok") is False
+                            else None)),
+            "release_attested": risk_health.get("release_attested"),
+            "uptime_seconds": risk_health.get("uptime_seconds"),
+            "model": _runtime_model_block(),
+        },
+    }
+
+
 @app.get("/admin/api/live")
 def admin_api_live(request: Request, window: str = "15m") -> dict:
     """Live monitor counters: direct mode=ro reads plus recent chain events.
@@ -2884,25 +3022,7 @@ def admin_api_live(request: Request, window: str = "15m") -> dict:
 
     # ── model / runtime: authoritative sources only ────────────────
     status_data = _STATUS_CACHE.get("data") or {}
-    risk_health = (status_data.get("risk") or {}).get("health") or {}
-    model_block = {
-        "model_id": risk_health.get("model_id") or MC.CANONICAL_MODEL_VERSION,
-        "release_id": (risk_health.get("release_id")
-                       or MC.CANONICAL_LEGACY_RELEASE_ID),
-        "feature_version": (risk_health.get("feature_version")
-                            or MC.CANONICAL_FEATURE_VERSION),
-        "threshold": MC.CANONICAL_THRESHOLD,
-        "runtime_state": risk_health.get("runtime_state"),  # None -> N/A
-        "model_readiness": risk_health.get("model_readiness"),
-        "release_attested": risk_health.get("release_attested"),
-        # Phase 111: the governance layer sits alongside the deployed
-        # (grandfathered manifest) identity above, so the read-only Model
-        # & Release panel can show both documented conventions instead of
-        # making an operator guess which layer "release_id" belongs to.
-        "governance_model_id": MC.CANONICAL_MODEL_ID,
-        "governance_release_id": MC.CANONICAL_RELEASE_ID,
-        "source": "risk /health via status cache + manifest_contract",
-    }
+    model_block = _runtime_model_block()
 
     return {
         "ts": now.isoformat(),
@@ -2976,9 +3096,29 @@ def admin_audit_overview(request: Request, limit: int = 50) -> dict:
         raise HTTPException(status_code=503, detail=f"integrity check failed (http {integrity_resp.status_code})")
     integrity = integrity_resp.json()
     events = events_resp.json() if events_resp.status_code == 200 else {}
+    # Phase 112: per-row verification for the simplified audit table's
+    # Status column. Same recompute rule as the transaction detail view
+    # (sha256(prev_hash + canonical(payload)) vs entry_hash) — the chain
+    # verdict itself still comes from the authoritative integrity block.
+    from src.audit_service.writer import canonical as _canonical
+    ev_out = []
+    for ev in events.get("events", []):
+        row = dict(ev)
+        payload = row.get("payload")
+        recomputed = None
+        if isinstance(payload, dict) and row.get("prev_hash") is not None:
+            try:
+                recomputed = hashlib.sha256(
+                    (row["prev_hash"] + _canonical(payload)).encode()
+                ).hexdigest()
+            except (TypeError, ValueError):
+                recomputed = None
+        row["self_consistent"] = (
+            bool(recomputed) and recomputed == row.get("entry_hash"))
+        ev_out.append(row)
     return {
         "integrity": integrity,
-        "events": events.get("events", []),
+        "events": ev_out,
         "total": events.get("total"),
     }
 
