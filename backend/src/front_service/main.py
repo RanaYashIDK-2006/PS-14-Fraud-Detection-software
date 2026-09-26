@@ -2717,19 +2717,6 @@ def admin_api_transactions(
     if degraded is not None:
         where.append("degraded = ?")
         params.append(1 if degraded else 0)
-    if review and review != "all":
-        # Phase 113: review-state filter over the same event keys — an
-        # absent review row counts as UNREVIEWED. "needs" scopes to
-        # flagged rows so it matches the dashboard KPI population.
-        _ensure_review_tables()  # honest 503 when the review store is down
-        state = {"needs": "UNREVIEWED", "under": "UNDER_REVIEW",
-                 "reviewed": "REVIEWED"}[review]
-        where.append(
-            "COALESCE((SELECT review_state FROM event_reviews er "
-            "WHERE er.event_id = risk_scores.event_id), 'UNREVIEWED') = ?")
-        params.append(state)
-        if review == "needs":
-            where.append("risk_band NOT IN ('low', 'unknown')")
 
     def _audit_id_set(sql: str, extra: list) -> list[str]:
         """Resolve a DB-4-derived fraud_id allow/deny set (capped)."""
@@ -2789,6 +2776,49 @@ def admin_api_transactions(
             marks = ",".join("?" * len(dq_ids))
             where.append(f"fraud_id NOT IN ({marks})")
             params.extend(dq_ids)
+
+    # Phase 114 (queue): authoritative per-state counts under the SAME
+    # filters MINUS the review scope, so each chip shows exactly what
+    # switching to it would return — three bounded COUNTs, never a
+    # client-side tally. An absent review store leaves them null, which
+    # the console renders as N/A (never a fabricated zero).
+    review_counts: dict | None = None
+    try:
+        _ensure_review_tables()
+        bw, bp = list(where), list(params)
+        _st = ("COALESCE((SELECT review_state FROM event_reviews er "
+               "WHERE er.event_id = risk_scores.event_id), 'UNREVIEWED')")
+
+        def _rc(extra: list, extra_p: list) -> int:
+            w = " AND ".join(bw + extra) if (bw or extra) else "1=1"
+            return _ro_scalar(
+                "risk", f"SELECT COUNT(*) FROM risk_scores WHERE {w}",
+                tuple(bp) + tuple(extra_p)) or 0
+
+        review_counts = {
+            "needs": _rc([f"{_st} = ?",
+                          "risk_band NOT IN ('low', 'unknown')"],
+                         ["UNREVIEWED"]),
+            "under": _rc([f"{_st} = ?"], ["UNDER_REVIEW"]),
+            "reviewed": _rc([f"{_st} = ?"], ["REVIEWED"]),
+        }
+    except HTTPException:
+        review_counts = None
+
+    if review and review != "all":
+        # Phase 113 (moved down in Phase 114 so the counts above see the
+        # unscoped filters): review-state filter over the same event keys
+        # — an absent review row counts as UNREVIEWED. "needs" scopes to
+        # flagged rows so it matches the dashboard KPI population.
+        _ensure_review_tables()  # honest 503 when the review store is down
+        state = {"needs": "UNREVIEWED", "under": "UNDER_REVIEW",
+                 "reviewed": "REVIEWED"}[review]
+        where.append(
+            "COALESCE((SELECT review_state FROM event_reviews er "
+            "WHERE er.event_id = risk_scores.event_id), 'UNREVIEWED') = ?")
+        params.append(state)
+        if review == "needs":
+            where.append("risk_band NOT IN ('low', 'unknown')")
 
     where_sql = " AND ".join(where) if where else "1=1"
     total = _ro_scalar("risk",
@@ -2878,6 +2908,7 @@ def admin_api_transactions(
         "limit": limit,
         "offset": offset,
         "has_more": offset + len(out_rows) < total,
+        "review_counts": review_counts,
         "decision_source": ("audit_payload" if decision else None),
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -3169,7 +3200,12 @@ def admin_api_summary(request: Request) -> dict:
     # reviewing yet (disjoint from UNDER_REVIEW / REVIEWED, matches the
     # Transactions "Needs Review" chip exactly).  Absent review store ->
     # null, so the console renders N/A, never a fabricated zero.
+    # Phase 114: two compact companions so the KPI can show what is being
+    # worked right now and what is done — one bounded COUNT over the
+    # (tiny) review table each, never a frontend tally.
     needs_review: int | None = None
+    under_review: int | None = None
+    reviewed_count: int | None = None
     try:
         _ensure_review_tables()
         needs_review = _ro_scalar(
@@ -3180,8 +3216,18 @@ def admin_api_summary(request: Request) -> dict:
             "WHERE er.event_id = risk_scores.event_id), 'UNREVIEWED') "
             "= 'UNREVIEWED'",
             (since,))
+        under_review = _ro_scalar(
+            "risk",
+            "SELECT COUNT(*) FROM event_reviews "
+            "WHERE review_state = 'UNDER_REVIEW'")
+        reviewed_count = _ro_scalar(
+            "risk",
+            "SELECT COUNT(*) FROM event_reviews "
+            "WHERE review_state = 'REVIEWED'")
     except HTTPException:
         needs_review = None
+        under_review = None
+        reviewed_count = None
 
     # Recent flagged rows (bounded, newest first). "Flagged" matches the
     # live monitor's metric: non-low, non-unknown band.
@@ -3275,6 +3321,8 @@ def admin_api_summary(request: Request) -> dict:
             "flagged_24h": flagged_24h,
             "blocked_24h": blocked_24h,
             "needs_review": needs_review,
+            "under_review": under_review,
+            "reviewed": reviewed_count,
             "newest_scored_at": (newest[0].get("newest") if newest else None),
         },
         "recent_flagged": recent_flagged,

@@ -525,9 +525,9 @@ ok("txnLimit = parseInt($('f-limit').value, 10) || 50" in shell,
    "explicit page size still drives limit/offset")
 
 # Detail navigation (§8).
-ok('<button id="d-prev" class="table-btn" disabled>Previous flagged</button>'
+ok('<button id="d-prev" class="table-btn" disabled>← Previous flagged</button>'
    in shell, "Previous flagged control exists, disabled by default")
-ok('<button id="d-next" class="table-btn" disabled>Next flagged</button>'
+ok('<button id="d-next" class="table-btn" disabled>Next flagged →</button>'
    in shell, "Next flagged control exists, disabled by default")
 ok("'← Back to flagged transactions'" in shell
    and "'← Back to transactions'" in shell,
