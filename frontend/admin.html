@@ -1560,7 +1560,7 @@
                 <!-- Transactions Tab (Phase 111) -->
                 <div id="tab-transactions" class="tab-content" style="display: none;">
                     <div class="content-header">
-                        <h2 class="content-title">Transactions</h2>
+                        <h2 class="content-title" id="tx-title">Transactions</h2>
                         <p class="content-subtitle">Search and investigate flagged transactions</p>
                     </div>
 
@@ -1570,10 +1570,20 @@
                                aria-label="Search transactions by event ID or transaction ID">
                         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px;">
                             <button id="f-search" class="passcode-btn" style="width: auto; padding: 10px 24px;">Search</button>
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-dim);">Period
+                                <select id="f-range" aria-label="Date range" style="padding: 8px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text);">
+                                    <option value="today">Today</option>
+                                    <option value="24h">Last 24 hours</option>
+                                    <option value="7d">Last 7 days</option>
+                                    <option value="30d">Last 30 days</option>
+                                    <option value="" selected>All time</option>
+                                </select>
+                            </label>
                             <button id="f-reset" class="table-btn" style="display: none;">Clear filters</button>
                             <span id="f-count" style="font-size: 12px; color: var(--text-dim);"></span>
                         </div>
                         <p id="f-error" class="passcode-error" style="margin-bottom: 10px;"></p>
+                        <button id="f-retry" class="table-btn" style="display: none; width: auto; margin-bottom: 10px;">Retry</button>
 
                         <!-- Quick filter chips (§16) -->
                         <div class="filter-chips" id="f-chips" role="group" aria-label="Quick filters">
@@ -1642,7 +1652,11 @@
                                 <h2 class="content-title" id="d-hero-title">Transaction</h2>
                                 <p class="content-subtitle" id="d-event-id" style="font-family: monospace;">—</p>
                             </div>
-                            <button id="d-back" class="table-btn">← Back to results</button>
+                            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                                <button id="d-prev" class="table-btn" disabled>Previous flagged</button>
+                                <button id="d-next" class="table-btn" disabled>Next flagged</button>
+                                <button id="d-back" class="table-btn">← Back to results</button>
+                            </div>
                         </div>
                         <p id="d-error" class="passcode-error"></p>
 
@@ -1674,6 +1688,14 @@
                                 </div>
                             </div>
                             <div style="padding: 2px 16px 16px;">
+                                <!-- Investigation continuity (Phase 114 §9): recorded facts only —
+                                     anything the backend does not record renders N/A, never an
+                                     inferred reviewer, verdict or resolution. -->
+                                <div id="d-continuity" style="font-size: 13px; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 6px;">
+                                    <div id="d-cont-status" style="margin: 3px 0;">Status: —</div>
+                                    <div id="d-cont-evidence" style="margin: 3px 0;">Evidence: —</div>
+                                    <div id="d-cont-audit" style="margin: 3px 0;">Audit trail: —</div>
+                                </div>
                                 <div id="d-review-state" style="font-size: 14px; margin: 8px 0 10px;">
                                     <span class="skel" style="width: 30%;"></span>
                                 </div>
@@ -2018,13 +2040,14 @@
             $('login-time').textContent = new Date().toLocaleString();
             fillAccessMeta();
             loadDashboard();
+            // Transaction-page URL state (Phase 114 §7): restore filters,
+            // period and page BEFORE the first load so a shared or refreshed
+            // URL lands on the same list. applyTxnQuery covers the old one-shot
+            // ?status=flagged deep link too — one load, no double fetch.
+            const txnQ = applyTxnQuery(new URLSearchParams(window.location.search));
             const r0 = routeFromPath();
-            if (r0.tab !== 'dashboard' || r0.detail) activateTab(r0.tab, { push: false, detail: r0.detail });
-            // Deep link: /admin/transactions?status=flagged (§4) — the URL
-            // form of the flagged KPI, applied once after the gate.
-            try {
-                if (new URLSearchParams(window.location.search).get('status') === 'flagged') goFlagged();
-            } catch (e) { /* no query string */ }
+            if (txnQ && r0.tab === 'dashboard' && !r0.detail) activateTab('transactions', { push: false });
+            else if (r0.tab !== 'dashboard' || r0.detail) activateTab(r0.tab, { push: false, detail: r0.detail });
             startDashboardTimer();
         }
 
@@ -2166,7 +2189,13 @@
                                     : (ROUTE_TABS[tab] || null);
                 // Tabs without a server route (Live Monitor, System
                 // Details) keep the current URL instead of faking one.
-                if (path && window.location.pathname !== path) history.pushState({ tab, detail }, '', path);
+                // Transaction LIST URLs carry their shareable filter state (§7);
+                // an identical target never pushes twice, so navigation cannot
+                // ping-pong history entries.
+                const qs = (path && !detail && tab === 'transactions') ? txnUrlQuery() : '';
+                const target = path ? path + qs : null;
+                if (target && window.location.pathname + window.location.search !== target)
+                    history.pushState({ tab, detail }, '', target);
             }
         }
 
@@ -2179,7 +2208,14 @@
 
         window.addEventListener('popstate', () => {
             if (!isAdminAuthenticated) return;
+            // Back/Forward restores the exact list state from the entry's own
+            // query (Phase 114 §7); push stays disabled here so restoring a
+            // state can never create a new entry (no ping-pong). Detail
+            // entries carry no query — they never owned list state, so
+            // passing over one must not wipe the filters a detail's context
+            // (prev/next, back label) is built from.
             const r = routeFromPath();
+            if (!r.detail) applyTxnQuery(new URLSearchParams(window.location.search));
             activateTab(r.tab, { push: false, detail: r.detail });
         });
 
@@ -2299,7 +2335,8 @@
             const query = String(q || '').trim();
             if (!query) return;
             ['f-event', 'f-fraud', 'f-decision', 'f-band', 'f-min', 'f-max',
-             'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged', 'f-review'].forEach(id => {
+             'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged', 'f-review',
+             'f-range'].forEach(id => {
                 const el = $(id); if (el) el.value = '';
             });
             const quick = $('f-quick');
@@ -3080,6 +3117,12 @@
         // the exact-ID auto-open never fires on pagination, chip switches,
         // or browser Back re-loading the list (§15/§26).
         let txnOpenExact = false;
+        // Phase 114 §8/§9: the authoritative result set the detail was opened
+        // from — its ids, the shareable list URL, and whether that list is the
+        // flagged view. null = no context (deep link miss), so prev/next stay
+        // disabled instead of guessing an order on the client.
+        let txnCtx = null;
+        let txnDetailId = null;
         let liveWindow = '15m';
         let livePaused = false;
         let liveFails = 0;
@@ -3097,6 +3140,30 @@
             $('txn-detail-panel').style.display = 'none';
         }
 
+        // ---- Period filter + UTC serialization (Phase 114 §3) ----------
+        // The backend parses ONLY YYYY-MM-DD[ HH:MM:SS] (naive UTC) — an
+        // ISO-Z string is a 400. Every frontend timestamp therefore lands
+        // here as a UTC wall-clock stamp; nothing is ever fabricated.
+        function utcStamp(ms) {
+            return new Date(ms).toISOString().slice(0, 19).replace('T', ' ');
+        }
+        function localToUtcStamp(v) {
+            const t = new Date(v.length === 16 ? v + ':00' : v);
+            return isNaN(t) ? '' : utcStamp(t.getTime());
+        }
+        // Compact period choices (§3): UTC/server-authoritative windows.
+        function txRangeSince(range) {
+            const now = Date.now();
+            if (range === 'today') {
+                const d = new Date(now);
+                return utcStamp(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+            }
+            if (range === '24h') return utcStamp(now - 24 * 3600e3);
+            if (range === '7d') return utcStamp(now - 7 * 24 * 3600e3);
+            if (range === '30d') return utcStamp(now - 30 * 24 * 3600e3);
+            return null;
+        }
+
         function txFilterParams() {
             const p = new URLSearchParams();
             const set = (k, v) => { if (v !== '' && v != null) p.set(k, v); };
@@ -3111,8 +3178,14 @@
             set('band', $('f-band').value);
             set('min_score', $('f-min').value);
             set('max_score', $('f-max').value);
-            if ($('f-since').value) set('since', new Date($('f-since').value).toISOString());
-            if ($('f-until').value) set('until', new Date($('f-until').value).toISOString());
+            // Custom window (expando) wins over the compact period select;
+            // both serialize to the backend's UTC wall-clock format.
+            const customSince = $('f-since').value;
+            const customUntil = $('f-until').value;
+            const range = $('f-range') ? $('f-range').value : '';
+            if (customSince) set('since', localToUtcStamp(customSince));
+            else if (range) set('since', txRangeSince(range));
+            if (customUntil) set('until', localToUtcStamp(customUntil));
             set('degraded', $('f-degraded').value);
             set('data_quality', $('f-dq').value);
             set('flagged', $('f-flagged').value);
@@ -3123,11 +3196,117 @@
             return p;
         }
 
-        // Which quick chip matches the current filter state (§16); null =
-        // only advanced filters are set, so no chip highlights.
-        function activeFilterKind() {
+        // ---- Shareable URL state (Phase 114 §7) --------------------------
+        // Only non-sensitive filter state reaches the query string: enum
+        // filters, identifiers the operator typed, period, review scope and
+        // page. Never credentials, tokens, TOTP values, PANs or payloads.
+        // Unknown keys are dropped (allowlist); invalid values are ignored
+        // on the way back in, so a mangled URL falls back to defaults.
+        const TXN_URL_KEYS = ['q', 'event_id', 'fraud_id', 'band', 'decision',
+                              'min_score', 'max_score', 'degraded', 'data_quality',
+                              'review', 'since', 'until'];
+
+        function txnUrlQuery() {
             const p = txFilterParams();
             p.delete('limit'); p.delete('offset');
+            const quick = ($('f-quick') ? $('f-quick').value.trim() : '');
+            if (quick) {
+                // The quick box travels as `q`, not as a duplicated filter.
+                if (p.get('event_id') === quick) p.delete('event_id');
+                if (p.get('fraud_id') === quick) p.delete('fraud_id');
+                p.set('q', quick);
+            }
+            if (p.get('flagged') === 'true') { p.delete('flagged'); p.set('status', 'flagged'); }
+            const range = $('f-range') ? $('f-range').value : '';
+            if (range) { p.delete('since'); p.delete('until'); p.set('range', range); }
+            const page = txnPage + 1;
+            if (page > 1) p.set('page', String(page));
+            [...p.keys()].forEach(k => {
+                if (k !== 'status' && k !== 'range' && k !== 'page'
+                        && !TXN_URL_KEYS.includes(k)) p.delete(k);
+            });
+            return p.toString() ? '?' + p.toString() : '';
+        }
+
+        // Restore transaction-page state from a location query (§7).
+        // Returns true when the URL carried transaction state, so boot can
+        // open the transactions tab for /admin?status=flagged style links.
+        // List state restores WITHOUT auto-opening a detail (§6): this
+        // never sets txnOpenExact.
+        function applyTxnQuery(sp) {
+            if (!sp || !$('f-quick')) return false;
+            let applied = false;
+            ['f-quick', 'f-event', 'f-fraud', 'f-decision', 'f-band', 'f-min',
+             'f-max', 'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged',
+             'f-review', 'f-range'].forEach(id => { const el = $(id); if (el) el.value = ''; });
+            txnPage = 0;
+            txnOpenExact = false;
+            const set = (id, v) => { const el = $(id); if (el) el.value = v; };
+            if (sp.get('status') === 'flagged') { set('f-flagged', 'true'); applied = true; }
+            const range = sp.get('range');
+            if (range && ['today', '24h', '7d', '30d'].includes(range)) {
+                set('f-range', range); applied = true;
+            }
+            const q = sp.get('q');
+            if (q) { set('f-quick', q); applied = true; }
+            const ev = sp.get('event_id');
+            if (ev && /^[A-Za-z0-9_.:\-]{1,128}$/.test(ev)) { set('f-event', ev); applied = true; }
+            const fr = sp.get('fraud_id');
+            if (fr && /^F[A-Za-z0-9_\-]{3,64}$/.test(fr)) { set('f-fraud', fr); applied = true; }
+            const band = sp.get('band');
+            if (band && ['low', 'medium', 'high', 'critical', 'unknown'].includes(band)) {
+                set('f-band', band); applied = true;
+            }
+            const dec = sp.get('decision');
+            if (dec && ['allow', 'verify', 'step_up'].includes(dec)) {
+                set('f-decision', dec); applied = true;
+            }
+            const deg = sp.get('degraded');
+            if (deg === 'true' || deg === 'false') { set('f-degraded', deg); applied = true; }
+            const dq = sp.get('data_quality');
+            if (dq === 'passed' || dq === 'blocked') { set('f-dq', dq); applied = true; }
+            const rev = sp.get('review');
+            if (rev && ['needs', 'under', 'reviewed'].includes(rev)) {
+                set('f-review', rev); applied = true;
+            }
+            for (const [key, id] of [['since', 'f-since'], ['until', 'f-until']]) {
+                const v = sp.get(key);
+                if (v && /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}/.test(v)) {
+                    set(id, v.replace(' ', 'T').slice(0, 16)); applied = true;
+                }
+            }
+            for (const [key, id] of [['min_score', 'f-min'], ['max_score', 'f-max']]) {
+                const v = sp.get(key);
+                if (v && /^\d{1,3}$/.test(v) && +v >= 0 && +v <= 100) {
+                    set(id, v); applied = true;
+                }
+            }
+            const page = sp.get('page');
+            if (page && /^\d{1,6}$/.test(page) && +page >= 1) txnPage = +page - 1;
+            return applied;
+        }
+
+        // Push the current list state into the URL (§7). Idempotent: an
+        // identical target never pushes, so repeated loads and popstate
+        // restores cannot ping-pong history entries.
+        function pushTxnUrl() {
+            if (!isAdminAuthenticated || txnDetailOpen) return;
+            if (currentTab !== 'transactions') return;
+            const path = ROUTE_TABS['transactions'];
+            if (!path) return;
+            const target = path + txnUrlQuery();
+            if (window.location.pathname + window.location.search !== target)
+                history.pushState({ tab: 'transactions', detail: null }, '', target);
+        }
+
+        // Which quick chip matches the current filter state (§16); null =
+        // only advanced filters are set, so no chip highlights. Review scope
+        // and the period select are orthogonal axes (§5 Flagged + Last 7 days),
+        // so they never move the status chip.
+        function activeFilterKind() {
+            const p = txFilterParams();
+            p.delete('limit'); p.delete('offset'); p.delete('review');
+            if ($('f-range') && $('f-range').value) { p.delete('since'); p.delete('until'); }
             if (![...p.keys()].length) return 'all';
             if (p.get('flagged') === 'true') return 'flagged';
             if (p.get('decision') === 'allow') return 'approved';
@@ -3142,13 +3321,20 @@
             const rkind = ($('f-review') && $('f-review').value) || 'all';
             document.querySelectorAll('#f-rchips .chip').forEach(c =>
                 c.classList.toggle('active', c.dataset.rchip === rkind));
+            const rangeOn = !!($('f-range') && $('f-range').value);
             const reset = $('f-reset');
-            if (reset) reset.style.display = (kind === 'all' && rkind === 'all') ? 'none' : 'inline-block';
+            if (reset) reset.style.display = (kind === 'all' && rkind === 'all' && !rangeOn)
+                ? 'none' : 'inline-block';
+            // Dynamic page title (§2): the default flagged view names itself.
+            const title = $('tx-title');
+            if (title) title.textContent = kind === 'flagged' ? 'FLAGGED TRANSACTIONS' : 'Transactions';
         }
 
-        async function loadTransactions() {
+        async function loadTransactions(snapped) {
             const err = $('f-error');
             err.style.display = 'none';
+            const retry = $('f-retry');
+            if (retry) retry.style.display = 'none';
             $('f-rows').innerHTML = '<tr><td colspan="6" style="padding: 14px 20px;">' +
                 '<span class="skel" style="width: 90%;"></span>' +
                 '<span class="skel" style="width: 75%;"></span>' +
@@ -3184,6 +3370,13 @@
                 const wantOpen = txnOpenExact;
                 txnOpenExact = false;
                 const pages = Math.max(1, Math.ceil(txnTotal / (d.limit || txnLimit)));
+                if (!snapped && rows.length === 0 && txnTotal > 0 && txnPage > 0) {
+                    // URL page beyond the current result set (§7: invalid
+                    // parameters fall back safely) — snap once to the last
+                    // real page instead of showing a phantom empty list.
+                    txnPage = Math.max(0, pages - 1);
+                    return loadTransactions(true);
+                }
                 $('f-count').textContent = `${txnTotal.toLocaleString()} results · page size ${d.limit} (server-capped)`;
                 $('f-page').textContent = `page ${txnPage + 1} of ${pages}`;
                 $('f-prev').disabled = txnPage <= 0;
@@ -3195,29 +3388,47 @@
                     const fp = txFilterParams();
                     fp.delete('limit'); fp.delete('offset');
                     const hasFilters = [...fp.keys()].length > 0;
-                    const loneEventId = hasFilters && [...fp.keys()].length === 1
-                        && ((fp.get('event_id') === quick && quick.length > 0)
-                            || (fp.get('fraud_id') === quick && quick.length > 0));
+                    const idKeys = [...fp.keys()].filter(
+                        k => !['review', 'since', 'until'].includes(k));
+                    const loneEventId = idKeys.length === 1
+                        && (idKeys[0] === 'event_id' || idKeys[0] === 'fraud_id')
+                        && fp.get(idKeys[0]) === quick && quick.length > 0;
+                    const flaggedOn = fp.get('flagged') === 'true';
+                    const rangeOn = !!($('f-range') && $('f-range').value);
                     let msg, sub;
                     if (loneEventId) {
                         msg = 'Transaction not found';
                         sub = 'Check the event ID, or clear the search.';
-                    } else if (hasFilters) {
+                    } else if (flaggedOn && rangeOn) {
+                        msg = 'No flagged transactions in this period.';
+                        sub = 'Try a wider period (All time), or clear the filters.';
+                    } else if (flaggedOn) {
                         msg = 'No matching transactions';
                         sub = 'Try another event ID or remove some filters.';
+                    } else if (hasFilters) {
+                        msg = 'No transactions match these filters.';
+                        sub = 'Try another event ID, widen the period, or remove some filters.';
                     } else {
                         msg = 'No transactions yet';
                         sub = 'Transactions will appear here when the system receives them.';
                     }
                     $('f-rows').innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px;"><b style="color: var(--text);">${msg}</b><div style="font-size: 12px; color: var(--text-dim); margin-top: 4px;">${sub}</div></td></tr>`;
+                    // The empty set is still authoritative (§8): no ids to
+                    // page through, so prev/next in a detail stay disabled.
+                    txnCtx = { ids: [], params: txnUrlQuery(),
+                               flagged: flaggedOn };
+                    pushTxnUrl();
                     return;
                 }
                 // Exact-ID search opens the detail directly (§15).
-                const lone = [...p.keys()].filter(k => k !== 'review').length === 3; // id + limit + offset
+                const lone = [...p.keys()].filter(
+                    k => !['limit', 'offset', 'review', 'since', 'until'].includes(k)).length === 1;
                 if (wantOpen && lone && quick0 && rows.length === 1
                         && rows[0].event_id === quick0) {
                     // Same path as a row click: detail opens AND the URL
                     // reflects it, so Back returns to the list (§26).
+                    txnCtx = { ids: rows.map(x => x.event_id), params: txnUrlQuery(),
+                               flagged: ($('f-flagged') && $('f-flagged').value === 'true') };
                     activateTab('transactions', { detail: quick0 });
                     return;
                 }
@@ -3245,13 +3456,23 @@
                         <td data-label="Review" style="font-size: 12px;">${reviewCell}</td>
                     </tr>`;
                 }).join('');
+                // Keep the authoritative result set (§8) and the shareable
+                // list URL (§7) in step with what is actually on screen.
+                txnCtx = { ids: rows.map(x => x.event_id), params: txnUrlQuery(),
+                           flagged: ($('f-flagged') && $('f-flagged').value === 'true') };
+                pushTxnUrl();
             } catch (e) {
                 if (e.sessionExpired) return;
                 console.error('transactions search failed:', e);
+                txnCtx = null;
                 err.textContent = 'Unable to load transactions — try again.';
                 err.style.display = 'block';
+                const retry2 = $('f-retry');
+                if (retry2) retry2.style.display = 'inline-block';
                 $('f-count').textContent = '';
-                $('f-rows').innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-dim); padding: 24px;">No results to show</td></tr>';
+                // API unavailable (§13): name the outage honestly — this is
+                // never rendered as a fabricated zero count.
+                $('f-rows').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 24px;"><b style="color: var(--text);">Transactions unavailable</b><div style="font-size: 12px; color: var(--text-dim); margin-top: 4px;">The transaction service did not respond — use Retry, or check System Details.</div></td></tr>';
                 syncQuickUI();
             }
         }
@@ -3259,11 +3480,21 @@
         // ---- Transaction investigation detail ----
         async function openTxnDetail(eventId) {
             txnDetailOpen = true;
+            txnDetailId = eventId;
             $('txn-search-panel').style.display = 'none';
             $('txn-detail-panel').style.display = 'block';
             $('d-event-id').textContent = eventId;
             $('d-error').style.display = 'none';
             $('d-hero-title').textContent = 'Transaction';
+            // Navigation (§8): disabled until the authoritative context is
+            // known — an edge is a disabled control, never a wrap-around.
+            ['d-prev', 'd-next'].forEach(id => { const b = $(id); if (b) b.disabled = true; });
+            const backBtn = $('d-back');
+            if (backBtn) backBtn.textContent = '← Back to results';
+            [['d-cont-status', 'Status: …'], ['d-cont-evidence', 'Evidence: …'],
+             ['d-cont-audit', 'Audit trail: …']].forEach(([id, txt]) => {
+                const el = $(id); if (el) el.textContent = txt;
+            });
             $('d-summary').innerHTML = '<div class="kpi"><div class="kpi-value">…</div><div class="kpi-label">fetching recorded evidence</div></div>';
             const skelRows = (n, cols) => '<tr><td colspan="' + cols + '" style="padding: 14px 20px;">' +
                 Array.from({ length: n }, (_, i) => `<span class="skel" style="width: ${88 - i * 14}%;"></span>`).join('') + '</td></tr>';
@@ -3292,6 +3523,7 @@
                     throw failure;
                 }
                 renderTxnDetail(d);
+                await syncTxnContext(eventId, d);
             } catch (e) {
                 if (e.sessionExpired) return;
                 console.error('transaction detail failed:', e);
@@ -3301,6 +3533,59 @@
                 $('d-error').style.display = 'block';
                 $('d-summary').innerHTML = '';
             }
+        }
+
+        // Prev/next follow the authoritative result set the detail was opened
+        // from (§8): the list's own ids in the server's order (scored_at DESC),
+        // or ONE bounded requery for deep links. Ordering is never recalculated
+        // on the client, and there is no wrap-around.
+        async function syncTxnContext(eventId, d) {
+            const setNav = () => {
+                const idx = txnCtx ? txnCtx.ids.indexOf(txnDetailId) : -1;
+                if (txnCtx) txnCtx.idx = idx;
+                const prev = $('d-prev'), next = $('d-next');
+                if (prev) prev.disabled = !(idx > 0);
+                if (next) next.disabled = !(txnCtx && idx >= 0 && idx < txnCtx.ids.length - 1);
+                const back = $('d-back');
+                if (back) back.textContent = (txnCtx && txnCtx.flagged)
+                    ? '← Back to flagged transactions' : '← Back to transactions';
+            };
+            if (txnCtx && txnCtx.ids.indexOf(eventId) !== -1) { setNav(); return; }
+            // Deep link / direct click (no list behind it): rebuild the context
+            // with the same authoritative query the list would run, bounded at
+            // one server-capped page.
+            const sc = (d && d.score && typeof d.score === 'object') ? d.score : (d || {});
+            const band0 = sc.risk_band;
+            const flagged0 = band0 && band0 !== 'low' && band0 !== 'unknown';
+            const p = txFilterParams();
+            p.delete('limit'); p.delete('offset');
+            // A stale search must not narrow the NAVIGATION context — the
+            // context is the current VIEW (period, review scope, chips);
+            // an exact search already stored its own single-row context.
+            p.delete('event_id'); p.delete('fraud_id');
+            p.set('limit', '200'); p.set('offset', '0');
+            if (flagged0 && p.get('flagged') !== 'true') p.set('flagged', 'true');
+            // Restore-format params (§7): Back must land on a query
+            // applyTxnQuery understands (status/range, not raw filters).
+            const ctxQ = new URLSearchParams(p.toString());
+            ctxQ.delete('limit'); ctxQ.delete('offset');
+            if (ctxQ.get('flagged') === 'true') { ctxQ.delete('flagged'); ctxQ.set('status', 'flagged'); }
+            const rng0 = $('f-range') ? $('f-range').value : '';
+            if (rng0) { ctxQ.delete('since'); ctxQ.delete('until'); ctxQ.set('range', rng0); }
+            txnCtx = null;
+            try {
+                const r = await authFetch('/admin/api/transactions?' + p.toString());
+                const dj = await r.json();
+                if (r.ok && (dj.rows || []).some(x => x.event_id === eventId)) {
+                    txnCtx = { ids: dj.rows.map(x => x.event_id),
+                               params: ctxQ.toString() ? '?' + ctxQ.toString() : '',
+                               flagged: p.get('flagged') === 'true' };
+                }
+            } catch (e2) {
+                if (e2.sessionExpired) throw e2;
+                // Honest absence: prev/next stay disabled (setNav below).
+            }
+            setNav();
         }
 
         function renderTxnDetail(d) {
@@ -3470,6 +3755,17 @@
                         (rec.mismatches.length > 2 ? ` (+${rec.mismatches.length - 2} more)` : '');
             }
             $('d-chain-note').textContent = note;
+            // Investigation continuity (§9): recorded facts only — anything
+            // the backend does not carry renders N/A, never an inferred
+            // reviewer, timestamp, verdict or resolution.
+            const contSet = (id, txt) => { const el = $(id); if (el) el.textContent = txt; };
+            contSet('d-cont-status', 'Status: '
+                + (dqBlocked ? 'BLOCKED' : (flagged ? 'FLAGGED'
+                    : (band ? String(band).toUpperCase() : 'N/A'))));
+            const evidenceOn = rs.length > 0 || stages.some(
+                s => s.evidence && Object.keys(s.evidence).length > 0);
+            contSet('d-cont-evidence', evidenceOn ? 'Evidence available' : 'Evidence: N/A');
+            contSet('d-cont-audit', evs.length > 0 ? 'Audit trail available' : 'Audit trail: N/A');
             renderReviewSection(rv);
         }
 
@@ -3691,7 +3987,8 @@
                         <span><span style="color: var(--text-dim); font-size: 12px;">${esc(tsF)}</span> <b style="font-family: monospace; font-size: 12px;">${esc(f.event_id ?? '—')}</b></span>
                         ${clsF ? `<span class="card-status ${clsF}" style="font-size: 11px;">${esc(wordF)}</span>`
                                 : `<span style="font-size: 12px; color: var(--text-dim);">${esc(wordF)}</span>`}
-                        ${flaggedF ? `<span style="font-size: 11px; color: var(--text-dim);">${esc(reviewWord(f.review_state))}</span>` : ''}
+                        ${flaggedF ? `<span style="font-size: 11px; color: var(--text-dim);">${esc(reviewWord(f.review_state))}</span>
+                        <span style="font-size: 11px; color: var(--text-dim);">Investigate →</span>` : ''}
                     </li>`;
                     }).join('')
                         : '<li style="cursor: default; color: var(--text-dim);">No scored events yet</li>';
@@ -4023,16 +4320,49 @@
                 });
             });
             $('f-reset') && $('f-reset').addEventListener('click', () => {
-                ['f-event', 'f-fraud', 'f-min', 'f-max', 'f-since', 'f-until'].forEach(id => $(id).value = '');
+                ['f-event', 'f-fraud', 'f-min', 'f-max', 'f-since', 'f-until',
+                 'f-range'].forEach(id => $(id).value = '');
                 ['f-decision', 'f-band', 'f-degraded', 'f-dq', 'f-flagged'].forEach(id => $(id).value = '');
                 if ($('f-quick')) $('f-quick').value = '';
                 if ($('f-review')) $('f-review').value = '';
                 txnPage = 0;
                 loadTransactions();
             });
+            $('f-retry') && $('f-retry').addEventListener('click', () => loadTransactions());
+            // Period select (§3): maps to the backend's since/until on the
+            // next query; the custom window and the compact period are one
+            // axis, so choosing one clears the other.
+            const frng = $('f-range');
+            if (frng) frng.addEventListener('change', () => {
+                if ($('f-since')) $('f-since').value = '';
+                if ($('f-until')) $('f-until').value = '';
+                txnPage = 0;
+                loadTransactions();
+            });
+            ['f-since', 'f-until'].forEach(id => {
+                const el = $(id);
+                if (el) el.addEventListener('change', () => {
+                    if (el.value && $('f-range')) $('f-range').value = '';
+                    txnPage = 0;
+                    loadTransactions();
+                });
+            });
             $('f-prev') && $('f-prev').addEventListener('click', () => { if (txnPage > 0) { txnPage--; loadTransactions(); } });
             $('f-next') && $('f-next').addEventListener('click', () => { txnPage++; loadTransactions(); });
-            $('d-back') && $('d-back').addEventListener('click', () => activateTab('transactions'));
+            // Detail navigation (§8): back returns to the list state the
+            // detail was opened from; prev/next walk that exact result set.
+            $('d-back') && $('d-back').addEventListener('click', () => {
+                if (txnCtx && txnCtx.params) applyTxnQuery(new URLSearchParams(txnCtx.params));
+                activateTab('transactions');
+            });
+            $('d-prev') && $('d-prev').addEventListener('click', () => {
+                if (!txnCtx || !(txnCtx.idx > 0)) return;
+                activateTab('transactions', { detail: txnCtx.ids[txnCtx.idx - 1] });
+            });
+            $('d-next') && $('d-next').addEventListener('click', () => {
+                if (!txnCtx || txnCtx.idx < 0 || txnCtx.idx >= txnCtx.ids.length - 1) return;
+                activateTab('transactions', { detail: txnCtx.ids[txnCtx.idx + 1] });
+            });
             $('mfa-manage-btn') && $('mfa-manage-btn').addEventListener('click', () => {
                 const p = $('mfa-manage');
                 const opening = p.style.display === 'none';

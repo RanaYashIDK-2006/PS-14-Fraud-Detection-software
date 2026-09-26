@@ -119,8 +119,13 @@ ok("All clear" in shell and "No transactions currently require review." in shell
    "flagged empty state is 'All clear', not a fake row (§17)")
 ok("No recent transactions" in shell,
    "activity feed keeps the honest empty state (§3)")
-for gone in ("Flagged Transactions", "No flagged transactions"):
-    ok(gone not in shell, f"old dashboard label removed: {gone}")
+ok("Flagged Transactions" not in shell,
+   "old dashboard label removed: Flagged Transactions")
+# Phase 114 §13 added "No flagged transactions in this period." as the
+# transaction LIST's period empty state — the old label remains banned from
+# the DASHBOARD itself, which is what this pin was written to protect.
+ok("No flagged transactions" not in seg,
+   "dashboard free of old label: No flagged transactions")
 
 # One-click wiring: KPI + View-all both call goFlagged; goFlagged applies
 # the flagged filter before activating the transactions tab.
