@@ -6,7 +6,8 @@ Sections
  [2] served shells + operator nav (6 items + System Details)
  [3] dashboard structure: KPIs, flagged-first, status lines, expando
  [4] /admin/api/summary: authz, shape, honest nulls, governance identity
- [5] transactions search UX: quick search, 5-column results, filters expando
+ [5] transactions search UX: quick search, 6-column results (Review added
+     in Phase 113), filters expando
  [6] detail view: why-box, fields table, processing-details expando
  [7] live monitor: simple metrics, honest connection states, detail expando
  [8] audit: simple table + human fork explanation + technical expando
@@ -213,10 +214,12 @@ i_filters = seg.find('id="f-filters"')
 ok(0 < i_results < i_filters or i_filters < i_results,
    "results table present with filters expando")
 thead = re.search(r'<thead>\s*<tr><th>Time</th><th>Event ID</th><th>Risk</th>'
-                  r'<th>Decision</th><th>Status</th></tr>', seg)
-ok(bool(thead), "results table is the 5-column operator view")
-ok(seg.count("colspan=\"5\"") >= 2,
-   "loading/empty states match the 5-column layout")
+                  r'<th>Decision</th><th>Status</th><th>Review</th></tr>', seg)
+ok(bool(thead), "results table is the 6-column operator view (Phase 113)")
+ok(seg.count("colspan=\"6\"") >= 1,
+   "empty state matches the 6-column layout")
+ok(seg.count("colspan=\"5\"") >= 1,
+   "technical audit table keeps its own 5-column layout")
 ok("quick" in shell and "set('event_id', quick)" in shell,
    "quick search feeds the identifier filter")
 

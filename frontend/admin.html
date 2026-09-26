@@ -1067,6 +1067,11 @@
                             <div class="kpi-value" id="dash-blocked">—</div>
                             <div class="kpi-label">Blocked (24h)</div>
                         </div>
+                        <div class="kpi kpi-attention clickable" id="dash-review-kpi"
+                             role="button" tabindex="0" title="Show flagged transactions awaiting review">
+                            <div class="kpi-value" id="dash-needs-review">—</div>
+                            <div class="kpi-label">Needs Review →</div>
+                        </div>
                     </div>
                     <p id="dash-kpi-note" style="font-size: 12px; color: var(--text-dim); margin: -20px 0 24px;"></p>
 
@@ -1262,10 +1267,10 @@
                         <div style="overflow-x: auto;">
                         <table>
                             <thead>
-                                <tr><th>Time</th><th>Event ID</th><th>Score</th><th>Band</th><th>Decision</th><th>Degraded</th><th>Data Quality</th></tr>
+                                <tr><th>Time</th><th>Event ID</th><th>Score</th><th>Band</th><th>Decision</th><th>Degraded</th><th>Data Quality</th><th>Review</th></tr>
                             </thead>
                             <tbody id="live-feed-body">
-                                <tr><td colspan="7" style="text-align: center; color: var(--text-dim); padding: 24px;">Connecting…</td></tr>
+                                <tr><td colspan="8" style="text-align: center; color: var(--text-dim); padding: 24px;">Connecting…</td></tr>
                             </tbody>
                         </table>
                         </div>
@@ -1578,6 +1583,17 @@
                             <button class="chip" data-chip="blocked">Blocked</button>
                         </div>
 
+                        <!-- Review workflow chips (Phase 113): disjoint operator
+                             review states. data-rchip keeps the pinned
+                             data-chip quick-filter contract untouched. -->
+                        <input type="hidden" id="f-review" value="">
+                        <div class="filter-chips" id="f-rchips" role="group" aria-label="Review filters">
+                            <button class="chip active" data-rchip="all">All</button>
+                            <button class="chip" data-rchip="needs">Needs Review</button>
+                            <button class="chip" data-rchip="under">Under Review</button>
+                            <button class="chip" data-rchip="reviewed">Reviewed</button>
+                        </div>
+
                         <details class="advanced" id="f-filters">
                             <summary>Filters</summary>
                             <div style="padding: 16px 20px;">
@@ -1610,10 +1626,10 @@
                             <div style="overflow-x: auto;">
                             <table class="stackable">
                                 <thead>
-                                    <tr><th>Time</th><th>Event ID</th><th>Risk</th><th>Decision</th><th>Status</th></tr>
+                                    <tr><th>Time</th><th>Event ID</th><th>Risk</th><th>Decision</th><th>Status</th><th>Review</th></tr>
                                 </thead>
                                 <tbody id="f-rows">
-                                    <tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 24px;">Search for a transaction, or press Search to browse</td></tr>
+                                    <tr><td colspan="6" style="text-align: center; color: var(--text-dim); padding: 24px;">Search for a transaction, or press Search to browse</td></tr>
                                 </tbody>
                             </table>
                             </div>
@@ -1646,6 +1662,40 @@
                                 </table>
                             </div>
                         </details>
+
+                        <!-- Investigation (Phase 113): operator review workflow — state, explicit
+                             actions, append-only notes. Display only: never the
+                             fraud decision, never a model output. -->
+                        <div class="data-table" id="d-investigation" style="margin-top: 12px;">
+                            <div class="table-header">
+                                <span class="table-title">Investigation</span>
+                                <div class="table-actions">
+                                    <span style="font-size: 12px; color: var(--text-dim);">operator review workflow — not a fraud decision</span>
+                                </div>
+                            </div>
+                            <div style="padding: 2px 16px 16px;">
+                                <div id="d-review-state" style="font-size: 14px; margin: 8px 0 10px;">
+                                    <span class="skel" style="width: 30%;"></span>
+                                </div>
+                                <div id="d-review-actions" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;"></div>
+                                <div id="d-review-meta" style="font-size: 12px; color: var(--text-dim); margin-bottom: 10px;"></div>
+                                <p id="d-review-error" class="passcode-error" style="display: none; margin-bottom: 8px;"></p>
+                                <div style="border-top: 1px solid var(--border); padding-top: 10px;">
+                                    <div style="font-size: 13px; font-weight: 600; margin-bottom: 6px;">Investigation notes</div>
+                                    <div id="d-review-notes" style="font-size: 13px; color: var(--text-dim);">No investigation notes yet</div>
+                                    <div id="d-note-form" style="display: none; margin-top: 10px;">
+                                        <textarea id="d-note-input" rows="2" maxlength="2000" aria-label="Investigation note"
+                                                  style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: inherit; resize: vertical;"
+                                                  placeholder="What did you observe? (max 2000 characters)"></textarea>
+                                        <div style="display: flex; gap: 8px; align-items: center; margin-top: 6px;">
+                                            <button class="table-btn" id="d-note-save">Add note</button>
+                                            <button class="table-btn" id="d-note-cancel">Cancel</button>
+                                            <span id="d-note-count" style="font-size: 11px; color: var(--text-dim);"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <details class="advanced" id="d-processing">
                             <summary>Processing details</summary>
@@ -2197,8 +2247,25 @@
             score_generated: 'Risk evaluation',
             runtime_release_unverified: 'Decision recorded',
             data_quality_blocked: 'Data-quality block',
+            admin_review_started: 'Started investigation',
+            admin_review_completed: 'Completed investigation',
+            admin_review_reopened: 'Reopened investigation',
+            admin_review_note_added: 'Added investigation note',
         };
         function eventLabel(t) { return EVENT_LABEL[t] || humanize(t); }
+
+        // Operator review workflow (Phase 113): human words for the
+        // server's review states — operators never see raw enum names.
+        const REVIEW_WORDS = {
+            UNREVIEWED: 'Needs review',
+            UNDER_REVIEW: 'Under review',
+            REVIEWED: 'Reviewed',
+        };
+        function reviewWord(state) { return REVIEW_WORDS[state] || REVIEW_WORDS.UNREVIEWED; }
+        function reviewBadge(state) {
+            const cls = state === 'REVIEWED' ? 'healthy' : (state === 'UNDER_REVIEW' ? '' : 'warning');
+            return `<span class="card-status ${cls}" style="font-size: 12px;">${esc(reviewWord(state))}</span>`;
+        }
 
         // Investigation state (§13): authoritative case/outcome rows from
         // the detail payload only — no frontend-only status. Writes live
@@ -2232,7 +2299,7 @@
             const query = String(q || '').trim();
             if (!query) return;
             ['f-event', 'f-fraud', 'f-decision', 'f-band', 'f-min', 'f-max',
-             'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged'].forEach(id => {
+             'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged', 'f-review'].forEach(id => {
                 const el = $(id); if (el) el.value = '';
             });
             const quick = $('f-quick');
@@ -2245,11 +2312,22 @@
 
         function goFlagged() {
             ['f-quick', 'f-event', 'f-fraud', 'f-decision', 'f-band', 'f-min', 'f-max',
-             'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged'].forEach(id => {
+             'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged', 'f-review'].forEach(id => {
                 const el = $(id); if (el) el.value = '';
             });
             const fl = $('f-flagged');
             if (fl) fl.value = 'true';
+            txnPage = 0;
+            activateTab('transactions');
+        }
+
+        // Dashboard "Needs Review" KPI -> the flagged review queue (§6).
+        function goNeedsReview() {
+            ['f-quick', 'f-event', 'f-fraud', 'f-decision', 'f-band', 'f-min', 'f-max',
+             'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged'].forEach(id => {
+                const el = $(id); if (el) el.value = '';
+            });
+            if ($('f-review')) $('f-review').value = 'needs';
             txnPage = 0;
             activateTab('transactions');
         }
@@ -2285,6 +2363,7 @@
                 $('dash-tx').textContent = fmt(c.transactions_24h);
                 $('dash-flagged').textContent = fmt(c.flagged_24h);
                 $('dash-blocked').textContent = fmt(c.blocked_24h);
+                $('dash-needs-review').textContent = fmt(c.needs_review);
                 $('dash-kpi-note').textContent = c.newest_scored_at
                     ? `newest scored at ${agoLabel(c.newest_scored_at)}`
                     : 'no scores recorded yet';
@@ -2769,7 +2848,7 @@
                                  : '<span class="status-bad">✗ mismatch</span>');
                     return `<tr>
                         <td style="font-size: 12px;">${esc(t)}</td>
-                        <td>${esc(ev.event_type)} <span style="color: var(--text-dim); font-size: 11px;">#${ev.seq}</span></td>
+                        <td>${esc(String(ev.event_type || '').startsWith('admin_review_') ? eventLabel(ev.event_type) : ev.event_type)} <span style="color: var(--text-dim); font-size: 11px;">#${ev.seq}</span></td>
                         <td style="font-size: 12px;">${mark}</td>
                     </tr>`;
                 }).join('');
@@ -3037,6 +3116,7 @@
             set('degraded', $('f-degraded').value);
             set('data_quality', $('f-dq').value);
             set('flagged', $('f-flagged').value);
+            set('review', $('f-review') ? $('f-review').value : '');
             txnLimit = parseInt($('f-limit').value, 10) || 50;
             p.set('limit', String(txnLimit));
             p.set('offset', String(txnPage * txnLimit));
@@ -3059,14 +3139,17 @@
             const kind = activeFilterKind();
             document.querySelectorAll('#f-chips .chip').forEach(c =>
                 c.classList.toggle('active', c.dataset.chip === kind));
+            const rkind = ($('f-review') && $('f-review').value) || 'all';
+            document.querySelectorAll('#f-rchips .chip').forEach(c =>
+                c.classList.toggle('active', c.dataset.rchip === rkind));
             const reset = $('f-reset');
-            if (reset) reset.style.display = kind === 'all' ? 'none' : 'inline-block';
+            if (reset) reset.style.display = (kind === 'all' && rkind === 'all') ? 'none' : 'inline-block';
         }
 
         async function loadTransactions() {
             const err = $('f-error');
             err.style.display = 'none';
-            $('f-rows').innerHTML = '<tr><td colspan="5" style="padding: 14px 20px;">' +
+            $('f-rows').innerHTML = '<tr><td colspan="6" style="padding: 14px 20px;">' +
                 '<span class="skel" style="width: 90%;"></span>' +
                 '<span class="skel" style="width: 75%;"></span>' +
                 '<span class="skel" style="width: 60%;"></span></td></tr>';
@@ -3126,11 +3209,11 @@
                         msg = 'No transactions yet';
                         sub = 'Transactions will appear here when the system receives them.';
                     }
-                    $('f-rows').innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 24px;"><b style="color: var(--text);">${msg}</b><div style="font-size: 12px; color: var(--text-dim); margin-top: 4px;">${sub}</div></td></tr>`;
+                    $('f-rows').innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px;"><b style="color: var(--text);">${msg}</b><div style="font-size: 12px; color: var(--text-dim); margin-top: 4px;">${sub}</div></td></tr>`;
                     return;
                 }
                 // Exact-ID search opens the detail directly (§15).
-                const lone = [...p.keys()].length === 3; // id + limit + offset
+                const lone = [...p.keys()].filter(k => k !== 'review').length === 3; // id + limit + offset
                 if (wantOpen && lone && quick0 && rows.length === 1
                         && rows[0].event_id === quick0) {
                     // Same path as a row click: detail opens AND the URL
@@ -3152,12 +3235,14 @@
                         statusCell = '<span style="color: var(--text-dim)">N/A</span>';
                     }
                     const deg = row.degraded ? ' <span title="ML unavailable — rules only evaluated">⚠</span>' : '';
+                    const reviewCell = `<span style="color: var(--text-dim);">${esc(reviewWord(row.review_state))}</span>`;
                     return `<tr>
                         <td data-label="Time" style="font-size: 12px;">${esc(row.scored_at ?? '—')}</td>
                         <td data-label="Event ID"><a class="txn-link" data-eid="${esc(row.event_id)}" href="${href}" style="font-family: monospace; font-size: 12px;">${esc(row.event_id)}</a></td>
                         <td data-label="Risk">${naVal(row.risk_score)}${deg}</td>
                         <td data-label="Decision">${word ? esc(word) : naVal(row.decision)}</td>
                         <td data-label="Status">${statusCell}</td>
+                        <td data-label="Review" style="font-size: 12px;">${reviewCell}</td>
                     </tr>`;
                 }).join('');
             } catch (e) {
@@ -3166,7 +3251,7 @@
                 err.textContent = 'Unable to load transactions — try again.';
                 err.style.display = 'block';
                 $('f-count').textContent = '';
-                $('f-rows').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 24px;">No results to show</td></tr>';
+                $('f-rows').innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-dim); padding: 24px;">No results to show</td></tr>';
                 syncQuickUI();
             }
         }
@@ -3191,6 +3276,13 @@
             $('d-audit').innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">—</td></tr>';
             $('d-reasons').textContent = 'REASON_NOT_AVAILABLE';
             $('d-chain-note').textContent = '—';
+            $('d-review-state').innerHTML = '<span class="skel" style="width: 30%;"></span>';
+            $('d-review-actions').innerHTML = '';
+            $('d-review-meta').textContent = '';
+            $('d-review-notes').innerHTML = '<span class="skel" style="width: 60%;"></span>';
+            $('d-review-error').style.display = 'none';
+            $('d-note-form').style.display = 'none';
+            $('d-note-input').value = '';
             try {
                 const r = await authFetch('/admin/api/transactions/' + encodeURIComponent(eventId));
                 const d = await r.json();
@@ -3223,6 +3315,8 @@
             const dqBlocked = dqStatus === 'blocked';
             const evs = (d.audit && d.audit.events) || [];
             const word = decisionWord(d.decision);
+            const rv = (d.review && typeof d.review === 'object') ? d.review : {};
+            const rvState = rv.review_state || 'UNREVIEWED';
 
             // Hero: name the situation instead of echoing the route.
             $('d-hero-title').textContent = dqBlocked ? 'BLOCKED TRANSACTION'
@@ -3247,6 +3341,7 @@
                 kpi(naVal(val(sc.risk_score)), 'Risk score', flagged ? 'kpi-attention' : ''),
                 kpi(word ? esc(word) : naVal(d.decision), 'Decision'),
                 kpi(`<span style="font-size: 15px;" title="${esc(scoredAt)}">${esc(timePart || 'N/A')}</span>`, 'Time'),
+                kpi(esc(reviewWord(rvState)), 'Review', rvState === 'REVIEWED' ? '' : 'kpi-attention'),
             ].join('');
 
             // Why-box (§9): headline first, then authoritative reason
@@ -3375,6 +3470,60 @@
                         (rec.mismatches.length > 2 ? ` (+${rec.mismatches.length - 2} more)` : '');
             }
             $('d-chain-note').textContent = note;
+            renderReviewSection(rv);
+        }
+
+        // ---- Operator review workflow (Phase 113) ------------------------
+        // Server-authoritative state: the console renders what GET …/review
+        // returns and posts the explicit actions; identity, timestamps and
+        // validation live backend-side, and a note never changes the
+        // transaction, the score, or the decision.
+        function updateSummaryReview(state) {
+            const row = $('d-summary');
+            if (!row) return;
+            const cells = row.querySelectorAll('.kpi');
+            const last = cells[cells.length - 1];
+            if (!last) return;
+            const lab = last.querySelector('.kpi-label');
+            if (!lab || lab.textContent !== 'Review') return;
+            const v = last.querySelector('.kpi-value');
+            if (v) v.textContent = reviewWord(state);
+            last.classList.toggle('kpi-attention', state !== 'REVIEWED');
+        }
+
+        function renderReviewSection(rv) {
+            const state = (rv && rv.review_state) || 'UNREVIEWED';
+            const stateEl = $('d-review-state');
+            const acts = $('d-review-actions');
+            const meta = $('d-review-meta');
+            const notesEl = $('d-review-notes');
+            if (!stateEl || !acts || !meta || !notesEl) return;
+            stateEl.innerHTML = reviewBadge(state);
+            const btns = state === 'REVIEWED'
+                ? [['reopen', 'Reopen review'], ['note', 'Add note']]
+                : (state === 'UNDER_REVIEW'
+                    ? [['complete', 'Mark reviewed'], ['note', 'Add note']]
+                    : [['start', 'Start review']]);
+            acts.innerHTML = btns.map(([k, label]) =>
+                `<button class="table-btn" data-review-action="${k}">${label}</button>`).join('');
+            const who = rv && rv.reviewer_id ? String(rv.reviewer_id) : null;
+            let metaText = '';
+            if (state === 'REVIEWED') {
+                metaText = 'Reviewed by: ' + (who || '—')
+                    + (rv.reviewed_at ? ' · Reviewed at: ' + rv.reviewed_at : '');
+            } else if (state === 'UNDER_REVIEW') {
+                metaText = 'Reviewed by: ' + (who || '—');
+            }
+            meta.textContent = metaText;
+            const notes = (rv && Array.isArray(rv.notes)) ? rv.notes : [];
+            notesEl.innerHTML = notes.length ? notes.map(n => `
+                <div style="margin-bottom: 8px;">
+                    <div style="font-size: 12px; color: var(--text-dim);">${esc(n.reviewer_id || 'admin')} • ${esc(n.created_at || '')}</div>
+                    <div style="white-space: pre-wrap; word-break: break-word;">${esc(n.note)}</div>
+                </div>`).join('') : '<span style="color: var(--text-dim);">No investigation notes yet</span>';
+            const err = $('d-review-error');
+            if (err) { err.style.display = 'none'; err.textContent = ''; }
+            updateSummaryReview(state);
         }
 
         // ---- Read-only model/release panel ----
@@ -3542,6 +3691,7 @@
                         <span><span style="color: var(--text-dim); font-size: 12px;">${esc(tsF)}</span> <b style="font-family: monospace; font-size: 12px;">${esc(f.event_id ?? '—')}</b></span>
                         ${clsF ? `<span class="card-status ${clsF}" style="font-size: 11px;">${esc(wordF)}</span>`
                                 : `<span style="font-size: 12px; color: var(--text-dim);">${esc(wordF)}</span>`}
+                        ${flaggedF ? `<span style="font-size: 11px; color: var(--text-dim);">${esc(reviewWord(f.review_state))}</span>` : ''}
                     </li>`;
                     }).join('')
                         : '<li style="cursor: default; color: var(--text-dim);">No scored events yet</li>';
@@ -3615,8 +3765,9 @@
                         <td>${naVal(f.decision)}</td>
                         <td>${f.degraded ? '⚠ yes' : 'no'}</td>
                         <td>${esc(f.data_quality_status ?? '—')}</td>
+                        <td style="font-size: 12px;">${esc(reviewWord(f.review_state))}</td>
                     </tr>`).join('')
-                        : '<tr><td colspan="7" style="text-align: center; color: var(--text-dim); padding: 24px;">No scored events yet</td></tr>';
+                        : '<tr><td colspan="8" style="text-align: center; color: var(--text-dim); padding: 24px;">No scored events yet</td></tr>';
                 }
                 const wl = $('live-window-label');
                 if (wl) wl.textContent = `window ${w.window || liveWindow}${w.since ? ' (since ' + w.since + ')' : ''} · refresh 5s`;
@@ -3698,6 +3849,14 @@
                     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goFlagged(); }
                 });
             }
+            // Needs Review KPI (§6): one click -> the flagged review queue.
+            const rkpi = $('dash-review-kpi');
+            if (rkpi) {
+                rkpi.addEventListener('click', goNeedsReview);
+                rkpi.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goNeedsReview(); }
+                });
+            }
             // Global header search (§15).
             const hs = $('hdr-search');
             if (hs) hs.addEventListener('keydown', (e) => {
@@ -3712,7 +3871,7 @@
                 if (!b) return;
                 ['f-quick', 'f-event', 'f-fraud', 'f-band', 'f-min', 'f-max',
                  'f-since', 'f-until', 'f-degraded', 'f-flagged', 'f-decision',
-                 'f-dq'].forEach(id => { const el = $(id); if (el) el.value = ''; });
+                 'f-dq', 'f-review'].forEach(id => { const el = $(id); if (el) el.value = ''; });
                 const kind = b.dataset.chip;
                 if (kind === 'flagged') $('f-flagged').value = 'true';
                 if (kind === 'approved') $('f-decision').value = 'allow';
@@ -3720,6 +3879,117 @@
                 txnPage = 0;
                 if (txnDetailOpen) showTxnList();
                 loadTransactions();
+            });
+            // Review chips (§7): each chip is one honest review-state view.
+            const rchips = $('f-rchips');
+            if (rchips) rchips.addEventListener('click', (e) => {
+                const b = e.target.closest('.chip');
+                if (!b) return;
+                const rchip = b.dataset.rchip;
+                if ($('f-review')) $('f-review').value = (rchip === 'all') ? '' : rchip;
+                txnPage = 0;
+                if (txnDetailOpen) showTxnList();
+                loadTransactions();
+            });
+            // Review workflow actions (§8/§9): one POST per explicit action;
+            // the response re-renders the authoritative section. The reviewer
+            // identity always comes from the session, never from the page.
+            const reviewErr = () => {
+                const err = $('d-review-error');
+                if (err) { err.style.display = 'none'; err.textContent = ''; }
+                return err;
+            };
+            const reviewPost = async (path, body) => {
+                const err = reviewErr();
+                try {
+                    const r = await authFetch('/admin/api/transactions/'
+                        + encodeURIComponent($('d-event-id').textContent) + path, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json',
+                                   'X-Requested-With': 'XMLHttpRequest' },
+                        body: JSON.stringify(body || {}),
+                    });
+                    const d = await r.json().catch(() => ({}));
+                    if (!r.ok) {
+                        throw new Error((d && d.detail)
+                            ? String(d.detail) : 'Review update failed — try again.');
+                    }
+                    return d;
+                } catch (e) {
+                    if (e.sessionExpired) throw e;
+                    if (err) {
+                        err.textContent = e.message || 'Review update failed — try again.';
+                        err.style.display = 'block';
+                    }
+                    throw e;
+                }
+            };
+            const dra = $('d-review-actions');
+            if (dra) dra.addEventListener('click', async (e) => {
+                const b = e.target.closest('[data-review-action]');
+                if (!b) return;
+                const action = b.getAttribute('data-review-action');
+                if (action === 'note') {
+                    const form = $('d-note-form');
+                    if (form) form.style.display = 'block';
+                    const inp = $('d-note-input');
+                    if (inp) inp.focus();
+                    return;
+                }
+                if (action !== 'start' && action !== 'complete' && action !== 'reopen') return;
+                b.disabled = true;
+                try {
+                    const d = await reviewPost('/review/' + action);
+                    renderReviewSection(d);
+                } catch (e2) { /* honest error already rendered */ }
+                finally { b.disabled = false; }
+            });
+            const noteSave = $('d-note-save');
+            if (noteSave) noteSave.addEventListener('click', async () => {
+                const inp = $('d-note-input');
+                const err = reviewErr();
+                const text = (inp.value || '').trim();
+                if (!text) {
+                    if (err) {
+                        err.textContent = 'Write an investigation note before adding it.';
+                        err.style.display = 'block';
+                    }
+                    inp.focus();
+                    return;
+                }
+                if (text.length > 2000) {
+                    if (err) {
+                        err.textContent = 'Notes are limited to 2000 characters.';
+                        err.style.display = 'block';
+                    }
+                    return;
+                }
+                noteSave.disabled = true;
+                try {
+                    const d = await reviewPost('/notes', { note: text });
+                    renderReviewSection(d);
+                    inp.value = '';
+                    const cnt = $('d-note-count');
+                    if (cnt) cnt.textContent = '';
+                    const form = $('d-note-form');
+                    if (form) form.style.display = 'none';
+                } catch (e3) { /* honest error already rendered */ }
+                finally { noteSave.disabled = false; }
+            });
+            const noteCancel = $('d-note-cancel');
+            if (noteCancel) noteCancel.addEventListener('click', () => {
+                const form = $('d-note-form');
+                if (form) form.style.display = 'none';
+                const inp = $('d-note-input');
+                if (inp) inp.value = '';
+                const cnt = $('d-note-count');
+                if (cnt) cnt.textContent = '';
+                reviewErr();
+            });
+            const noteInput = $('d-note-input');
+            if (noteInput) noteInput.addEventListener('input', () => {
+                const cnt = $('d-note-count');
+                if (cnt) cnt.textContent = noteInput.value.length + ' / 2000';
             });
             // Status card + model link open System Details (§6/§8).
             const openSystem = () => activateTab('system');
@@ -3756,6 +4026,7 @@
                 ['f-event', 'f-fraud', 'f-min', 'f-max', 'f-since', 'f-until'].forEach(id => $(id).value = '');
                 ['f-decision', 'f-band', 'f-degraded', 'f-dq', 'f-flagged'].forEach(id => $(id).value = '');
                 if ($('f-quick')) $('f-quick').value = '';
+                if ($('f-review')) $('f-review').value = '';
                 txnPage = 0;
                 loadTransactions();
             });

@@ -263,14 +263,21 @@ ok('<details class="advanced" id="d-processing">' in shell
 # Investigation state: authoritative display only (§13)
 ok("investigationText" in shell and "CASE_GLOSS" in shell,
    "investigation state rendered from recorded case/outcome rows")
-ok("UNREVIEWED" not in shell and "UNDER_REVIEW" not in shell,
-   "no frontend-only investigation states invented (§13)")
+# Phase 113 review workflow: the states now exist BECAUSE the backend
+# serves them — pinned as present + payload-driven, never invented per row.
+ok("UNREVIEWED" in shell and "UNDER_REVIEW" in shell and "REVIEWED" in shell,
+   "review states present, served by the backend workflow (§13)")
+ok("d.review" in shell and "rv.review_state" in shell,
+   "review state renders from the detail payload, not frontend-only (§13)")
 for state in ("NEW", "REVIEWING", "USER_VERIFICATION",
               "CONFIRMED_SUSPICIOUS", "CONFIRMED_LEGITIMATE", "CLOSED"):
     ok(f"{state}:" in shell or f"'{state}'" in shell,
        f"backend case status understood: {state}")
-ok("confirm_alert" not in shell and "Mark reviewed" not in shell,
-   "no investigation write action without a backend the admin session owns (§14)")
+ok("confirm_alert" not in shell,
+   "no fraud-confirmation action in the console (§14)")
+ok("Mark reviewed" in shell and "reviewPost('/review/' + action)" in shell
+   and "reviewPost('/notes'" in shell,
+   "review actions post to the backend endpoints the session owns (§14)")
 ok("field('Investigation', investigationText(d))" in shell,
    "investigation line appears in Transaction information")
 

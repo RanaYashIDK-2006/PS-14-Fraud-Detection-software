@@ -2304,6 +2304,330 @@ def admin_shell_settings() -> Response:
     return _admin_shell()
 
 
+# ── Phase 113: operator review workflow store (DB-3) ───────────────────
+# An event-keyed review record next to risk_scores (the same convention
+# investigator_cases uses): no row == UNREVIEWED.  The record tracks the
+# OPERATOR workflow only — it never mutates the transaction, the score,
+# the decision, the model, the threshold, or the release, and it is
+# deliberately separate from the verification console's outcome-governance
+# tables (verification_outcomes / investigator_cases).
+_REVIEW_ACTIONS = {"start": "UNDER_REVIEW", "complete": "REVIEWED",
+                   "reopen": "UNDER_REVIEW"}
+_REVIEW_TRANSITIONS = {
+    ("UNREVIEWED", "start"): "UNDER_REVIEW",
+    ("UNDER_REVIEW", "complete"): "REVIEWED",
+    ("REVIEWED", "reopen"): "UNDER_REVIEW",
+}
+_REVIEW_EVENT_TYPES = {"start": "admin_review_started",
+                       "complete": "admin_review_completed",
+                       "reopen": "admin_review_reopened"}
+_REVIEW_FILTERS = ("all", "needs", "under", "reviewed")
+_REVIEW_MAX_NOTE = 2000
+_review_schema_ready = False
+
+
+def _ensure_review_tables() -> None:
+    """Idempotent DDL for the two review tables in DB-3 (flagged once).
+
+    SQLAlchemy's create_all never learns about these tables (they are
+    intentionally not part of any service's model metadata), so the front
+    service creates them itself.  Raises 503 when DB-3 is unwritable.
+    """
+    global _review_schema_ready
+    if _review_schema_ready:
+        return
+    try:
+        conn = sqlite3.connect(str(_DBS["risk"]), timeout=5)
+        try:
+            conn.execute(
+                "CREATE TABLE IF NOT EXISTS event_reviews ("
+                "event_id VARCHAR(64) PRIMARY KEY, "
+                "review_state VARCHAR(16) NOT NULL DEFAULT 'UNREVIEWED', "
+                "reviewer_id VARCHAR(64), "
+                "created_at VARCHAR(32) NOT NULL, "
+                "updated_at VARCHAR(32) NOT NULL, "
+                "reviewed_at VARCHAR(32), "
+                "version INTEGER NOT NULL DEFAULT 1)")
+            conn.execute(
+                "CREATE TABLE IF NOT EXISTS event_review_notes ("
+                "note_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "event_id VARCHAR(64) NOT NULL, "
+                "note TEXT NOT NULL, "
+                "reviewer_id VARCHAR(64) NOT NULL, "
+                "created_at VARCHAR(32) NOT NULL)")
+            conn.commit()
+        finally:
+            conn.close()
+        _review_schema_ready = True
+    except sqlite3.Error as exc:
+        raise HTTPException(status_code=503,
+                            detail="review store unavailable") from exc
+
+
+def _review_payload(event_id: str) -> dict:
+    """Review state + bounded notes timeline for one event (read-only).
+
+    Absent store or absent row -> honest UNREVIEWED defaults; never a
+    fabricated state.
+    """
+    empty = {"event_id": event_id, "review_state": "UNREVIEWED",
+             "reviewer_id": None, "created_at": None, "updated_at": None,
+             "reviewed_at": None, "version": 0, "notes": [],
+             "notes_total": 0}
+    try:
+        _ensure_review_tables()
+        conn = sqlite3.connect(str(_DBS["risk"]), timeout=5)
+        conn.row_factory = sqlite3.Row
+        try:
+            row = conn.execute(
+                "SELECT review_state, reviewer_id, created_at, updated_at, "
+                "reviewed_at, version FROM event_reviews WHERE event_id = ?",
+                (event_id,)).fetchone()
+            if row is None:
+                return empty
+            notes = [dict(n) for n in conn.execute(
+                "SELECT note, reviewer_id, created_at FROM event_review_notes "
+                "WHERE event_id = ? ORDER BY created_at, note_id LIMIT 200",
+                (event_id,)).fetchall()]
+            total = conn.execute(
+                "SELECT COUNT(*) AS c FROM event_review_notes "
+                "WHERE event_id = ?", (event_id,)).fetchone()["c"]
+            out = dict(row)
+            out.update({"event_id": event_id, "notes": notes,
+                        "notes_total": total})
+            return out
+        finally:
+            conn.close()
+    except HTTPException:
+        raise
+    except sqlite3.Error:
+        return empty  # absent store -> honest default, never fabricated
+
+
+def _review_event(event_id: str) -> dict:
+    """Gate a review request: well-formed id AND the event must exist."""
+    if not _TX_EVENT_ID_RE.fullmatch(event_id or ""):
+        raise HTTPException(status_code=400, detail="malformed event_id")
+    rows = _ro_rows(
+        "risk",
+        "SELECT fraud_id, risk_band FROM risk_scores "
+        "WHERE event_id = ? LIMIT 1", (event_id,)) or []
+    if not rows:
+        raise HTTPException(status_code=404, detail="event not found")
+    return rows[0]
+
+
+def _review_states(event_ids: list[str]) -> dict[str, str]:
+    """Batch review states for one bounded page of events (read-only).
+
+    Absent table or absent row -> UNREVIEWED: before the first review
+    action the table does not exist yet, which is exactly the honest
+    "nobody has reviewed this" answer, never a fabricated state.
+    """
+    if not event_ids:
+        return {}
+    marks = ",".join("?" * len(event_ids))
+    rows = _ro_rows(
+        "risk",
+        "SELECT event_id, review_state FROM event_reviews "
+        f"WHERE event_id IN ({marks})",
+        tuple(event_ids)) or []
+    return {r["event_id"]: r["review_state"] for r in rows}
+
+
+def _review_audit(fraud_id: str, event_type: str, payload: dict) -> bool:
+    """Append a review audit event to DB-4 (best-effort, reported honestly).
+
+    The payload carries the transition record required by the workflow —
+    event_id, previous/new state, admin identity, timestamp — and never
+    credentials, TOTP secrets, tokens, or PANs.
+    """
+    try:
+        from src.audit_service.writer import append_audit_event
+        append_audit_event(fraud_id, event_type, payload)
+        return True
+    except Exception as exc:  # noqa: BLE001
+        print(f"[front-service] review audit {event_type} failed: {exc}",
+              file=sys.stderr)
+        return False
+
+
+def _review_transition(event_id: str, action: str, actor: str,
+                       fraud_id: str) -> tuple[dict, bool, bool]:
+    """Atomically apply one review transition.
+
+    Returns (payload, changed, audit_ok).  BEGIN IMMEDIATE serializes
+    concurrent writers, the state machine rejects arbitrary jumps, and a
+    replay (already in the target state) is an idempotent success with NO
+    duplicate audit event.  The reviewer identity comes from the session —
+    never from the request.
+    """
+    _ensure_review_tables()
+    conn = sqlite3.connect(str(_DBS["risk"]), timeout=5)
+    conn.row_factory = sqlite3.Row
+    try:
+        conn.execute("BEGIN IMMEDIATE")
+        row = conn.execute(
+            "SELECT review_state FROM event_reviews WHERE event_id = ?",
+            (event_id,)).fetchone()
+        current = row["review_state"] if row else "UNREVIEWED"
+        target = _REVIEW_TRANSITIONS.get((current, action))
+        if target is None:
+            conn.rollback()
+            if current == _REVIEW_ACTIONS[action]:
+                # Replay: already in the requested state -> idempotent no-op.
+                return _review_payload(event_id), False, True
+            raise HTTPException(
+                status_code=409,
+                detail=f"invalid review transition: {action} from {current}")
+        now = datetime.now(timezone.utc).isoformat()
+        if row is None:
+            conn.execute(
+                "INSERT INTO event_reviews (event_id, review_state, "
+                "reviewer_id, created_at, updated_at, reviewed_at, version) "
+                "VALUES (?,?,?,?,?,?,1)",
+                (event_id, target, actor, now, now,
+                 now if target == "REVIEWED" else None))
+        else:
+            cur = conn.execute(
+                "UPDATE event_reviews SET review_state = ?, reviewer_id = ?, "
+                "updated_at = ?, reviewed_at = ?, version = version + 1 "
+                "WHERE event_id = ? AND review_state = ?",
+                (target, actor, now,
+                 now if target == "REVIEWED" else None,
+                 event_id, current))
+            if cur.rowcount != 1:  # pragma: no cover - BEGIN IMMEDIATE closes this
+                conn.rollback()
+                raise HTTPException(
+                    status_code=409,
+                    detail="review updated concurrently — reload and retry")
+        conn.commit()
+    except HTTPException:
+        raise
+    except sqlite3.Error as exc:
+        try:
+            conn.rollback()
+        except sqlite3.Error:
+            pass
+        raise HTTPException(status_code=503,
+                            detail="review store unavailable") from exc
+    finally:
+        conn.close()
+    audit_ok = _review_audit(
+        fraud_id, _REVIEW_EVENT_TYPES[action],
+        {"event_id": event_id, "previous_review_state": current,
+         "new_review_state": target, "admin_identity": actor,
+         "timestamp": now})
+    return _review_payload(event_id), True, audit_ok
+
+
+@app.get("/admin/api/transactions/{event_id}/review")
+def admin_api_tx_review(
+    event_id: str,
+    _session: tuple[dict, bytes] = Depends(_require_admin),
+) -> dict:
+    """Operator review state + investigation notes for one event (§5)."""
+    _review_event(event_id)
+    return _review_payload(event_id)
+
+
+@app.post("/admin/api/transactions/{event_id}/review/start")
+def admin_api_tx_review_start(
+    event_id: str,
+    _session: tuple[dict, bytes] = Depends(_require_admin),
+) -> dict:
+    """UNREVIEWED -> UNDER_REVIEW (reviewer identity is session-side)."""
+    score = _review_event(event_id)
+    payload, changed, audit_ok = _review_transition(
+        event_id, "start", _session[0].get("sub", "admin"),
+        score["fraud_id"])
+    return {**payload, "action": "start", "changed": changed,
+            "audit_logged": audit_ok}
+
+
+@app.post("/admin/api/transactions/{event_id}/review/complete")
+def admin_api_tx_review_complete(
+    event_id: str,
+    _session: tuple[dict, bytes] = Depends(_require_admin),
+) -> dict:
+    """UNDER_REVIEW -> REVIEWED."""
+    score = _review_event(event_id)
+    payload, changed, audit_ok = _review_transition(
+        event_id, "complete", _session[0].get("sub", "admin"),
+        score["fraud_id"])
+    return {**payload, "action": "complete", "changed": changed,
+            "audit_logged": audit_ok}
+
+
+@app.post("/admin/api/transactions/{event_id}/review/reopen")
+def admin_api_tx_review_reopen(
+    event_id: str,
+    _session: tuple[dict, bytes] = Depends(_require_admin),
+) -> dict:
+    """REVIEWED -> UNDER_REVIEW."""
+    score = _review_event(event_id)
+    payload, changed, audit_ok = _review_transition(
+        event_id, "reopen", _session[0].get("sub", "admin"),
+        score["fraud_id"])
+    return {**payload, "action": "reopen", "changed": changed,
+            "audit_logged": audit_ok}
+
+
+class ReviewNoteRequest(BaseModel):
+    note: str
+
+
+@app.post("/admin/api/transactions/{event_id}/notes")
+def admin_api_tx_review_note(
+    event_id: str,
+    req: ReviewNoteRequest,
+    _session: tuple[dict, bytes] = Depends(_require_admin),
+) -> dict:
+    """Append an investigation note (bounded, UTF-8, server-validated).
+
+    Notes are append-only: there is no update or delete endpoint, and a
+    note never changes the review state, the transaction, or the model
+    output.  Any reviewer/supplied identity field in the body is ignored —
+    the author is always the authenticated session.
+    """
+    score = _review_event(event_id)
+    actor = _session[0].get("sub", "admin")
+    note = (req.note or "").strip()
+    if not note:
+        raise HTTPException(status_code=400, detail="note is empty")
+    if len(note) > _REVIEW_MAX_NOTE:
+        raise HTTPException(
+            status_code=400,
+            detail=f"note too long (max {_REVIEW_MAX_NOTE} characters)")
+    if any(ord(ch) < 32 and ch not in "\n\t" for ch in note):
+        raise HTTPException(
+            status_code=400,
+            detail="note contains unsupported control characters")
+    now = datetime.now(timezone.utc).isoformat()
+    try:
+        _ensure_review_tables()
+        conn = sqlite3.connect(str(_DBS["risk"]), timeout=5)
+        try:
+            conn.execute(
+                "INSERT INTO event_review_notes "
+                "(event_id, note, reviewer_id, created_at) VALUES (?,?,?,?)",
+                (event_id, note, actor, now))
+            conn.commit()
+        finally:
+            conn.close()
+    except HTTPException:
+        raise
+    except sqlite3.Error as exc:
+        raise HTTPException(status_code=503,
+                            detail="review store unavailable") from exc
+    audit_ok = _review_audit(
+        score["fraud_id"], "admin_review_note_added",
+        {"event_id": event_id, "admin_identity": actor, "timestamp": now,
+         "note_chars": len(note), "note_preview": note[:120]})
+    return {**_review_payload(event_id), "note_added": True,
+            "audit_logged": audit_ok}
+
+
 @app.get("/admin/api/transactions")
 def admin_api_transactions(
     _session: tuple[dict, bytes] = Depends(_require_admin),
@@ -2318,6 +2642,7 @@ def admin_api_transactions(
     degraded: bool | None = None,
     data_quality: str | None = None,
     flagged: bool | None = None,
+    review: str | None = None,
     limit: int = 50,
     offset: int = 0,
 ) -> dict:
@@ -2346,8 +2671,13 @@ def admin_api_transactions(
         raise HTTPException(status_code=400,
                             detail="decision must be allow|verify|step_up")
     if data_quality and data_quality not in ("passed", "blocked"):
-        raise HTTPException(status_code=400,
-                            detail="data_quality must be passed|blocked")
+        raise HTTPException(
+            status_code=400,
+            detail="data_quality must be passed|blocked")
+    if review is not None and review not in _REVIEW_FILTERS:
+        raise HTTPException(
+            status_code=400,
+            detail="review must be all|needs|under|reviewed")
     for name, val in (("min_score", min_score), ("max_score", max_score)):
         if val is not None and not (0 <= val <= 100):
             raise HTTPException(status_code=400,
@@ -2387,6 +2717,19 @@ def admin_api_transactions(
     if degraded is not None:
         where.append("degraded = ?")
         params.append(1 if degraded else 0)
+    if review and review != "all":
+        # Phase 113: review-state filter over the same event keys — an
+        # absent review row counts as UNREVIEWED. "needs" scopes to
+        # flagged rows so it matches the dashboard KPI population.
+        _ensure_review_tables()  # honest 503 when the review store is down
+        state = {"needs": "UNREVIEWED", "under": "UNDER_REVIEW",
+                 "reviewed": "REVIEWED"}[review]
+        where.append(
+            "COALESCE((SELECT review_state FROM event_reviews er "
+            "WHERE er.event_id = risk_scores.event_id), 'UNREVIEWED') = ?")
+        params.append(state)
+        if review == "needs":
+            where.append("risk_band NOT IN ('low', 'unknown')")
 
     def _audit_id_set(sql: str, extra: list) -> list[str]:
         """Resolve a DB-4-derived fraud_id allow/deny set (capped)."""
@@ -2497,6 +2840,8 @@ def admin_api_transactions(
         except (TypeError, ValueError):
             return []
 
+    review_by_event = _review_states([r["event_id"] for r in rows_out])
+
     out_rows = []
     for r in rows_out:
         codes = _codes(r.get("reason_codes"))
@@ -2506,6 +2851,7 @@ def admin_api_transactions(
             "risk_score": r["risk_score"],
             "risk_band": r["risk_band"],
             "decision": decisions.get(r["event_id"]),  # None -> UI shows N/A
+            "review_state": review_by_event.get(r["event_id"], "UNREVIEWED"),
             "reason_codes": codes,
             "ml_score": r["ml_score"],
             "rule_score": r["rule_score"],
@@ -2521,9 +2867,9 @@ def admin_api_transactions(
 
     _admin_audit(_session[0].get("sub", "admin"), "admin_tx_search",
                  {"filters": {k: v for k, v in {
-                     "event_id": event_id, "fraud_id": fraud_id,
-                     "band": band, "decision": decision,
+                     "event_id": event_id, "fraud_id": fraud_id, "band": band, "decision": decision,
                      "flagged": flagged, "data_quality": data_quality,
+                     "review": review,
                  }.items() if v is not None},
                   "total": total, "limit": limit, "offset": offset})
     return {
@@ -2743,6 +3089,7 @@ def admin_api_transaction_detail(
         },
         "outcomes": outcomes,
         "cases": cases,
+        "review": _review_payload(event_id),
         "context": {
             "threshold": MC.CANONICAL_THRESHOLD,
             "model_id": MC.CANONICAL_MODEL_VERSION,
@@ -2817,6 +3164,24 @@ def admin_api_summary(request: Request) -> dict:
         (since,))
     newest = _ro_rows("risk",
                       "SELECT MAX(scored_at) AS newest FROM risk_scores") or []
+
+    # Phase 113: the one new KPI — flagged rows nobody has started
+    # reviewing yet (disjoint from UNDER_REVIEW / REVIEWED, matches the
+    # Transactions "Needs Review" chip exactly).  Absent review store ->
+    # null, so the console renders N/A, never a fabricated zero.
+    needs_review: int | None = None
+    try:
+        _ensure_review_tables()
+        needs_review = _ro_scalar(
+            "risk",
+            "SELECT COUNT(*) FROM risk_scores "
+            "WHERE scored_at >= ? AND risk_band NOT IN ('low', 'unknown') "
+            "AND COALESCE((SELECT review_state FROM event_reviews er "
+            "WHERE er.event_id = risk_scores.event_id), 'UNREVIEWED') "
+            "= 'UNREVIEWED'",
+            (since,))
+    except HTTPException:
+        needs_review = None
 
     # Recent flagged rows (bounded, newest first). "Flagged" matches the
     # live monitor's metric: non-low, non-unknown band.
@@ -2909,6 +3274,7 @@ def admin_api_summary(request: Request) -> dict:
             "transactions_24h": tx_24h,
             "flagged_24h": flagged_24h,
             "blocked_24h": blocked_24h,
+            "needs_review": needs_review,
             "newest_scored_at": (newest[0].get("newest") if newest else None),
         },
         "recent_flagged": recent_flagged,
@@ -3041,6 +3407,9 @@ def admin_api_live(request: Request, window: str = "15m") -> dict:
         except (TypeError, ValueError):
             return []
 
+    # Phase 113: review state is DISPLAYED only — the feed never changes it.
+    review_by_event = _review_states([r["event_id"] for r in feed_src])
+
     feed = []
     for r in feed_src:
         codes = _feed_codes(r.get("reason_codes"))
@@ -3049,6 +3418,7 @@ def admin_api_live(request: Request, window: str = "15m") -> dict:
             "event_id": r["event_id"],
             "risk_score": r["risk_score"],
             "decision": decisions_by_event.get(r["event_id"]),  # None -> N/A
+            "review_state": review_by_event.get(r["event_id"], "UNREVIEWED"),
             "decision_band": r["risk_band"],
             "degraded": bool(r["degraded"]),
             "data_quality_status": (
