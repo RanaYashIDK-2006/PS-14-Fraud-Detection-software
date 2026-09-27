@@ -2322,6 +2322,21 @@ _REVIEW_EVENT_TYPES = {"start": "admin_review_started",
                        "complete": "admin_review_completed",
                        "reopen": "admin_review_reopened"}
 _REVIEW_FILTERS = ("all", "needs", "under", "reviewed")
+# Phase 115 (queue aging): waiting age is measured from the row's OWN
+# authoritative scored_at stamp (UTC) against SERVER time — the client
+# never supplies a timestamp and never computes the age.  One shared SQL
+# expression feeds the page rows, the aging summary, the age filter and
+# the detail view, so they can never disagree with each other.  A NULL
+# result (missing/unparseable scored_at) becomes null in the payload and
+# N/A in the console — never a fabricated zero.
+_AGE_SQL = ("CAST(strftime('%s','now') - strftime('%s', scored_at) "
+            "AS INTEGER)")
+# Waiting-age buckets (§5/§7): half-open intervals, lower bound inclusive —
+# [0,15m) [15m,1h) [1h,4h) [4h,24h) [24h,∞).
+_AGE_FILTERS = {"lt15m": (None, 900), "15m_1h": (900, 3600),
+                "1h_4h": (3600, 14400), "4h_24h": (14400, 86400),
+                "gt24h": (86400, None)}
+_QUEUE_SORTS = ("oldest", "newest")
 _REVIEW_MAX_NOTE = 2000
 _review_schema_ready = False
 
@@ -2643,6 +2658,8 @@ def admin_api_transactions(
     data_quality: str | None = None,
     flagged: bool | None = None,
     review: str | None = None,
+    age: str | None = None,
+    queue_sort: str | None = None,
     limit: int = 50,
     offset: int = 0,
 ) -> dict:
@@ -2678,6 +2695,13 @@ def admin_api_transactions(
         raise HTTPException(
             status_code=400,
             detail="review must be all|needs|under|reviewed")
+    if age is not None and age not in _AGE_FILTERS:
+        raise HTTPException(
+            status_code=400,
+            detail="age must be lt15m|15m_1h|1h_4h|4h_24h|gt24h")
+    if queue_sort is not None and queue_sort not in _QUEUE_SORTS:
+        raise HTTPException(
+            status_code=400, detail="queue_sort must be oldest|newest")
     for name, val in (("min_score", min_score), ("max_score", max_score)):
         if val is not None and not (0 <= val <= 100):
             raise HTTPException(status_code=400,
@@ -2717,6 +2741,24 @@ def admin_api_transactions(
     if degraded is not None:
         where.append("degraded = ?")
         params.append(1 if degraded else 0)
+    if age:
+        # Phase 115 §7: backend-side waiting-age bucket filter.  Waiting
+        # age exists only for rows still awaiting review (UNREVIEWED), so
+        # rows without an authoritative waiting age never match — every
+        # row returned under an age filter carries waiting_seconds below.
+        # Absent review store -> honest 503, exactly like review= does.
+        _ensure_review_tables()
+        lo, hi = _AGE_FILTERS[age]
+        _st_age = ("COALESCE((SELECT review_state FROM event_reviews er "
+                   "WHERE er.event_id = risk_scores.event_id), "
+                   "'UNREVIEWED')")
+        where.append(f"{_st_age} = 'UNREVIEWED'")
+        if lo is not None:
+            where.append(f"{_AGE_SQL} >= ?")
+            params.append(lo)
+        if hi is not None:
+            where.append(f"{_AGE_SQL} < ?")
+            params.append(hi)
 
     def _audit_id_set(sql: str, extra: list) -> list[str]:
         """Resolve a DB-4-derived fraud_id allow/deny set (capped)."""
@@ -2782,7 +2824,13 @@ def admin_api_transactions(
     # switching to it would return — three bounded COUNTs, never a
     # client-side tally. An absent review store leaves them null, which
     # the console renders as N/A (never a fabricated zero).
+    #
+    # Phase 115 (aging): queue_aging partitions the "needs" (awaiting)
+    # queue under that SAME scope — filters MINUS the review chip — so
+    # switching review=never/under/reviewed never reshapes these numbers
+    # (§6); they always describe the Needs Review queue the banner names.
     review_counts: dict | None = None
+    queue_aging: dict | None = None
     try:
         _ensure_review_tables()
         bw, bp = list(where), list(params)
@@ -2802,8 +2850,40 @@ def admin_api_transactions(
             "under": _rc([f"{_st} = ?"], ["UNDER_REVIEW"]),
             "reviewed": _rc([f"{_st} = ?"], ["REVIEWED"]),
         }
+
+        # One bounded grouped pass (no per-row queries): bucket ages of
+        # the awaiting rows. NULL scored_at falls outside every bucket
+        # (never fabricated into <15m); empty population -> honest 0s
+        # with a NULL oldest; any failure nulls the whole summary.
+        aw = " AND ".join(
+            bw + [f"{_st} = ?", "risk_band NOT IN ('low', 'unknown')"])
+        ar = _ro_rows(
+            "risk",
+            f"SELECT SUM(CASE WHEN age < 900 THEN 1 ELSE 0 END) "
+            f"       AS under_15m, "
+            f"       SUM(CASE WHEN age >= 900 AND age < 3600 "
+            f"           THEN 1 ELSE 0 END) AS bucket_15m_1h, "
+            f"       SUM(CASE WHEN age >= 3600 AND age < 14400 "
+            f"           THEN 1 ELSE 0 END) AS bucket_1h_4h, "
+            f"       SUM(CASE WHEN age >= 14400 AND age < 86400 "
+            f"           THEN 1 ELSE 0 END) AS bucket_4h_24h, "
+            f"       SUM(CASE WHEN age >= 86400 THEN 1 ELSE 0 END) "
+            f"       AS over_24h, MAX(age) AS oldest "
+            f"FROM (SELECT {_AGE_SQL} AS age FROM risk_scores "
+            f"      WHERE {aw})",
+            tuple(bp) + ("UNREVIEWED",)) or []
+        if ar:
+            queue_aging = {
+                "under_15m": int(ar[0]["under_15m"] or 0),
+                "15m_to_1h": int(ar[0]["bucket_15m_1h"] or 0),
+                "1h_to_4h": int(ar[0]["bucket_1h_4h"] or 0),
+                "4h_to_24h": int(ar[0]["bucket_4h_24h"] or 0),
+                "over_24h": int(ar[0]["over_24h"] or 0),
+                "oldest_waiting_seconds": ar[0]["oldest"],
+            }
     except HTTPException:
         review_counts = None
+        queue_aging = None
 
     if review and review != "all":
         # Phase 113 (moved down in Phase 114 so the counts above see the
@@ -2821,15 +2901,26 @@ def admin_api_transactions(
             where.append("risk_band NOT IN ('low', 'unknown')")
 
     where_sql = " AND ".join(where) if where else "1=1"
+    # Phase 115 §8: optional queue ordering — explicit oldest/newest
+    # re-orders by the same authoritative waiting age (scored_at ascending/
+    # descending), event_id as the deterministic tiebreak. Absent -> the
+    # exact Phase-114 default. Never by fraud score; never a new priority
+    # score; never sorted on the client.
+    order_sql = "scored_at DESC, event_id"
+    if queue_sort == "oldest":
+        order_sql = "scored_at ASC, event_id"
+    elif queue_sort == "newest":
+        order_sql = "scored_at DESC, event_id"
     total = _ro_scalar("risk",
                        f"SELECT COUNT(*) FROM risk_scores WHERE {where_sql}",
                        tuple(params)) or 0
     rows_out = _ro_rows(
         "risk",
         f"SELECT event_id, fraud_id, risk_score, risk_band, reason_codes, "
-        f"model_version, ml_score, rule_score, degraded, scored_at "
+        f"model_version, ml_score, rule_score, degraded, scored_at, "
+        f"{_AGE_SQL} AS waiting_s "
         f"FROM risk_scores WHERE {where_sql} "
-        f"ORDER BY scored_at DESC, event_id LIMIT ? OFFSET ?",
+        f"ORDER BY {order_sql} LIMIT ? OFFSET ?",
         tuple(params) + (limit, offset)) or []
 
     # Enrich the PAGE (not the world): one bounded DB-4 pass for decisions,
@@ -2875,13 +2966,18 @@ def admin_api_transactions(
     out_rows = []
     for r in rows_out:
         codes = _codes(r.get("reason_codes"))
+        state = review_by_event.get(r["event_id"], "UNREVIEWED")
+        # Phase 115 §4: waiting age exists only while the row is still
+        # awaiting review; anything else (or an unknown stamp) is null
+        # -> the UI renders N/A, never a guessed duration.
+        waiting_s = r["waiting_s"] if state == "UNREVIEWED" else None
         out_rows.append({
             "event_id": r["event_id"],
             "fraud_id": r["fraud_id"],
             "risk_score": r["risk_score"],
             "risk_band": r["risk_band"],
             "decision": decisions.get(r["event_id"]),  # None -> UI shows N/A
-            "review_state": review_by_event.get(r["event_id"], "UNREVIEWED"),
+            "review_state": state,
             "reason_codes": codes,
             "ml_score": r["ml_score"],
             "rule_score": r["rule_score"],
@@ -2892,16 +2988,19 @@ def admin_api_transactions(
             "model_id": r["model_version"],
             "release_id": releases.get(r["event_id"]),  # None -> UI shows N/A
             "scored_at": r["scored_at"],
+            "waiting_seconds": waiting_s,
+            "waiting_since": (r["scored_at"]
+                              if waiting_s is not None else None),
         })
     out_rows = _apply_pii_mask(out_rows)
 
     _admin_audit(_session[0].get("sub", "admin"), "admin_tx_search",
-                 {"filters": {k: v for k, v in {
-                     "event_id": event_id, "fraud_id": fraud_id, "band": band, "decision": decision,
+                 {"filters": {k: v for k, v in {                     "event_id": event_id, "fraud_id": fraud_id, "band": band, "decision": decision,
                      "flagged": flagged, "data_quality": data_quality,
-                     "review": review,
+                     "review": review, "age": age,
+                     "queue_sort": queue_sort,
                  }.items() if v is not None},
-                  "total": total, "limit": limit, "offset": offset})
+                 "total": total, "limit": limit, "offset": offset})
     return {
         "rows": out_rows,
         "total": total,
@@ -2909,6 +3008,7 @@ def admin_api_transactions(
         "offset": offset,
         "has_more": offset + len(out_rows) < total,
         "review_counts": review_counts,
+        "queue_aging": queue_aging,
         "decision_source": ("audit_payload" if decision else None),
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -2934,7 +3034,8 @@ def admin_api_transaction_detail(
         "risk",
         "SELECT score_id, event_id, fraud_id, risk_score, risk_band, "
         "reason_codes, model_version, ml_score, rule_score, degraded, "
-        "scored_at FROM risk_scores WHERE event_id = ? LIMIT 1",
+        f"scored_at, {_AGE_SQL} AS waiting_s "
+        "FROM risk_scores WHERE event_id = ? LIMIT 1",
         (event_id,)) or []
     if not score_rows:
         _admin_audit(_session[0].get("sub", "admin"), "admin_tx_view",
@@ -3074,9 +3175,19 @@ def admin_api_transaction_detail(
                  {"event_id": event_id, "result": "found",
                   "risk_band": score["risk_band"]})
 
+    # Phase 115 §12: authoritative waiting age for this record — the
+    # server's own clock over the recorded scored_at, present only while
+    # the record still awaits review (null -> "Waiting for review: N/A").
+    review_rec = _review_payload(event_id)
+    waiting_s = (score["waiting_s"]
+                 if review_rec.get("review_state") == "UNREVIEWED" else None)
+
     return {
         "event_id": event_id,
         "generated_at": datetime.now(timezone.utc).isoformat(),
+        "waiting_seconds": waiting_s,
+        "waiting_since": (score["scored_at"]
+                          if waiting_s is not None else None),
         "score": {
             "score_id": score["score_id"],
             "event_id": score["event_id"],
@@ -3120,7 +3231,7 @@ def admin_api_transaction_detail(
         },
         "outcomes": outcomes,
         "cases": cases,
-        "review": _review_payload(event_id),
+        "review": review_rec,
         "context": {
             "threshold": MC.CANONICAL_THRESHOLD,
             "model_id": MC.CANONICAL_MODEL_VERSION,

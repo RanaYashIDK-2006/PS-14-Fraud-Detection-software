@@ -1611,6 +1611,8 @@
                         <div class="card" id="f-queue" style="display: none; margin-top: 14px;">
                             <div class="card-title" id="f-queue-title">NEEDS REVIEW</div>
                             <div id="f-queue-sub" style="font-size: 13px; color: var(--text-dim);">N/A</div>
+                            <div id="f-queue-oldest" style="font-size: 13px; color: var(--text-dim); margin-top: 2px;">Oldest waiting: N/A</div>
+                            <div id="f-queue-aging" style="font-size: 12px; color: var(--text-dim); margin-top: 2px;">Aging breakdown: N/A</div>
                             <div id="f-queue-pos" style="font-size: 12px; color: var(--text-dim); display: none; margin-top: 4px;"></div>
                         </div>
 
@@ -1629,6 +1631,8 @@
                                 <label style="color: var(--text-dim);">Degraded<select id="f-degraded" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">any</option><option value="true">only degraded</option><option value="false">only non-degraded</option></select></label>
                                 <label style="color: var(--text-dim);">Data quality<select id="f-dq" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">any</option><option value="blocked">blocked</option><option value="passed">passed</option></select></label>
                                 <label style="color: var(--text-dim);">Flagged only<select id="f-flagged" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">no</option><option value="true">yes (non-low band)</option></select></label>
+                                <label style="color: var(--text-dim);">Waiting age<select id="f-age" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">All</option><option value="lt15m">&lt;15 min</option><option value="15m_1h">15 min–1 hour</option><option value="1h_4h">1–4 hours</option><option value="4h_24h">4–24 hours</option><option value="gt24h">&gt; 24 hours</option></select></label>
+                                <label style="color: var(--text-dim);">Queue order<select id="f-qsort" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option value="">Default</option><option value="oldest">Oldest waiting</option><option value="newest">Newest waiting</option></select></label>
                                 <label style="color: var(--text-dim);">Rows per page<select id="f-limit" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); margin-top: 4px;"><option>25</option><option selected>50</option><option>100</option></select></label>
                             </div>
                             </div>
@@ -1646,10 +1650,10 @@
                             <div style="overflow-x: auto;">
                             <table class="stackable">
                                 <thead>
-                                    <tr><th>Time</th><th>Event ID</th><th>Risk</th><th>Decision</th><th>Status</th><th>Review</th></tr>
+                                    <tr><th>Time</th><th>Event ID</th><th>Risk</th><th>Decision</th><th>Status</th><th>Review</th><th>Waiting</th></tr>
                                 </thead>
                                 <tbody id="f-rows">
-                                    <tr><td colspan="6" style="text-align: center; color: var(--text-dim); padding: 24px;">Search for a transaction, or press Search to browse</td></tr>
+                                    <tr><td colspan="7" style="text-align: center; color: var(--text-dim); padding: 24px;">Search for a transaction, or press Search to browse</td></tr>
                                 </tbody>
                             </table>
                             </div>
@@ -2348,7 +2352,7 @@
             if (!query) return;
             ['f-event', 'f-fraud', 'f-decision', 'f-band', 'f-min', 'f-max',
              'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged', 'f-review',
-             'f-range'].forEach(id => {
+             'f-range', 'f-age', 'f-qsort'].forEach(id => {
                 const el = $(id); if (el) el.value = '';
             });
             const quick = $('f-quick');
@@ -2361,7 +2365,8 @@
 
         function goFlagged() {
             ['f-quick', 'f-event', 'f-fraud', 'f-decision', 'f-band', 'f-min', 'f-max',
-             'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged', 'f-review'].forEach(id => {
+             'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged', 'f-review',
+             'f-age', 'f-qsort'].forEach(id => {
                 const el = $(id); if (el) el.value = '';
             });
             const fl = $('f-flagged');
@@ -2373,7 +2378,8 @@
         // Dashboard "Needs Review" KPI -> the flagged review queue (§6).
         function goNeedsReview() {
             ['f-quick', 'f-event', 'f-fraud', 'f-decision', 'f-band', 'f-min', 'f-max',
-             'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged'].forEach(id => {
+             'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged',
+             'f-age', 'f-qsort'].forEach(id => {
                 const el = $(id); if (el) el.value = '';
             });
             if ($('f-review')) $('f-review').value = 'needs';
@@ -3205,6 +3211,8 @@
             set('data_quality', $('f-dq').value);
             set('flagged', $('f-flagged').value);
             set('review', $('f-review') ? $('f-review').value : '');
+            set('age', $('f-age') ? $('f-age').value : '');
+            set('queue_sort', $('f-qsort') ? $('f-qsort').value : '');
             txnLimit = parseInt($('f-limit').value, 10) || 50;
             p.set('limit', String(txnLimit));
             p.set('offset', String(txnPage * txnLimit));
@@ -3219,7 +3227,7 @@
         // on the way back in, so a mangled URL falls back to defaults.
         const TXN_URL_KEYS = ['q', 'event_id', 'fraud_id', 'band', 'decision',
                               'min_score', 'max_score', 'degraded', 'data_quality',
-                              'review', 'since', 'until'];
+                              'review', 'since', 'until', 'age', 'queue_sort'];
 
         function txnUrlQuery() {
             const p = txFilterParams();
@@ -3253,7 +3261,7 @@
             let applied = false;
             ['f-quick', 'f-event', 'f-fraud', 'f-decision', 'f-band', 'f-min',
              'f-max', 'f-since', 'f-until', 'f-degraded', 'f-dq', 'f-flagged',
-             'f-review', 'f-range'].forEach(id => { const el = $(id); if (el) el.value = ''; });
+             'f-review', 'f-range', 'f-age', 'f-qsort'].forEach(id => { const el = $(id); if (el) el.value = ''; });
             txnPage = 0;
             txnOpenExact = false;
             const set = (id, v) => { const el = $(id); if (el) el.value = v; };
@@ -3283,6 +3291,16 @@
             const rev = sp.get('review');
             if (rev && ['needs', 'under', 'reviewed'].includes(rev)) {
                 set('f-review', rev); applied = true;
+            }
+            // Queue aging state (Phase 115 §14): only allowlisted values
+            // restore — an invalid age/queue_sort falls back to the default.
+            const ageV = sp.get('age');
+            if (ageV && ['lt15m', '15m_1h', '1h_4h', '4h_24h', 'gt24h'].includes(ageV)) {
+                set('f-age', ageV); applied = true;
+            }
+            const sortV = sp.get('queue_sort');
+            if (sortV && ['oldest', 'newest'].includes(sortV)) {
+                set('f-qsort', sortV); applied = true;
             }
             for (const [key, id] of [['since', 'f-since'], ['until', 'f-until']]) {
                 const v = sp.get(key);
@@ -3321,6 +3339,9 @@
         function activeFilterKind() {
             const p = txFilterParams();
             p.delete('limit'); p.delete('offset'); p.delete('review');
+            // Queue-aging controls (age/queue_sort) are orthogonal axes
+            // like the review chip — they never move the status chip.
+            p.delete('age'); p.delete('queue_sort');
             if ($('f-range') && $('f-range').value) { p.delete('since'); p.delete('until'); }
             if (![...p.keys()].length) return 'all';
             if (p.get('flagged') === 'true') return 'flagged';
@@ -3343,6 +3364,44 @@
             // Dynamic page title (§2): the default flagged view names itself.
             const title = $('tx-title');
             if (title) title.textContent = kind === 'flagged' ? 'FLAGGED TRANSACTIONS' : 'Transactions';
+        }
+
+        // ---- Queue aging surface (Phase 115 §4/§5/§9/§11) ---------------
+        // Presentation-only duration formatter: the API keeps the precise
+        // numeric age; null/unknown renders N/A, never a fabricated 0.
+        function fmtWait(sec) {
+            if (sec == null || isNaN(sec)) return 'N/A';
+            const s = Math.floor(sec);
+            if (s < 60) return '<1m';
+            const m = Math.floor(s / 60);
+            if (m < 60) return m + 'm';
+            const h = Math.floor(m / 60);
+            if (h < 24) return (m % 60) ? h + 'h ' + (m % 60) + 'm' : h + 'h';
+            const d = Math.floor(h / 24);
+            return (h % 24) ? d + 'd ' + (h % 24) + 'h' : d + 'd';
+        }
+
+        // Oldest-waiting line + compact aging breakdown (§9): every number
+        // comes from the response's queue_aging summary — unavailable
+        // renders N/A, and the client never recomputes an age from its own
+        // clock (server-authoritative, §4).
+        function renderQueueAging(aging) {
+            const oldEl = $('f-queue-oldest');
+            if (oldEl) {
+                const o = aging ? aging.oldest_waiting_seconds : null;
+                oldEl.textContent = 'Oldest waiting: '
+                    + (o != null ? fmtWait(o) : 'N/A');
+            }
+            const agEl = $('f-queue-aging');
+            if (agEl) {
+                agEl.textContent = aging
+                    ? '<15m: ' + aging.under_15m
+                      + ' · 15m–1h: ' + aging['15m_to_1h']
+                      + ' · 1h–4h: ' + aging['1h_to_4h']
+                      + ' · 4h–24h: ' + aging['4h_to_24h']
+                      + ' · >24h: ' + aging.over_24h
+                    : 'Aging breakdown: N/A';
+            }
         }
 
         // ---- Review queue surface (Phase 114 §2/§3/§7) ------------------
@@ -3406,7 +3465,7 @@
             // Queue banner: hidden unless the Needs Review queue is active,
             // N/A until (and unless) the server answers (§2).
             renderQueueHeader(null);
-            $('f-rows').innerHTML = '<tr><td colspan="6" style="padding: 14px 20px;">' +
+            renderQueueAging(null);                    $('f-rows').innerHTML = '<tr><td colspan="7" style="padding: 14px 20px;">' +
                 '<span class="skel" style="width: 90%;"></span>' +
                 '<span class="skel" style="width: 75%;"></span>' +
                 '<span class="skel" style="width: 60%;"></span></td></tr>';
@@ -3456,6 +3515,9 @@
                 // Queue banner + chip counts (§2/§7): authoritative response only.
                 renderQueueHeader(txnTotal);
                 renderReviewCounts(d.review_counts);
+                // Phase 115 §9: oldest-waiting + aging breakdown from the
+                // same response (N/A when the server did not send them).
+                renderQueueAging(d.queue_aging);
                 if (!rows.length) {
                     // Honest, contextual empty states (§17).
                     const quick = (($('f-quick') && $('f-quick').value) || '').trim();
@@ -3463,7 +3525,8 @@
                     fp.delete('limit'); fp.delete('offset');
                     const hasFilters = [...fp.keys()].length > 0;
                     const idKeys = [...fp.keys()].filter(
-                        k => !['review', 'since', 'until'].includes(k));
+                        k => !['review', 'since', 'until',
+                               'age', 'queue_sort'].includes(k));
                     const loneEventId = idKeys.length === 1
                         && (idKeys[0] === 'event_id' || idKeys[0] === 'fraud_id')
                         && fp.get(idKeys[0]) === quick && quick.length > 0;
@@ -3486,7 +3549,7 @@
                         msg = 'No transactions yet';
                         sub = 'Transactions will appear here when the system receives them.';
                     }
-                    $('f-rows').innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px;"><b style="color: var(--text);">${msg}</b><div style="font-size: 12px; color: var(--text-dim); margin-top: 4px;">${sub}</div></td></tr>`;
+                    $('f-rows').innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 24px;"><b style="color: var(--text);">${msg}</b><div style="font-size: 12px; color: var(--text-dim); margin-top: 4px;">${sub}</div></td></tr>`;
                     // The empty set is still authoritative (§8): no ids to
                     // page through, so prev/next in a detail stay disabled.
                     txnCtx = makeTxnCtx([], d, p);
@@ -3496,7 +3559,8 @@
                 }
                 // Exact-ID search opens the detail directly (§15).
                 const lone = [...p.keys()].filter(
-                    k => !['limit', 'offset', 'review', 'since', 'until'].includes(k)).length === 1;
+                    k => !['limit', 'offset', 'review', 'since', 'until',
+                           'age', 'queue_sort'].includes(k)).length === 1;
                 if (wantOpen && lone && quick0 && rows.length === 1
                         && rows[0].event_id === quick0) {
                     // Same path as a row click: detail opens AND the URL
@@ -3520,6 +3584,11 @@
                     }
                     const deg = row.degraded ? ' <span title="ML unavailable — rules only evaluated">⚠</span>' : '';
                     const reviewCell = `<span style="color: var(--text-dim);">${esc(reviewWord(row.review_state))}</span>`;
+                    // Phase 115 §11: compact waiting age — server seconds,
+                    // presentation-only formatting; null -> N/A.
+                    const waitCell = row.waiting_seconds == null
+                        ? '<span style="color: var(--text-dim);">N/A</span>'
+                        : esc(fmtWait(row.waiting_seconds));
                     return `<tr>
                         <td data-label="Time" style="font-size: 12px;">${esc(row.scored_at ?? '—')}</td>
                         <td data-label="Event ID"><a class="txn-link" data-eid="${esc(row.event_id)}" href="${href}" style="font-family: monospace; font-size: 12px;">${esc(row.event_id)}</a></td>
@@ -3527,6 +3596,7 @@
                         <td data-label="Decision">${word ? esc(word) : naVal(row.decision)}</td>
                         <td data-label="Status">${statusCell}</td>
                         <td data-label="Review" style="font-size: 12px;">${reviewCell}</td>
+                        <td data-label="Waiting" style="font-size: 12px;">${waitCell}</td>
                     </tr>`;
                 }).join('');
                 // Keep the authoritative result set (§8) and the shareable
@@ -3545,10 +3615,11 @@
                 $('f-count').textContent = '';
                 // API unavailable (§13): name the outage honestly — this is
                 // never rendered as a fabricated zero count.
-                $('f-rows').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 24px;"><b style="color: var(--text);">Transactions unavailable</b><div style="font-size: 12px; color: var(--text-dim); margin-top: 4px;">The transaction service did not respond — use Retry, or check System Details.</div></td></tr>';
+                $('f-rows').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 24px;"><b style="color: var(--text);">Transactions unavailable</b><div style="font-size: 12px; color: var(--text-dim); margin-top: 4px;">The transaction service did not respond — use Retry, or check System Details.</div></td></tr>';
                 syncQuickUI();
                 // Queue banner stays N/A and chip counts go N/A on failure (§2/§7).
                 renderReviewCounts(null);
+                renderQueueAging(null);
             }
         }
 
@@ -3714,7 +3785,8 @@
                 return { ids: (dj.rows || []).map(x => x.event_id),
                          offset: dj.offset != null ? dj.offset : 0,
                          total: dj.total != null ? dj.total : null,
-                         review_counts: dj.review_counts || null };
+                         review_counts: dj.review_counts || null,
+                         queue_aging: dj.queue_aging || null };
             } catch (e) { if (e.sessionExpired) throw e; return null; }
         }
 
@@ -3733,6 +3805,7 @@
             txnCtx = Object.assign({}, txnCtx, fresh);
             renderQueueHeader(fresh.total);
             renderReviewCounts(fresh.review_counts);
+            renderQueueAging(fresh.queue_aging);
             updateTxnNav();
             if (action === 'complete' && !wasMember) {
                 if (!fresh.ids.length) {
@@ -3850,6 +3923,11 @@
                 field('Fraud / transaction ID', val(sc.fraud_id, d.fraud_id)),
                 field('Decision', word),
                 field('Investigation', investigationText(d)),
+                // Phase 115 §12: server-authoritative waiting age for a
+                // record opened from the queue — N/A when not awaiting.
+                // The value cell carries an id so the post-action re-render
+                // (§13) can clear a duration the server no longer confirms.
+                `<tr><td data-label="Waiting for review" style="color: var(--text-dim); width: 260px;">Waiting for review</td><td id="d-waiting-val">${d.waiting_seconds == null ? naVal(null) : esc(fmtWait(d.waiting_seconds))}</td></tr>`,
                 field('Risk score', val(sc.risk_score)),
                 field('Risk band', band),
                 field('Data quality', dqBlocked ? 'blocked' : (dqStatus || val(d.data_quality_status))),
@@ -3977,6 +4055,13 @@
                 </div>`).join('') : '<span style="color: var(--text-dim);">No investigation notes yet</span>';
             const err = $('d-review-error');
             if (err) { err.style.display = 'none'; err.textContent = ''; }
+            // Phase 115 §13: the waiting field follows the AUTHORITATIVE
+            // review state — once the record no longer awaits review it
+            // reads N/A, never a stale duration from page load. A still-
+            // UNREVIEWED record keeps its server-supplied value (never
+            // recomputed on the client).
+            const wEl = $('d-waiting-val');
+            if (wEl && state !== 'UNREVIEWED') wEl.innerHTML = naVal(null);
             updateSummaryReview(state);
         }
 
@@ -4326,7 +4411,7 @@
                 if (!b) return;
                 ['f-quick', 'f-event', 'f-fraud', 'f-band', 'f-min', 'f-max',
                  'f-since', 'f-until', 'f-degraded', 'f-flagged', 'f-decision',
-                 'f-dq', 'f-review'].forEach(id => { const el = $(id); if (el) el.value = ''; });
+                 'f-dq', 'f-review', 'f-age', 'f-qsort'].forEach(id => { const el = $(id); if (el) el.value = ''; });
                 const kind = b.dataset.chip;
                 if (kind === 'flagged') $('f-flagged').value = 'true';
                 if (kind === 'approved') $('f-decision').value = 'allow';
@@ -4491,7 +4576,8 @@
             $('f-reset') && $('f-reset').addEventListener('click', () => {
                 ['f-event', 'f-fraud', 'f-min', 'f-max', 'f-since', 'f-until',
                  'f-range'].forEach(id => $(id).value = '');
-                ['f-decision', 'f-band', 'f-degraded', 'f-dq', 'f-flagged'].forEach(id => $(id).value = '');
+                ['f-decision', 'f-band', 'f-degraded', 'f-dq', 'f-flagged',
+                 'f-age', 'f-qsort'].forEach(id => $(id).value = '');
                 if ($('f-quick')) $('f-quick').value = '';
                 if ($('f-review')) $('f-review').value = '';
                 txnPage = 0;
