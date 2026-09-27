@@ -1076,6 +1076,52 @@
                     </div>
                     <p id="dash-kpi-note" style="font-size: 12px; color: var(--text-dim); margin: -20px 0 24px;"></p>
 
+                    <!-- REVIEW WORKLOAD (Phase 116 §8): factual aggregates
+                         only — no rankings, grades, or comparisons. -->
+                    <div class="data-table" id="wl-section">
+                        <div class="table-header">
+                            <span class="table-title">Review Workload</span>
+                            <div class="table-actions">
+                                <label style="font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 6px;">Period
+                                    <select id="wl-range" aria-label="Workload period" style="padding: 6px 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text);">
+                                        <option value="24h">24 hours</option>
+                                        <option value="7d">7 days</option>
+                                        <option value="30d">30 days</option>
+                                        <option value="all">All time</option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="kpi-row" style="margin-bottom: 4px;">
+                            <div class="kpi">
+                                <div class="kpi-value" id="wl-needs">—</div>
+                                <div class="kpi-label">Needs Review</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="wl-under">—</div>
+                                <div class="kpi-label">Under Review</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="wl-reviewed">—</div>
+                                <div class="kpi-label" id="wl-reviewed-label">Reviewed — 24h</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi-value" id="wl-reviewers">—</div>
+                                <div class="kpi-label">Active Reviewers</div>
+                            </div>
+                        </div>
+                        <div id="wl-turnaround" style="font-size: 13px; color: var(--text-dim); line-height: 1.9; margin-top: 4px;">
+                            <div id="wl-line-completed">Completed reviews: N/A</div>
+                            <div id="wl-line-avg">Average review duration: N/A</div>
+                            <div id="wl-line-median">Median review duration: N/A</div>
+                            <div id="wl-line-oldest">Oldest waiting: N/A</div>
+                        </div>
+                        <details id="wl-detail" style="margin-top: 8px;">
+                            <summary style="cursor: pointer; font-size: 12px; color: var(--text-dim);">Review duration detail</summary>
+                            <div id="wl-buckets" style="font-size: 12px; color: var(--text-dim); margin-top: 6px;">Duration buckets: N/A</div>
+                        </details>
+                    </div>
+
                     <!-- NEEDS ATTENTION (flagged, §3/§4) -->
                     <div class="data-table">
                         <div class="table-header">
@@ -2055,6 +2101,9 @@
             $('admin-content').classList.add('visible');
             $('login-time').textContent = new Date().toLocaleString();
             fillAccessMeta();
+            // Phase 116 §13: restore the workload period BEFORE the first
+            // summary fetch so a shared or refreshed URL lands on it.
+            applyWorkloadQuery(new URLSearchParams(window.location.search));
             loadDashboard();
             // Transaction-page URL state (Phase 114 §7): restore filters,
             // period and page BEFORE the first load so a shared or refreshed
@@ -2208,7 +2257,8 @@
                 // Transaction LIST URLs carry their shareable filter state (§7);
                 // an identical target never pushes twice, so navigation cannot
                 // ping-pong history entries.
-                const qs = (path && !detail && tab === 'transactions') ? txnUrlQuery() : '';
+                const qs = (path && !detail && tab === 'transactions') ? txnUrlQuery()
+                    : (path && !detail && tab === 'dashboard') ? workloadUrlQuery() : '';
                 const target = path ? path + qs : null;
                 if (target && window.location.pathname + window.location.search !== target)
                     history.pushState({ tab, detail }, '', target);
@@ -2232,6 +2282,8 @@
             // (prev/next, back label) is built from.
             const r = routeFromPath();
             if (!r.detail) applyTxnQuery(new URLSearchParams(window.location.search));
+            // Phase 116 §13: Back/Forward also restore the workload period.
+            if (!r.detail) applyWorkloadQuery(new URLSearchParams(window.location.search));
             activateTab(r.tab, { push: false, detail: r.detail });
         });
 
@@ -2403,12 +2455,88 @@
             }
         }
 
+        // ---- Review workload surface (Phase 116 §7/§8/§13) --------------
+        // Period control + shareable URL state: only these four allowlisted
+        // labels exist (the server re-validates the same allowlist and 400s
+        // anything else), and every workload number below comes straight
+        // from the summary payload — the client never computes one, never
+        // ranks a reviewer, and unavailable values render N/A (never a
+        // fabricated 0).
+        const WORKLOAD_RANGES = ['24h', '7d', '30d', 'all'];
+        const WORKLOAD_LABELS = {
+            '24h': '24h', '7d': '7d', '30d': '30d', 'all': 'all time'
+        };
+
+        function workloadUrlQuery() {
+            const el = $('wl-range');
+            const v = el ? el.value : '24h';
+            return (WORKLOAD_RANGES.includes(v) && v !== '24h')
+                ? '?workload_range=' + v : '';
+        }
+
+        // Restore the period from a location query; anything not on the
+        // allowlist falls back to the 24h default (invalid falls back safely).
+        function applyWorkloadQuery(sp) {
+            const el = $('wl-range');
+            if (!el || !sp) return false;
+            const v = sp.get('workload_range');
+            if (v && WORKLOAD_RANGES.includes(v)) { el.value = v; return true; }
+            el.value = '24h';
+            return false;
+        }
+
+        function pushWorkloadUrl() {
+            if (!isAdminAuthenticated) return;
+            if (currentTab !== 'dashboard') return;
+            const path = ROUTE_TABS['dashboard'];
+            if (!path) return;
+            const target = path + workloadUrlQuery();
+            if (window.location.pathname + window.location.search !== target)
+                history.pushState({ tab: 'dashboard', detail: null }, '', target);
+        }
+
+        // Render the Review Workload section from the server payload only:
+        // null -> N/A, never a client-side count or duration.
+        function renderWorkload(w, c) {
+            const fmt = v => v == null ? 'N/A' : Number(v).toLocaleString();
+            const rng = (($('wl-range') && $('wl-range').value) || '24h');
+            const lbl = $('wl-reviewed-label');
+            if (lbl) lbl.textContent = 'Reviewed — ' + (WORKLOAD_LABELS[rng] || rng);
+            const set = (id, v) => { const el = $(id); if (el) el.textContent = fmt(v); };
+            set('wl-needs', c ? c.needs_review : null);
+            set('wl-under', c ? c.under_review : null);
+            set('wl-reviewed', w ? w.reviewed_in_period : null);
+            set('wl-reviewers', w ? w.active_reviewers : null);
+            const dur = (w && w.completed_review_duration) || null;
+            const durFmt = v => (v != null ? fmtWait(v) : 'N/A');
+            const line = (id, text) => { const el = $(id); if (el) el.textContent = text; };
+            line('wl-line-completed',
+                'Completed reviews: ' + fmt(w ? w.reviewed_in_period : null));
+            line('wl-line-avg', 'Average review duration: '
+                + durFmt(dur ? dur.average_seconds : null));
+            line('wl-line-median', 'Median review duration: '
+                + durFmt(dur ? dur.median_seconds : null));
+            line('wl-line-oldest', 'Oldest waiting: '
+                + (w && w.oldest_waiting_seconds != null
+                    ? fmtWait(w.oldest_waiting_seconds) : 'N/A'));
+            const bk = (w && w.duration_buckets) || null;
+            line('wl-buckets', bk
+                ? '<15m: ' + bk.lt15m + ' · 15m–1h: ' + bk['15m_1h']
+                  + ' · 1h–4h: ' + bk['1h_4h'] + ' · 4h–24h: ' + bk['4h_24h']
+                  + ' · >24h: ' + bk.gt24h
+                : 'Duration buckets: N/A');
+        }
+
         // Load dashboard data from the compact operator summary — one small
         // request answers "is it working / what's flagged / what needs attention"
         // instead of the heavy live-monitor payload.
         async function loadDashboard() {
             try {
-                const s = await authFetch('/admin/api/summary').then(r => r.json());
+                const wsel = $('wl-range');
+                const wl = (wsel && WORKLOAD_RANGES.includes(wsel.value))
+                    ? wsel.value : '24h';
+                const s = await authFetch('/admin/api/summary?workload_range='
+                    + encodeURIComponent(wl)).then(r => r.json());
 
                 const st = s.status || {};
                 renderStatusCard(st);
@@ -2425,6 +2553,9 @@
                 $('dash-kpi-note').textContent = c.newest_scored_at
                     ? `newest scored at ${agoLabel(c.newest_scored_at)}`
                     : 'no scores recorded yet';
+
+                // Review workload (Phase 116 §8): server aggregates only.
+                renderWorkload(s.workload, c);
 
                 // Flagged transactions — the main thing to investigate.
                 const flagged = s.recent_flagged || [];
@@ -2561,6 +2692,12 @@
         // Load tab data
         async function loadTabData(tab) {
             switch (tab) {
+                case 'dashboard':
+                    // Phase 116 §11: re-fetch the authoritative summary
+                    // (workload included) each time the dashboard opens —
+                    // mutations never leave stale numbers behind.
+                    loadDashboard();
+                    break;
                 case 'live':
                     startLive();
                     break;
@@ -4487,6 +4624,10 @@
                     // only now is the queue refreshed — never before the
                     // response, never from a local assumption.
                     if (d.changed) await afterReviewAction(action);
+                    // Phase 116 §11: workload numbers are server-authoritative
+                    // — refresh the summary after every review mutation (never
+                    // a local increment; the queue refresh above stays intact).
+                    if (d.changed) loadDashboard();
                 } catch (e2) {
                     // Phase 114 §16: a rejected transition means another
                     // operator moved the record first — re-fetch the server
@@ -4593,6 +4734,13 @@
                 if ($('f-until')) $('f-until').value = '';
                 txnPage = 0;
                 loadTransactions();
+            });
+            // Phase 116 §7/§13: a period change pushes its own history
+            // entry (Back/Forward restore it) and re-fetches the summary.
+            const wlSel = $('wl-range');
+            if (wlSel) wlSel.addEventListener('change', () => {
+                pushWorkloadUrl();
+                loadDashboard();
             });
             ['f-since', 'f-until'].forEach(id => {
                 const el = $(id);

@@ -2337,6 +2337,13 @@ _AGE_FILTERS = {"lt15m": (None, 900), "15m_1h": (900, 3600),
                 "1h_4h": (3600, 14400), "4h_24h": (14400, 86400),
                 "gt24h": (86400, None)}
 _QUEUE_SORTS = ("oldest", "newest")
+# Phase 116 (review workload): allowlisted period labels for the dashboard's
+# Review Workload section.  The client may only pick one of these four
+# strings; the summary endpoint re-validates against this allowlist (400
+# otherwise) and computes every cutoff itself from SERVER time — never from
+# a client-supplied timestamp.
+_WORKLOAD_RANGES = ("24h", "7d", "30d", "all")
+_WORKLOAD_RANGE_DAYS = {"24h": 1, "7d": 7, "30d": 30, "all": None}
 _REVIEW_MAX_NOTE = 2000
 _review_schema_ready = False
 
@@ -3272,7 +3279,7 @@ def _runtime_model_block() -> dict:
 
 
 @app.get("/admin/api/summary")
-def admin_api_summary(request: Request) -> dict:
+def admin_api_summary(request: Request, workload_range: str = "24h") -> dict:
     """Compact operator-dashboard payload (Phase 112): one small request.
 
     Answers the dashboard questions — is the system working, are
@@ -3281,8 +3288,18 @@ def admin_api_summary(request: Request) -> dict:
     Counts are bounded read-only queries; status/details come from the
     background-refreshed status cache. Absent sources return null so the
     console renders N/A, never a fabricated zero.
+
+    Phase 116: `workload_range` (24h|7d|30d|all, default 24h) scopes only
+    the period-dependent fields of the `workload` block below.  It is an
+    exact-match allowlist value — anything else (including injection-shaped
+    input) is a 400 after authentication, and the client never supplies a
+    timestamp.
     """
     _require_admin_session(request)
+    if workload_range not in _WORKLOAD_RANGES:
+        raise HTTPException(
+            status_code=400,
+            detail="workload_range must be one of: 24h, 7d, 30d, all")
     now = datetime.now(timezone.utc)
     since = (now - timedelta(hours=24)).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -3339,6 +3356,181 @@ def admin_api_summary(request: Request) -> dict:
         needs_review = None
         under_review = None
         reviewed_count = None
+
+    # ── Phase 116: Review Workload (descriptive observability only) ─────
+    # Factual aggregates over the EXISTING review lifecycle — no rankings,
+    # grades, comparisons, assignment, or client-side arithmetic.  Every
+    # value below comes from bounded server-side queries; unavailable
+    # sources make the whole block null so the console renders N/A (never
+    # a fabricated zero).  Documented semantics (pinned by the Phase-116
+    # suite):
+    #   * needs_review / under_review / reviewed mirror the `counts`
+    #     scalars computed above (one source, no drift);
+    #   * reviewed_last_24h / reviewed_last_7d / reviewed_in_period count
+    #     REVIEWED rows whose authoritative reviewed_at falls inside the
+    #     window — a completion stamp that is missing is never counted;
+    #   * duration = CURRENT review cycle only: reviewed_at minus the
+    #     newest cycle-begin audit event (admin_review_started or
+    #     admin_review_reopened) for that event, so a reopened review's
+    #     earlier cycles are never folded in.  Missing start, missing
+    #     completion, unparsable stamps or a non-positive result drops
+    #     that row from the aggregates — an unmeasurable review is NOT a
+    #     0-second review;
+    #   * active_reviewers = distinct session-derived reviewer_id values
+    #     on current UNDER_REVIEW rows; an under-review row without an
+    #     identity nulls the count (honest failure, never a guess);
+    #   * oldest_waiting_seconds mirrors the Phase-115 queue metric:
+    #     flagged rows still UNREVIEWED, aged from their own scored_at.
+    workload: dict | None = None
+    try:
+        _ensure_review_tables()
+        c24 = (now - timedelta(days=_WORKLOAD_RANGE_DAYS["24h"])).isoformat()
+        c7 = (now - timedelta(days=_WORKLOAD_RANGE_DAYS["7d"])).isoformat()
+        c30 = (now - timedelta(days=_WORKLOAD_RANGE_DAYS["30d"])).isoformat()
+        # One bounded grouped pass (never per-row scans).
+        rrow = _ro_rows(
+            "risk",
+            "SELECT SUM(CASE WHEN reviewed_at >= ? THEN 1 ELSE 0 END) "
+            "       AS r24, "
+            "       SUM(CASE WHEN reviewed_at >= ? THEN 1 ELSE 0 END) "
+            "       AS r7, "
+            "       SUM(CASE WHEN reviewed_at >= ? THEN 1 ELSE 0 END) "
+            "       AS r30, "
+            "       SUM(CASE WHEN reviewed_at IS NOT NULL "
+            "           THEN 1 ELSE 0 END) AS rall "
+            "FROM event_reviews WHERE review_state = 'REVIEWED'",
+            (c24, c7, c30))
+        if not rrow:
+            raise HTTPException(status_code=503,
+                                detail="workload summary unavailable")
+        reviewed_last_24h = int(rrow[0]["r24"] or 0)
+        reviewed_last_7d = int(rrow[0]["r7"] or 0)
+        reviewed_30d = int(rrow[0]["r30"] or 0)
+        reviewed_all = int(rrow[0]["rall"] or 0)
+        in_period = {"24h": reviewed_last_24h, "7d": reviewed_last_7d,
+                     "30d": reviewed_30d, "all": reviewed_all}[
+                         workload_range]
+
+        # Distinct reviewers CURRENTLY holding an under-review record.
+        arows = _ro_rows(
+            "risk",
+            "SELECT DISTINCT reviewer_id FROM event_reviews "
+            "WHERE review_state = 'UNDER_REVIEW'")
+        if arows is None:
+            raise HTTPException(status_code=503,
+                                detail="workload summary unavailable")
+        active_reviewers: int | None = len(arows)
+        for arow in arows:
+            if not (arow.get("reviewer_id") or "").strip():
+                active_reviewers = None  # missing identity -> honest null
+                break
+
+        # Backlog age: same population/scope as the Phase-115 needs-queue
+        # metric.  NULL (empty queue or unavailable store) -> UI shows N/A.
+        oldest_waiting = _ro_scalar(
+            "risk",
+            "SELECT MAX(" + _AGE_SQL + ") FROM risk_scores WHERE "
+            "COALESCE((SELECT review_state FROM event_reviews er "
+            "WHERE er.event_id = risk_scores.event_id), "
+            "'UNREVIEWED') = 'UNREVIEWED' "
+            "AND risk_band NOT IN ('low', 'unknown')")
+
+        # Completed-review turnaround for the selected period: one bounded
+        # row set, then one bounded pass over the EXISTING audit events for
+        # cycle-begin timestamps (no new audit event types, no duplicate
+        # writes, no audit-chain changes, newest first so the first hit per
+        # event is the current cycle's begin).
+        dur_cut = {"24h": c24, "7d": c7, "30d": c30,
+                   "all": None}[workload_range]
+        dsql = ("SELECT event_id, reviewed_at FROM event_reviews "
+                "WHERE review_state = 'REVIEWED' "
+                "AND reviewed_at IS NOT NULL")
+        dparams: tuple = ()
+        if dur_cut:
+            dsql += " AND reviewed_at >= ?"
+            dparams = (dur_cut,)
+        dsql += " ORDER BY reviewed_at DESC LIMIT 5000"
+        done = _ro_rows("risk", dsql, dparams)
+        begins: dict[str, str] = {}
+        brows = (_ro_rows(
+            "audit",
+            "SELECT payload_summary FROM audit_events WHERE event_type IN "
+            "('admin_review_started', 'admin_review_reopened') "
+            "ORDER BY seq DESC LIMIT 5000")
+            if done is not None else None)
+        durations: list[float] | None = None
+        if done is not None and brows is not None:
+            for br in brows:
+                try:
+                    bp = json.loads(br["payload_summary"])
+                except (TypeError, ValueError):
+                    continue
+                eid, ts = bp.get("event_id"), bp.get("timestamp")
+                if isinstance(eid, str) and isinstance(ts, str) \
+                        and eid not in begins:
+                    begins[eid] = ts
+            durations = []
+            for drow in done:
+                b0 = begins.get(drow["event_id"])
+                if not b0:
+                    continue  # missing start -> unmeasurable, never 0
+                try:
+                    t0 = datetime.fromisoformat(b0)
+                    t1 = datetime.fromisoformat(drow["reviewed_at"])
+                except (TypeError, ValueError):
+                    continue
+                if t0.tzinfo is None or t1.tzinfo is None:
+                    continue  # unstamped timezone -> unmeasurable
+                secs = (t1 - t0).total_seconds()
+                if secs <= 0:
+                    continue  # zero/negative durations are impossible
+                durations.append(secs)
+        dur_block: dict | None = None
+        dur_buckets: dict | None = None
+        if durations is not None:
+            durations.sort()
+            n = len(durations)
+            med: float | None = None
+            if n:
+                mid = n // 2
+                med = (float(durations[mid]) if n % 2
+                       else (durations[mid - 1] + durations[mid]) / 2.0)
+            dur_block = {
+                "count": n,
+                "average_seconds": (round(sum(durations) / n, 2)
+                                    if n else None),
+                "median_seconds": (round(med, 2) if med is not None
+                                   else None),
+                "min_seconds": (int(round(durations[0])) if n else None),
+                "max_seconds": (int(round(durations[-1])) if n else None),
+            }
+            # Same half-open, lower-inclusive edges as the Phase-115 aging
+            # buckets — descriptive labels only, never "slow"/"fast".
+            dur_buckets = {
+                "lt15m": sum(1 for x in durations if x < 900),
+                "15m_1h": sum(1 for x in durations if 900 <= x < 3600),
+                "1h_4h": sum(1 for x in durations if 3600 <= x < 14400),
+                "4h_24h": sum(1 for x in durations if 14400 <= x < 86400),
+                "gt24h": sum(1 for x in durations if x >= 86400),
+            }
+
+        workload = {
+            "range": workload_range,
+            "needs_review": needs_review,
+            "under_review": under_review,
+            "reviewed": reviewed_count,
+            "reviewed_last_24h": reviewed_last_24h,
+            "reviewed_last_7d": reviewed_last_7d,
+            "reviewed_in_period": in_period,
+            "oldest_waiting_seconds": oldest_waiting,
+            "active_reviewers": active_reviewers,
+            "completed_review_duration": dur_block,
+            "duration_buckets": dur_buckets,
+        }
+    except HTTPException:
+        workload = None
+    except sqlite3.Error:
+        workload = None
 
     # Recent flagged rows (bounded, newest first). "Flagged" matches the
     # live monitor's metric: non-low, non-unknown band.
@@ -3436,6 +3628,8 @@ def admin_api_summary(request: Request) -> dict:
             "reviewed": reviewed_count,
             "newest_scored_at": (newest[0].get("newest") if newest else None),
         },
+        # Phase 116: descriptive review-workload aggregates (null -> N/A).
+        "workload": workload,
         "recent_flagged": recent_flagged,
         "recent_activity": recent_activity,
         "chain": {
