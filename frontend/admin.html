@@ -1052,6 +1052,22 @@
                         <div id="dash-warnings" style="display: none; margin-top: 8px; font-size: 13px; color: var(--warning);"></div>
                     </div>
 
+                    <!-- ATTENTION CENTER (Phase 117 §12): factual operational
+                         signals only — no scoring, no remediation, no rankings. -->
+                    <div class="data-table" id="att-section">
+                        <div class="table-header">
+                            <span class="table-title">Attention Center</span>
+                            <div class="table-actions">
+                                <span id="att-count" style="font-size: 12px; color: var(--text-dim);">…</span>
+                            </div>
+                        </div>
+                        <div id="att-items" style="padding: 4px 20px 12px;">
+                            <span class="skel" style="width: 70%;"></span>
+                            <div style="height: 6px;"></div>
+                            <span class="skel" style="width: 55%;"></span>
+                        </div>
+                    </div>
+
                     <!-- TRANSACTIONS -->
                     <div class="kpi-row">
                         <div class="kpi">
@@ -2455,6 +2471,98 @@
             }
         }
 
+        // ---- Attention Center surface (Phase 117 §12-§14) ---------------
+        // Server-authoritative only: every state/message/count comes from
+        // /admin/api/attention (which consumes the existing status/chain
+        // caches, one bounded audit count, the Phase-116 workload block and
+        // the governance constants).  The client never derives an attention
+        // condition, never repairs anything, and an unavailable source
+        // renders N/A — never a fabricated zero.
+        const ATTENTION_LABELS = {
+            DATA_QUALITY_BLOCKS: 'DATA QUALITY',
+            RUNTIME_ATTESTATION: 'RUNTIME',
+            AUDIT_INTEGRITY: 'AUDIT',
+            REVIEW_TELEMETRY: 'REVIEW TELEMETRY',
+            SYSTEM_READINESS: 'READINESS'
+        };
+        const ATTENTION_ACTIONS = {
+            DATA_QUALITY_BLOCKS: 'View',
+            RUNTIME_ATTESTATION: 'Details',
+            AUDIT_INTEGRITY: 'Audit',
+            REVIEW_TELEMETRY: 'View',
+            SYSTEM_READINESS: 'Details'
+        };
+
+        function attentionBadgeCls(state) {
+            if (state === 'OK' || state === 'READY') return 'healthy';
+            if (state === 'UNAVAILABLE') return '';
+            // The standing governance state is informational, NOT a service
+            // failure (Phase 117 §11) — it never gets the warning style.
+            if (String(state).indexOf('SYSTEM_READY') === 0) return '';
+            return 'warning';
+        }
+
+        // Render the Attention Center from the server payload only: a failed
+        // or missing payload shows the unavailable state (§13), never zeros.
+        function renderAttention(att) {
+            const hdr = $('att-count');
+            const box = $('att-items');
+            if (!box) return;
+            const items = (att && Array.isArray(att.items)) ? att.items : null;
+            if (!items) {
+                if (hdr) hdr.textContent = 'N/A';
+                box.innerHTML = '<div style="color: var(--text-dim); font-size: 13px; padding: 6px 0;">'
+                    + 'Attention status unavailable</div>';
+                return;
+            }
+            const need = items.filter(i => i && i.available
+                && i.state !== 'OK' && i.state !== 'READY').length;
+            const unav = items.filter(i => !i || !i.available).length;
+            if (hdr) hdr.textContent = need + ' need attention · '
+                + unav + ' unavailable';
+            box.innerHTML = items.map(i => {
+                if (!i) return '';
+                const st = i.state == null ? 'UNAVAILABLE' : String(i.state);
+                const cls = attentionBadgeCls(st);
+                const label = ATTENTION_LABELS[i.type] || i.type || '';
+                const act = ATTENTION_ACTIONS[i.type] || null;
+                const msg = i.message ? String(i.message) : 'N/A';
+                const btn = act
+                    ? '<button class="table-btn" data-att-type="'
+                      + esc(i.type || '') + '" data-att-route="'
+                      + esc(i.route || '') + '">' + esc(act) + '</button>'
+                    : '';
+                return '<div class="att-row" data-att-item="' + esc(i.type || '') + '"'
+                    + ' style="display: flex; align-items: center; gap: 10px;'
+                    + ' flex-wrap: wrap; padding: 7px 0;'
+                    + ' border-top: 1px solid var(--border); font-size: 13px;">'
+                    + '<span class="card-status ' + cls + '" style="min-width: 104px;'
+                    + ' text-align: center;">' + esc(st) + '</span>'
+                    + '<b style="min-width: 116px;">' + esc(label) + '</b>'
+                    + '<span style="flex: 1; min-width: 200px;'
+                    + ' color: var(--text-dim);">' + esc(msg) + '</span>'
+                    + btn + '</div>';
+            }).join('');
+        }
+
+        // Navigation (Phase 117 §14): route-driven to EXISTING surfaces only
+        // — no placeholder routes.  A transaction route goes through the
+        // normal filter→tab flow (a legitimate history entry; Back/Forward
+        // keep working).  Surfaces without a URL route (System Details)
+        // map to their tab, the same no-URL pattern the status card uses.
+        function openAttentionItem(route) {
+            if (route && route.indexOf('/admin/transactions') === 0) {
+                applyTxnQuery(new URLSearchParams(route.split('?')[1] || ''));
+                activateTab('transactions');
+            } else if (route === '/admin/audit') {
+                activateTab('audit');
+            } else if (route === '/admin') {
+                activateTab('dashboard');
+            } else {
+                activateTab('system');
+            }
+        }
+
         // ---- Review workload surface (Phase 116 §7/§8/§13) --------------
         // Period control + shareable URL state: only these four allowlisted
         // labels exist (the server re-validates the same allowlist and 400s
@@ -2535,11 +2643,18 @@
                 const wsel = $('wl-range');
                 const wl = (wsel && WORKLOAD_RANGES.includes(wsel.value))
                     ? wsel.value : '24h';
-                const s = await authFetch('/admin/api/summary?workload_range='
-                    + encodeURIComponent(wl)).then(r => r.json());
+                const [s, att] = await Promise.all([
+                    authFetch('/admin/api/summary?workload_range='
+                        + encodeURIComponent(wl)).then(r => r.json()),
+                    authFetch('/admin/api/attention').then(r => r.json())
+                        .catch(() => null),
+                ]);
 
                 const st = s.status || {};
                 renderStatusCard(st);
+                // Attention Center (Phase 117): server items only; a failed
+                // fetch renders the honest unavailable state, never zeros.
+                renderAttention(att);
 
                 const c = s.counts || {};
                 const fmt = v => v == null ? 'N/A' : Number(v).toLocaleString();
@@ -4741,6 +4856,14 @@
             if (wlSel) wlSel.addEventListener('change', () => {
                 pushWorkloadUrl();
                 loadDashboard();
+            });
+            // Attention Center (Phase 117 §14): navigation is route-driven
+            // to existing surfaces only — no placeholder routes.
+            const attBox = $('att-items');
+            if (attBox) attBox.addEventListener('click', (e) => {
+                const b = e.target.closest('[data-att-route]');
+                if (!b) return;
+                openAttentionItem(b.getAttribute('data-att-route'));
             });
             ['f-since', 'f-until'].forEach(id => {
                 const el = $(id);

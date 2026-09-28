@@ -55,6 +55,11 @@ from src.middleware import apply_security_middleware
 # Phase 111: authoritative read-only context for the investigation UI
 # (threshold/model/release/feature identity + reason-code explanations).
 from src.monitoring import manifest_contract as MC
+from src.monitoring.phase103_production_readiness_closure import (
+    PROMOTION_STATE,
+    REAL_WORLD_VALIDATION,
+    SYSTEM_READINESS,
+)
 from src.risk_engine.reason_codes import REASON_CODE_TEXT
 
 from .admin_store import AdminStore
@@ -3278,85 +3283,17 @@ def _runtime_model_block() -> dict:
     }
 
 
-@app.get("/admin/api/summary")
-def admin_api_summary(request: Request, workload_range: str = "24h") -> dict:
-    """Compact operator-dashboard payload (Phase 112): one small request.
+def _review_workload(now: datetime, workload_range: str,
+                     needs_review: int | None,
+                     under_review: int | None,
+                     reviewed_count: int | None) -> dict | None:
+    """Phase-116 workload aggregates (extracted verbatim in Phase 117).
 
-    Answers the dashboard questions — is the system working, are
-    transactions arriving, what is flagged, what needs attention — without
-    pulling the heavy live-monitor payload (feed rows, decision scans).
-    Counts are bounded read-only queries; status/details come from the
-    background-refreshed status cache. Absent sources return null so the
-    console renders N/A, never a fabricated zero.
-
-    Phase 116: `workload_range` (24h|7d|30d|all, default 24h) scopes only
-    the period-dependent fields of the `workload` block below.  It is an
-    exact-match allowlist value — anything else (including injection-shaped
-    input) is a 400 after authentication, and the client never supplies a
-    timestamp.
+    Shared by the dashboard summary and the Attention Center so both
+    always answer from one computation.  Returns the workload dict, or
+    None when the review store / queries cannot answer - never a
+    fabricated value.
     """
-    _require_admin_session(request)
-    if workload_range not in _WORKLOAD_RANGES:
-        raise HTTPException(
-            status_code=400,
-            detail="workload_range must be one of: 24h, 7d, 30d, all")
-    now = datetime.now(timezone.utc)
-    since = (now - timedelta(hours=24)).strftime("%Y-%m-%d %H:%M:%S")
-
-    status_data = _STATUS_CACHE.get("data") or {}
-    risk_health = (status_data.get("risk") or {}).get("health") or {}
-    chain = _CHAIN_CACHE.get("data") or {}
-
-    # 24h counts — real queries, bounded window.
-    tx_24h = _ro_scalar("risk",
-                        "SELECT COUNT(*) FROM risk_scores WHERE scored_at >= ?",
-                        (since,))
-    flagged_24h = _ro_scalar(
-        "risk",
-        "SELECT COUNT(*) FROM risk_scores "
-        "WHERE scored_at >= ? AND risk_band NOT IN ('low', 'unknown')",
-        (since,))
-    blocked_24h = _ro_scalar(
-        "audit",
-        "SELECT COUNT(*) FROM audit_events "
-        "WHERE event_type = 'data_quality_blocked' AND created_at >= ?",
-        (since,))
-    newest = _ro_rows("risk",
-                      "SELECT MAX(scored_at) AS newest FROM risk_scores") or []
-
-    # Phase 113: the one new KPI — flagged rows nobody has started
-    # reviewing yet (disjoint from UNDER_REVIEW / REVIEWED, matches the
-    # Transactions "Needs Review" chip exactly).  Absent review store ->
-    # null, so the console renders N/A, never a fabricated zero.
-    # Phase 114: two compact companions so the KPI can show what is being
-    # worked right now and what is done — one bounded COUNT over the
-    # (tiny) review table each, never a frontend tally.
-    needs_review: int | None = None
-    under_review: int | None = None
-    reviewed_count: int | None = None
-    try:
-        _ensure_review_tables()
-        needs_review = _ro_scalar(
-            "risk",
-            "SELECT COUNT(*) FROM risk_scores "
-            "WHERE scored_at >= ? AND risk_band NOT IN ('low', 'unknown') "
-            "AND COALESCE((SELECT review_state FROM event_reviews er "
-            "WHERE er.event_id = risk_scores.event_id), 'UNREVIEWED') "
-            "= 'UNREVIEWED'",
-            (since,))
-        under_review = _ro_scalar(
-            "risk",
-            "SELECT COUNT(*) FROM event_reviews "
-            "WHERE review_state = 'UNDER_REVIEW'")
-        reviewed_count = _ro_scalar(
-            "risk",
-            "SELECT COUNT(*) FROM event_reviews "
-            "WHERE review_state = 'REVIEWED'")
-    except HTTPException:
-        needs_review = None
-        under_review = None
-        reviewed_count = None
-
     # ── Phase 116: Review Workload (descriptive observability only) ─────
     # Factual aggregates over the EXISTING review lifecycle — no rankings,
     # grades, comparisons, assignment, or client-side arithmetic.  Every
@@ -3531,6 +3468,92 @@ def admin_api_summary(request: Request, workload_range: str = "24h") -> dict:
         workload = None
     except sqlite3.Error:
         workload = None
+    return workload
+
+
+@app.get("/admin/api/summary")
+def admin_api_summary(request: Request, workload_range: str = "24h") -> dict:
+    """Compact operator-dashboard payload (Phase 112): one small request.
+
+    Answers the dashboard questions — is the system working, are
+    transactions arriving, what is flagged, what needs attention — without
+    pulling the heavy live-monitor payload (feed rows, decision scans).
+    Counts are bounded read-only queries; status/details come from the
+    background-refreshed status cache. Absent sources return null so the
+    console renders N/A, never a fabricated zero.
+
+    Phase 116: `workload_range` (24h|7d|30d|all, default 24h) scopes only
+    the period-dependent fields of the `workload` block below.  It is an
+    exact-match allowlist value — anything else (including injection-shaped
+    input) is a 400 after authentication, and the client never supplies a
+    timestamp.
+    """
+    _require_admin_session(request)
+    if workload_range not in _WORKLOAD_RANGES:
+        raise HTTPException(
+            status_code=400,
+            detail="workload_range must be one of: 24h, 7d, 30d, all")
+    now = datetime.now(timezone.utc)
+    since = (now - timedelta(hours=24)).strftime("%Y-%m-%d %H:%M:%S")
+
+    status_data = _STATUS_CACHE.get("data") or {}
+    risk_health = (status_data.get("risk") or {}).get("health") or {}
+    chain = _CHAIN_CACHE.get("data") or {}
+
+    # 24h counts — real queries, bounded window.
+    tx_24h = _ro_scalar("risk",
+                        "SELECT COUNT(*) FROM risk_scores WHERE scored_at >= ?",
+                        (since,))
+    flagged_24h = _ro_scalar(
+        "risk",
+        "SELECT COUNT(*) FROM risk_scores "
+        "WHERE scored_at >= ? AND risk_band NOT IN ('low', 'unknown')",
+        (since,))
+    blocked_24h = _ro_scalar(
+        "audit",
+        "SELECT COUNT(*) FROM audit_events "
+        "WHERE event_type = 'data_quality_blocked' AND created_at >= ?",
+        (since,))
+    newest = _ro_rows("risk",
+                      "SELECT MAX(scored_at) AS newest FROM risk_scores") or []
+
+    # Phase 113: the one new KPI — flagged rows nobody has started
+    # reviewing yet (disjoint from UNDER_REVIEW / REVIEWED, matches the
+    # Transactions "Needs Review" chip exactly).  Absent review store ->
+    # null, so the console renders N/A, never a fabricated zero.
+    # Phase 114: two compact companions so the KPI can show what is being
+    # worked right now and what is done — one bounded COUNT over the
+    # (tiny) review table each, never a frontend tally.
+    needs_review: int | None = None
+    under_review: int | None = None
+    reviewed_count: int | None = None
+    try:
+        _ensure_review_tables()
+        needs_review = _ro_scalar(
+            "risk",
+            "SELECT COUNT(*) FROM risk_scores "
+            "WHERE scored_at >= ? AND risk_band NOT IN ('low', 'unknown') "
+            "AND COALESCE((SELECT review_state FROM event_reviews er "
+            "WHERE er.event_id = risk_scores.event_id), 'UNREVIEWED') "
+            "= 'UNREVIEWED'",
+            (since,))
+        under_review = _ro_scalar(
+            "risk",
+            "SELECT COUNT(*) FROM event_reviews "
+            "WHERE review_state = 'UNDER_REVIEW'")
+        reviewed_count = _ro_scalar(
+            "risk",
+            "SELECT COUNT(*) FROM event_reviews "
+            "WHERE review_state = 'REVIEWED'")
+    except HTTPException:
+        needs_review = None
+        under_review = None
+        reviewed_count = None
+
+    # Phase 116 block extracted in Phase 117 so the Attention Center
+    # consumes the SAME computation (one implementation, no drift).
+    workload = _review_workload(now, workload_range, needs_review,
+                                under_review, reviewed_count)
 
     # Recent flagged rows (bounded, newest first). "Flagged" matches the
     # live monitor's metric: non-low, non-unknown band.
@@ -3656,6 +3679,191 @@ def admin_api_summary(request: Request, workload_range: str = "24h") -> dict:
             "model": _runtime_model_block(),
         },
     }
+
+
+# ── Phase 117: Attention Center (observability + navigation only) ──────
+# Factual items over EXISTING authoritative sources — no second
+# attestation/chain implementation, no remediation, no scoring, no
+# rankings.  Every item is bounded, keeps the subsystem's own canonical
+# state where one exists (the runtime state value, SYSTEM_READINESS), and
+# reports available=false (UI: N/A) instead of a fabricated zero when its
+# source cannot answer.  Items never carry credentials, environment
+# values, PANs, or reviewer identity.
+
+
+def _attention_dq_item(since: str) -> dict:
+    """DATA_QUALITY_BLOCKS: bounded count of recent data-quality blocks.
+
+    `count` is the number of data_quality_blocked audit events inside the
+    24h window (same window as the summary's blocked_24h).  Absent DB-4 ->
+    available=false, never a fabricated 0.  Route: the existing blocked
+    transaction filter.
+    """
+    item = {"type": "DATA_QUALITY_BLOCKS", "state": "UNAVAILABLE",
+            "count": None,
+            "message": "Data-quality enforcement telemetry unavailable",
+            "source": "risk_engine", "available": False,
+            "route": "/admin/transactions?data_quality=blocked"}
+    n = _ro_scalar(
+        "audit",
+        "SELECT COUNT(*) FROM audit_events "
+        "WHERE event_type = 'data_quality_blocked' AND created_at >= ?",
+        (since,))
+    if n is None:
+        return item
+    item["available"] = True
+    item["count"] = int(n)
+    if n == 0:
+        item["state"] = "OK"
+        item["message"] = ("No evaluations blocked by data-quality "
+                           "enforcement in the last 24h")
+    else:
+        item["state"] = "ATTENTION"
+        item["message"] = (
+            f"{n} evaluation{'s' if n != 1 else ''} blocked by data-quality "
+            "enforcement in the last 24h")
+    return item
+
+
+def _attention_runtime_item(risk_health: dict) -> dict:
+    """RUNTIME_ATTESTATION: the risk engine's canonical Phase-49 state.
+
+    The state is passed through VERBATIM from the cached /health body
+    (READY / MODEL_NOT_READY / DRIFTED / FAILED / ...) — this consumes the
+    existing attestation, it never re-runs it, and it never translates the
+    canonical state into an invented severity (§6).  Missing health ->
+    available=false, never a guess.
+    """
+    canonical = risk_health.get("runtime_state")
+    if canonical is None:
+        return {"type": "RUNTIME_ATTESTATION", "state": "UNAVAILABLE",
+                "count": None,
+                "message": "Runtime attestation telemetry unavailable",
+                "source": "risk_engine", "available": False,
+                "route": None}
+    bits = [f"Runtime attestation {canonical}"]
+    model_rd = risk_health.get("model_readiness")
+    if isinstance(model_rd, str):
+        bits.append(f"model {model_rd}")
+    attested = risk_health.get("release_attested")
+    if attested is True:
+        bits.append("release attested")
+    elif attested is False:
+        bits.append("release unattested")
+    return {"type": "RUNTIME_ATTESTATION", "state": str(canonical),
+            "count": None, "message": " · ".join(bits),
+            "source": "risk_engine", "available": True, "route": None}
+
+
+def _attention_audit_item(chain: dict) -> dict:
+    """AUDIT_INTEGRITY: quarantine-aware verdict from the cached chain.
+
+    Distinguishes the documented historical quarantine (ok=True while
+    strict_ok stays broken — never reported as clean, §9) from a newly
+    detected failure (ok=False, with the chain's own reason), and from
+    unavailable verification (ok missing).  The chain is evaluated only
+    by the audit service; nothing here repairs, rewrites, or re-verifies
+    it, and no second implementation exists in this service.
+    """
+    base = {"type": "AUDIT_INTEGRITY", "source": "audit_service",
+            "route": "/admin/audit", "count": None}
+    ok = chain.get("ok")
+    if not isinstance(ok, bool):
+        return {**base, "state": "UNAVAILABLE",
+                "message": "Audit chain verification unavailable",
+                "available": False}
+    if not ok:
+        first_bad = chain.get("first_bad_seq")
+        where = f" (first bad seq {first_bad})" \
+            if first_bad is not None else ""
+        return {**base, "state": "ATTENTION", "available": True,
+                "message": "Chain verification failed: "
+                           f"{chain.get('reason') or 'unspecified'}{where}"}
+    quarantined = chain.get("quarantined_breaks") or []
+    if chain.get("strict_ok") is False and quarantined:
+        return {**base, "state": "ATTENTION", "available": True,
+                "count": len(quarantined),
+                "message": (
+                    "Historical quarantined fork present: strict "
+                    f"verification broken at seq {chain.get('first_bad_seq')} "
+                    f"({len(quarantined)} breaks covered by frozen findings)")}
+    return {**base, "state": "OK", "count": 0, "available": True,
+            "message": "Chain verified end-to-end (strict)"}
+
+
+def _attention_review_item(now: datetime) -> dict:
+    """REVIEW_TELEMETRY: completeness of Phase-116 review-cycle telemetry.
+
+    `count` is how many all-time completed reviews LACK a measurable
+    current-cycle duration (missing start/completion/unstamped).  The
+    wording is telemetry-only: it never claims the reviews themselves are
+    invalid and never exposes reviewer identity (§10).
+    """
+    base = {"type": "REVIEW_TELEMETRY", "source": "front_service",
+            "route": "/admin", "count": None}
+    workload = _review_workload(now, "all", None, None, None)
+    if workload is None:
+        return {**base, "state": "UNAVAILABLE",
+                "message": "Review workload telemetry unavailable",
+                "available": False}
+    dur = workload.get("completed_review_duration")
+    total = workload.get("reviewed_in_period")
+    if dur is None or total is None:
+        return {**base, "state": "UNAVAILABLE",
+                "message": "Review duration telemetry unavailable",
+                "available": False}
+    measured = dur.get("count")
+    gap = int(total) - int(measured)
+    if gap > 0:
+        return {**base, "state": "ATTENTION", "available": True,
+                "count": gap,
+                "message": (f"{gap} of {total} completed reviews lack "
+                            "measurable review-cycle telemetry")}
+    return {**base, "state": "OK", "available": True, "count": 0,
+            "message": (f"Review-cycle telemetry measurable for all "
+                        f"{total} completed reviews")}
+
+
+def _attention_readiness_item() -> dict:
+    """SYSTEM_READINESS: the standing governance facts, verbatim.
+
+    SYSTEM_READY_PENDING_ELIGIBLE_DATASET is the documented standing
+    state — surfaced with the RWV and promotion facts alongside (§11) and
+    NEVER re-labelled as a production failure.
+    """
+    return {"type": "SYSTEM_READINESS", "state": SYSTEM_READINESS,
+            "count": None,
+            "message": (f"System readiness {SYSTEM_READINESS} · RWV "
+                        f"{REAL_WORLD_VALIDATION} · promotion "
+                        f"{PROMOTION_STATE}"),
+            "source": "governance", "available": True, "route": None}
+
+
+@app.get("/admin/api/attention")
+def admin_api_attention(request: Request) -> dict:
+    """Compact Attention Center payload (Phase 117 §4-§6).
+
+    Five factual, bounded items consumed from EXISTING sources: the status
+    cache's risk /health body, the cached chain verdict, one bounded
+    audit-event COUNT, the Phase-116 workload computation, and the
+    governance constants.  No new audit event types, no chain/attestation
+    re-implementation, no remediation — observation and navigation only.
+    An unanswered source is available=false (UI renders N/A), never a
+    fabricated zero.
+    """
+    _require_admin_session(request)
+    now = datetime.now(timezone.utc)
+    since = (now - timedelta(hours=24)).strftime("%Y-%m-%d %H:%M:%S")
+    status_data = _STATUS_CACHE.get("data") or {}
+    risk_health = (status_data.get("risk") or {}).get("health") or {}
+    chain = _CHAIN_CACHE.get("data") or {}
+    return {"ts": now.isoformat(), "items": [
+        _attention_dq_item(since),
+        _attention_runtime_item(risk_health),
+        _attention_audit_item(chain),
+        _attention_review_item(now),
+        _attention_readiness_item(),
+    ]}
 
 
 @app.get("/admin/api/live")
