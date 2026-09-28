@@ -60,6 +60,9 @@ from src.monitoring.phase103_production_readiness_closure import (
     REAL_WORLD_VALIDATION,
     SYSTEM_READINESS,
 )
+from src.monitoring.phase104_external_dataset_report import (
+    generate_phase104_report,
+)
 from src.risk_engine.reason_codes import REASON_CODE_TEXT
 
 from .admin_store import AdminStore
@@ -3691,6 +3694,34 @@ def admin_api_summary(request: Request, workload_range: str = "24h") -> dict:
 # values, PANs, or reviewer identity.
 
 
+def _attention_evidence(available: bool, summary: str,
+                        details: list | None) -> dict:
+    """Phase 118 §3: the bounded evidence block attached to every item.
+
+    Evidence restates facts already read from the SAME authoritative source
+    that produced the item — computed in the same call, returned in the
+    same response (§6), never a second subsystem implementation.  Bounds
+    are enforced here so every payload stays deterministic and small:
+    single-line summary <= 300 chars, at most 8 label/value rows, labels
+    <= 60 chars, values <= 200 chars.  Evidence never changes an item's
+    state or count, never adds a severity, and an unanswered source keeps
+    available=false with an honest summary instead of a fabricated zero.
+    """
+    text = " ".join(str(summary or "").split())[:300]
+    if not text:
+        text = "Evidence unavailable"
+    rows: list[dict] = []
+    for row in (details or []):
+        if len(rows) >= 8 or not isinstance(row, dict):
+            continue
+        label, value = row.get("label"), row.get("value")
+        if label is None or value is None:
+            continue
+        rows.append({"label": " ".join(str(label).split())[:60],
+                     "value": " ".join(str(value).split())[:200]})
+    return {"available": bool(available), "summary": text, "details": rows}
+
+
 def _attention_dq_item(since: str) -> dict:
     """DATA_QUALITY_BLOCKS: bounded count of recent data-quality blocks.
 
@@ -3699,11 +3730,15 @@ def _attention_dq_item(since: str) -> dict:
     available=false, never a fabricated 0.  Route: the existing blocked
     transaction filter.
     """
+    route = "/admin/transactions?data_quality=blocked"
     item = {"type": "DATA_QUALITY_BLOCKS", "state": "UNAVAILABLE",
             "count": None,
             "message": "Data-quality enforcement telemetry unavailable",
             "source": "risk_engine", "available": False,
-            "route": "/admin/transactions?data_quality=blocked"}
+            "route": route,
+            "evidence": _attention_evidence(
+                False, "Blocked-event count unavailable (DB-4 not answering)",
+                [])}
     n = _ro_scalar(
         "audit",
         "SELECT COUNT(*) FROM audit_events "
@@ -3713,6 +3748,16 @@ def _attention_dq_item(since: str) -> dict:
         return item
     item["available"] = True
     item["count"] = int(n)
+    # Phase 118: evidence restates this exact bounded COUNT plus its
+    # window/source/navigation — the same query already run for the item.
+    item["evidence"] = _attention_evidence(
+        True,
+        f"{n} blocked evaluation{'' if n == 1 else 's'} in the last 24h",
+        [{"label": "Blocked evaluations", "value": int(n)},
+         {"label": "Window", "value": "last 24h"},
+         {"label": "Event type", "value": "data_quality_blocked"},
+         {"label": "Source", "value": "DB-4 audit_events (bounded COUNT)"},
+         {"label": "Navigation", "value": route}])
     if n == 0:
         item["state"] = "OK"
         item["message"] = ("No evaluations blocked by data-quality "
@@ -3739,20 +3784,40 @@ def _attention_runtime_item(risk_health: dict) -> dict:
         return {"type": "RUNTIME_ATTESTATION", "state": "UNAVAILABLE",
                 "count": None,
                 "message": "Runtime attestation telemetry unavailable",
-                "source": "risk_engine", "available": False,
-                "route": None}
+                "source": "risk_engine", "available": False, "route": None,
+                "evidence": _attention_evidence(
+                    False, "Cached risk /health body absent", [])}
     bits = [f"Runtime attestation {canonical}"]
+    ev_facts = [f"runtime_state={canonical}"]
+    rows = [{"label": "Runtime state", "value": canonical}]
     model_rd = risk_health.get("model_readiness")
     if isinstance(model_rd, str):
         bits.append(f"model {model_rd}")
+        ev_facts.append(f"model_readiness={model_rd}")
+        rows.append({"label": "Model readiness", "value": model_rd})
     attested = risk_health.get("release_attested")
     if attested is True:
         bits.append("release attested")
     elif attested is False:
         bits.append("release unattested")
+    if isinstance(attested, bool):
+        ev_facts.append(f"release_attested={str(attested).lower()}")
+        rows.append({"label": "Release attestation",
+                     "value": "attested" if attested else "unattested"})
+    # Already-authoritative runtime facts from the SAME cached /health
+    # body — never a second attestation run (Phase 118 §3), and only
+    # identity fields already safe for admin display.
+    for lbl, key in (("Liveness", "liveness"), ("Readiness", "readiness"),
+                     ("Release", "release_id"), ("Model", "model_id"),
+                     ("Feature version", "feature_version")):
+        value = risk_health.get(key)
+        if isinstance(value, str) and value:
+            rows.append({"label": lbl, "value": value})
     return {"type": "RUNTIME_ATTESTATION", "state": str(canonical),
             "count": None, "message": " · ".join(bits),
-            "source": "risk_engine", "available": True, "route": None}
+            "source": "risk_engine", "available": True, "route": None,
+            "evidence": _attention_evidence(
+                True, "Cached risk /health: " + ", ".join(ev_facts), rows)}
 
 
 def _attention_audit_item(chain: dict) -> dict:
@@ -3771,24 +3836,70 @@ def _attention_audit_item(chain: dict) -> dict:
     if not isinstance(ok, bool):
         return {**base, "state": "UNAVAILABLE",
                 "message": "Audit chain verification unavailable",
-                "available": False}
+                "available": False,
+                "evidence": _attention_evidence(
+                    False, "Cached chain verdict absent", [])}
+    n_entries = chain.get("n_entries")
+    entry_row = ([{"label": "Total entries", "value": int(n_entries)}]
+                 if isinstance(n_entries, int) else [])
     if not ok:
         first_bad = chain.get("first_bad_seq")
         where = f" (first bad seq {first_bad})" \
             if first_bad is not None else ""
+        reason = chain.get("reason") or "unspecified"
         return {**base, "state": "ATTENTION", "available": True,
                 "message": "Chain verification failed: "
-                           f"{chain.get('reason') or 'unspecified'}{where}"}
+                           f"{reason}{where}",
+                "evidence": _attention_evidence(
+                    True,
+                    f"Newly detected failure at seq "
+                    f"{first_bad if first_bad is not None else 'unknown'}: "
+                    f"{reason}",
+                    [{"label": "Chain status", "value": "failed"},
+                     {"label": "First bad sequence",
+                      "value": (first_bad if first_bad is not None
+                                else "unknown")},
+                     {"label": "Reason", "value": reason},
+                     *entry_row,
+                     {"label": "Navigation", "value": "/admin/audit"}])}
     quarantined = chain.get("quarantined_breaks") or []
     if chain.get("strict_ok") is False and quarantined:
+        first_bad = chain.get("first_bad_seq")
+        shown = ", ".join(str(s) for s in quarantined[:10])
+        if len(quarantined) > 10:
+            shown += ", ..."
+        rows = [{"label": "Strict verification", "value": "broken"},
+                {"label": "First broken sequence",
+                 "value": first_bad if first_bad is not None else "unknown"},
+                {"label": "Quarantined forks", "value": len(quarantined)},
+                {"label": "Affected sequences", "value": shown}]
+        findings = chain.get("finding_ids")
+        if isinstance(findings, list) and findings:
+            rows.append({"label": "Frozen findings",
+                         "value": len(findings)})
+        rows.extend(entry_row)
+        rows.append({"label": "Navigation", "value": "/admin/audit"})
         return {**base, "state": "ATTENTION", "available": True,
                 "count": len(quarantined),
                 "message": (
                     "Historical quarantined fork present: strict "
                     f"verification broken at seq {chain.get('first_bad_seq')} "
-                    f"({len(quarantined)} breaks covered by frozen findings)")}
+                    f"({len(quarantined)} breaks covered by frozen findings)"),
+                "evidence": _attention_evidence(
+                    True,
+                    f"Strict verification broken at seq {first_bad}; "
+                    f"{len(quarantined)} quarantined forks covered by "
+                    "frozen findings",
+                    rows)}
     return {**base, "state": "OK", "count": 0, "available": True,
-            "message": "Chain verified end-to-end (strict)"}
+            "message": "Chain verified end-to-end (strict)",
+            "evidence": _attention_evidence(
+                True, "Strict verification passed end-to-end",
+                [{"label": "Chain status",
+                  "value": "verified end-to-end (strict)"},
+                 *entry_row,
+                 {"label": "Quarantined forks", "value": 0},
+                 {"label": "Navigation", "value": "/admin/audit"}])}
 
 
 def _attention_review_item(now: datetime) -> dict:
@@ -3805,23 +3916,59 @@ def _attention_review_item(now: datetime) -> dict:
     if workload is None:
         return {**base, "state": "UNAVAILABLE",
                 "message": "Review workload telemetry unavailable",
-                "available": False}
+                "available": False,
+                "evidence": _attention_evidence(
+                    False, "Review workload source unavailable", [])}
     dur = workload.get("completed_review_duration")
     total = workload.get("reviewed_in_period")
     if dur is None or total is None:
+        if total is not None:
+            # Phase 118: completion counts ARE answerable — surface them
+            # and mark only the duration side N/A (never a fabricated 0).
+            return {**base, "state": "UNAVAILABLE",
+                    "message": "Review duration telemetry unavailable",
+                    "available": False,
+                    "evidence": _attention_evidence(
+                        True,
+                        "Completion counts available; duration telemetry "
+                        "unavailable",
+                        [{"label": "Period", "value": "all time"},
+                         {"label": "Completed reviews",
+                          "value": int(total)},
+                         {"label": "Measurable cycles", "value": "N/A"},
+                         {"label": "Telemetry gap", "value": "N/A"},
+                         {"label": "Duration aggregates",
+                          "value": "unavailable"}])}
         return {**base, "state": "UNAVAILABLE",
                 "message": "Review duration telemetry unavailable",
-                "available": False}
-    measured = dur.get("count")
-    gap = int(total) - int(measured)
+                "available": False,
+                "evidence": _attention_evidence(
+                    False, "Review duration telemetry unavailable", [])}
+    measured = int(dur.get("count"))
+    gap = int(total) - measured
+    # Evidence = the same Phase-116 workload numbers the item is built
+    # from (same call, same response): completion/measurable/gap counts,
+    # the period, and whether duration aggregates exist.  No reviewer
+    # identity, no performance scoring (Phase 118 §3).
+    evidence = _attention_evidence(
+        True,
+        f"{measured} of {total} completed reviews have a measurable "
+        "review-cycle duration",
+        [{"label": "Period", "value": "all time"},
+         {"label": "Completed reviews", "value": int(total)},
+         {"label": "Measurable cycles", "value": measured},
+         {"label": "Telemetry gap", "value": gap},
+         {"label": "Duration aggregates", "value": "available"}])
     if gap > 0:
         return {**base, "state": "ATTENTION", "available": True,
                 "count": gap,
                 "message": (f"{gap} of {total} completed reviews lack "
-                            "measurable review-cycle telemetry")}
+                            "measurable review-cycle telemetry"),
+                "evidence": evidence}
     return {**base, "state": "OK", "available": True, "count": 0,
             "message": (f"Review-cycle telemetry measurable for all "
-                        f"{total} completed reviews")}
+                        f"{total} completed reviews"),
+            "evidence": evidence}
 
 
 def _attention_readiness_item() -> dict:
@@ -3829,14 +3976,34 @@ def _attention_readiness_item() -> dict:
 
     SYSTEM_READY_PENDING_ELIGIBLE_DATASET is the documented standing
     state — surfaced with the RWV and promotion facts alongside (§11) and
-    NEVER re-labelled as a production failure.
+    NEVER re-labelled as a production failure.  Phase 118 evidence keeps
+    the three concepts on separate rows (operational readiness, RWV
+    eligibility, promotion state) plus the authoritative qualified-
+    dataset tuple from the Phase-104 report — never collapsed into one
+    health score.
     """
+    try:
+        qualified = generate_phase104_report().qualified_datasets
+        q_value = ("(none)" if not qualified
+                   else ", ".join(str(q) for q in qualified[:8]))
+    except Exception:
+        q_value = "unavailable"
     return {"type": "SYSTEM_READINESS", "state": SYSTEM_READINESS,
             "count": None,
             "message": (f"System readiness {SYSTEM_READINESS} · RWV "
                         f"{REAL_WORLD_VALIDATION} · promotion "
                         f"{PROMOTION_STATE}"),
-            "source": "governance", "available": True, "route": None}
+            "source": "governance", "available": True, "route": None,
+            "evidence": _attention_evidence(
+                True,
+                f"{SYSTEM_READINESS} · {REAL_WORLD_VALIDATION} · "
+                f"{PROMOTION_STATE}",
+                [{"label": "Operational readiness",
+                  "value": SYSTEM_READINESS},
+                 {"label": "Real-world validation",
+                  "value": REAL_WORLD_VALIDATION},
+                 {"label": "Promotion state", "value": PROMOTION_STATE},
+                 {"label": "Qualified datasets", "value": q_value}])}
 
 
 @app.get("/admin/api/attention")
@@ -3850,6 +4017,11 @@ def admin_api_attention(request: Request) -> dict:
     re-implementation, no remediation — observation and navigation only.
     An unanswered source is available=false (UI renders N/A), never a
     fabricated zero.
+
+    Phase 118 §3: every item additionally carries a bounded `evidence`
+    block ({available, summary, details}) restating facts from the SAME
+    source read for the item in this same call — one response per load,
+    no second subsystem implementation, evidence never changes state.
     """
     _require_admin_session(request)
     now = datetime.now(timezone.utc)

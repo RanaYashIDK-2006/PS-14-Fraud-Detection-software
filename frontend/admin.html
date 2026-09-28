@@ -761,6 +761,33 @@
         }
 
         /* Phase 113: operator workflow polish */
+        /* Phase 118 §4: attention evidence disclosure (collapsed by
+           default; a native button toggles it, see toggleAttentionEvidence). */
+        .att-ev {
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 6px;
+            padding: 7px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--card);
+            font-size: 12px;
+        }
+        .att-ev[hidden] { display: none; }
+        .att-ev-sum {
+            color: var(--text-dim);
+            margin-bottom: 6px;
+            overflow-wrap: anywhere;
+        }
+        .att-ev-dl {
+            display: grid;
+            grid-template-columns: minmax(90px, max-content) 1fr;
+            gap: 3px 14px;
+            margin: 0;
+        }
+        .att-ev-dl dt { color: var(--text-dim); }
+        .att-ev-dl dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+
         .skel {
             display: block;
             height: 12px;
@@ -2492,6 +2519,12 @@
             REVIEW_TELEMETRY: 'View',
             SYSTEM_READINESS: 'Details'
         };
+        // Phase 118 §4: which items have their evidence panel open.  Tracked
+        // by item type so a dashboard auto-refresh re-renders the panel in
+        // the operator's current state.  Evidence itself is rendered from
+        // the SAME attention response as the item — the client never
+        // refetches it and never recomputes a count/state (§6).
+        const ATTENTION_OPEN = new Set();
 
         function attentionBadgeCls(state) {
             if (state === 'OK' || state === 'READY') return 'healthy';
@@ -2532,7 +2565,18 @@
                       + esc(i.type || '') + '" data-att-route="'
                       + esc(i.route || '') + '">' + esc(act) + '</button>'
                     : '';
-                return '<div class="att-row" data-att-item="' + esc(i.type || '') + '"'
+                const type = i.type || '';
+                const evOpen = ATTENTION_OPEN.has(type);
+                const evId = 'att-ev-' + type;
+                const evBtn = '<button class="table-btn" data-att-ev="'
+                    + esc(type) + '" aria-expanded="' + (evOpen ? 'true' : 'false')
+                    + '" aria-controls="' + esc(evId)
+                    + '" title="Server-provided evidence for this item">'
+                    + (evOpen ? 'Hide evidence' : 'View evidence') + '</button>';
+                const evPanel = '<div class="att-ev" id="' + esc(evId) + '"'
+                    + (evOpen ? '' : ' hidden') + '>'
+                    + attentionEvidenceHtml(i.evidence) + '</div>';
+                return '<div class="att-row" data-att-item="' + esc(type) + '"'
                     + ' style="display: flex; align-items: center; gap: 10px;'
                     + ' flex-wrap: wrap; padding: 7px 0;'
                     + ' border-top: 1px solid var(--border); font-size: 13px;">'
@@ -2541,8 +2585,44 @@
                     + '<b style="min-width: 116px;">' + esc(label) + '</b>'
                     + '<span style="flex: 1; min-width: 200px;'
                     + ' color: var(--text-dim);">' + esc(msg) + '</span>'
-                    + btn + '</div>';
+                    + btn + evBtn + evPanel + '</div>';
             }).join('');
+        }
+
+        // Phase 118 §4: evidence is DISPLAYED, never derived.  Every line
+        // comes from the server's bounded evidence object of the SAME
+        // response; an absent object renders N/A (§13) and unavailable
+        // sources show the server's honest summary instead of zeros.
+        function attentionEvidenceHtml(ev) {
+            if (!ev || typeof ev !== 'object') {
+                return '<div class="att-ev-sum">N/A</div>';
+            }
+            const sum = ev.summary ? String(ev.summary) : 'N/A';
+            let html = '<div class="att-ev-sum">' + esc(sum) + '</div>';
+            const rows = Array.isArray(ev.details) ? ev.details : [];
+            if (rows.length) {
+                html += '<dl class="att-ev-dl">' + rows.map(r => {
+                    const l = r && r.label != null ? String(r.label) : '';
+                    const v = r && r.value != null ? String(r.value) : '';
+                    return '<dt>' + esc(l) + '</dt><dd>' + esc(v) + '</dd>';
+                }).join('') + '</dl>';
+            }
+            return html;
+        }
+
+        // Phase 118 §4: keyboard-accessible disclosure — a native <button>
+        // (Enter/Space) with aria-expanded/aria-controls, clear
+        // View evidence / Hide evidence wording.  Toggling never fetches.
+        function toggleAttentionEvidence(type) {
+            const panel = document.getElementById('att-ev-' + type);
+            const btn = document.querySelector('[data-att-ev="' + type + '"]');
+            if (!panel || !btn) return;
+            const opening = panel.hidden;
+            panel.hidden = !opening;
+            btn.setAttribute('aria-expanded', opening ? 'true' : 'false');
+            btn.textContent = opening ? 'Hide evidence' : 'View evidence';
+            if (opening) ATTENTION_OPEN.add(type);
+            else ATTENTION_OPEN.delete(type);
         }
 
         // Navigation (Phase 117 §14): route-driven to EXISTING surfaces only
@@ -4861,6 +4941,11 @@
             // to existing surfaces only — no placeholder routes.
             const attBox = $('att-items');
             if (attBox) attBox.addEventListener('click', (e) => {
+                const ev = e.target.closest('[data-att-ev]');
+                if (ev) {
+                    toggleAttentionEvidence(ev.getAttribute('data-att-ev'));
+                    return;
+                }
                 const b = e.target.closest('[data-att-route]');
                 if (!b) return;
                 openAttentionItem(b.getAttribute('data-att-route'));

@@ -254,8 +254,11 @@ class cache_guard:
         return False
 
 
+# Phase 118 §3 extends the item contract with the bounded `evidence`
+# block ({available, summary, details}) — every other key and the five
+# item types/order stay exactly as Phase 117 pinned them.
 ITEM_KEYS = {"type", "state", "count", "message", "source", "available",
-             "route"}
+             "route", "evidence"}
 TYPES = ["DATA_QUALITY_BLOCKS", "RUNTIME_ATTESTATION", "AUDIT_INTEGRITY",
          "REVIEW_TELEMETRY", "SYSTEM_READINESS"]
 
