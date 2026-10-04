@@ -1,0 +1,154 @@
+======================================================================
+FEATURE LEAKAGE STRUCTURAL TESTS
+======================================================================
+
+[1] Registry integrity
+  ✓ Registry is non-empty
+  ✓ All registry features have unique names
+
+[2] ML_FEATURES ↔ Registry alignment
+  ✓ All ML_FEATURES are in the registry
+  ✓ All registry features are in ML_FEATURES
+
+[3] No feature uses labels
+  ✓ 'amount_ratio' does not use labels
+  ✓ 'txn_freq_last_24h' does not use labels
+  ✓ 'txn_time_unusual' does not use labels
+  ✓ 'new_device_flag' does not use labels
+  ✓ 'unusual_location_flag' does not use labels
+  ✓ 'unusual_recipient_flag' does not use labels
+  ✓ 'failed_auth_count_24h' does not use labels
+  ✓ 'days_since_last_similar_txn' does not use labels
+  ✓ 'gradual_escalation_score' does not use labels
+  ✓ 'known_device_count' does not use labels
+  ✓ 'account_tenure_days' does not use labels
+  ✓ 'hour_of_day' does not use labels
+  ✓ 'is_weekend' does not use labels
+  ✓ 'shared_device_accounts' does not use labels
+  ✓ 'shared_recipient_accounts' does not use labels
+  ✓ 'mule_ring_score' does not use labels
+  ✓ 'hour_deviation' does not use labels
+  ✓ 'amount_zscore' does not use labels
+  ✓ 'velocity_deviation' does not use labels
+  ✓ 'recipient_novelty' does not use labels
+  ✓ 'txn_regularity' does not use labels
+
+[4] No feature uses future data
+  ✓ 'amount_ratio' does not use future data
+  ✓ 'txn_freq_last_24h' does not use future data
+  ✓ 'txn_time_unusual' does not use future data
+  ✓ 'new_device_flag' does not use future data
+  ✓ 'unusual_location_flag' does not use future data
+  ✓ 'unusual_recipient_flag' does not use future data
+  ✓ 'failed_auth_count_24h' does not use future data
+  ✓ 'days_since_last_similar_txn' does not use future data
+  ✓ 'gradual_escalation_score' does not use future data
+  ✓ 'known_device_count' does not use future data
+  ✓ 'account_tenure_days' does not use future data
+  ✓ 'hour_of_day' does not use future data
+  ✓ 'is_weekend' does not use future data
+  ✓ 'shared_device_accounts' does not use future data
+  ✓ 'shared_recipient_accounts' does not use future data
+  ✓ 'mule_ring_score' does not use future data
+  ✓ 'hour_deviation' does not use future data
+  ✓ 'amount_zscore' does not use future data
+  ✓ 'velocity_deviation' does not use future data
+  ✓ 'recipient_novelty' does not use future data
+  ✓ 'txn_regularity' does not use future data
+
+[5] No feature uses post-event outcomes
+  ✓ 'amount_ratio' does not use post-event outcomes
+  ✓ 'txn_freq_last_24h' does not use post-event outcomes
+  ✓ 'txn_time_unusual' does not use post-event outcomes
+  ✓ 'new_device_flag' does not use post-event outcomes
+  ✓ 'unusual_location_flag' does not use post-event outcomes
+  ✓ 'unusual_recipient_flag' does not use post-event outcomes
+  ✓ 'failed_auth_count_24h' does not use post-event outcomes
+  ✓ 'days_since_last_similar_txn' does not use post-event outcomes
+  ✓ 'gradual_escalation_score' does not use post-event outcomes
+  ✓ 'known_device_count' does not use post-event outcomes
+  ✓ 'account_tenure_days' does not use post-event outcomes
+  ✓ 'hour_of_day' does not use post-event outcomes
+  ✓ 'is_weekend' does not use post-event outcomes
+  ✓ 'shared_device_accounts' does not use post-event outcomes
+  ✓ 'shared_recipient_accounts' does not use post-event outcomes
+  ✓ 'mule_ring_score' does not use post-event outcomes
+  ✓ 'hour_deviation' does not use post-event outcomes
+  ✓ 'amount_zscore' does not use post-event outcomes
+  ✓ 'velocity_deviation' does not use post-event outcomes
+  ✓ 'recipient_novelty' does not use post-event outcomes
+  ✓ 'txn_regularity' does not use post-event outcomes
+
+[6] All features allowed at scoring time
+  ✓ 'amount_ratio' is allowed at scoring time
+  ✓ 'txn_freq_last_24h' is allowed at scoring time
+  ✓ 'txn_time_unusual' is allowed at scoring time
+  ✓ 'new_device_flag' is allowed at scoring time
+  ✓ 'unusual_location_flag' is allowed at scoring time
+  ✓ 'unusual_recipient_flag' is allowed at scoring time
+  ✓ 'failed_auth_count_24h' is allowed at scoring time
+  ✓ 'days_since_last_similar_txn' is allowed at scoring time
+  ✓ 'gradual_escalation_score' is allowed at scoring time
+  ✓ 'known_device_count' is allowed at scoring time
+  ✓ 'account_tenure_days' is allowed at scoring time
+  ✓ 'hour_of_day' is allowed at scoring time
+  ✓ 'is_weekend' is allowed at scoring time
+  ✓ 'shared_device_accounts' is allowed at scoring time
+  ✓ 'shared_recipient_accounts' is allowed at scoring time
+  ✓ 'mule_ring_score' is allowed at scoring time
+  ✓ 'hour_deviation' is allowed at scoring time
+  ✓ 'amount_zscore' is allowed at scoring time
+  ✓ 'velocity_deviation' is allowed at scoring time
+  ✓ 'recipient_novelty' is allowed at scoring time
+  ✓ 'txn_regularity' is allowed at scoring time
+
+[7] Validation catches illegal features
+  ✓ Validation catches illegal features: label
+  ✓ Validation catches illegal features: is_fraud
+  ✓ Validation catches illegal features: chargeback
+  ✓ Validation catches illegal features: email
+  ✓ Validation catches illegal features: raw_amount
+  ✓ Validation catches illegal features: transaction_amount
+
+[8] Validation accepts clean feature list
+  ✓ Clean ML_FEATURES passes validation
+
+[9] Scoring features are safe
+  ✓ Scoring features is non-empty
+  ✓ Scoring features ⊆ ML_FEATURES
+  ✓ All scoring features have no labels/future/outcome
+
+[10] No amount features are raw
+  ✓ 'amount_ratio' has safe source (not raw amount)
+  ✓ 'amount_zscore' has safe source (not raw amount)
+
+[11] Privacy class assignments
+  ✓ 'amount_ratio' has a privacy class
+  ✓ 'txn_freq_last_24h' has a privacy class
+  ✓ 'txn_time_unusual' has a privacy class
+  ✓ 'new_device_flag' has a privacy class
+  ✓ 'unusual_location_flag' has a privacy class
+  ✓ 'unusual_recipient_flag' has a privacy class
+  ✓ 'failed_auth_count_24h' has a privacy class
+  ✓ 'days_since_last_similar_txn' has a privacy class
+  ✓ 'gradual_escalation_score' has a privacy class
+  ✓ 'known_device_count' has a privacy class
+  ✓ 'account_tenure_days' has a privacy class
+  ✓ 'hour_of_day' has a privacy class
+  ✓ 'is_weekend' has a privacy class
+  ✓ 'shared_device_accounts' has a privacy class
+  ✓ 'shared_recipient_accounts' has a privacy class
+  ✓ 'mule_ring_score' has a privacy class
+  ✓ 'hour_deviation' has a privacy class
+  ✓ 'amount_zscore' has a privacy class
+  ✓ 'velocity_deviation' has a privacy class
+  ✓ 'recipient_novelty' has a privacy class
+  ✓ 'txn_regularity' has a privacy class
+
+[12] Training would reject label-derived features
+  ✓ Training rejects feature list containing 'was_fraud'
+  ✓ Training rejects feature list containing 'chargeback_result'
+
+======================================================================
+RESULTS: 123/123 passed, 0 failed
+======================================================================

@@ -40,8 +40,8 @@ Status: VERIFIED | PARTIALLY_VERIFIED | UNSUPPORTED | FALSE | NOT_APPLICABLE
 | M2 | No temporal leakage | ✅ VERIFIED | temporal_test.py (22/22) | Point-in-time correctness |
 | M3 | Calibration implemented | ✅ VERIFIED | calibration_test.py (16/16) | Platt scaling on validation data |
 | M4 | Drift detection | ✅ VERIFIED | drift_detector_test.py (31/31) | PSI-based; needs baseline |
-| M5 | In-domain: 96.6% ROC-AUC (ULB) | ✅ VERIFIED | train_compare.py, time-split eval, 284K ULB rows | In-domain only; PCA features do not correspond to §16 production feature space |
-| M6 | Altman: 98.2% ROC-AUC (user-disjoint) | ✅ VERIFIED | ibm_train.py (1.2M rows, user-disjoint split) | Same generator family as training data; not a truly independent source |
+| M5 | In-domain: 96.6% ROC-AUC (ULB) | ❌ UNSUPPORTED | **Phase 105 correction:** `train_compare.py` runs the 9,799-row synthetic set and never touches ULB — the attribution was false. No artifact contains the 0.966/0.877/97.8%@0.43 tuple; nearest is `ulb_max_push.json` 0.966404 (time-split, r1 0.815). Reproduced replacement: pattern XGB ROC-AUC **0.976** via `eval_ulb.py`, ledger `eval-20261003T084934+0000-e58d68c2bf88` (registry C-001) | In-domain only; PCA features do not correspond to §16 production feature space; historical value retained here for traceability (registry C-101, NOT ESTABLISHED) |
+| M6 | Altman: 98.2% ROC-AUC (user-disjoint) | ⚠️ PARTIALLY_VERIFIED | ibm_train.py (1.2M rows, user-disjoint split) → `reports/ibm_train/training_report.json` (0.9819; registry C-004) — artifact records no seed/git, and the split is user-disjoint but NOT chronological | Same generator family as training data; not a truly independent source |
 | M7 | Cross-domain transfer | ❌ UNSUPPORTED | cross_domain_v2.py | AUC ~0.5 — fraud signals are domain-specific |
 | M8 | Industry-grade fraud detection | ❌ UNSUPPORTED | Only synthetic/cross-domain eval | No independent validation |
 | M9 | Generalizes to real-world fraud | ❌ UNSUPPORTED | Evaluated on public datasets only | Not validated in production |

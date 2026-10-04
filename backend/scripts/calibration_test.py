@@ -208,6 +208,64 @@ def run_tests():
     else:
         test("metadata.json exists", False)
 
+    # ---- Phase 105: evidence artifact + append-only ledger record ---------
+    # The measured Brier/ECE are written to a structured artifact bound to the
+    # artifact bytes (calibrator/labels/scores), git state and the exact
+    # command — so documentation can reference evidence instead of literals.
+    try:
+        import json as _json
+        from datetime import datetime, timezone as _tz
+        from eval_record import EvaluationLedger, create_evaluation_record
+
+        _root = Path(__file__).resolve().parents[2]
+        _outdir = _root / "reports" / "calibration_test"
+        _outdir.mkdir(parents=True, exist_ok=True)
+        _artifact = {
+            "generated_utc": datetime.now(_tz.utc).isoformat(timespec="seconds"),
+            "suite": "backend/scripts/calibration_test.py",
+            "command": "python backend/scripts/calibration_test.py",
+            "model": "ps14 fused ensemble (models/artifacts/*.joblib)",
+            "calibration_method": "platt",
+            "evaluation_split": "training validation split (validation_labels.joblib / fused_val_scores.joblib)",
+            "n_samples": int(len(y_true)),
+            "brier": brier,
+            "ece": ece,
+            "ece_bins": 10,
+            "reliability_bins": curve,
+            "scope_note": "calibration measured on the synthetic-data validation split; real-world calibration not established",
+        }
+        _apath = _outdir / "calibration_metrics.json"
+        _apath.write_text(_json.dumps(_artifact, indent=2), encoding="utf-8")
+
+        rec = create_evaluation_record(
+            model_identifier="ps14_fused_ensemble_platt_calibrated",
+            artifact_paths=[calibrator_path, labels_path, scores_path],
+            dataset_path=labels_path,   # evaluation labels file is the measured dataset
+            seed=None,
+            threshold=None,
+            threshold_source="none",
+            preprocessing_version="none_fixed_artifacts",
+            feature_schema_version="none_fixed_scores",
+            evaluation_config={
+                "script": "backend/scripts/calibration_test.py",
+                "split": "validation",
+                "calibration_method": "platt",
+                "ece_bins": 10,
+                "seed_not_applicable": "deterministic metrics over fixed artifacts; no sampling",
+            },
+            metrics={"calibration": {"brier": brier, "ece": ece, "ece_bins": 10,
+                                     "n_samples": int(len(y_true)), "method": "platt"}},
+            command="python backend/scripts/calibration_test.py",
+            warnings=["calibrator trained in a prior run — training provenance limited to artifact hashes"],
+        )
+        EvaluationLedger(_root / "reports" / "evaluation_runs" / "eval_ledger.jsonl").append(rec)
+        (_root / "reports" / "evaluation_runs" / f"record_{rec.evaluation_id}.json").write_text(
+            _json.dumps(rec.to_dict(), indent=2), encoding="utf-8")
+        print(f"\nEvidence artifact: reports/calibration_test/calibration_metrics.json")
+        print(f"evaluation record: {rec.evaluation_id}")
+    except Exception as _e:
+        print(f"\n(evidence record skipped: {_e})")
+
     # ---- Summary ----
     print("\n" + "=" * 70)
     total = passed + failed

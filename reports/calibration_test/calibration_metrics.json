@@ -1,0 +1,29 @@
+{
+  "generated_utc": "2026-10-03T14:42:19+00:00",
+  "suite": "backend/scripts/calibration_test.py",
+  "command": "python backend/scripts/calibration_test.py",
+  "model": "ps14 fused ensemble (models/artifacts/*.joblib)",
+  "calibration_method": "platt",
+  "evaluation_split": "training validation split (validation_labels.joblib / fused_val_scores.joblib)",
+  "n_samples": 1470,
+  "brier": 0.01073368217015549,
+  "ece": 0.014450218995775772,
+  "ece_bins": 10,
+  "reliability_bins": [
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "mean_predicted": 0.006485846659184285,
+      "fraction_positive": 0.002066115702479339,
+      "count": 1452
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "mean_predicted": 0.12086819029695528,
+      "fraction_positive": 0.9444444444444444,
+      "count": 18
+    }
+  ],
+  "scope_note": "calibration measured on the synthetic-data validation split; real-world calibration not established"
+}

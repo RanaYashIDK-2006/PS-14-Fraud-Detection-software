@@ -49,6 +49,19 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
 
+      # Phase 105: evidence enforcement — a quantitative claim introduced in a
+      # managed README surface without a validated claims-registry entry (or a
+      # registry entry whose evidence/ledger record does not check out) fails CI.
+      - name: Claim evidence enforcement
+        run: python backend/scripts/claim_evidence_check.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Evaluation record schema tests
+        run: python backend/scripts/eval_record_test.py
+        env:
+          PYTHONIOENCODING: utf-8
+
       - name: Run backup/restore test
         run: python backend/scripts/backup_restore_test.py
         env:

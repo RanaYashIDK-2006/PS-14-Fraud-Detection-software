@@ -203,6 +203,7 @@ def main() -> int:
 
     report = {
         "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "command": "python backend/scripts/cross_dataset_eval.py " + " ".join(sys.argv[1:]),
         "note": (
             "ML-only (no rules) comparison. Both models scored on identical rows. "
             "IBM v2 holdout rows are strictly AFTER the training prefix (user-disjoint "
@@ -215,6 +216,38 @@ def main() -> int:
     out = REPORT_DIR / "cross_dataset_report.json"
     out.write_text(json.dumps(report, indent=2))
     print(f"\nreport: {out}")
+
+    # Phase 105: bind this execution to the append-only evidence ledger.
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from eval_record import EvaluationLedger, create_evaluation_record
+
+        rec = create_evaluation_record(
+            model_identifier="ps14_cross_dataset_comparison",
+            artifact_paths=sorted(ARTIFACTS.glob("*.joblib")),
+            dataset_path=ROOT / "data" / "transactions.csv",
+            training_dataset_path=ROOT / "data" / "transactions.csv",
+            seed=None,
+            threshold=None,
+            threshold_source="none",
+            preprocessing_version="embedded_in_artifacts",
+            feature_schema_version="production_48_native",
+            evaluation_config={
+                "script": "backend/scripts/cross_dataset_eval.py",
+                "ibm_rows": args.ibm_rows,
+                "datasets": sorted(results.keys()),
+                "seed_not_applicable": "deterministic scoring of fixed artifacts; no sampling",
+            },
+            metrics={"datasets": results},
+            command=report["command"],
+            warnings=["kaggle_ulb_pca_proxy is a rank-preserving proxy mapping, not feature-semantic evaluation"],
+        )
+        EvaluationLedger(ROOT / "reports" / "evaluation_runs" / "eval_ledger.jsonl").append(rec)
+        (ROOT / "reports" / "evaluation_runs" / f"record_{rec.evaluation_id}.json").write_text(
+            json.dumps(rec.to_dict(), indent=2), encoding="utf-8")
+        print(f"evaluation record: {rec.evaluation_id}")
+    except Exception as _e:
+        print(f"(evaluation record skipped: {_e})")
     return 0
 
 

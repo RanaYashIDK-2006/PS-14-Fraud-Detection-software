@@ -22,8 +22,13 @@ sys.path.insert(0, str(ROOT / "backend"))
 
 # ═══════════════════════════════════════════════════════════════════
 # COMPARISON DATA
-# ═══════════════════════════════════════════════════════════════════
-# PS-14 numbers are MEASURED from the live codebase on Kaggle ULB data.
+#
+# Phase 105 (evidence enforcement): PS-14's ULB metrics are NO LONGER
+# hardcoded here. They are loaded from the executed evaluation artifact
+# (reports/ulb_results.json, produced by scripts/eval_ulb.py and bound to the
+# append-only evidence ledger). If the artifact is missing the row reports
+# N/A instead of silently showing a remembered number.
+#
 # Industry numbers below are ILLUSTRATIVE ESTIMATES — not sourced from
 # specific papers or vendor publications. They represent the general
 # performance range reported across the ML fraud-detection literature
@@ -35,25 +40,78 @@ sys.path.insert(0, str(ROOT / "backend"))
 # on industry talks and blog posts, not verified measurements.
 # Do NOT cite these as sourced from specific papers or vendor docs.
 
-SYSTEMS = {
-    "PS-14 (Ours)": {
+
+def load_ps14_from_evidence() -> dict:
+    """Build the PS-14 row from the executed ULB evaluation artifact.
+
+    Prefers the fresh root-level artifact (written by
+    ``python backend/scripts/eval_ulb.py``, ledger-bound) and falls back to
+    the historical misc/reports copy. The evidence source is recorded in the
+    returned row's ``source`` field so every printed number names the
+    artifact it came from.
+    """
+    candidates = [
+        (ROOT / "reports" / "ulb_results.json", "executed"),
+        (ROOT / "misc" / "reports" / "ulb_results.json", "historical"),
+    ]
+    for path, freshness in candidates:
+        if not path.exists():
+            continue
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        px = (data.get("results") or {}).get("pattern_xgb") or {}
+        if not px:
+            continue
+        eval_id = data.get("evaluation_id", "pre-Phase-105 artifact, no ledger record")
+        source = (
+            f"EVIDENCE: {path.relative_to(ROOT)} — pattern_xgb row from eval_ulb.py "
+            f"(seed 42, stratified 80/20, ULB sha256 {str(data.get('hash'))[:16]}…, "
+            f"ledger {eval_id}, {freshness})"
+        )
+        return {
+            "type": "Research XGBoost + pattern features (ULB benchmark row)",
+            "roc_auc": px.get("roc_auc"),
+            "pr_auc": px.get("pr_auc"),
+            "recall_at_1pct_fpr": px.get("r1"),
+            # precision/fpr at a fixed operating threshold are NOT computed by
+            # the ULB evaluation — None renders as N/A instead of a remembered
+            # number that no artifact supports.
+            "precision": None,
+            "fpr": None,
+            # latency/throughput: historical load_test.py observation
+            # (README claims ~40–60 TPS, ~15–25 ms p50); not re-run in
+            # Phase 105 — kept as explicitly historical reference values.
+            "latency_ms": 17.2,
+            "throughput_tps": 58,
+            "privacy": "Full (pseudonymous IDs, no PII in features, encrypted DB-1)",
+            "explainability": "Category-level reason codes + SHAP attribution",
+            "training_data": f"Kaggle ULB ({data.get('n_rows')} rows, {data.get('fraud')} fraud)",
+            "features": data.get("n_feat_pattern"),
+            "deployment": "6-service microservice (FastAPI + SQLite)",
+            "audit_trail": "Yes (hash-chained, append-only)",
+            "cold_start": "Handled (no 1-day floor, young accounts represented)",
+            "source": source,
+        }
+    return {
         "type": "Privacy-First XGBoost Ensemble",
-        "roc_auc": 0.966,
-        "pr_auc": 0.877,
-        "recall_at_1pct_fpr": 0.918,
-        "precision": 0.978,
-        "fpr": 0.00008,
-        "latency_ms": 17.2,
-        "throughput_tps": 58,
+        "roc_auc": None, "pr_auc": None, "recall_at_1pct_fpr": None,
+        "precision": None, "fpr": None, "latency_ms": None,
+        "throughput_tps": None,
         "privacy": "Full (pseudonymous IDs, no PII in features, encrypted DB-1)",
         "explainability": "Category-level reason codes + SHAP attribution",
-        "training_data": "Kaggle ULB (284K rows, 492 fraud)",
-        "features": 16,
+        "training_data": "UNESTABLISHED — reports/ulb_results.json missing",
+        "features": None,
         "deployment": "6-service microservice (FastAPI + SQLite)",
         "audit_trail": "Yes (hash-chained, append-only)",
         "cold_start": "Handled (no 1-day floor, young accounts represented)",
-        "source": "This repository",
-    },
+        "source": "NO EVIDENCE ARTIFACT — run: python backend/scripts/eval_ulb.py",
+    }
+
+
+SYSTEMS = {
+    "PS-14 (Ours)": load_ps14_from_evidence(),
     "XGBoost (illustrative)": {
         "type": "XGBoost + Handcrafted Features",
         "roc_auc": 0.975,
@@ -367,8 +425,11 @@ def print_comparison_table():
     print("    • Open source: Full codebase, no proprietary components")
     print()
     print("  Where PS-14 is BEHIND:")
-    print("    • Raw AUC: GNN (0.992) and LSTM (0.980) beat PS-14 (0.966)")
-    print("    • Throughput: Stripe/PayPal handle 5K-10K TPS (PS-14: 58 TPS)")
+    _ps14 = SYSTEMS["PS-14 (Ours)"]
+    _ps14_auc = _ps14.get("roc_auc")
+    _auc_txt = f"{_ps14_auc:.3f}" if isinstance(_ps14_auc, (int, float)) else "N/A (no evidence artifact)"
+    print(f"    • Raw AUC: GNN (0.992) and LSTM (0.980) beat PS-14 ({_auc_txt})")
+    print("    • Throughput: Stripe/PayPal handle 5K-10K TPS (PS-14: 58 TPS — historical load_test observation, SELF-TESTED)")
     print("    • Scale: PS-14 is a prototype; production systems have billions of txns")
     print("    • Feature count: Industry uses 100s of features; PS-14 uses 16")
     print("    • Graph features: GNN captures relationship patterns PS-14 can't")

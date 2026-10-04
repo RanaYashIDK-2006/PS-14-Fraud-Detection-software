@@ -1,0 +1,57 @@
+{
+  "evaluation_id": "eval-20261003T085043+0000-c175e39c082e",
+  "timestamp_utc": "2026-10-03T08:50:43+00:00",
+  "model_identifier": "ps14_fused_ensemble_platt_calibrated",
+  "model_hash": "566a635505de1073ab516d21890ca4e7089ae4e89a35ca918ce213f6cc2048a3",
+  "artifact_file_hashes": {
+    "calibrator.joblib": "21b37c04060846141e5051f79a17732c3b3e41b34b67e32836be87eb2b6dd983",
+    "validation_labels.joblib": "d1d44f03455cb0f25e514195d799ed000c77ff107be46e829a48624f887784de",
+    "fused_val_scores.joblib": "babacd5fa54b264e7b510d4d300024416707088a3459c6a538ca6e636a818d71"
+  },
+  "preprocessing_version": "1.0",
+  "feature_schema_version": "1.0",
+  "dataset": {
+    "path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\models\\artifacts\\validation_labels.joblib",
+    "sha256": "d1d44f03455cb0f25e514195d799ed000c77ff107be46e829a48624f887784de",
+    "size_bytes": 11985,
+    "exists": true
+  },
+  "training_dataset": null,
+  "seed": null,
+  "threshold": null,
+  "threshold_source": "none",
+  "evaluation_config": {
+    "script": "backend/scripts/calibration_test.py",
+    "split": "validation",
+    "calibration_method": "platt",
+    "ece_bins": 10,
+    "seed_not_applicable": "deterministic metrics over fixed artifacts; no sampling",
+    "metric_definitions_version": "1.0"
+  },
+  "git_commit": "a0b600ba2edd917498d3a9551c19e10225930e4b",
+  "software": {
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "sklearn": "1.9.0",
+    "xgboost": "3.4.1",
+    "scipy": "1.18.0"
+  },
+  "metric_definitions_version": "1.0",
+  "metrics": {
+    "calibration": {
+      "brier": 0.0009280049005246071,
+      "ece": 0.001279013244298246,
+      "ece_bins": 10,
+      "n_samples": 1470,
+      "method": "platt"
+    }
+  },
+  "command": "python backend/scripts/calibration_test.py",
+  "warnings": [
+    "calibrator trained in a prior run \u2014 training provenance limited to artifact hashes"
+  ],
+  "status": "COMPLETED",
+  "record_version": "1.1"
+}

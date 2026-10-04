@@ -156,6 +156,7 @@ def main() -> int:
         threshold_source=threshold_source,
         evaluation_config={"config_file": args.config, **cfg},
         metrics=metrics,
+        command="python scripts/evaluate.py " + " ".join(sys.argv[1:]),
         status="COMPLETED",
     )
     ledger = EvaluationLedger(outdir / "eval_ledger.jsonl")

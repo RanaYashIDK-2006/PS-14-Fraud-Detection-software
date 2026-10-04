@@ -838,47 +838,6 @@ Data: {data_path.name}, {len(df):,} events, test fraud rate {y_test.mean():.4f}.
         "ood_scenarios": ood_df.to_dict(orient="records"),
     }
 
-    # ---- Phase 39: immutable evaluation record (append-only) ---------------
-    # Binds these metrics to the artifact bytes, dataset bytes, seed, thresholds
-    # and git state. Thresholds were selected on VALIDATION (fit_fold/
-    # threshold_at_fpr), never on test — recorded here as threshold_source so
-    # reviewers can verify the Recall@1%FPR discipline. The ledger never
-    # rewrites previous records; failed/unfavorable runs stay on disk.
-    try:
-        sys.path.insert(0, str(root / "backend" / "scripts"))
-        from eval_record import EvaluationLedger, record_from_run  # noqa: E402
-
-        fused_row = next(r for r in res_df.to_dict(orient="records")
-                         if str(r["model"]).startswith("fused"))
-        rec = record_from_run(
-            model_identifier="ps14_fused_ensemble",
-            artifacts_dir=outdir,
-            dataset_path=data_path,
-            train_data_path=Path(feedback_source) if feedback_source else None,
-            seed=args.seed,
-            threshold=float(fused_row["threshold_f1"]),
-            threshold_source="validation",
-            metrics={
-                "test_prevalence": float(y_test.mean()),
-                "split_counts": {"train": int(len(train)), "val": int(len(val)), "test": int(len(test))},
-                "fused": {k: v for k, v in fused_row.items() if k != "model"},
-                "per_model": [{k: v for k, v in r.items() if k != "model"}
-                              for r in res_df.to_dict(orient="records")],
-            },
-            extra_config={
-                "split": "time_70_15_15", "group_eval": not args.no_group_eval,
-                "ood_gate": {"floor": args.ood_recall_floor,
-                             "archetypes": args.ood_gate_archetypes,
-                             "enforced": not args.no_ood_gate},
-                "feedback_rows": n_feedback,
-            },
-            warnings=[] if (gate_rows and all(r["passed"] for r in gate_rows))
-                      else ["OOD gate not enforced or failed — see metadata.json ood_gate"],
-        )
-        EvaluationLedger(root / "reports" / "evaluation_runs" / "eval_ledger.jsonl").append(rec)
-        print(f"  evaluation record: {rec.evaluation_id} (model hash {rec.model_hash[:12]}…)")
-    except Exception as _e:  # record failure must not break the training run
-        print(f"  (evaluation record skipped: {_e})")
     (outdir / "metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
     # ---- Optional plot -----------------------------------------------------
@@ -922,6 +881,60 @@ Data: {data_path.name}, {len(df):,} events, test fraud rate {y_test.mean():.4f}.
         "enforced": not args.no_ood_gate and bool(gen_df.shape[0]),
     }
     (outdir / "metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
+
+    # ---- Phase 39: immutable evaluation record (append-only) ---------------
+    # Binds these metrics to the artifact bytes, dataset bytes, seed, thresholds
+    # and git state. Thresholds were selected on VALIDATION (fit_fold/
+    # threshold_at_fpr), never on test — recorded here as threshold_source so
+    # reviewers can verify the Recall@1%FPR discipline. The ledger never
+    # rewrites previous records; failed/unfavorable runs stay on disk.
+    # Phase 105: this block used to run BEFORE gate_rows was computed, so the
+    # UnboundLocalError was swallowed and train_compare silently appended
+    # nothing. It now runs after the OOD gate evaluates (and before a gate
+    # failure exits), so BOTH passing and failing runs are recorded.
+    try:
+        sys.path.insert(0, str(root / "backend" / "scripts"))
+        from eval_record import EvaluationLedger, record_from_run  # noqa: E402
+
+        fused_row = next(r for r in res_df.to_dict(orient="records")
+                         if str(r["model"]).startswith("fused"))
+        rec = record_from_run(
+            model_identifier="ps14_fused_ensemble",
+            artifacts_dir=outdir,
+            dataset_path=data_path,
+            train_data_path=Path(feedback_source) if feedback_source else None,
+            seed=args.seed,
+            threshold=float(fused_row["threshold_f1"]),
+            threshold_source="validation",
+            preprocessing_version="standardscaler_fit_on_train",
+            feature_schema_version="ps14_synthetic_48_native",
+            metrics={
+                "test_prevalence": float(y_test.mean()),
+                "split_counts": {"train": int(len(train)), "val": int(len(val)), "test": int(len(test))},
+                "fused": {k: v for k, v in fused_row.items() if k != "model"},
+                "per_model": [{k: v for k, v in r.items() if k != "model"}
+                              for r in res_df.to_dict(orient="records")],
+            },
+            extra_config={
+                "split": "time_70_15_15", "group_eval": not args.no_group_eval,
+                "ood_gate": {"floor": args.ood_recall_floor,
+                             "archetypes": args.ood_gate_archetypes,
+                             "enforced": not args.no_ood_gate,
+                             "rows": gate_rows,
+                             "passed": (bool(gate_rows) and all(r["passed"] for r in gate_rows))
+                                       or args.no_ood_gate},
+                "feedback_rows": n_feedback,
+            },
+            command="python src/train_compare.py " + " ".join(sys.argv[1:]),
+            warnings=[] if ((gate_rows and all(r["passed"] for r in gate_rows))
+                            or args.no_ood_gate)
+                      else ["OOD gate FAILED — see metadata.json ood_gate"],
+        )
+        EvaluationLedger(root / "reports" / "evaluation_runs" / "eval_ledger.jsonl").append(rec)
+        print(f"  evaluation record: {rec.evaluation_id} (model hash {rec.model_hash[:12]}…)")
+    except Exception as _e:  # record failure must not break the training run
+        print(f"  (evaluation record skipped: {_e})")
+
     if gate_rows and not all(r["passed"] for r in gate_rows) and not args.no_ood_gate:
         failed = ", ".join(r["archetype"] for r in gate_rows if not r["passed"])
         sys.exit(f"OOD recall gate FAILED: held-out recall@1%FPR below {args.ood_recall_floor:.2f} "

@@ -12,7 +12,7 @@ The system is a 6-service microservice architecture: an Identity Service (pseudo
 
 | Dimension | Status |
 |---|---|
-| In-domain benchmark performance | **Strong** — ROC-AUC 0.966 on ULB, 0.982 on IBM v2 (synthetic/training distributions) |
+| In-domain benchmark performance | **Measured (research models)** — ULB ROC-AUC 0.976 (pattern XGB, reproduced Phase 105, ledger-bound), IBM v2 ROC-AUC 0.982 (artifact-verified); neither is the production feature contract |
 | External transfer performance | **Substantially weaker** — ROC-AUC 0.435–0.595 on unprovenanced external data |
 | Real-world validation | **Not established** — all evaluations use synthetic or unprovenanced public datasets |
 | Deployment infrastructure | **Demonstrated** — Docker, Caddy auto-HTTPS, PostgreSQL config, CI/CD pipeline exist |
@@ -22,26 +22,27 @@ The system is a 6-service microservice architecture: an Identity Service (pseudo
 
 ## Key Results
 
+<!-- claims:managed:start — quantitative rows in this region MUST carry a claim id registered in docs/evaluation/claims_registry.jsonl; enforced by backend/scripts/claim_evidence_check.py (CI). -->
 ### In-domain benchmark
 
-Performance on datasets from the same distribution as training data. These measure discrimination ability within a specific data distribution — not real-world generalization.
+Performance on datasets from the same distribution as the evaluated model's training data. These measure discrimination ability within a specific data distribution — not real-world generalization.
 
-**Kaggle ULB Credit Card Fraud** (284,807 transactions, 492 fraud; PCA features, Dal Pozzolo et al.)
+**Kaggle ULB Credit Card Fraud** — research benchmark model (pattern XGB), random stratified 80/20 split, seed 42. Reproduced Phase 105 via `python backend/scripts/eval_ulb.py` → `reports/ulb_results.json`, ledger `eval-20261003T084934+0000-e58d68c2bf88`, dataset sha256 `76274b69…`. This is a ULB-trained research model on PCA features — **not** the production §16/48-feature contract.
 
-| Metric | Value |
-|---|---|
-| ROC-AUC | 0.966 |
-| Recall@1%FPR | 91.8% |
-| PR-AUC | 0.877 |
-| Recall (threshold 0.43) | 97.8% (4 missed) |
-| False Positive Rate | 1.996% |
+| Metric | Value | Evidence |
+|---|---|---|
+| ROC-AUC | 0.976 | <!-- claims:C-001 --> |
+| Recall@1%FPR | 91.8% | <!-- claims:C-002 --> |
+| PR-AUC | 0.883 | <!-- claims:C-003 --> |
 
-**IBM v2** (1.2M rows, user-disjoint split)
+> ⚠️ The historical headline tuple (ROC-AUC **0.966**, PR-AUC **0.877**, recall **97.8% @ threshold 0.43**, FPR **1.996%**) does not correspond to any single artifact and is classified **NOT ESTABLISHED** — see `docs/PHASE_105_EVIDENCE_BASELINE.md` §6, where those historical values remain recorded for traceability.
+
+**IBM v2** (1.2M rows, user-disjoint split; values verified against artifact `reports/ibm_train/training_report.json` in Phase 105 — artifact records no seed/git, so classification is SELF-TESTED)
 
 | Model | ROC-AUC | PR-AUC | Recall@1%FPR |
 |---|---|---|---|
-| XGB | 0.982 | 0.406 | 0.836 |
-| Fused | 0.978 | 0.314 | 0.840 |
+| XGB | 0.982 <!-- claims:C-004 --> | 0.406 <!-- claims:C-005 --> | 0.836 <!-- claims:C-006 --> |
+| Fused | 0.978 <!-- claims:C-007 --> | 0.314 <!-- claims:C-008 --> | 0.840 <!-- claims:C-009 --> |
 
 > ⚠️ These metrics measure in-domain benchmark performance. They should not be interpreted as evidence of real-world generalization.
 
@@ -51,16 +52,17 @@ Evaluations on datasets not seen during training. Results show substantial degra
 
 | Evaluation | Dataset | Model | ROC-AUC | FPR | Notes |
 |---|---|---|---|---|---|
-| Phase 23B | Kaggle fraudTrain (1.85M) | P20_45feat | 0.47 | — | 33/45 features unavailable |
-| Phase 24 | Kaggle test (555K) | E_hardneg | 0.435 | 44.9% | 20/48 features reconstructed |
-| Phase 25 | Kaggle test (reconstructed) | E_hardneg | 0.595 | 9.9% | 47/48 features; promotion BLOCKED |
-| IBM v2 cross-dataset | IBM holdout (200K) | IBM v2 | 0.873 | — | Same generator family, not independent |
+| Phase 23B | Kaggle fraudTrain (1.85M) | P20_45feat | 0.47 <!-- claims:C-010 --> | — | 33/45 features unavailable; artifact `phase23b/kaggle/13_p20_metrics.json` (0.4658) |
+| Phase 24 | Kaggle test (555K) | E_hardneg | 0.435 <!-- claims:C-011 --> | 44.9% <!-- claims:C-012 --> | **NOT ESTABLISHED** — prose-only intermediate result; no JSON artifact exists |
+| Phase 25 | Kaggle test (reconstructed) | E_hardneg | 0.595 <!-- claims:C-013 --> | 9.9% <!-- claims:C-014 --> | 47/48 features; artifact `phase24/kaggle/05_e_hardneg_metrics.json`; promotion BLOCKED |
+| IBM v2 cross-dataset | IBM holdout (200K) | IBM v2 | 0.873 <!-- claims:C-015 --> | — | Reproduced Phase 105 (`--ibm-rows 200000`, ledger `eval-20261003T085632…`); same generator family, not independent |
 
-**Key finding:** In-domain ROC-AUC 0.966 drops to 0.435–0.595 on external data. The IBM v2 cross-dataset result (0.873) is from the same generator family — not a truly independent source.
+**Key finding:** In-domain research ULB ROC-AUC 0.976 (reproduced) drops to 0.595 on the strongest external evaluation; the earlier 0.435 intermediate is prose-only (NOT ESTABLISHED). The IBM v2 cross-dataset result (0.873, reproduced) is from the same generator family — not a truly independent source.
+<!-- claims:managed:end -->
 
 ### Security
 
-Self-authored automated security regression suite covering 42 attack scenarios. **These are not independent penetration tests.** A professional pentest is recommended before handling real financial data.
+Self-authored automated security regression suite (scenario count is not pinned by any artifact: README historically claimed 42, `security_ci_gate.py` says 34, static count is 66 `test(` + 43 `test_blocked(` call sites — see `docs/PHASE_105_EVIDENCE_BASELINE.md`). **These are not independent penetration tests.** A professional pentest is recommended before handling real financial data.
 
 | Test Suite | Checks | Result |
 |---|---|---|
@@ -83,16 +85,16 @@ Self-authored automated security regression suite covering 42 attack scenarios. 
 
 - End-to-end fraud scoring pipeline (6 services, register-to-audit flow)
 - Privacy-preserving architecture (pseudonymous IDs, PII stripped at ingest, DB isolation)
-- Stacked ML fusion (LR + RF + XGB + IF) with Platt-calibrated probabilities (Brier 0.0009, ECE 0.0013)
+- Stacked ML fusion (LR + RF + XGB + IF) with Platt-calibrated probabilities (Brier 0.0009, ECE 0.0013 — reproduced Phase 105 on the synthetic validation split, n=1470; ledger `eval-20261003T084644+0000-72d714bd81b3`) <!-- claims:C-016 C-017 -->
 - Declarative rule engine with PR-reviewed rules and severity tuning
 - Append-only, hash-chained audit trail with independent export verification
 - Human-in-the-loop verification workflow with case management
 - Federated learning algorithm (FedAvg, DP variant, heterogeneity map)
 - Deployment infrastructure (Docker, Caddy auto-HTTPS, PostgreSQL config, CI/CD)
-- 17-suite regression test suite (21/22 pass; `rules_gate` is a documented fragile test)
+- Regression test battery (`.freebuff/p114_battery.sh`, 79 checks: phase suites 46–118 + security + core; Phase 105: 76/79 as-run with services down, 3/3 re-run PASS with stack up = 79/79) + `regression_suite.py --fast` (22 FAST suites in CI)
 - Feedback loop (verification outcomes → labeled data → retraining)
 - Drift monitoring (PSI-based, hash-chained alerts)
-- k-anonymity gate on data exports
+- k-anonymity checker exists (`src/k_anonymity/checker.py`, `k_anonymity_test.py`) but is **test/CLI-only — not wired into `/audit/export`** (README previously claimed a gate on data exports; corrected per Phase 104 audit)
 
 ## What is not yet established
 
@@ -111,23 +113,23 @@ Every claim in this repository is classified by its evidence type and status.
 | # | Claim | Evidence | Evidence Type | Status | Limitation |
 |---|---|---|---|---|---|
 | 1 | End-to-end fraud scoring pipeline | 6-service architecture, live walkthrough, 50-case batch test | Implementation + automated test | **DEMONSTRATED** | Runs on synthetic data; no real-world transaction flow |
-| 2 | ULB benchmark performance (ROC-AUC 0.966) | `train_compare.py`, time-split eval on 284K ULB rows | Experiment | **EXPERIMENTAL** | In-domain only; PCA features do not correspond to §16 production feature space |
-| 3 | External dataset generalization | Phases 23B–25, `cross_dataset_eval.py` | Experiment | **NOT ESTABLISHED** | ROC-AUC degrades to 0.435–0.595 on external data; 0.873 on same-family IBM (not truly independent) |
-| 4 | No data leakage within audited scope | Phase 25 10-check audit, `leakage_structural_test.py` (123/123) | Self-tested | **SELF-TESTED** | Covers target correlation, temporal ordering, entity contamination, scaler fitting, distribution shift; not a mathematical guarantee against all leakage forms |
+| 2 | ULB benchmark performance (ROC-AUC 0.976 pattern XGB) | `eval_ulb.py` → `reports/ulb_results.json` + ledger `eval-20261003T084934…` (reproduced Phase 105; historical 0.966 attribution to `train_compare.py` was wrong — that script runs the synthetic set) | Experiment | **DEMONSTRATED** | In-domain research model on PCA features; not the §16 production contract; historical 0.966/0.877/97.8%@0.43 tuple NOT ESTABLISHED (Phase 105 §6) |
+| 3 | External dataset generalization | Phases 23B–25, `cross_dataset_eval.py` (reproduced Phase 105, ledger `eval-20261003T085632…`) | Experiment | **NOT ESTABLISHED** | ROC-AUC degrades to 0.595 artifact-backed (0.435 intermediate is prose-only) on external data; 0.873 on same-family IBM (not truly independent) |
+| 4 | No data leakage within audited scope | Phase 25 10-check audit, `leakage_structural_test.py` (123/123, re-run Phase 105 `reports/phase105/leakage_structural_test.out`) <!-- claims:C-018 --> | Self-tested | **SELF-TESTED** | Covers target correlation, temporal ordering, entity contamination, scaler fitting, distribution shift; not a mathematical guarantee against all leakage forms |
 | 5 | Privacy/identity separation | `pseudonym_separation_test.py` (14/14), `smoke_test.py` DB-separation checks | Self-tested | **SELF-TESTED** | Tested under specific DB-2 compromise scenarios; not an exhaustive privacy proof |
 | 6 | Database isolation (per-store ownership) | `smoke_test.py` (DB-1 has no features; DB-2 has no PII), 5 physically separate SQLite stores | Self-tested | **SELF-TESTED** | Prototype uses SQLite; production would require per-store PostgreSQL with network segments |
-| 7 | Security regression testing (42 scenarios) | `penetration_test.py` (42 scenarios), `security_test.py` (9 checks) | Self-tested | **SELF-TESTED** | Self-authored automated tests; not equivalent to independent penetration testing |
+| 7 | Security regression testing (self-authored scenario suite) | `penetration_test.py`, `security_test.py` (scenario count unpinned: 42 claimed vs 34 vs 66+43 call sites — see Phase 105) | Self-tested | **SELF-TESTED** | Self-authored automated tests; not equivalent to independent penetration testing |
 | 8 | Independent penetration testing | None | None | **NOT ESTABLISHED** | No independent penetration test exists in the repository; professional pentest recommended |
 | 9 | Federated learning | `federated_sim.py`, `federated_test.py` (43/43), 4 reports | Simulation | **SIMULATED** | Simulated institutions on synthetic data, single machine; no real financial institution participated |
 | 10 | Production deployment infrastructure | Docker, Caddy auto-HTTPS, PostgreSQL config, CI/CD, `deploy.sh` | Implementation | **DEMONSTRATED** | Infrastructure exists; model promotion to production is BLOCKED |
 | 11 | Production model promotion | Phase 22–25 promotion gates, `promotion_guard.py` | Blocked | **BLOCKED** | Pending independently sourced, provenance-verified real-world fraud data |
-| 12 | Model calibration (ml_score as calibrated probability) | PlattCalibration, `calibration_test.py` (16/16), Brier 0.0009, ECE 0.0013 | Self-tested | **SELF-TESTED** | Calibrated on synthetic data distribution; calibration on real data not validated |
+| 12 | Model calibration (ml_score as calibrated probability) | PlattCalibration, `calibration_test.py` (16/16), Brier 0.0009, ECE 0.0013 — ledger-bound Phase 105 <!-- claims:C-016 C-017 --> | Experiment + ledger record | **DEMONSTRATED** | Measured on the synthetic validation split (n=1470); calibration on real data not validated |
 | 13 | Real-world fraud detection effectiveness | None with provenance-verified data | None | **NOT ESTABLISHED** | All evaluations use synthetic or unprovenanced public datasets |
 | 14 | Dataset provenance verification | Phase 23 114-source audit | Experiment | **NOT ESTABLISHED** | 0 of 114 sources meet all provenance criteria; best candidate (Kaggle) has unclear source |
 | 15 | Throughput and scalability | `load_test.py` (~40–60 TPS, ~15–25ms p50) | Self-tested | **SELF-TESTED** | Single concurrent request, SQLite backend, no audit chain writes measured |
 | 16 | 50-case scenario testing | `batch_cases.py`, invariant checks (determinism, monotonicity, audit chain) | Self-tested | **SELF-TESTED** | Synthetic hand-designed scenarios + seeded perturbations; does not establish detection performance |
 | 17 | Cross-domain vs domain-specific training | 4-dataset ROC-AUC matrix, `meta_ensemble.py` | Experiment | **EXPERIMENTAL** | 4 public datasets; diagonal outperformed off-diagonal in this evaluation — not a universal theorem |
-| 18 | CI/CD pipeline validation | `.github/workflows/ci-cd.yml`, `security-scan.yml` | Implementation | **DEMONSTRATED** | Pipeline runs on push to main; `rules_gate` is a documented fragile test (21/22 suites pass) |
+| 18 | CI/CD pipeline validation | `.github/workflows/ci-cd.yml`, `security-scan.yml` | Implementation | **DEMONSTRATED** | Pipeline runs on push to main; Phase 105 added evidence-enforcement + eval-record steps; `regression_suite --fast` = 22 FAST suites |
 
 ### What this project does NOT currently claim
 
@@ -137,7 +139,7 @@ The repository does not currently establish:
 - **Institutional deployment** — no financial institution uses or has validated this system. The federated learning component is a local simulation with synthetic data.
 - **Independent penetration-test certification** — the 42 security scenarios are self-authored automated regression tests. No professional penetration test or third-party security audit has been conducted.
 - **Regulatory approval** — no regulatory body has reviewed or approved this system. The security hardening guide references DPDP Act and RBI guidelines as design considerations, not as achieved compliance.
-- **Reliable real-world generalization** — external-transfer evaluations show substantial degradation (ROC-AUC 0.435–0.595 on unprovenanced data vs 0.966 in-domain). The cross-domain matrix demonstrates an observed limitation, not a universal property.
+- **Reliable real-world generalization** — external-transfer evaluations show substantial degradation (ROC-AUC 0.595 artifact-backed on unprovenanced external data, with an earlier prose-only 0.435 intermediate, vs 0.976 research in-domain). The cross-domain matrix demonstrates an observed limitation, not a universal property.
 - **Universal superiority of domain-specific training** — the 4-dataset cross-domain experiment shows domain-specific models outperformed cross-domain transfer in this specific evaluation. This is an observed result on these datasets, not a proven theorem about fraud detection.
 - **Data leakage freedom** — the leakage audit covers 10 specific checks within a defined scope. It does not guarantee the absence of all possible leakage forms.
 
@@ -564,14 +566,14 @@ After load, `/health` re-checks the artifact set on every call (post-load drift 
 
 ## Limitations
 
-- **Synthetic data limitations** — all training and in-domain evaluation uses synthetic data (IBM generator, PaySim, PS-14 derived). The 2017 regime shift is classified as a synthetic artifact. Absolute performance numbers (ROC-AUC 0.966, recall 99.67%) are measured on synthetic distributions and must not be extrapolated to real-world transaction streams.
+- **Synthetic data limitations** — all training and in-domain evaluation uses synthetic data (IBM generator, PaySim, PS-14 derived). The 2017 regime shift is classified as a synthetic artifact. Absolute performance numbers on synthetic distributions (e.g. fused ROC-AUC 0.984 on the synthetic set, ledger `eval-20261003T090047…`, Phase 105) must not be extrapolated to real-world transaction streams. The historical headline "ROC-AUC 0.966" is NOT ESTABLISHED (see `docs/PHASE_105_EVIDENCE_BASELINE.md` §6).
 - **External distribution shift** — models trained on synthetic data show substantial degradation on external datasets (ROC-AUC 0.435–0.595 on unprovenanced data). This is expected when training and test distributions differ, but it means the system has not demonstrated generalization.
 - **Provenance limitations** — 0 of 114 evaluated data sources meet all provenance criteria. The best candidate (Kaggle fraudTrain) has unclear source, no channel information, no label timing, and undisclosed label definition. Any evaluation on this data carries fundamental credibility limitations.
 - **Lack of institutional validation** — no financial institution has used, tested, or validated this system. The federated learning component is a local simulation with synthetic data.
 - **Lack of independent penetration testing** — the 42 security scenarios are self-authored automated regression tests. No professional penetration test or third-party security audit has been conducted. A pentest is recommended before handling real financial data.
 - **Prototype status** — the system runs on SQLite with shared internal tokens. Production would require per-store PostgreSQL, per-service mTLS, KMS envelope encryption, and network segmentation. The deployment infrastructure exists but has not been exercised in a production environment.
 - **Leakage audit scope** — the 10-check leakage audit covers target correlation, temporal ordering, entity contamination, scaler fitting, and distribution shift within the audited pipeline. It does not guarantee the absence of all possible leakage forms.
-- **Model calibration scope** — Platt calibration (Brier 0.0009, ECE 0.0013) was fit and validated on synthetic data distribution. Calibration on real-world data has not been attempted.
+- **Model calibration scope** — Platt calibration (Brier 0.0009, ECE 0.0013 — reproduced Phase 105 on the synthetic validation split, ledger `eval-20261003T084644+0000-72d714bd81b3`) was fit and validated on synthetic data distribution. Calibration on real-world data has not been attempted.
 
 ## Reproducible Evaluation
 
@@ -621,7 +623,7 @@ All major evaluations are reported in the standardized matrix (`backend/scripts/
 
 Every reported metric is an **estimate from a finite dataset**, not a universal population value:
 
-- **In-domain benchmark numbers (e.g. ULB ROC-AUC 0.966) carry sampling uncertainty.** Bootstrap confidence intervals (percentile method, stratified by class, seed recorded) are available via `--bootstrap`; the point estimates in this README are the full-sample values.
+- **In-domain benchmark numbers (e.g. ULB ROC-AUC 0.976, pattern XGB) carry sampling uncertainty.** Bootstrap confidence intervals (percentile method, stratified by class, seed recorded) are available via `--bootstrap`; the point estimates in this README are the full-sample values.
 - **Small or imbalanced splits produce unstable estimates.** Confidence intervals are withheld when a conditioning cell has fewer than 30 observations; reports carry explicit `SMALL_POSITIVE_CLASS` / `HEAVY_IMBALANCE` warnings rather than spuriously precise numbers.
 - **Prevalence context is mandatory.** At fraud prevalence *p*, an always-legitimate classifier achieves accuracy `1 − p` — accuracy is never the headline metric here, and PR-AUC is always read against its prevalence baseline.
 - **No statistical-significance claim** is made for any model-vs-baseline or model-vs-model comparison unless a documented test supports it; comparisons share the same split and metric implementation, which makes them fair but not automatically significant.
@@ -1154,7 +1156,7 @@ Requires the live stack (:8003 + :8005) — it is a live check, not part of the 
 - **Cold-start false positives** (fixed): the generator and the live Privacy Layer both clamped time-derived features to a 1-day floor, so training never saw young accounts and every brand-new account's normal transaction scored ~0.7. The floor is removed (real sub-day tenure, minutes-to-hours first swipes, and zero-known-device accounts are all represented in training) and the live clamp is gone, so a fresh account's normal first event scores ~0.41 (step-up, not verify) and a known-device event ~0.02.
 - **Operating point** (§6): `severity_scale: 0.45` in `rules.yaml` is tuned by `scripts/tune_operating_point.py` with a cost-weighted objective (C_FN/C_FP = 20; step-up friction 0.15–0.25). Per-event scores are scale-invariant, so the tuner computes them ONCE and caches them on disk (`models/cache/`, gitignored), keyed on the dataset content + model artifacts + the per-rule severity/condition state: a re-run (any cost ratio) hits the cache and finishes in ~0.1s instead of ~3 min; retraining, regenerating the data, or editing a rule's severity/condition invalidates it, while a `severity_scale`-only write (e.g. by `scripts/training_pipeline.py`) deliberately does not. The post-cold-start-fix retune cuts legit challenges from 1.77% (25 events) to 0.14% (2) on the test split while holding fraud recall at 92.3% (48/52) and lowering total cost 118.2 → 70.6. The residual 2 legit challenges are ML-driven (above any rule scaling). See `models/tuning_report.md`. `--per-rule`
 - **Link analysis / device graphs**: three cross-account features (`shared_device_accounts`, `shared_recipient_accounts`, `mule_ring_score`) are derived at ingest from DB-2 (counts of OTHER accounts on the device / recipient) and synthesized in training by a new mule-ring archetype (2–4 accounts sharing one device and a converging sink recipient, moderate amounts so amount features see nothing). A declarative `RULE_MULE_RING` (reason code `MULE_RING`) fires on shared device + shared/new recipient or a heavily shared device alone. Trained, tuned, and verified live: a three-account ring trips score 100 → VERIFY while a family phone shared by two legit accounts stays low (device-only sharing contributes 1/4 to the composite).
-- **Calibration + odds**: the stacker output is mapped to the true fraud probability by **Platt scaling** (`PlattCalibration` in `src/risk_engine/calibration.py`) fit on an out-of-archetype pool blended with the prototype model's own validation predictions — the isotonic fit on near-separable data produced a step function, so it was replaced (`models/artifacts/calibrator.joblib`); `ml_score` is therefore a calibrated probability and the response carries `odds = p/(1-p)` (clamped at 9999 when p == 1) so thresholds carry business meaning across model versions. The score remains `100 × max(ml, rule)`. Calibration metrics (validated by `backend/scripts/calibration_test.py`): Brier score 0.0009, ECE 0.0013, 16/16 tests pass.
+- **Calibration + odds**: the stacker output is mapped to the true fraud probability by **Platt scaling** (`PlattCalibration` in `src/risk_engine/calibration.py`) fit on an out-of-archetype pool blended with the prototype model's own validation predictions — the isotonic fit on near-separable data produced a step function, so it was replaced (`models/artifacts/calibrator.joblib`); `ml_score` is therefore a calibrated probability and the response carries `odds = p/(1-p)` (clamped at 9999 when p == 1) so thresholds carry business meaning across model versions. The score remains `100 × max(ml, rule)`. Calibration metrics (validated by `backend/scripts/calibration_test.py`, ledger `eval-20261003T084644+0000-72d714bd81b3`): Brier score 0.0009, ECE 0.0013, 16/16 tests pass.
 - **Fail-safe degraded mode**: if ML fusion raises or the circuit breaker (3 consecutive failures → open 30s, then half-open probe) is open, the evaluation falls back to the declarative rules with a fail-safe floor (score ≥ 31 = STEP_UP), tags the decision `degraded: true` with reason code `ML_UNAVAILABLE`, and records it in DB-3 + the audit chain — ML failure never silently produces ALLOW. A degraded ML never 500s the request.
 - **Rules backtesting**: `scripts/simulate_rules.py` replays a candidate rule config (or a `--severity-scale`) over the labeled training history with the live calibrated fusion, reporting recall / FPR / decision-mix deltas and the exact events whose allow/step-up/verify decision would change — the "what-if" step before editing `rules.yaml`.
 - **Velocity / spend limits** (pre-scoring enforcement, section 7): the Risk Engine evaluates per-account (max 10 txns / 24h hard cap, 3× median daily spend soft cap) and per-device (max 20 txns / 24h across accounts) caps configured in `rules.yaml` `velocity_limits`, derived entirely from the §16 vector the Privacy Layer builds (`account_daily_spend_ratio`, `device_daily_count` — raw amounts never reach the Risk Engine). Hard caps force score 100 → VERIFY regardless of ML+rules; soft caps floor at step-up. The 24h windows are anchored at the event's own timestamp, so backdated history (demo seed, replays) counts correctly.

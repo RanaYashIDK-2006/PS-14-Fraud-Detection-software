@@ -1,5 +1,6 @@
 {
-  "generated": "2026-09-13T11:17:33Z",
+  "generated": "2026-10-03T08:56:32Z",
+  "command": "python backend/scripts/cross_dataset_eval.py --ibm-rows 200000",
   "note": "ML-only (no rules) comparison. Both models scored on identical rows. IBM v2 holdout rows are strictly AFTER the training prefix (user-disjoint 70/15/15 split, users shared across no folds). Kaggle ULB is a RANK-PRESERVING PCA-PROXY mapping onto the 21-feature contract (V1..V21 slot-filling); treat those numbers as rank-transfer evidence, not feature-semantic evaluation.",
   "datasets": {
     "synthetic": {

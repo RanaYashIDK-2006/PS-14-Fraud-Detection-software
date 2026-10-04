@@ -38,7 +38,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-EVALUATION_RECORD_VERSION = "1.0"
+# v1.1 (Phase 105): optional top-level `command` field added so every record
+# can name the exact invocation that produced it. v1.0 records remain valid
+# legacy entries (command absent); validation treats command as required for
+# NEW DEMONSTRATED records and optional for legacy ones.
+EVALUATION_RECORD_VERSION = "1.1"
 
 
 def sha256_file(path: Path, chunk_size: int = 1 << 20) -> str:
@@ -141,6 +145,7 @@ class EvaluationRecord:
     software: dict[str, str]
     metric_definitions_version: str
     metrics: dict[str, Any]
+    command: str | None = None           # exact invocation (v1.1+; None on legacy records)
     warnings: list[str] = field(default_factory=list)
     status: str = "COMPLETED"          # COMPLETED | FAILED — failures are preserved
     record_version: str = EVALUATION_RECORD_VERSION
@@ -178,6 +183,7 @@ def create_evaluation_record(
     threshold_source: str = "none",
     evaluation_config: dict[str, Any] | None = None,
     metrics: dict[str, Any] | None = None,
+    command: str | None = None,
     warnings: list[str] | None = None,
     status: str = "COMPLETED",
 ) -> EvaluationRecord:
@@ -211,6 +217,7 @@ def create_evaluation_record(
         software=software_versions(),
         metric_definitions_version=cfg["metric_definitions_version"],
         metrics=dict(metrics or {}),
+        command=command,
         warnings=list(warnings or []),
         status=status,
     )
@@ -256,8 +263,11 @@ def record_from_run(  # noqa: ANN201 - dict for JSON reports
     threshold_source: str = "validation",
     metrics: dict[str, Any] | None = None,
     extra_config: dict[str, Any] | None = None,
+    command: str | None = None,
     warnings: list[str] | None = None,
     status: str = "COMPLETED",
+    preprocessing_version: str = "1.0",
+    feature_schema_version: str = "1.0",
 ) -> EvaluationRecord:
     """Convenience constructor for train_compare-style runs.
 
@@ -271,8 +281,11 @@ def record_from_run(  # noqa: ANN201 - dict for JSON reports
         seed=seed,
         threshold=threshold,
         threshold_source=threshold_source,
+        preprocessing_version=preprocessing_version,
+        feature_schema_version=feature_schema_version,
         evaluation_config={"artifacts_dir": str(artifacts_dir), **(extra_config or {})},
         metrics=metrics,
+        command=command,
         warnings=warnings,
         status=status,
     )

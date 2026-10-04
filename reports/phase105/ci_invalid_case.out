@@ -1,0 +1,7 @@
+CLAIM EVIDENCE CHECK: FAIL (6 problem(s))
+  - C-101: documented_in file missing: docs/PHASE_105_EVIDENCE_BASELINE.md
+  - C-102: documented_in file missing: docs/PHASE_105_EVIDENCE_BASELINE.md
+  - C-103: documented_in file missing: docs/PHASE_105_EVIDENCE_BASELINE.md
+  - C-104: documented_in file missing: docs/PHASE_105_EVIDENCE_BASELINE.md
+  - README.md:61: quantitative row inside managed region (region starts line 25) lacks a <!-- claim:C-NNN --> annotation: | Rogue ROC-AUC | 0.999 |
+  - surface missing: C:\Users\Rana Yash Singh\OneDrive\Documents\Project\docs\PHASE_105_EVIDENCE_BASELINE.md

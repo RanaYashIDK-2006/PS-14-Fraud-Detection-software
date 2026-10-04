@@ -1,0 +1,150 @@
+{
+  "evaluation_id": "eval-20261003T084934+0000-e58d68c2bf88",
+  "timestamp_utc": "2026-10-03T08:49:34+00:00",
+  "model_identifier": "ps14_ulb_research_eval",
+  "model_hash": null,
+  "artifact_file_hashes": {},
+  "preprocessing_version": "1.0",
+  "feature_schema_version": "1.0",
+  "dataset": {
+    "path": "data\\creditcard.csv",
+    "sha256": "76274b691b16a6c49d3f159c883398e03ccd6d1ee12d9d8ee38f4b4b98551a89",
+    "size_bytes": 150828752,
+    "exists": true
+  },
+  "training_dataset": null,
+  "seed": 42,
+  "threshold": null,
+  "threshold_source": "none",
+  "evaluation_config": {
+    "script": "backend/scripts/eval_ulb.py",
+    "split": "random_stratified_80_20_test_size=0.2_random_state=42",
+    "models_trained": [
+      "base_lr",
+      "base_rf",
+      "base_xgb",
+      "cv_5fold_xgb",
+      "pattern_lr",
+      "pattern_rf",
+      "pattern_stacker",
+      "pattern_xgb",
+      "stacker_ci"
+    ],
+    "note": "ULB PCA research benchmark; NOT the production 21/48-feature contract",
+    "metric_definitions_version": "1.0"
+  },
+  "git_commit": "a0b600ba2edd917498d3a9551c19e10225930e4b",
+  "software": {
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "sklearn": "1.9.0",
+    "xgboost": "3.4.1",
+    "scipy": "1.18.0"
+  },
+  "metric_definitions_version": "1.0",
+  "metrics": {
+    "results": {
+      "base_lr": {
+        "roc_auc": 0.972102,
+        "pr_auc": 0.728989,
+        "brier": 0.023494,
+        "r1": 0.908163,
+        "r05": 0.887755,
+        "r01": 0.846939,
+        "n_pos": 98,
+        "n_neg": 56864,
+        "time": 0.4
+      },
+      "base_rf": {
+        "roc_auc": 0.981636,
+        "pr_auc": 0.831402,
+        "brier": 0.001074,
+        "r1": 0.908163,
+        "r05": 0.897959,
+        "r01": 0.857143,
+        "n_pos": 98,
+        "n_neg": 56864,
+        "time": 17.9
+      },
+      "base_xgb": {
+        "roc_auc": 0.977358,
+        "pr_auc": 0.874863,
+        "brier": 0.000378,
+        "r1": 0.897959,
+        "r05": 0.897959,
+        "r01": 0.867347,
+        "n_pos": 98,
+        "n_neg": 56864,
+        "time": 2.9
+      },
+      "pattern_lr": {
+        "roc_auc": 0.974676,
+        "pr_auc": 0.712332,
+        "brier": 0.024466,
+        "r1": 0.897959,
+        "r05": 0.887755,
+        "r01": 0.836735,
+        "n_pos": 98,
+        "n_neg": 56864,
+        "time": 0.6
+      },
+      "pattern_rf": {
+        "roc_auc": 0.983721,
+        "pr_auc": 0.829117,
+        "brier": 0.001182,
+        "r1": 0.897959,
+        "r05": 0.897959,
+        "r01": 0.846939,
+        "n_pos": 98,
+        "n_neg": 56864,
+        "time": 20.1
+      },
+      "pattern_xgb": {
+        "roc_auc": 0.975807,
+        "pr_auc": 0.883465,
+        "brier": 0.000361,
+        "r1": 0.918367,
+        "r05": 0.897959,
+        "r01": 0.887755,
+        "n_pos": 98,
+        "n_neg": 56864,
+        "time": 4.4
+      },
+      "pattern_stacker": {
+        "roc_auc": 0.976855,
+        "pr_auc": 0.875298,
+        "brier": 0.000389,
+        "r1": 0.908163,
+        "r05": 0.908163,
+        "r01": 0.867347,
+        "n_pos": 98,
+        "n_neg": 56864,
+        "time": 101.4
+      },
+      "cv_5fold_xgb": {
+        "roc_auc_mean": 0.984873,
+        "roc_auc_std": 0.007484,
+        "pr_auc_mean": 0.85371,
+        "r1_mean": 0.898572
+      },
+      "stacker_ci": {
+        "roc_auc_95ci": [
+          0.958228,
+          0.994999
+        ],
+        "pr_auc_95ci": [
+          0.813243,
+          0.928568
+        ]
+      }
+    }
+  },
+  "command": "python backend/scripts/eval_ulb.py",
+  "warnings": [
+    "model artifacts not persisted \u2014 reproduction is by re-running the command"
+  ],
+  "status": "COMPLETED",
+  "record_version": "1.1"
+}

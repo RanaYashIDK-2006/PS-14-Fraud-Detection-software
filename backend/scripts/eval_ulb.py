@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Phase 1: ULB Creditcard exhaustive evaluation."""
 import hashlib, json, time, warnings
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier, StackingClassifier
@@ -146,8 +147,49 @@ results["stacker_ci"] = {
 }
 
 out = {"dataset": "ulb_creditcard", "n_rows": len(df), "fraud": int(df["Class"].sum()),
-       "fraud_rate": round(float(df["Class"].mean()),6), "hash": file_hash("data/creditcard.csv"),
+       "fraud_rate": round(float(df["Class"].mean()), 6), "hash": file_hash("data/creditcard.csv"),
        "n_feat_base": len(feat_cols), "n_feat_pattern": X_pat.shape[1], "results": results,
+       "split": "random_stratified_80_20_test_size=0.2_random_state=42",
+       "seed": 42,
+       "command": "python backend/scripts/eval_ulb.py",
        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S")}
-with open("reports/ulb_results.json","w") as f: json.dump(out, f, indent=2)
+with open("reports/ulb_results.json", "w") as f: json.dump(out, f, indent=2)
 print(f"\nSaved to reports/ulb_results.json")
+
+# Phase 105: bind this execution to the append-only evidence ledger so the
+# numbers above are traceable to an actual run (dataset bytes, git state,
+# seed, command). Failed/unfavorable runs are appended exactly the same way.
+try:
+    ROOT = Path(__file__).resolve().parents[2]
+    sys_mod = __import__("sys")
+    sys_mod.path.insert(0, str(Path(__file__).resolve().parent))
+    from eval_record import EvaluationLedger, create_evaluation_record
+
+    rec = create_evaluation_record(
+        model_identifier="ps14_ulb_research_eval",
+        artifact_paths=[],           # research models are trained in-process, not persisted
+        dataset_path=Path("data/creditcard.csv"),
+        seed=42,
+        threshold=None,
+        threshold_source="none",     # ranking metrics only; no operating point selected here
+        preprocessing_version="standardscaler_fit_on_train",
+        feature_schema_version="ulb_pca30_research",
+        evaluation_config={
+            "script": "backend/scripts/eval_ulb.py",
+            "split": out["split"],
+            "models_trained": sorted(results.keys()),
+            "note": "ULB PCA research benchmark; NOT the production 21/48-feature contract",
+        },
+        metrics={"results": results},
+        command="python backend/scripts/eval_ulb.py",
+        warnings=["model artifacts not persisted — reproduction is by re-running the command"],
+    )
+    led = EvaluationLedger(ROOT / "reports" / "evaluation_runs" / "eval_ledger.jsonl")
+    led.append(rec)
+    (ROOT / "reports" / "evaluation_runs" / f"record_{rec.evaluation_id}.json").write_text(
+        json.dumps(rec.to_dict(), indent=2), encoding="utf-8")
+    out["evaluation_id"] = rec.evaluation_id
+    with open("reports/ulb_results.json", "w") as f: json.dump(out, f, indent=2)
+    print(f"evaluation record: {rec.evaluation_id} (dataset sha256 {rec.dataset['sha256'][:16]}…, git {str(rec.git_commit)[:10]})")
+except Exception as _e:
+    print(f"(evaluation record skipped: {_e})")

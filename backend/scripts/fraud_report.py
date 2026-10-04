@@ -1,4 +1,16 @@
-"""Generate a comprehensive fraud transaction report for the Kaggle dataset."""
+"""Generate a comprehensive fraud transaction report for the Kaggle dataset.
+
+Phase 105: the performance header is COMPUTED from this run's scores
+(previously hardcoded literals presented as measured results). Provenance
+(dataset bytes, model-artifact bytes, git state) is written alongside.
+Requires models/artifacts/{xgb_kaggle,scaler_kaggle}.joblib — there is NO
+producer script for these artifacts in the repository, so the report is
+explicitly BLOCKED when they are absent.
+"""
+import hashlib
+import json
+import sys
+import time
 import pandas as pd
 import numpy as np
 import joblib
@@ -6,15 +18,98 @@ import warnings
 import os
 
 warnings.filterwarnings("ignore")
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Repo root (scripts/ -> backend/ -> root); the pre-restructure two-level
+# dirname resolved to backend/ and broke data/ lookups after the reorganize.
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-df = pd.read_csv(os.path.join(ROOT, "data", "creditcard.csv"))
-model = joblib.load(os.path.join(ROOT, "models", "artifacts", "xgb_kaggle.joblib"))
-scaler = joblib.load(os.path.join(ROOT, "models", "artifacts", "scaler_kaggle.joblib"))
+_ds_path = os.path.join(ROOT, "data", "creditcard.csv")
+_model_path = os.path.join(ROOT, "models", "artifacts", "xgb_kaggle.joblib")
+_scaler_path = os.path.join(ROOT, "models", "artifacts", "scaler_kaggle.joblib")
+_missing = [p for p in (_ds_path, _model_path, _scaler_path) if not os.path.exists(p)]
+if _missing:
+    print("BLOCKED: cannot generate the fraud report — required artifacts are missing:")
+    for p in _missing:
+        print(f"  - {p}")
+    print("No producer script for xgb_kaggle.joblib exists in the repository, so this")
+    print("report cannot be reproduced from source. See docs/PHASE_105_EVIDENCE_BASELINE.md.")
+    sys.exit(2)
+
+df = pd.read_csv(_ds_path)
+model = joblib.load(_model_path)
+scaler = joblib.load(_scaler_path)
 
 features = ["Time"] + [f"V{i}" for i in range(1, 29)] + ["Amount"]
 X_full = scaler.transform(df[features].values)
 df["ml_score"] = model.predict_proba(X_full)[:, 1]
+
+# ---- Phase 105: measured metrics for THIS run (no hardcoded performance) --
+from sklearn.metrics import roc_auc_score, average_precision_score, roc_curve
+_y = df["Class"].to_numpy(dtype=int)
+_s = df["ml_score"].to_numpy(dtype=float)
+_roc = float(roc_auc_score(_y, _s))
+_pr = float(average_precision_score(_y, _s))
+_fpr, _tpr, _ = roc_curve(_y, _s)
+if _fpr[0] > 0:
+    _fpr = np.concatenate([[0], _fpr]); _tpr = np.concatenate([[0], _tpr])
+_r1 = float(_tpr[min(np.searchsorted(_fpr, 0.01), len(_tpr) - 1)])
+
+def _sha(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+_git = None
+try:
+    import subprocess
+    _git = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True,
+                          text=True, timeout=10).stdout.strip() or None
+except Exception:
+    pass
+
+_metrics = {
+    "generated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    "command": "python backend/scripts/fraud_report.py",
+    "dataset": "data/creditcard.csv",
+    "dataset_sha256": _sha(_ds_path),
+    "model_artifact": "models/artifacts/xgb_kaggle.joblib",
+    "model_artifact_sha256": _sha(_model_path),
+    "model_producer": "NOT IN REPOSITORY (legacy artifact — no producer script)",
+    "split": "full-dataset scoring (no held-out split; in-sample metrics)",
+    "git_commit": _git,
+    "roc_auc": _roc,
+    "pr_auc": _pr,
+    "recall_at_1pct_fpr": _r1,
+}
+_out_dir = os.path.join(ROOT, "reports", "fraud_report")
+os.makedirs(_out_dir, exist_ok=True)
+with open(os.path.join(_out_dir, "metrics.json"), "w", encoding="utf-8") as f:
+    json.dump(_metrics, f, indent=2)
+try:
+    from pathlib import Path
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from eval_record import EvaluationLedger, create_evaluation_record
+    _rec = create_evaluation_record(
+        model_identifier="xgb_kaggle_fraud_report",
+        artifact_paths=[Path(_model_path)],
+        dataset_path=Path(_ds_path),
+        seed=None,
+        threshold=None,
+        threshold_source="none",
+        evaluation_config={"script": "backend/scripts/fraud_report.py",
+                           "split": _metrics["split"],
+                           "seed_not_applicable": "deterministic scoring of a fixed artifact",
+                           "model_producer": _metrics["model_producer"]},
+        metrics={"roc_auc": _roc, "pr_auc": _pr, "recall_at_1pct_fpr": _r1},
+        command="python backend/scripts/fraud_report.py",
+        warnings=["in-sample metrics (full dataset scored, no held-out split)",
+                  "model artifact has no producer script in the repository"],
+    )
+    EvaluationLedger(Path(ROOT) / "reports" / "evaluation_runs" / "eval_ledger.jsonl").append(_rec)
+    print(f"evaluation record: {_rec.evaluation_id}")
+except Exception as _e:
+    print(f"(evaluation record skipped: {_e})")
 
 importance = model.feature_importances_
 feat_names = features
@@ -60,9 +155,12 @@ print("=" * W)
 print("  FRAUD TRANSACTION REPORT — Kaggle ULB Credit Card Dataset (284,807 transactions)")
 print("=" * W)
 print()
-print(f"  Dataset:     284,807 transactions | 492 confirmed fraud (0.173%)")
-print(f"  Model:       XGBoost (30 PCA features, scale_pos_weight balanced)")
-print(f"  Performance: ROC-AUC=0.966 | PR-AUC=0.877 | Recall@1%FPR=0.918")
+print(f"  Dataset:     {len(df):,} transactions | {int(df['Class'].sum()):,} confirmed fraud ({df['Class'].mean()*100:.3f}%)")
+print(f"  Model:       xgb_kaggle.joblib (legacy artifact, sha256 {_metrics['model_artifact_sha256'][:16]}…)")
+print(f"  Performance: ROC-AUC={_roc:.6f} | PR-AUC={_pr:.6f} | Recall@1%FPR={_r1:.6f}")
+print(f"  NOTE:        in-sample metrics on the full dataset (no held-out split);")
+print(f"               model artifact has no producer script — reproduction BLOCKED")
+print(f"  Evidence:    reports/fraud_report/metrics.json (git {_git or 'unknown'})")
 print()
 
 # Top model features
@@ -256,7 +354,7 @@ print("=" * W)
 print()
 print(f"  Dataset:     284,807 transactions | 492 confirmed fraud (0.173%)")
 print(f"  Model:       XGBoost (30 PCA features, scale_pos_weight balanced)")
-print(f"  Performance: ROC-AUC=0.966 | PR-AUC=0.877 | Recall@1%FPR=0.918")
+print(f"  Performance: ROC-AUC={_roc:.3f} | PR-AUC={_pr:.3f} | Recall@1%FPR={_r1:.3f}")
 
 # (content already printed above — just save to file)
 sys.stdout = old_stdout
