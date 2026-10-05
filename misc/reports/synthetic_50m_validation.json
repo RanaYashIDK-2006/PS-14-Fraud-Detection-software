@@ -1,0 +1,106 @@
+{
+  "benchmark": "data\\synthetic_50m",
+  "generator_version": "1.0.0",
+  "seed": 20261005,
+  "rows": 50000000,
+  "fraud_rows": 61109,
+  "fraud_prevalence": 0.00122218,
+  "verdict": "PASS",
+  "checks": [
+    {
+      "check": "partitions_present",
+      "status": "PASS",
+      "detail": "166 parquet partitions"
+    },
+    {
+      "check": "contract_features_present",
+      "status": "PASS",
+      "detail": "missing=[]"
+    },
+    {
+      "check": "no_unexpected_columns",
+      "status": "PASS",
+      "detail": "unexpected=[]"
+    },
+    {
+      "check": "feature_order_matches_manifest",
+      "status": "PASS",
+      "detail": "first48_match=True"
+    },
+    {
+      "check": "no_index_column",
+      "status": "PASS",
+      "detail": "n_cols=53"
+    },
+    {
+      "check": "row_count_exact",
+      "status": "PASS",
+      "detail": "rows=50,000,000 (target 50,000,000)"
+    },
+    {
+      "check": "fraud_prevalence",
+      "status": "INFO",
+      "detail": "61,109 fraud = 0.001222 (IBM v2 = 0.001220)"
+    },
+    {
+      "check": "amount_quantiles",
+      "status": "INFO",
+      "detail": "synth p1/p5/p25/p50/p75/p90/p95/p99 = 0.00/0.18/9.70/31.79/70.16/125.91/181.44/422.34 | IBM = -96.00/0.28/9.47/32.19/66.83/112.39/147.41/313.91"
+    },
+    {
+      "check": "channel_mix",
+      "status": "INFO",
+      "detail": "synth swipe/chip/online = 0.6308/0.2578/0.1113 | IBM = 0.6310/0.2578/0.1112"
+    },
+    {
+      "check": "hour_profile",
+      "status": "INFO",
+      "detail": "peak hour synth=12 p(synth max)=0.0714; 24 bins emitted"
+    },
+    {
+      "check": "error_rate",
+      "status": "INFO",
+      "detail": "synth=0.02413 | IBM=0.01536"
+    },
+    {
+      "check": "label_domain",
+      "status": "PASS",
+      "detail": "label read as int8 0/1 across all partitions"
+    },
+    {
+      "check": "label_not_reconstructable_from_single_feature",
+      "status": "PASS",
+      "detail": "max single-feature exact AUC = amt_sq 0.7205 (leak threshold 0.95); min |AUC-0.5| = 0.0000",
+      "per_feature_auc": {
+        "amt_sq": 0.7205,
+        "amt": 0.7205,
+        "log_amt": 0.7205,
+        "amt_x_mcc": 0.7194,
+        "amt_x_hr": 0.7097,
+        "amt_vs_user_avg": 0.7025,
+        "amt_zscore": 0.7025,
+        "high_amt": 0.6018
+      }
+    },
+    {
+      "check": "train_test_entity_disjoint",
+      "status": "PASS",
+      "detail": "4101 distinct user_id; appearing in both splits = 0"
+    },
+    {
+      "check": "metadata_not_in_features",
+      "status": "PASS",
+      "detail": "leaking columns = []"
+    },
+    {
+      "check": "past_only_historical_aggregate",
+      "status": "PASS",
+      "detail": "0 mismatches over 301,205 rows (user_fraud_rate must equal prior-rows fraud rate, cold start 0.001)"
+    },
+    {
+      "check": "reproducible_from_seed",
+      "status": "PASS",
+      "detail": "partition 2002-09: recorded=5db67b31a506c7e3 regenerated=5db67b31a506c7e3"
+    }
+  ]
+}

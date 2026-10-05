@@ -1,0 +1,55 @@
+# PS-14 — Research-plan freeze check (docs/RESEARCH_PLAN.md §30)
+#
+# Runs scripts/check_freeze.py on every commit that touches the plan, the
+# preregistration, the freeze record, or the check script itself, and again
+# on freeze tags.
+#
+# PRE-FREEZE BEHAVIOR IS BY DESIGN: while docs/RESEARCH_PLAN.md is a DRAFT
+# carrying [TO BE FROZEN] markers and docs/FREEZE_RECORD.json does not exist,
+# this workflow is RED. That red X is the freeze gate working — "a freeze is
+# not valid because a person declared it, only because the check passed on
+# the tagged commit." It is a separate workflow so it never blocks the main
+# test/security pipeline on unrelated commits.
+
+name: Freeze Check
+
+on:
+  push:
+    paths:
+      - 'docs/RESEARCH_PLAN.md'
+      - 'docs/evaluation/PRE_REGISTERED_EVALUATION_PROTOCOL.md'
+      - 'docs/FREEZE_RECORD.json'
+      - 'scripts/check_freeze.py'
+      - '.github/workflows/freeze-check.yml'
+    tags: ['freeze-*']
+  pull_request:
+    paths:
+      - 'docs/RESEARCH_PLAN.md'
+      - 'docs/evaluation/PRE_REGISTERED_EVALUATION_PROTOCOL.md'
+      - 'docs/FREEZE_RECORD.json'
+      - 'scripts/check_freeze.py'
+      - '.github/workflows/freeze-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  freeze-check:
+    name: Freeze Check (§30)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Freeze check
+        # Exits non-zero while placeholders remain or the record is absent/
+        # stale — required §30 behavior, not an error to be suppressed.
+        run: python scripts/check_freeze.py
+        env:
+          PYTHONIOENCODING: utf-8

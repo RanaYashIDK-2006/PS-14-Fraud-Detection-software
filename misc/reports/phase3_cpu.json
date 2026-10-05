@@ -1,0 +1,44 @@
+{
+  "label": "CPU-utilisation sample over a 5,000,000-row runner pass",
+  "evidence_class": "SELF-TESTED \u2014 SYNTHETIC 50M \u2014 SCALE EXPERIMENT",
+  "rows": 5000000,
+  "wall_seconds_sampled": 48.17246389389038,
+  "logical_cores": 16,
+  "samples": 95,
+  "sample_interval_s": 0.5,
+  "cpu_percent_mean": 309.1926315789474,
+  "cpu_percent_p50": 390.6,
+  "cpu_percent_p95": 465.6,
+  "cpu_percent_max": 482.6,
+  "cpu_cores_busy_mean": 19.32453947368421,
+  "rss_MB_mean": 918.6318256578948,
+  "rss_MB_max": 1144.109375,
+  "runner_exit_code": 0,
+  "runner": {
+    "rows_processed": 5000000,
+    "wall_seconds": 35.191959381103516,
+    "rows_per_second": 142077.9089295259,
+    "roc_auc": 0.5625890353104461,
+    "latency_ms_per_batch": {
+      "mean": 3.7828030516252373,
+      "p50": 5.5229999125003815,
+      "p95": 6.6923799458891144,
+      "p99": 7.014368092641234
+    },
+    "stage_seconds": {
+      "load": 0.2828884010668844,
+      "validate": 0.8248763002920896,
+      "scale": 0.6837402991950512,
+      "infer": 30.324425999075174,
+      "fuse": 0.06475469865836203,
+      "threshold": 0.004665600834414363,
+      "store": 0.1036828001961112
+    }
+  },
+  "runner_stdout_tail": [
+    "ROC-AUC=0.562589 PR-AUC=0.001612 Brier=0.001410",
+    "member ROC-AUC: {'xgb': 0.5815688032177725, 'lgb': 0.568781687103764, 'cb': 0.5430547433613038}",
+    "latency ms p50/p95/p99: 6/7/7",
+    "report -> misc\\reports\\phase3_cpu_run.json"
+  ]
+}

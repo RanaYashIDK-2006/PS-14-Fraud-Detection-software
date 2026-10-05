@@ -1,0 +1,222 @@
+{
+  "classification": "EXPLORATORY \u2014 NOT confirmatory Track M",
+  "n_boot": 300,
+  "seed": 42,
+  "summary": {
+    "ibm_discrimination": {
+      "brier": 0.0010157651488219355,
+      "ece": 0.00045018313047671065,
+      "pr_auc": 0.0007528145092177202,
+      "recall_at_1pct_fpr": 0.0,
+      "roc_auc": 0.3732392809770885,
+      "test_n": 131821,
+      "test_pos": 134
+    },
+    "ibm_gating": {
+      "classA": {
+        "conditions": 4,
+        "row_gate_block_rates": {
+          "A_inf": 0.7267734276025823,
+          "A_nan": 0.7269479066309616,
+          "A_oor": 0.726500329992945,
+          "A_type": 0.7263561951434141
+        },
+        "windows_blocked": {
+          "A_inf": true,
+          "A_nan": true,
+          "A_oor": true,
+          "A_type": true
+        }
+      },
+      "classB": {
+        "conditions": 7,
+        "row_gate": {
+          "better": 0,
+          "equal": 0,
+          "min_coverage": 0.23798180866478028,
+          "recall_deltas": {
+            "B_amount_1.1": 0.029850746268656716,
+            "B_amount_1.25": 0.029850746268656716,
+            "B_amount_1.5": 0.029850746268656716,
+            "B_hour": 0.029850746268656716,
+            "B_noise_0.25": 0.029850746268656716,
+            "B_noise_0.5": 0.029850746268656716,
+            "B_noise_1.0": 0.029850746268656716
+          },
+          "worse": 7
+        },
+        "window_gate": {
+          "better": 0,
+          "equal": 0,
+          "min_coverage": 0.0,
+          "windows_blocked": 7,
+          "worse": 7
+        }
+      },
+      "clean": {
+        "row_gated": {
+          "coverage": 0.28033469629269997,
+          "false_reject_legit": 94748,
+          "recall": 0.029850746268656716,
+          "wrong_confident": 1067
+        },
+        "ungated": {
+          "recall": 0.0,
+          "wrong_confident": 474
+        },
+        "window_gated": {
+          "coverage": 0.0,
+          "recall": 0.029850746268656716,
+          "window_blocked": true,
+          "wrong_confident": 727
+        }
+      }
+    },
+    "kaggle_discrimination": {
+      "brier": 0.0012645187450369545,
+      "ece": 0.00046159696506094006,
+      "pr_auc": 0.8028985357437411,
+      "recall_at_1pct_fpr": 0.8536130536130536,
+      "roc_auc": 0.9631841372085674,
+      "test_n": 555719,
+      "test_pos": 2145
+    },
+    "kaggle_entity_disjoint": {
+      "brier": 0.0015412043585367524,
+      "ece": 0.0003282122677141114,
+      "pr_auc": 0.8558655401817142,
+      "recall_at_1pct_fpr": 0.8759075907590759,
+      "roc_auc": 0.9696750121785482,
+      "test_n": 240831,
+      "test_pos": 1515
+    },
+    "kaggle_gating": {
+      "classA": {
+        "conditions": 4,
+        "row_gate_block_rates": {
+          "A_inf": 0.030916704305593345,
+          "A_nan": 0.03093469901155077,
+          "A_oor": 0.03090950642321033,
+          "A_type": 0.030931100070359263
+        },
+        "windows_blocked": {
+          "A_inf": false,
+          "A_nan": false,
+          "A_oor": false,
+          "A_type": false
+        }
+      },
+      "classB": {
+        "conditions": 7,
+        "row_gate": {
+          "better": 7,
+          "equal": 0,
+          "min_coverage": 0.958613975768329,
+          "recall_deltas": {
+            "B_amount_1.1": -0.13053613053613056,
+            "B_amount_1.25": -0.13146853146853144,
+            "B_amount_1.5": -0.1384615384615384,
+            "B_hour": -0.12494172494172495,
+            "B_noise_0.25": -0.12354312354312358,
+            "B_noise_0.5": -0.1221445221445222,
+            "B_noise_1.0": -0.12074592074592072
+          },
+          "worse": 0
+        },
+        "window_gate": {
+          "better": 7,
+          "equal": 0,
+          "min_coverage": 0.958613975768329,
+          "windows_blocked": 0,
+          "worse": 0
+        }
+      },
+      "clean": {
+        "row_gated": {
+          "coverage": 0.9939249872687456,
+          "false_reject_legit": 2411,
+          "recall": 0.7286713286713287,
+          "wrong_confident": 5403
+        },
+        "ungated": {
+          "recall": 0.8536130536130536,
+          "wrong_confident": 5606
+        },
+        "window_gated": {
+          "coverage": 0.9939249872687456,
+          "recall": 0.7286713286713287,
+          "window_blocked": false,
+          "wrong_confident": 5403
+        }
+      }
+    },
+    "ulb_discrimination": {
+      "brier": 0.000502967722807061,
+      "ece": 0.0003340801425981246,
+      "pr_auc": 0.7111356345674871,
+      "recall_at_1pct_fpr": 0.8133333333333334,
+      "roc_auc": 0.9588297267682717,
+      "test_n": 56962,
+      "test_pos": 75
+    },
+    "ulb_gating": {
+      "classA": {
+        "conditions": 4,
+        "row_gate_block_rates": {
+          "A_inf": 0.07169692075418699,
+          "A_nan": 0.07143358730381655,
+          "A_oor": 0.07104736490994001,
+          "A_type": 0.07127558723359428
+        },
+        "windows_blocked": {
+          "A_inf": true,
+          "A_nan": true,
+          "A_oor": true,
+          "A_type": true
+        }
+      },
+      "classB": {
+        "conditions": 6,
+        "row_gate": {
+          "better": 6,
+          "equal": 0,
+          "min_coverage": 0.8880130613391384,
+          "recall_deltas": {
+            "B_amount_1.1": -0.7733333333333333,
+            "B_amount_1.25": -0.7733333333333333,
+            "B_amount_1.5": -0.7733333333333333,
+            "B_noise_0.25": -0.7733333333333333,
+            "B_noise_0.5": -0.7733333333333333,
+            "B_noise_1.0": -0.7866666666666667
+          },
+          "worse": 0
+        },
+        "window_gate": {
+          "better": 6,
+          "equal": 0,
+          "min_coverage": 0.0,
+          "windows_blocked": 6,
+          "worse": 0
+        }
+      },
+      "clean": {
+        "row_gated": {
+          "coverage": 0.9523893121730276,
+          "false_reject_legit": 2652,
+          "recall": 0.04,
+          "wrong_confident": 320
+        },
+        "ungated": {
+          "recall": 0.8133333333333334,
+          "wrong_confident": 404
+        },
+        "window_gated": {
+          "coverage": 0.0,
+          "recall": 0.013333333333333334,
+          "window_blocked": true,
+          "wrong_confident": 311
+        }
+      }
+    }
+  }
+}

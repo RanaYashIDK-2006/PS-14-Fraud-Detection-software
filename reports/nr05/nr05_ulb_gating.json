@@ -1,0 +1,775 @@
+{
+  "classification": "EXPLORATORY \u2014 previously exposed dataset; NOT confirmatory Track M evidence",
+  "conditions": {
+    "A_inf": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 1424,
+        "out_of_range": 7736,
+        "wrong_type": 0
+      },
+      "n_total": 56962,
+      "perturbation_class": "A_designed_for",
+      "psi_max": 1.4631,
+      "row_gated": {
+        "accepted_correct": 52856,
+        "coverage": 0.928303079245813,
+        "fallback_errors": 296,
+        "false_reject_legit": 4024,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 52878,
+        "n_blocked": 4084,
+        "n_fallback": 4084,
+        "precision": 0.012048192771084338,
+        "recall": 0.04,
+        "wrong_confident": 318
+      },
+      "ungated": {
+        "accepted_correct": 56551,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 56962,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.1331877729257642,
+        "recall": 0.8133333333333334,
+        "wrong_confident": 401
+      },
+      "window_blocked": true,
+      "window_gated": {
+        "accepted_correct": 0,
+        "coverage": 0.0,
+        "fallback_errors": 311,
+        "false_reject_legit": 56887,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 0,
+        "n_blocked": 56962,
+        "n_fallback": 56962,
+        "precision": 0.004201680672268907,
+        "recall": 0.013333333333333334,
+        "wrong_confident": 311
+      }
+    },
+    "A_nan": {
+      "gate_reasons": {
+        "missing": 1424,
+        "non_finite": 0,
+        "out_of_range": 6306,
+        "wrong_type": 0
+      },
+      "n_total": 56962,
+      "perturbation_class": "A_designed_for",
+      "psi_max": 1.4631,
+      "row_gated": {
+        "accepted_correct": 52869,
+        "coverage": 0.9285664126961835,
+        "fallback_errors": 296,
+        "false_reject_legit": 4009,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 52893,
+        "n_blocked": 4069,
+        "n_fallback": 4069,
+        "precision": 0.01195219123505976,
+        "recall": 0.04,
+        "wrong_confident": 320
+      },
+      "ungated": {
+        "accepted_correct": 56548,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 56962,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.13232104121475055,
+        "recall": 0.8133333333333334,
+        "wrong_confident": 404
+      },
+      "window_blocked": true,
+      "window_gated": {
+        "accepted_correct": 0,
+        "coverage": 0.0,
+        "fallback_errors": 311,
+        "false_reject_legit": 56887,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 0,
+        "n_blocked": 56962,
+        "n_fallback": 56962,
+        "precision": 0.004201680672268907,
+        "recall": 0.013333333333333334,
+        "wrong_confident": 311
+      }
+    },
+    "A_oor": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 7734,
+        "wrong_type": 0
+      },
+      "n_total": 56962,
+      "perturbation_class": "A_designed_for",
+      "psi_max": 1.4633,
+      "row_gated": {
+        "accepted_correct": 52894,
+        "coverage": 0.92895263509006,
+        "fallback_errors": 299,
+        "false_reject_legit": 3984,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 52915,
+        "n_blocked": 4047,
+        "n_fallback": 4047,
+        "precision": 0.01195219123505976,
+        "recall": 0.04,
+        "wrong_confident": 320
+      },
+      "ungated": {
+        "accepted_correct": 56442,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 56962,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.10758377425044091,
+        "recall": 0.8133333333333334,
+        "wrong_confident": 507
+      },
+      "window_blocked": true,
+      "window_gated": {
+        "accepted_correct": 0,
+        "coverage": 0.0,
+        "fallback_errors": 311,
+        "false_reject_legit": 56887,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 0,
+        "n_blocked": 56962,
+        "n_fallback": 56962,
+        "precision": 0.004201680672268907,
+        "recall": 0.013333333333333334,
+        "wrong_confident": 311
+      }
+    },
+    "A_type": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 6312,
+        "wrong_type": 1424
+      },
+      "n_total": 56962,
+      "perturbation_class": "A_designed_for",
+      "psi_max": 1.4634,
+      "row_gated": {
+        "accepted_correct": 52878,
+        "coverage": 0.9287244127664057,
+        "fallback_errors": 296,
+        "false_reject_legit": 4000,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 52902,
+        "n_blocked": 4060,
+        "n_fallback": 4060,
+        "precision": 0.01195219123505976,
+        "recall": 0.04,
+        "wrong_confident": 320
+      },
+      "ungated": {
+        "accepted_correct": 56548,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 56962,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.13232104121475055,
+        "recall": 0.8133333333333334,
+        "wrong_confident": 404
+      },
+      "window_blocked": true,
+      "window_gated": {
+        "accepted_correct": 0,
+        "coverage": 0.0,
+        "fallback_errors": 311,
+        "false_reject_legit": 56887,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 0,
+        "n_blocked": 56962,
+        "n_fallback": 56962,
+        "precision": 0.004201680672268907,
+        "recall": 0.013333333333333334,
+        "wrong_confident": 311
+      }
+    },
+    "B_amount_1.1": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 6333,
+        "wrong_type": 0
+      },
+      "n_total": 56962,
+      "perturbation_class": "B_not_designed_for_primary",
+      "psi_max": 1.4633,
+      "row_gated": {
+        "accepted_correct": 54217,
+        "coverage": 0.9522313121028054,
+        "fallback_errors": 296,
+        "false_reject_legit": 2661,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 54241,
+        "n_blocked": 2721,
+        "n_fallback": 2721,
+        "precision": 0.01195219123505976,
+        "recall": 0.04,
+        "wrong_confident": 320
+      },
+      "ungated": {
+        "accepted_correct": 56548,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 56962,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.13232104121475055,
+        "recall": 0.8133333333333334,
+        "wrong_confident": 404
+      },
+      "window_blocked": true,
+      "window_gated": {
+        "accepted_correct": 0,
+        "coverage": 0.0,
+        "fallback_errors": 311,
+        "false_reject_legit": 56887,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 0,
+        "n_blocked": 56962,
+        "n_fallback": 56962,
+        "precision": 0.004201680672268907,
+        "recall": 0.013333333333333334,
+        "wrong_confident": 311
+      }
+    },
+    "B_amount_1.25": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 6392,
+        "wrong_type": 0
+      },
+      "n_total": 56962,
+      "perturbation_class": "B_not_designed_for_primary",
+      "psi_max": 1.4633,
+      "row_gated": {
+        "accepted_correct": 54172,
+        "coverage": 0.9514413117516941,
+        "fallback_errors": 296,
+        "false_reject_legit": 2706,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 54196,
+        "n_blocked": 2766,
+        "n_fallback": 2766,
+        "precision": 0.01195219123505976,
+        "recall": 0.04,
+        "wrong_confident": 320
+      },
+      "ungated": {
+        "accepted_correct": 56548,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 56962,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.13232104121475055,
+        "recall": 0.8133333333333334,
+        "wrong_confident": 404
+      },
+      "window_blocked": true,
+      "window_gated": {
+        "accepted_correct": 0,
+        "coverage": 0.0,
+        "fallback_errors": 311,
+        "false_reject_legit": 56887,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 0,
+        "n_blocked": 56962,
+        "n_fallback": 56962,
+        "precision": 0.004201680672268907,
+        "recall": 0.013333333333333334,
+        "wrong_confident": 311
+      }
+    },
+    "B_amount_1.5": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 6463,
+        "wrong_type": 0
+      },
+      "n_total": 56962,
+      "perturbation_class": "B_not_designed_for_primary",
+      "psi_max": 1.4633,
+      "row_gated": {
+        "accepted_correct": 54112,
+        "coverage": 0.9503879779502125,
+        "fallback_errors": 296,
+        "false_reject_legit": 2766,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 54136,
+        "n_blocked": 2826,
+        "n_fallback": 2826,
+        "precision": 0.01195219123505976,
+        "recall": 0.04,
+        "wrong_confident": 320
+      },
+      "ungated": {
+        "accepted_correct": 56547,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 56962,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.13203463203463203,
+        "recall": 0.8133333333333334,
+        "wrong_confident": 405
+      },
+      "window_blocked": true,
+      "window_gated": {
+        "accepted_correct": 0,
+        "coverage": 0.0,
+        "fallback_errors": 311,
+        "false_reject_legit": 56887,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 0,
+        "n_blocked": 56962,
+        "n_fallback": 56962,
+        "precision": 0.004201680672268907,
+        "recall": 0.013333333333333334,
+        "wrong_confident": 311
+      }
+    },
+    "B_noise_0.25": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 6394,
+        "wrong_type": 0
+      },
+      "n_total": 56962,
+      "perturbation_class": "B_not_designed_for_primary",
+      "psi_max": 1.1794,
+      "row_gated": {
+        "accepted_correct": 54152,
+        "coverage": 0.9510902004845335,
+        "fallback_errors": 296,
+        "false_reject_legit": 2726,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 54176,
+        "n_blocked": 2786,
+        "n_fallback": 2786,
+        "precision": 0.01195219123505976,
+        "recall": 0.04,
+        "wrong_confident": 320
+      },
+      "ungated": {
+        "accepted_correct": 56547,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 56962,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.13203463203463203,
+        "recall": 0.8133333333333334,
+        "wrong_confident": 405
+      },
+      "window_blocked": true,
+      "window_gated": {
+        "accepted_correct": 0,
+        "coverage": 0.0,
+        "fallback_errors": 311,
+        "false_reject_legit": 56887,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 0,
+        "n_blocked": 56962,
+        "n_fallback": 56962,
+        "precision": 0.004201680672268907,
+        "recall": 0.013333333333333334,
+        "wrong_confident": 311
+      }
+    },
+    "B_noise_0.5": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 7704,
+        "wrong_type": 0
+      },
+      "n_total": 56962,
+      "perturbation_class": "B_not_designed_for_primary",
+      "psi_max": 1.0616,
+      "row_gated": {
+        "accepted_correct": 52898,
+        "coverage": 0.9290579684702082,
+        "fallback_errors": 297,
+        "false_reject_legit": 3980,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 52921,
+        "n_blocked": 4041,
+        "n_fallback": 4041,
+        "precision": 0.01195219123505976,
+        "recall": 0.04,
+        "wrong_confident": 320
+      },
+      "ungated": {
+        "accepted_correct": 56543,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 56962,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.13090128755364808,
+        "recall": 0.8133333333333334,
+        "wrong_confident": 409
+      },
+      "window_blocked": true,
+      "window_gated": {
+        "accepted_correct": 0,
+        "coverage": 0.0,
+        "fallback_errors": 311,
+        "false_reject_legit": 56887,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 0,
+        "n_blocked": 56962,
+        "n_fallback": 56962,
+        "precision": 0.004201680672268907,
+        "recall": 0.013333333333333334,
+        "wrong_confident": 311
+      }
+    },
+    "B_noise_1.0": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 10157,
+        "wrong_type": 0
+      },
+      "n_total": 56962,
+      "perturbation_class": "B_not_designed_for_primary",
+      "psi_max": 1.0616,
+      "row_gated": {
+        "accepted_correct": 50560,
+        "coverage": 0.8880130613391384,
+        "fallback_errors": 298,
+        "false_reject_legit": 6317,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 50583,
+        "n_blocked": 6379,
+        "n_fallback": 6379,
+        "precision": 0.008,
+        "recall": 0.02666666666666667,
+        "wrong_confident": 321
+      },
+      "ungated": {
+        "accepted_correct": 56538,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 56962,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.12951167728237792,
+        "recall": 0.8133333333333334,
+        "wrong_confident": 414
+      },
+      "window_blocked": true,
+      "window_gated": {
+        "accepted_correct": 0,
+        "coverage": 0.0,
+        "fallback_errors": 311,
+        "false_reject_legit": 56887,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 0,
+        "n_blocked": 56962,
+        "n_fallback": 56962,
+        "precision": 0.004201680672268907,
+        "recall": 0.013333333333333334,
+        "wrong_confident": 311
+      }
+    },
+    "clean": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 6315,
+        "wrong_type": 0
+      },
+      "n_total": 56962,
+      "perturbation_class": "A_designed_for",
+      "psi_max": 1.4633,
+      "row_gated": {
+        "accepted_correct": 54226,
+        "coverage": 0.9523893121730276,
+        "fallback_errors": 296,
+        "false_reject_legit": 2652,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 54250,
+        "n_blocked": 2712,
+        "n_fallback": 2712,
+        "precision": 0.01195219123505976,
+        "recall": 0.04,
+        "wrong_confident": 320
+      },
+      "ungated": {
+        "accepted_correct": 56548,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 56962,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.13232104121475055,
+        "recall": 0.8133333333333334,
+        "wrong_confident": 404
+      },
+      "window_blocked": true,
+      "window_gated": {
+        "accepted_correct": 0,
+        "coverage": 0.0,
+        "fallback_errors": 311,
+        "false_reject_legit": 56887,
+        "frauds_caught_by_fallback": 1,
+        "n_accepted": 0,
+        "n_blocked": 56962,
+        "n_fallback": 56962,
+        "precision": 0.004201680672268907,
+        "recall": 0.013333333333333334,
+        "wrong_confident": 311
+      }
+    }
+  },
+  "contract": {
+    "bounds": {
+      "Amount": {
+        "hi": 1149.516600000006,
+        "lo": -142.43499999999997
+      },
+      "LogAmount": {
+        "hi": 11.88460333900947,
+        "lo": -4.920058393487123
+      },
+      "V1": {
+        "hi": 6.446075965544008,
+        "lo": -10.8961010392154
+      },
+      "V10": {
+        "hi": 5.122051548822228,
+        "lo": -3.9854632963043986
+      },
+      "V11": {
+        "hi": 5.619297535980916,
+        "lo": -5.121467797280404
+      },
+      "V12": {
+        "hi": 3.981845682409195,
+        "lo": -5.541229556833446
+      },
+      "V13": {
+        "hi": 5.476549457202399,
+        "lo": -5.023297214162534
+      },
+      "V14": {
+        "hi": 3.9923437712188306,
+        "lo": -4.775249591205818
+      },
+      "V15": {
+        "hi": 4.552923272188221,
+        "lo": -4.97113245570349
+      },
+      "V16": {
+        "hi": 3.809918300661198,
+        "lo": -4.387391121255281
+      },
+      "V17": {
+        "hi": 4.2025483331879485,
+        "lo": -3.0371853997900957
+      },
+      "V18": {
+        "hi": 3.928713884120013,
+        "lo": -4.125681421577023
+      },
+      "V19": {
+        "hi": 3.968676619259967,
+        "lo": -4.033409527800619
+      },
+      "V2": {
+        "hi": 6.561956529047109,
+        "lo": -7.59236123806208
+      },
+      "V20": {
+        "hi": 3.1385874955656474,
+        "lo": -2.123073751052593
+      },
+      "V21": {
+        "hi": 2.633927420073916,
+        "lo": -2.1855319400708177
+      },
+      "V22": {
+        "hi": 3.1711621495897413,
+        "lo": -3.5214757303756046
+      },
+      "V23": {
+        "hi": 2.0412569179076847,
+        "lo": -1.6908978122456362
+      },
+      "V24": {
+        "hi": 2.5505089341577074,
+        "lo": -3.166177002270659
+      },
+      "V25": {
+        "hi": 2.2643076589602282,
+        "lo": -2.3865050640327077
+      },
+      "V26": {
+        "hi": 2.373599006047316,
+        "lo": -2.125023584209978
+      },
+      "V27": {
+        "hi": 1.22759534699004,
+        "lo": -1.542517653623713
+      },
+      "V28": {
+        "hi": 0.7281643932192767,
+        "lo": -1.1145545216715873
+      },
+      "V3": {
+        "hi": 5.569940638088244,
+        "lo": -6.163545065221168
+      },
+      "V4": {
+        "hi": 7.274241358500033,
+        "lo": -6.347490661600688
+      },
+      "V5": {
+        "hi": 5.578555563785674,
+        "lo": -5.653898195400753
+      },
+      "V6": {
+        "hi": 6.447493270578855,
+        "lo": -4.367230464074865
+      },
+      "V7": {
+        "hi": 4.563181174513645,
+        "lo": -5.208879160791799
+      },
+      "V8": {
+        "hi": 3.122945312075747,
+        "lo": -5.00217490218189
+      },
+      "V9": {
+        "hi": 5.741251655950669,
+        "lo": -5.0671362781030345
+      }
+    },
+    "fallback_amount_threshold": 1454.421199999994,
+    "source": "TRAIN window only (q01/q99 \u00b1 2\u00b7IQR)"
+  },
+  "dataset": {
+    "name": "ulb",
+    "note": "ULB PCA feature representation; Time = seconds from first transaction (chronological order, no calendar semantics); entity ids absent \u2192 entity-disjoint NOT APPLICABLE",
+    "path": "data\\creditcard.csv",
+    "sha256": "76274b691b16a6c49d3f159c883398e03ccd6d1ee12d9d8ee38f4b4b98551a89"
+  },
+  "definitions": {
+    "class_A": "NaN / +Inf / clearly out-of-range / wrong-type: 10% of test rows total (4 kinds \u00d7 2.5%), one random feature per row \u2014 SECONDARY evidence",
+    "class_B": "in-range subtle shifts on 30% of rows: Gaussian noise \u03c3\u2208(0.25, 0.5, 1.0)\u00d7train-std on top-3-variance features; amount \u00d7(1.1, 1.25, 1.5); cyclic hour +3h \u2014 PRIMARY exploratory investigation; magnitudes fixed a priori, full range recorded (never tuned to outcomes)",
+    "confident": "ML confident iff p >= 0.8 or p <= 0.2 (NR-05 exploratory definition; plan \u00a75.3 remains [TO BE FROZEN])",
+    "fallback": "amount > train q99.5 \u2192 FRAUD, else LEGIT (train-only rule; rules are always 'confident')",
+    "gated": "(component 1) row-level contract enforcement \u2014 Phase-41 semantics, TRAIN-window bounds; (component 2) window-level PSI gate (block if any feature PSI >= 0.25). Reported SEPARATELY as row_gated and window_gated (plan \u00a75.0); ungated = both bypassed",
+    "labels": "never modified; wrong decisions judged against original labels",
+    "ungated": "SAME model/preprocessing/imputation/inputs/population with both gates bypassed; invalid inputs scored via frozen median imputation (never crashes)",
+    "window_block_rule": "PSI >= 0.25 on \u22651 feature \u2192 entire window falls back (psi.py standard ALERT threshold, reused unchanged)"
+  },
+  "experiment_id": "nr05_ulb_gating",
+  "exploratory": true,
+  "model_artifacts": "reports\\nr05\\artifacts\\nr05_ulb_discrimination",
+  "non_independent": true,
+  "summary": {
+    "classA": {
+      "conditions": 4,
+      "row_gate_block_rates": {
+        "A_inf": 0.07169692075418699,
+        "A_nan": 0.07143358730381655,
+        "A_oor": 0.07104736490994001,
+        "A_type": 0.07127558723359428
+      },
+      "windows_blocked": {
+        "A_inf": true,
+        "A_nan": true,
+        "A_oor": true,
+        "A_type": true
+      }
+    },
+    "classB": {
+      "conditions": 6,
+      "row_gate": {
+        "better": 6,
+        "equal": 0,
+        "min_coverage": 0.8880130613391384,
+        "recall_deltas": {
+          "B_amount_1.1": -0.7733333333333333,
+          "B_amount_1.25": -0.7733333333333333,
+          "B_amount_1.5": -0.7733333333333333,
+          "B_noise_0.25": -0.7733333333333333,
+          "B_noise_0.5": -0.7733333333333333,
+          "B_noise_1.0": -0.7866666666666667
+        },
+        "worse": 0
+      },
+      "window_gate": {
+        "better": 6,
+        "equal": 0,
+        "min_coverage": 0.0,
+        "windows_blocked": 6,
+        "worse": 0
+      }
+    },
+    "clean": {
+      "row_gated": {
+        "coverage": 0.9523893121730276,
+        "false_reject_legit": 2652,
+        "recall": 0.04,
+        "wrong_confident": 320
+      },
+      "ungated": {
+        "recall": 0.8133333333333334,
+        "wrong_confident": 404
+      },
+      "window_gated": {
+        "coverage": 0.0,
+        "recall": 0.013333333333333334,
+        "window_blocked": true,
+        "wrong_confident": 311
+      }
+    }
+  },
+  "threshold": {
+    "source": "CAL window @1%FPR (re-derived, identical)",
+    "value": 0.001515165708293356
+  }
+}

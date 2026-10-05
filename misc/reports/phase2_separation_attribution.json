@@ -1,0 +1,683 @@
+{
+  "holdout_auc": 0.9999999719444446,
+  "n_synth": 150000,
+  "n_real": 150000,
+  "single_feature_separation": [
+    {
+      "feature": "user_city_diversity",
+      "auc": 0.99994
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "auc": 0.9996390664
+    },
+    {
+      "feature": "user_merch_count",
+      "auc": 0.9996390664
+    },
+    {
+      "feature": "user_tx_count",
+      "auc": 0.9988720199999999
+    },
+    {
+      "feature": "card_tx_count",
+      "auc": 0.9981984002444444
+    },
+    {
+      "feature": "merch_tx_count",
+      "auc": 0.9766779378222222
+    },
+    {
+      "feature": "user_fraud_rate",
+      "auc": 0.7724994608
+    },
+    {
+      "feature": "Day",
+      "auc": 0.7537743327333334
+    },
+    {
+      "feature": "Month",
+      "auc": 0.7056066666666667
+    },
+    {
+      "feature": "city_id",
+      "auc": 0.6062941365111112
+    },
+    {
+      "feature": "merch_fraud_rate",
+      "auc": 0.5946432991333332
+    },
+    {
+      "feature": "user_avg_amt",
+      "auc": 0.5939657356888889
+    },
+    {
+      "feature": "merchant_id",
+      "auc": 0.5889932382222223
+    },
+    {
+      "feature": "mcc_high",
+      "auc": 0.5792466666666667
+    },
+    {
+      "feature": "city_fraud_rate",
+      "auc": 0.5773738674444445
+    },
+    {
+      "feature": "card_id",
+      "auc": 0.576403788311111
+    },
+    {
+      "feature": "mcc",
+      "auc": 0.5752460777333334
+    },
+    {
+      "feature": "log_amt",
+      "auc": 0.5608306434444446
+    },
+    {
+      "feature": "amt",
+      "auc": 0.5608301847111111
+    },
+    {
+      "feature": "amt_sq",
+      "auc": 0.5608301842222223
+    },
+    {
+      "feature": "amt_x_online",
+      "auc": 0.5525073871333335
+    },
+    {
+      "feature": "amt_x_mcc",
+      "auc": 0.5516497069999999
+    },
+    {
+      "feature": "amt_x_hr",
+      "auc": 0.5510703912222222
+    },
+    {
+      "feature": "is_online",
+      "auc": 0.54959
+    },
+    {
+      "feature": "is_online_or_no_state",
+      "auc": 0.54959
+    },
+    {
+      "feature": "hour_cos",
+      "auc": 0.5478983714666666
+    },
+    {
+      "feature": "high_amt",
+      "auc": 0.5415466666666667
+    },
+    {
+      "feature": "mn",
+      "auc": 0.5382198662444444
+    },
+    {
+      "feature": "mcc_gas",
+      "auc": 0.5349666666666667
+    },
+    {
+      "feature": "mcc_restaurant",
+      "auc": 0.5347466666666667
+    },
+    {
+      "feature": "chip",
+      "auc": 0.5317766666666667
+    },
+    {
+      "feature": "hour_sin",
+      "auc": 0.5288850479111111
+    },
+    {
+      "feature": "dow",
+      "auc": 0.5269400572444445
+    },
+    {
+      "feature": "amt_x_chip",
+      "auc": 0.5263566880444446
+    },
+    {
+      "feature": "is_swipe",
+      "auc": 0.5178133333333333
+    },
+    {
+      "feature": "hr",
+      "auc": 0.5169173218666667
+    },
+    {
+      "feature": "is_business_hours",
+      "auc": 0.5155966666666667
+    },
+    {
+      "feature": "mcc_grocery",
+      "auc": 0.51314
+    },
+    {
+      "feature": "amt_x_night",
+      "auc": 0.5129339305333335
+    },
+    {
+      "feature": "amt_vs_user_avg",
+      "auc": 0.5125251570888889
+    },
+    {
+      "feature": "amt_zscore",
+      "auc": 0.512524653288889
+    },
+    {
+      "feature": "is_night",
+      "auc": 0.5124966666666666
+    },
+    {
+      "feature": "very_high_amt",
+      "auc": 0.5101933333333334
+    },
+    {
+      "feature": "err",
+      "auc": 0.5038
+    },
+    {
+      "feature": "mcc_travel",
+      "auc": 0.50142
+    },
+    {
+      "feature": "has_zip",
+      "auc": 0.5
+    },
+    {
+      "feature": "has_state",
+      "auc": 0.5
+    },
+    {
+      "feature": "mcc_online",
+      "auc": 0.5
+    }
+  ],
+  "permutation_importance": [
+    {
+      "feature": "user_city_diversity",
+      "auc_without": 0.7501572420833333,
+      "drop": 0.24984272986111122
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "auc_without": 0.9999992977777777,
+      "drop": 6.741666668252932e-07
+    },
+    {
+      "feature": "user_tx_count",
+      "auc_without": 0.9999993780555556,
+      "drop": 5.938888889556182e-07
+    },
+    {
+      "feature": "dow",
+      "auc_without": 0.9999999197222222,
+      "drop": 5.222222232426077e-08
+    },
+    {
+      "feature": "card_id",
+      "auc_without": 0.9999999311111112,
+      "drop": 4.083333338122941e-08
+    },
+    {
+      "feature": "amt_vs_user_avg",
+      "auc_without": 0.9999999355555554,
+      "drop": 3.6388889124161494e-08
+    },
+    {
+      "feature": "hour_cos",
+      "auc_without": 0.9999999486111112,
+      "drop": 2.3333333376562848e-08
+    },
+    {
+      "feature": "amt",
+      "auc_without": 0.999999965,
+      "drop": 6.944444574941144e-09
+    },
+    {
+      "feature": "amt_x_mcc",
+      "auc_without": 0.9999999683333336,
+      "drop": 3.6111109658065743e-09
+    },
+    {
+      "feature": "Day",
+      "auc_without": 0.999999968611111,
+      "drop": 3.33333360913457e-09
+    },
+    {
+      "feature": "mcc",
+      "auc_without": 0.9999999691666666,
+      "drop": 2.7777780076121417e-09
+    },
+    {
+      "feature": "amt_x_hr",
+      "auc_without": 0.9999999691666668,
+      "drop": 2.7777777855675367e-09
+    },
+    {
+      "feature": "mn",
+      "auc_without": 0.9999999694444444,
+      "drop": 2.5000002068509275e-09
+    },
+    {
+      "feature": "chip",
+      "auc_without": 0.9999999705555557,
+      "drop": 1.3888888927837684e-09
+    },
+    {
+      "feature": "hr",
+      "auc_without": 0.9999999708333334,
+      "drop": 1.1111112030448567e-09
+    },
+    {
+      "feature": "city_id",
+      "auc_without": 0.9999999711111112,
+      "drop": 8.333334022836425e-10
+    },
+    {
+      "feature": "hour_sin",
+      "auc_without": 0.9999999716666668,
+      "drop": 2.7777780076121417e-10
+    },
+    {
+      "feature": "user_fraud_rate",
+      "auc_without": 0.9999999719444445,
+      "drop": 1.1102230246251565e-16
+    },
+    {
+      "feature": "amt_x_online",
+      "auc_without": 0.9999999719444445,
+      "drop": 1.1102230246251565e-16
+    },
+    {
+      "feature": "log_amt",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "amt_sq",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "is_night",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "is_online",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "err",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "has_zip",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "has_state",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "is_online_or_no_state",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "mcc_high",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "mcc_restaurant",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "mcc_gas",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "mcc_grocery",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "mcc_travel",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "mcc_online",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "amt_zscore",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "merch_fraud_rate",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "high_amt",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "very_high_amt",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "amt_x_chip",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "user_merch_count",
+      "auc_without": 0.9999999719444446,
+      "drop": 0.0
+    },
+    {
+      "feature": "amt_x_night",
+      "auc_without": 0.9999999722222224,
+      "drop": -2.7777780076121417e-10
+    },
+    {
+      "feature": "is_swipe",
+      "auc_without": 0.9999999725000002,
+      "drop": -5.555556015224283e-10
+    },
+    {
+      "feature": "merchant_id",
+      "auc_without": 0.9999999747222222,
+      "drop": -2.7777776745452343e-09
+    },
+    {
+      "feature": "city_fraud_rate",
+      "auc_without": 0.9999999749999999,
+      "drop": -3.055555364284146e-09
+    },
+    {
+      "feature": "is_business_hours",
+      "auc_without": 0.9999999761111111,
+      "drop": -4.166666567329003e-09
+    },
+    {
+      "feature": "user_avg_amt",
+      "auc_without": 0.9999999780555557,
+      "drop": -6.111111172657502e-09
+    },
+    {
+      "feature": "Month",
+      "auc_without": 0.9999999819444444,
+      "drop": -9.999999828202988e-09
+    },
+    {
+      "feature": "card_tx_count",
+      "auc_without": 0.9999999830555555,
+      "drop": -1.1111110920225542e-08
+    },
+    {
+      "feature": "merch_tx_count",
+      "auc_without": 0.9999999847222223,
+      "drop": -1.2777777724792827e-08
+    }
+  ],
+  "leave_one_out": [
+    {
+      "feature": "user_city_diversity",
+      "auc_without": 0.9999995768055555,
+      "drop": 3.9513888905329253e-07
+    },
+    {
+      "feature": "amt_x_hr",
+      "auc_without": 0.9999999119444444,
+      "drop": 6.000000019046325e-08
+    },
+    {
+      "feature": "user_tx_count",
+      "auc_without": 0.9999999158333334,
+      "drop": 5.611111120185086e-08
+    },
+    {
+      "feature": "user_avg_amt",
+      "auc_without": 0.9999999169444445,
+      "drop": 5.5000000109828306e-08
+    },
+    {
+      "feature": "merch_tx_count",
+      "auc_without": 0.9999999186111111,
+      "drop": 5.3333333416283324e-08
+    },
+    {
+      "feature": "city_id",
+      "auc_without": 0.9999999222222221,
+      "drop": 4.972222245047675e-08
+    },
+    {
+      "feature": "amt",
+      "auc_without": 0.9999999238888888,
+      "drop": 4.805555575693177e-08
+    },
+    {
+      "feature": "log_amt",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "amt_sq",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "Month",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "is_night",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "is_online",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "err",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "has_zip",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "has_state",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "is_online_or_no_state",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "mcc_high",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "mcc_restaurant",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "mcc_gas",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "mcc_travel",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "mcc_online",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "amt_vs_user_avg",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "amt_zscore",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "user_merchant_diversity",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "user_fraud_rate",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "merch_fraud_rate",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "high_amt",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "very_high_amt",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "amt_x_chip",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "amt_x_online",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "user_merch_count",
+      "auc_without": 0.9999999238888889,
+      "drop": 4.8055555645909465e-08
+    },
+    {
+      "feature": "chip",
+      "auc_without": 0.9999999258333333,
+      "drop": 4.611111126262557e-08
+    },
+    {
+      "feature": "city_fraud_rate",
+      "auc_without": 0.9999999269444444,
+      "drop": 4.5000000170603016e-08
+    },
+    {
+      "feature": "hour_cos",
+      "auc_without": 0.9999999275,
+      "drop": 4.444444456908059e-08
+    },
+    {
+      "feature": "is_business_hours",
+      "auc_without": 0.9999999288888889,
+      "drop": 4.305555567629682e-08
+    },
+    {
+      "feature": "amt_x_night",
+      "auc_without": 0.9999999311111111,
+      "drop": 4.083333349225171e-08
+    },
+    {
+      "feature": "amt_x_mcc",
+      "auc_without": 0.9999999330555556,
+      "drop": 3.8888888997945514e-08
+    },
+    {
+      "feature": "is_swipe",
+      "auc_without": 0.9999999338888889,
+      "drop": 3.8055555706684174e-08
+    },
+    {
+      "feature": "hour_sin",
+      "auc_without": 0.9999999341666667,
+      "drop": 3.777777790592296e-08
+    },
+    {
+      "feature": "card_id",
+      "auc_without": 0.9999999344444443,
+      "drop": 3.750000021618405e-08
+    },
+    {
+      "feature": "card_tx_count",
+      "auc_without": 0.9999999352777778,
+      "drop": 3.6666666813900406e-08
+    },
+    {
+      "feature": "dow",
+      "auc_without": 0.999999938611111,
+      "drop": 3.3333333537832743e-08
+    },
+    {
+      "feature": "mcc",
+      "auc_without": 0.9999999394444444,
+      "drop": 3.25000001355491e-08
+    },
+    {
+      "feature": "mcc_grocery",
+      "auc_without": 0.9999999405555554,
+      "drop": 3.138888915454885e-08
+    },
+    {
+      "feature": "hr",
+      "auc_without": 0.9999999505555556,
+      "drop": 2.1388888993278954e-08
+    },
+    {
+      "feature": "mn",
+      "auc_without": 0.9999999583333333,
+      "drop": 1.3611111238098772e-08
+    },
+    {
+      "feature": "Day",
+      "auc_without": 0.9999999611111111,
+      "drop": 1.0833333452531235e-08
+    },
+    {
+      "feature": "merchant_id",
+      "auc_without": 0.9999999702777778,
+      "drop": 1.666666804567285e-09
+    }
+  ]
+}

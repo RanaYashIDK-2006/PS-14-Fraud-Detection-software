@@ -1,0 +1,119 @@
+{
+  "artifact_file_hashes": {
+    "if.joblib": "290b00156ba1abc101d25f12fa678778d98aa72b6773d2ae268702c162c1ed7f",
+    "lr.joblib": "50a46f3814340a0f418746b8005795f89dc72ce43e7b1daa7f27a4f6ae9acb80",
+    "pipeline_state.joblib": "e590735d5cc7274cd8a18b972323eeb917c4849314fe254faa1a86edf2092c6a",
+    "platt.joblib": "32c00be3cd34093c4b49a6bca8473628059fba5e6251d1d64e8953e3d91da463",
+    "rf.joblib": "4d3e68ed6ba07ac1d468f4ff0464ea63b0fb2ec215146f1292e4e2abe5e70828",
+    "xgb.joblib": "020b49f913fe949828bf03fab44e52a618cd18c9749ae7f8b533227e87e50d2f"
+  },
+  "command": "python backend/scripts/nr05_diagnostics.py",
+  "dataset": {
+    "exists": true,
+    "path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\data\\kaggle_fraud\\fraudTrain.csv",
+    "sha256": "fd7139200dbfcbed0b6742bbe05a4f1abce532c4fef20918228a651647a3e75d",
+    "size_bytes": 351238196
+  },
+  "evaluation_config": {
+    "exploratory": true,
+    "exposure": "PREVIOUSLY EXPLORATORY/EXPOSED",
+    "features": [
+      "amt",
+      "log_amt",
+      "hour",
+      "dow",
+      "is_weekend",
+      "category_code",
+      "log_city_pop",
+      "dist_km",
+      "age"
+    ],
+    "metric_definitions_version": "1.0",
+    "n_boot": 300,
+    "non_independent": true,
+    "note": "9-feature dataset-appropriate representation; category codes fit on TRAIN only; fraudTest is the natural chronological final test (already exposed \u2014 exploratory only)",
+    "script": "backend/scripts/nr05_diagnostics.py",
+    "seed": 42,
+    "split": "fraudTrain by unix_time 70/30 train/cal; fraudTest = final test"
+  },
+  "evaluation_id": "eval-20261004T110124+0000-cb7205186560",
+  "feature_schema_version": "nr05_kaggle_features_v1",
+  "git_commit": "5a5ff55cc03df73318fdf31a16e3665f159a4720",
+  "metric_definitions_version": "1.0",
+  "metrics": {
+    "bootstraps": {
+      "dependence_aware": {
+        "ci_high": 0.9707389126425044,
+        "ci_low": 0.9559760994061184,
+        "n_valid": 300,
+        "point": 0.9631841372085674
+      },
+      "iid": {
+        "ci_high": 0.9687021032633182,
+        "ci_low": 0.9578881358855942,
+        "n_valid": 300,
+        "point": 0.9631841372085674
+      }
+    },
+    "calibration": {
+      "brier": 0.0012645187450369545,
+      "cal_n": 389003,
+      "ece": 0.00046159696506094006
+    },
+    "ensemble_platt": {
+      "fn": 314,
+      "fp": 5542,
+      "pr_auc": 0.8028985357437411,
+      "recall_at_1pct_fpr": 0.8536130536130536,
+      "roc_auc": 0.9631841372085674,
+      "tn": 548032,
+      "tp": 1831
+    },
+    "headline": {
+      "brier": 0.0012645187450369545,
+      "ece": 0.00046159696506094006,
+      "pr_auc": 0.8028985357437411,
+      "recall_at_1pct_fpr": 0.8536130536130536,
+      "roc_auc": 0.9631841372085674,
+      "test_n": 555719,
+      "test_pos": 2145
+    },
+    "lr": {
+      "pr_auc": 0.1582996299302394,
+      "recall_at_1pct_fpr": 0.7752913752913753,
+      "roc_auc": 0.8347061813362615
+    },
+    "xgb": {
+      "pr_auc": 0.851669503126464,
+      "recall_at_1pct_fpr": 0.9585081585081585,
+      "roc_auc": 0.9970099078062964
+    }
+  },
+  "model_hash": "dc38316098886ecea524c85b7a7258776454006d9fd12a5c0d6bbeadb1a0e748",
+  "model_identifier": "nr05_kaggle_discrimination",
+  "preprocessing_version": "median_impute_fit_on_train",
+  "record_version": "1.1",
+  "seed": 42,
+  "software": {
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "scipy": "1.18.0",
+    "sklearn": "1.9.0",
+    "xgboost": "3.4.1"
+  },
+  "status": "COMPLETED",
+  "threshold": 0.006655666997569969,
+  "threshold_source": "validation",
+  "timestamp_utc": "2026-10-04T11:01:24+00:00",
+  "training_dataset": null,
+  "warnings": [
+    "EXPLORATORY: previously exposed dataset \u2014 not confirmatory Track M evidence",
+    "NON-INDEPENDENT: prior project exposure (see DATASET_EXPOSURE_LEDGER.md)",
+    "single seed 42 \u2014 \u00a718 minimum-seed rule is [TO BE FROZEN]",
+    "dependence-aware CIs are EXPLORATORY \u2014 METHOD NOT YET FROZEN",
+    "baseline identity (LR vs XGB) is [TO BE FROZEN] in plan \u00a73 \u2014 both reported",
+    "HEAVY_IMBALANCE: prevalence below 1% \u2014 accuracy is meaningless as a headline metric; rely on PR-AUC and recall at a stated FPR operating point."
+  ]
+}

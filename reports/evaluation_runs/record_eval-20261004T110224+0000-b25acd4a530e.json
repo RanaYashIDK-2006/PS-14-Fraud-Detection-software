@@ -1,0 +1,338 @@
+{
+  "artifact_file_hashes": {},
+  "command": "python backend/scripts/nr05_diagnostics.py",
+  "dataset": {
+    "exists": true,
+    "path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\data\\kaggle_fraud\\fraudTrain.csv",
+    "sha256": "fd7139200dbfcbed0b6742bbe05a4f1abce532c4fef20918228a651647a3e75d",
+    "size_bytes": 351238196
+  },
+  "evaluation_config": {
+    "definitions": {
+      "class_A": "NaN / +Inf / clearly out-of-range / wrong-type: 10% of test rows total (4 kinds \u00d7 2.5%), one random feature per row \u2014 SECONDARY evidence",
+      "class_B": "in-range subtle shifts on 30% of rows: Gaussian noise \u03c3\u2208(0.25, 0.5, 1.0)\u00d7train-std on top-3-variance features; amount \u00d7(1.1, 1.25, 1.5); cyclic hour +3h \u2014 PRIMARY exploratory investigation; magnitudes fixed a priori, full range recorded (never tuned to outcomes)",
+      "confident": "ML confident iff p >= 0.8 or p <= 0.2 (NR-05 exploratory definition; plan \u00a75.3 remains [TO BE FROZEN])",
+      "fallback": "amount > train q99.5 \u2192 FRAUD, else LEGIT (train-only rule; rules are always 'confident')",
+      "gated": "(component 1) row-level contract enforcement \u2014 Phase-41 semantics, TRAIN-window bounds; (component 2) window-level PSI gate (block if any feature PSI >= 0.25). Reported SEPARATELY as row_gated and window_gated (plan \u00a75.0); ungated = both bypassed",
+      "labels": "never modified; wrong decisions judged against original labels",
+      "ungated": "SAME model/preprocessing/imputation/inputs/population with both gates bypassed; invalid inputs scored via frozen median imputation (never crashes)",
+      "window_block_rule": "PSI >= 0.25 on \u22651 feature \u2192 entire window falls back (psi.py standard ALERT threshold, reused unchanged)"
+    },
+    "exploratory": true,
+    "metric_definitions_version": "1.0",
+    "model_artifacts": "reports\\nr05\\artifacts\\nr05_kaggle_discrimination",
+    "non_independent": true,
+    "script": "backend/scripts/nr05_diagnostics.py",
+    "seed": 42
+  },
+  "evaluation_id": "eval-20261004T110224+0000-b25acd4a530e",
+  "feature_schema_version": "nr05_kaggle_features_v1",
+  "git_commit": "5a5ff55cc03df73318fdf31a16e3665f159a4720",
+  "metric_definitions_version": "1.0",
+  "metrics": {
+    "conditions": {
+      "A_inf": {
+        "psi_max": 0.083,
+        "row_gated": {
+          "coverage": 0.9690832956944067,
+          "recall": 0.7184149184149184,
+          "wrong_confident": 5361
+        },
+        "ungated": {
+          "recall": 0.8517482517482518,
+          "wrong_confident": 5584
+        },
+        "window_blocked": false,
+        "window_gated": {
+          "coverage": 0.9690832956944067,
+          "recall": 0.7184149184149184,
+          "wrong_confident": 5361
+        }
+      },
+      "A_nan": {
+        "psi_max": 0.083,
+        "row_gated": {
+          "coverage": 0.9690653009884492,
+          "recall": 0.7193473193473193,
+          "wrong_confident": 5341
+        },
+        "ungated": {
+          "recall": 0.8522144522144522,
+          "wrong_confident": 5594
+        },
+        "window_blocked": false,
+        "window_gated": {
+          "coverage": 0.9690653009884492,
+          "recall": 0.7193473193473193,
+          "wrong_confident": 5341
+        }
+      },
+      "A_oor": {
+        "psi_max": 0.083,
+        "row_gated": {
+          "coverage": 0.9690904935767897,
+          "recall": 0.7156177156177156,
+          "wrong_confident": 5362
+        },
+        "ungated": {
+          "recall": 0.8526806526806526,
+          "wrong_confident": 7526
+        },
+        "window_blocked": false,
+        "window_gated": {
+          "coverage": 0.9690904935767897,
+          "recall": 0.7156177156177156,
+          "wrong_confident": 5362
+        }
+      },
+      "A_type": {
+        "psi_max": 0.083,
+        "row_gated": {
+          "coverage": 0.9690688999296407,
+          "recall": 0.7193473193473193,
+          "wrong_confident": 5353
+        },
+        "ungated": {
+          "recall": 0.8531468531468531,
+          "wrong_confident": 5585
+        },
+        "window_blocked": false,
+        "window_gated": {
+          "coverage": 0.9690688999296407,
+          "recall": 0.7193473193473193,
+          "wrong_confident": 5353
+        }
+      },
+      "B_amount_1.1": {
+        "psi_max": 0.083,
+        "row_gated": {
+          "coverage": 0.993647868797,
+          "recall": 0.7226107226107226,
+          "wrong_confident": 5586
+        },
+        "ungated": {
+          "recall": 0.8531468531468531,
+          "wrong_confident": 5913
+        },
+        "window_blocked": false,
+        "window_gated": {
+          "coverage": 0.993647868797,
+          "recall": 0.7226107226107226,
+          "wrong_confident": 5586
+        }
+      },
+      "B_amount_1.25": {
+        "psi_max": 0.083,
+        "row_gated": {
+          "coverage": 0.9931530143831685,
+          "recall": 0.7198135198135198,
+          "wrong_confident": 6083
+        },
+        "ungated": {
+          "recall": 0.8512820512820513,
+          "wrong_confident": 6668
+        },
+        "window_blocked": false,
+        "window_gated": {
+          "coverage": 0.9931530143831685,
+          "recall": 0.7198135198135198,
+          "wrong_confident": 6083
+        }
+      },
+      "B_amount_1.5": {
+        "psi_max": 0.083,
+        "row_gated": {
+          "coverage": 0.9919239759662707,
+          "recall": 0.7142191142191142,
+          "wrong_confident": 7160
+        },
+        "ungated": {
+          "recall": 0.8526806526806526,
+          "wrong_confident": 8382
+        },
+        "window_blocked": false,
+        "window_gated": {
+          "coverage": 0.9919239759662707,
+          "recall": 0.7142191142191142,
+          "wrong_confident": 7160
+        }
+      },
+      "B_hour": {
+        "psi_max": 0.083,
+        "row_gated": {
+          "coverage": 0.9939249872687456,
+          "recall": 0.6904428904428904,
+          "wrong_confident": 9418
+        },
+        "ungated": {
+          "recall": 0.8153846153846154,
+          "wrong_confident": 9584
+        },
+        "window_blocked": false,
+        "window_gated": {
+          "coverage": 0.9939249872687456,
+          "recall": 0.6904428904428904,
+          "wrong_confident": 9418
+        }
+      },
+      "B_noise_0.25": {
+        "psi_max": 0.083,
+        "row_gated": {
+          "coverage": 0.9939159899157668,
+          "recall": 0.7216783216783217,
+          "wrong_confident": 7004
+        },
+        "ungated": {
+          "recall": 0.8452214452214453,
+          "wrong_confident": 7222
+        },
+        "window_blocked": false,
+        "window_gated": {
+          "coverage": 0.9939159899157668,
+          "recall": 0.7216783216783217,
+          "wrong_confident": 7004
+        }
+      },
+      "B_noise_0.5": {
+        "psi_max": 0.083,
+        "row_gated": {
+          "coverage": 0.9898707800165192,
+          "recall": 0.7212121212121212,
+          "wrong_confident": 9176
+        },
+        "ungated": {
+          "recall": 0.8433566433566434,
+          "wrong_confident": 9488
+        },
+        "window_blocked": false,
+        "window_gated": {
+          "coverage": 0.9898707800165192,
+          "recall": 0.7212121212121212,
+          "wrong_confident": 9176
+        }
+      },
+      "B_noise_1.0": {
+        "psi_max": 0.083,
+        "row_gated": {
+          "coverage": 0.958613975768329,
+          "recall": 0.7174825174825175,
+          "wrong_confident": 13060
+        },
+        "ungated": {
+          "recall": 0.8382284382284382,
+          "wrong_confident": 14391
+        },
+        "window_blocked": false,
+        "window_gated": {
+          "coverage": 0.958613975768329,
+          "recall": 0.7174825174825175,
+          "wrong_confident": 13060
+        }
+      },
+      "clean": {
+        "psi_max": 0.083,
+        "row_gated": {
+          "coverage": 0.9939249872687456,
+          "recall": 0.7286713286713287,
+          "wrong_confident": 5403
+        },
+        "ungated": {
+          "recall": 0.8536130536130536,
+          "wrong_confident": 5606
+        },
+        "window_blocked": false,
+        "window_gated": {
+          "coverage": 0.9939249872687456,
+          "recall": 0.7286713286713287,
+          "wrong_confident": 5403
+        }
+      }
+    },
+    "summary": {
+      "classA": {
+        "conditions": 4,
+        "row_gate_block_rates": {
+          "A_inf": 0.030916704305593345,
+          "A_nan": 0.03093469901155077,
+          "A_oor": 0.03090950642321033,
+          "A_type": 0.030931100070359263
+        },
+        "windows_blocked": {
+          "A_inf": false,
+          "A_nan": false,
+          "A_oor": false,
+          "A_type": false
+        }
+      },
+      "classB": {
+        "conditions": 7,
+        "row_gate": {
+          "better": 7,
+          "equal": 0,
+          "min_coverage": 0.958613975768329,
+          "recall_deltas": {
+            "B_amount_1.1": -0.13053613053613056,
+            "B_amount_1.25": -0.13146853146853144,
+            "B_amount_1.5": -0.1384615384615384,
+            "B_hour": -0.12494172494172495,
+            "B_noise_0.25": -0.12354312354312358,
+            "B_noise_0.5": -0.1221445221445222,
+            "B_noise_1.0": -0.12074592074592072
+          },
+          "worse": 0
+        },
+        "window_gate": {
+          "better": 7,
+          "equal": 0,
+          "min_coverage": 0.958613975768329,
+          "windows_blocked": 0,
+          "worse": 0
+        }
+      },
+      "clean": {
+        "row_gated": {
+          "coverage": 0.9939249872687456,
+          "false_reject_legit": 2411,
+          "recall": 0.7286713286713287,
+          "wrong_confident": 5403
+        },
+        "ungated": {
+          "recall": 0.8536130536130536,
+          "wrong_confident": 5606
+        },
+        "window_gated": {
+          "coverage": 0.9939249872687456,
+          "recall": 0.7286713286713287,
+          "window_blocked": false,
+          "wrong_confident": 5403
+        }
+      }
+    }
+  },
+  "model_hash": null,
+  "model_identifier": "nr05_kaggle_gating",
+  "preprocessing_version": "median_impute_fit_on_train",
+  "record_version": "1.1",
+  "seed": 42,
+  "software": {
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "scipy": "1.18.0",
+    "sklearn": "1.9.0",
+    "xgboost": "3.4.1"
+  },
+  "status": "COMPLETED",
+  "threshold": 0.006655666997569969,
+  "threshold_source": "validation",
+  "timestamp_utc": "2026-10-04T11:02:24+00:00",
+  "training_dataset": null,
+  "warnings": [
+    "EXPLORATORY: previously exposed dataset \u2014 not confirmatory Track M evidence",
+    "NON-INDEPENDENT: prior project exposure",
+    "gate contract/PSI fitted on TRAIN window only; Class B magnitudes fixed a priori",
+    "gating criterion thresholds (plan \u00a75.5) remain [TO BE FROZEN]",
+    "row-level and window-level gate components reported separately (plan \u00a75.0)"
+  ]
+}

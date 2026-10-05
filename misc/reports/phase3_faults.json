@@ -1,0 +1,210 @@
+{
+  "label": "Phase 3 \u00a712 failure / recovery on partition copies",
+  "evidence_class": "SELF-TESTED \u2014 SYNTHETIC 50M \u2014 SCALE EXPERIMENT",
+  "copied_partitions": [
+    "2016-01",
+    "2016-02",
+    "2016-03"
+  ],
+  "original_benchmark_sha256_before": "c2db7142e24dd8d9c2806ef8a1ec0c23e62cbf2d8fcc4b4b614396922b47edf1",
+  "original_benchmark_sha256_after": "c2db7142e24dd8d9c2806ef8a1ec0c23e62cbf2d8fcc4b4b614396922b47edf1",
+  "original_benchmark_unmodified": true,
+  "tests": [
+    {
+      "fault": "baseline_no_fault",
+      "expectation": "PASS",
+      "returncode": 0,
+      "seconds": 28.58,
+      "stderr_tail": [],
+      "stdout_tail": [
+        "member ROC-AUC: {'xgb': 0.5640391144272916, 'lgb': 0.5781736339790717, 'cb': 0.5667721746022694}",
+        "latency ms p50/p95/p99: 12/23/24",
+        "report -> misc\\reports\\phase3_faults\\result.json"
+      ],
+      "report_written": true,
+      "observed": {
+        "rows_processed": 903612,
+        "partitions_processed": 3,
+        "fraud_rows": 1142,
+        "roc_auc": 0.5779177532367532,
+        "confusion_at_threshold": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1142,
+          "tn": 902470
+        },
+        "missing_feature_partitions": 0,
+        "nonfinite_values": 0
+      },
+      "outcome": "AS EXPECTED",
+      "failed_loudly": false
+    },
+    {
+      "fault": "missing_partition",
+      "expectation": "FAIL_LOUDLY",
+      "returncode": 0,
+      "seconds": 21.05,
+      "stderr_tail": [],
+      "stdout_tail": [
+        "member ROC-AUC: {'xgb': 0.5588088902112269, 'lgb': 0.5748517963566548, 'cb': 0.5610740581580952}",
+        "latency ms p50/p95/p99: 11/19/20",
+        "report -> misc\\reports\\phase3_faults\\result.json"
+      ],
+      "report_written": true,
+      "observed": {
+        "rows_processed": 602408,
+        "partitions_processed": 2,
+        "fraud_rows": 780,
+        "roc_auc": 0.5727559989791801,
+        "confusion_at_threshold": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 780,
+          "tn": 601628
+        },
+        "missing_feature_partitions": 0,
+        "nonfinite_values": 0
+      },
+      "outcome": "SILENT \u2014 DEFECT",
+      "failed_loudly": false,
+      "note": "rglob over data/ simply sees fewer files; the runner has NO partition manifest assertion, so this MAY pass with fewer rows"
+    },
+    {
+      "fault": "corrupt_partition_truncated_4KiB",
+      "expectation": "FAIL_LOUDLY",
+      "returncode": 1,
+      "seconds": 10.27,
+      "stderr_tail": [
+        "  File \"pyarrow/error.pxi\", line 92, in pyarrow.lib.check_status",
+        "    raise convert_status(status)",
+        "pyarrow.lib.ArrowInvalid: Parquet magic bytes not found in footer. Either the file is corrupted or this is not a parquet file."
+      ],
+      "stdout_tail": [],
+      "report_written": false,
+      "outcome": "AS EXPECTED",
+      "failed_loudly": true
+    },
+    {
+      "fault": "duplicate_partition_under_new_year_month",
+      "expectation": "FAIL_LOUDLY",
+      "returncode": 0,
+      "seconds": 36.15,
+      "stderr_tail": [],
+      "stdout_tail": [
+        "member ROC-AUC: {'xgb': 0.5667220840272514, 'lgb': 0.5798746238860355, 'cb': 0.5697133980360483}",
+        "latency ms p50/p95/p99: 9/22/23",
+        "report -> misc\\reports\\phase3_faults\\result.json"
+      ],
+      "report_written": true,
+      "observed": {
+        "rows_processed": 1204816,
+        "partitions_processed": 4,
+        "fraud_rows": 1504,
+        "roc_auc": 0.5805749242684164,
+        "confusion_at_threshold": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1504,
+          "tn": 1203312
+        },
+        "missing_feature_partitions": 0,
+        "nonfinite_values": 0
+      },
+      "outcome": "SILENT \u2014 DEFECT",
+      "failed_loudly": false,
+      "rows_inflated_vs_baseline": true,
+      "observed_effect": "duplicate rows scored as extra data; prevalence 1504/1204816 vs baseline 1142/903612"
+    },
+    {
+      "fault": "rerun_completed_pass1",
+      "expectation": "PASS",
+      "returncode": 0,
+      "seconds": 28.89,
+      "stderr_tail": [],
+      "stdout_tail": [
+        "member ROC-AUC: {'xgb': 0.5640391144272916, 'lgb': 0.5781736339790717, 'cb': 0.5667721746022694}",
+        "latency ms p50/p95/p99: 13/24/25",
+        "report -> misc\\reports\\phase3_faults\\result.json"
+      ],
+      "report_written": true,
+      "observed": {
+        "rows_processed": 903612,
+        "partitions_processed": 3,
+        "fraud_rows": 1142,
+        "roc_auc": 0.5779177532367532,
+        "confusion_at_threshold": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1142,
+          "tn": 902470
+        },
+        "missing_feature_partitions": 0,
+        "nonfinite_values": 0
+      },
+      "outcome": "AS EXPECTED",
+      "failed_loudly": false
+    },
+    {
+      "fault": "rerun_completed_pass2",
+      "expectation": "PASS",
+      "returncode": 0,
+      "seconds": 28.77,
+      "stderr_tail": [],
+      "stdout_tail": [
+        "member ROC-AUC: {'xgb': 0.5640391144272916, 'lgb': 0.5781736339790717, 'cb': 0.5667721746022694}",
+        "latency ms p50/p95/p99: 10/22/23",
+        "report -> misc\\reports\\phase3_faults\\result.json"
+      ],
+      "report_written": true,
+      "observed": {
+        "rows_processed": 903612,
+        "partitions_processed": 3,
+        "fraud_rows": 1142,
+        "roc_auc": 0.5779177532367532,
+        "confusion_at_threshold": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1142,
+          "tn": 902470
+        },
+        "missing_feature_partitions": 0,
+        "nonfinite_values": 0
+      },
+      "outcome": "AS EXPECTED",
+      "failed_loudly": false,
+      "bit_identical_to_pass1": true,
+      "comparison": "rows, fraud rows, ROC-AUC and full confusion matrix"
+    },
+    {
+      "fault": "recovery_after_restore",
+      "expectation": "PASS",
+      "returncode": 0,
+      "seconds": 28.63,
+      "stderr_tail": [],
+      "stdout_tail": [
+        "member ROC-AUC: {'xgb': 0.5640391144272916, 'lgb': 0.5781736339790717, 'cb': 0.5667721746022694}",
+        "latency ms p50/p95/p99: 10/18/19",
+        "report -> misc\\reports\\phase3_faults\\result.json"
+      ],
+      "report_written": true,
+      "observed": {
+        "rows_processed": 903612,
+        "partitions_processed": 3,
+        "fraud_rows": 1142,
+        "roc_auc": 0.5779177532367532,
+        "confusion_at_threshold": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1142,
+          "tn": 902470
+        },
+        "missing_feature_partitions": 0,
+        "nonfinite_values": 0
+      },
+      "outcome": "AS EXPECTED",
+      "failed_loudly": false,
+      "restored_to_baseline_rows": true,
+      "restored_to_baseline_auc": true
+    }
+  ]
+}

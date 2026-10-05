@@ -1,0 +1,57 @@
+{
+  "evaluation_id": "eval-20261004T122416+0000-4ee47f9b2d33",
+  "timestamp_utc": "2026-10-04T12:24:16+00:00",
+  "model_identifier": "ps14_fused_ensemble_platt_calibrated",
+  "model_hash": "2320071f5c1c217dfac9a999adafc4e837389f49113a83228088f8cd0420762c",
+  "artifact_file_hashes": {
+    "calibrator.joblib": "6c885d86e976f385b154921f60512b1abb5915d2378ad4b08f082f3d57c9d0b7",
+    "validation_labels.joblib": "d1d44f03455cb0f25e514195d799ed000c77ff107be46e829a48624f887784de",
+    "fused_val_scores.joblib": "9c8c10cb71e89053a21337049d32f1c7bc27048895f09aa13a456b0843e8a020"
+  },
+  "preprocessing_version": "none_fixed_artifacts",
+  "feature_schema_version": "none_fixed_scores",
+  "dataset": {
+    "path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\models\\artifacts\\validation_labels.joblib",
+    "sha256": "d1d44f03455cb0f25e514195d799ed000c77ff107be46e829a48624f887784de",
+    "size_bytes": 11985,
+    "exists": true
+  },
+  "training_dataset": null,
+  "seed": null,
+  "threshold": null,
+  "threshold_source": "none",
+  "evaluation_config": {
+    "script": "backend/scripts/calibration_test.py",
+    "split": "validation",
+    "calibration_method": "platt",
+    "ece_bins": 10,
+    "seed_not_applicable": "deterministic metrics over fixed artifacts; no sampling",
+    "metric_definitions_version": "1.0"
+  },
+  "git_commit": "5a5ff55cc03df73318fdf31a16e3665f159a4720",
+  "software": {
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "sklearn": "1.9.0",
+    "xgboost": "3.4.1",
+    "scipy": "1.18.0"
+  },
+  "metric_definitions_version": "1.0",
+  "metrics": {
+    "calibration": {
+      "brier": 0.01073368217015549,
+      "ece": 0.014450218995775772,
+      "ece_bins": 10,
+      "n_samples": 1470,
+      "method": "platt"
+    }
+  },
+  "command": "python backend/scripts/calibration_test.py",
+  "warnings": [
+    "calibrator trained in a prior run \u2014 training provenance limited to artifact hashes"
+  ],
+  "status": "COMPLETED",
+  "record_version": "1.1"
+}

@@ -1,0 +1,121 @@
+{
+  "artifact_file_hashes": {
+    "if.joblib": "3e1687e9cdfa21cce87dcef4b71e0d845ec4837f7d8c463caa2fc980485a6530",
+    "lr.joblib": "0ef0a88ac40e579fee1ef22fe9afe0e9c5c5e56f56cd060455996b49ab9c3a9a",
+    "pipeline_state.joblib": "d29957c638a5abe2e046c4b07246a17d28878ba4780f13d6b24bdf6706e1558a",
+    "platt.joblib": "916da4058e80f66d6f6533249d724e22a1cea7f8da6a49db0f52b48de2330f0e",
+    "rf.joblib": "9ca810aa5e7638e2d9047b715d3c7032a50e0303a1460e6e2e1665452d7027af",
+    "xgb.joblib": "cc663a65faaab55775d1422a79da18151068079f48c66338660b15a277b49c0f"
+  },
+  "command": "python backend/scripts/nr05_diagnostics.py",
+  "dataset": {
+    "exists": true,
+    "path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\data\\credit_card_transactions-ibm_v2.csv",
+    "sha256": "b01fa323c98522f8c710c7f7242581860c97c50183f1c5fa9e772e5c674a7f15",
+    "size_bytes": 2350744057
+  },
+  "evaluation_config": {
+    "exploratory": true,
+    "exposure": "PREVIOUSLY EXPLORATORY/EXPOSED",
+    "features": [
+      "amount",
+      "log_amount",
+      "hour",
+      "dow",
+      "is_weekend",
+      "day",
+      "month",
+      "chip_code",
+      "errors_flag",
+      "tenure_days",
+      "amount_ratio"
+    ],
+    "metric_definitions_version": "1.0",
+    "n_boot": 300,
+    "non_independent": true,
+    "note": "stride-37 deterministic sample of the 24.4M-row file (659105 rows), 11 dataset-appropriate features, vectorized per-user tenure/amount-ratio history; temporal 60/20/20 split after sorting by parsed timestamp",
+    "script": "backend/scripts/nr05_diagnostics.py",
+    "seed": 42,
+    "split": "temporal (sorted by time): 60/20/20"
+  },
+  "evaluation_id": "eval-20261004T110430+0000-72423ef6dfc8",
+  "feature_schema_version": "nr05_ibm_features_v1",
+  "git_commit": "5a5ff55cc03df73318fdf31a16e3665f159a4720",
+  "metric_definitions_version": "1.0",
+  "metrics": {
+    "bootstraps": {
+      "dependence_aware": {
+        "ci_high": 0.42228260052086625,
+        "ci_low": 0.31888412898828,
+        "n_valid": 300,
+        "point": 0.3732392809770885
+      },
+      "iid": {
+        "ci_high": 0.4197375158803173,
+        "ci_low": 0.3208829459248066,
+        "n_valid": 300,
+        "point": 0.3732392809770885
+      }
+    },
+    "calibration": {
+      "brier": 0.0010157651488219355,
+      "cal_n": 131821,
+      "ece": 0.00045018313047671065
+    },
+    "ensemble_platt": {
+      "fn": 134,
+      "fp": 340,
+      "pr_auc": 0.0007528145092177202,
+      "recall_at_1pct_fpr": 0.0,
+      "roc_auc": 0.3732392809770885,
+      "tn": 131347,
+      "tp": 0
+    },
+    "headline": {
+      "brier": 0.0010157651488219355,
+      "ece": 0.00045018313047671065,
+      "pr_auc": 0.0007528145092177202,
+      "recall_at_1pct_fpr": 0.0,
+      "roc_auc": 0.3732392809770885,
+      "test_n": 131821,
+      "test_pos": 134
+    },
+    "lr": {
+      "pr_auc": 0.0015903652817001114,
+      "recall_at_1pct_fpr": 0.9104477611940298,
+      "roc_auc": 0.5773345525669246
+    },
+    "xgb": {
+      "pr_auc": 0.002635338208362565,
+      "recall_at_1pct_fpr": 0.7014925373134329,
+      "roc_auc": 0.6395861047266194
+    }
+  },
+  "model_hash": "1eaa1741e9e0dbb1527b064b8903989f554fcbc5ed76fa96aa20d688ed7c0ec5",
+  "model_identifier": "nr05_ibm_discrimination",
+  "preprocessing_version": "median_impute_fit_on_train",
+  "record_version": "1.1",
+  "seed": 42,
+  "software": {
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "scipy": "1.18.0",
+    "sklearn": "1.9.0",
+    "xgboost": "3.4.1"
+  },
+  "status": "COMPLETED",
+  "threshold": 0.0016055727784746318,
+  "threshold_source": "validation",
+  "timestamp_utc": "2026-10-04T11:04:30+00:00",
+  "training_dataset": null,
+  "warnings": [
+    "EXPLORATORY: previously exposed dataset \u2014 not confirmatory Track M evidence",
+    "NON-INDEPENDENT: prior project exposure (see DATASET_EXPOSURE_LEDGER.md)",
+    "single seed 42 \u2014 \u00a718 minimum-seed rule is [TO BE FROZEN]",
+    "dependence-aware CIs are EXPLORATORY \u2014 METHOD NOT YET FROZEN",
+    "baseline identity (LR vs XGB) is [TO BE FROZEN] in plan \u00a73 \u2014 both reported",
+    "HEAVY_IMBALANCE: prevalence below 1% \u2014 accuracy is meaningless as a headline metric; rely on PR-AUC and recall at a stated FPR operating point."
+  ]
+}

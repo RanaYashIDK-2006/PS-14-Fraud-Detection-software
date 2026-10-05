@@ -1,0 +1,10 @@
+{
+  "source": "data/credit_card_transactions-ibm_v2.csv",
+  "rows": 1200000,
+  "fraud_rows": 1255,
+  "fraud_prevalence": 0.0010458333333333333,
+  "feature_contract": "models/production/manifest.json",
+  "semantics": "runtime contract native_features.py, past-only",
+  "built_utc": "2026-10-05T14:14:38Z",
+  "elapsed_seconds": 30.0
+}

@@ -303,6 +303,21 @@ Column key for all tables: **P** = Prerequisites · **In** = Inputs · **Out** =
 output · **Acc** = Acceptance criteria · **Evd** = Evidence required · **Dep** =
 Dependency · **Ext** = blocking external dependency (— if none).
 
+**Freeze ordering — RESOLVED (RP-01 §H).** Exploratory work may occur before
+the Research Plan (`docs/RESEARCH_PLAN.md`) freeze; confirmatory Track M
+execution may begin only after freeze. **NR-05 may therefore proceed before
+the freeze only as exploratory work on previously exposed datasets**
+(ULB/Kaggle/IBM remain EXPLORATORY per plan §14): it cannot produce
+confirmatory Track M evidence, make an exposed dataset "untouched", be
+presented as independent replication, or be used to retrospectively select
+or alter the confirmatory decision rules. Confirmatory Track M on untouched
+eligible datasets stays blocked until all five freeze conditions hold:
+statistical review complete · all freeze placeholders resolved ·
+`docs/FREEZE_RECORD.json` exists and is complete · the freeze checker
+passes · frozen artifacts committed at the tagged Git state. The Research
+Plan's freeze-before-confirmatory-experiment rule remains authoritative;
+NR-05 is still the next roadmap requirement.
+
 ### GATE 1 — EVIDENCE FOUNDATION (3 phases)
 
 | ID | Title | Purpose | P | In | Out | Acc | Evd | Dep | Gate | Ext |

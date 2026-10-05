@@ -122,6 +122,13 @@
       ],
       "type": "float",
       "notes": "Haversine distance"
+    },
+    "failed_auth_proxy": {
+      "description": "Failed-authentication proxy feature (declared name only; no computation spec exists)",
+      "source": "auth-event history (phase-65 research surrogate declaration)",
+      "available_in": [],
+      "type": "float",
+      "notes": "N-02 restoration (NR-04): the 14th feature of the original phase-65 public contract (scripts/phase65_research_surrogate.py, check '14 public features'); it was missing from this map at creation while public_features_count stayed 14. Semantics beyond the name were never specified or implemented - available_in is intentionally empty so no run can silently use it; preregistered use requires reviewer-specified semantics."
     }
   },
   "missing_from_public": {

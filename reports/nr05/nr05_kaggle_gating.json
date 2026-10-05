@@ -1,0 +1,743 @@
+{
+  "classification": "EXPLORATORY \u2014 previously exposed dataset; NOT confirmatory Track M evidence",
+  "conditions": {
+    "A_inf": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 13892,
+        "out_of_range": 17259,
+        "wrong_type": 0
+      },
+      "n_total": 555719,
+      "perturbation_class": "A_designed_for",
+      "psi_max": 0.083,
+      "row_gated": {
+        "accepted_correct": 535162,
+        "coverage": 0.9690832956944067,
+        "fallback_errors": 2051,
+        "false_reject_legit": 16190,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 538538,
+        "n_blocked": 17181,
+        "n_fallback": 17181,
+        "precision": 0.24214330609679446,
+        "recall": 0.7184149184149184,
+        "wrong_confident": 5361
+      },
+      "ungated": {
+        "accepted_correct": 549882,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 555719,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.24870677919956438,
+        "recall": 0.8517482517482518,
+        "wrong_confident": 5584
+      },
+      "window_blocked": false,
+      "window_gated": {
+        "accepted_correct": 535162,
+        "coverage": 0.9690832956944067,
+        "fallback_errors": 2051,
+        "false_reject_legit": 16190,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 538538,
+        "n_blocked": 17181,
+        "n_fallback": 17181,
+        "precision": 0.24214330609679446,
+        "recall": 0.7184149184149184,
+        "wrong_confident": 5361
+      }
+    },
+    "A_nan": {
+      "gate_reasons": {
+        "missing": 13892,
+        "non_finite": 0,
+        "out_of_range": 3362,
+        "wrong_type": 0
+      },
+      "n_total": 555719,
+      "perturbation_class": "A_designed_for",
+      "psi_max": 0.083,
+      "row_gated": {
+        "accepted_correct": 535172,
+        "coverage": 0.9690653009884492,
+        "fallback_errors": 2051,
+        "false_reject_legit": 16200,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 538528,
+        "n_blocked": 17191,
+        "n_fallback": 17191,
+        "precision": 0.24306868304977947,
+        "recall": 0.7193473193473193,
+        "wrong_confident": 5341
+      },
+      "ungated": {
+        "accepted_correct": 549870,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 555719,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.2483695652173913,
+        "recall": 0.8522144522144522,
+        "wrong_confident": 5594
+      },
+      "window_blocked": false,
+      "window_gated": {
+        "accepted_correct": 535172,
+        "coverage": 0.9690653009884492,
+        "fallback_errors": 2051,
+        "false_reject_legit": 16200,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 538528,
+        "n_blocked": 17191,
+        "n_fallback": 17191,
+        "precision": 0.24306868304977947,
+        "recall": 0.7193473193473193,
+        "wrong_confident": 5341
+      }
+    },
+    "A_oor": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 17257,
+        "wrong_type": 0
+      },
+      "n_total": 555719,
+      "perturbation_class": "A_designed_for",
+      "psi_max": 0.083,
+      "row_gated": {
+        "accepted_correct": 535173,
+        "coverage": 0.9690904935767897,
+        "fallback_errors": 2060,
+        "false_reject_legit": 16177,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 538542,
+        "n_blocked": 17177,
+        "n_fallback": 17177,
+        "precision": 0.2415801070192005,
+        "recall": 0.7156177156177156,
+        "wrong_confident": 5362
+      },
+      "ungated": {
+        "accepted_correct": 546138,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 555719,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.16486389039120244,
+        "recall": 0.8526806526806526,
+        "wrong_confident": 7526
+      },
+      "window_blocked": false,
+      "window_gated": {
+        "accepted_correct": 535173,
+        "coverage": 0.9690904935767897,
+        "fallback_errors": 2060,
+        "false_reject_legit": 16177,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 538542,
+        "n_blocked": 17177,
+        "n_fallback": 17177,
+        "precision": 0.2415801070192005,
+        "recall": 0.7156177156177156,
+        "wrong_confident": 5362
+      }
+    },
+    "A_type": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 3365,
+        "wrong_type": 13892
+      },
+      "n_total": 555719,
+      "perturbation_class": "A_designed_for",
+      "psi_max": 0.083,
+      "row_gated": {
+        "accepted_correct": 535164,
+        "coverage": 0.9690688999296407,
+        "fallback_errors": 2054,
+        "false_reject_legit": 16195,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 538530,
+        "n_blocked": 17189,
+        "n_fallback": 17189,
+        "precision": 0.2425719226536708,
+        "recall": 0.7193473193473193,
+        "wrong_confident": 5353
+      },
+      "ungated": {
+        "accepted_correct": 549883,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 555719,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.248945721670521,
+        "recall": 0.8531468531468531,
+        "wrong_confident": 5585
+      },
+      "window_blocked": false,
+      "window_gated": {
+        "accepted_correct": 535164,
+        "coverage": 0.9690688999296407,
+        "fallback_errors": 2054,
+        "false_reject_legit": 16195,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 538530,
+        "n_blocked": 17189,
+        "n_fallback": 17189,
+        "precision": 0.2425719226536708,
+        "recall": 0.7193473193473193,
+        "wrong_confident": 5353
+      }
+    },
+    "B_amount_1.1": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 3530,
+        "wrong_type": 0
+      },
+      "n_total": 555719,
+      "perturbation_class": "B_not_designed_for_primary",
+      "psi_max": 0.083,
+      "row_gated": {
+        "accepted_correct": 548529,
+        "coverage": 0.993647868797,
+        "fallback_errors": 2037,
+        "false_reject_legit": 2553,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 552189,
+        "n_blocked": 3530,
+        "n_fallback": 3530,
+        "precision": 0.23301262778111845,
+        "recall": 0.7226107226107226,
+        "wrong_confident": 5586
+      },
+      "ungated": {
+        "accepted_correct": 549506,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 555719,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.23680124223602483,
+        "recall": 0.8531468531468531,
+        "wrong_confident": 5913
+      },
+      "window_blocked": false,
+      "window_gated": {
+        "accepted_correct": 548529,
+        "coverage": 0.993647868797,
+        "fallback_errors": 2037,
+        "false_reject_legit": 2553,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 552189,
+        "n_blocked": 3530,
+        "n_fallback": 3530,
+        "precision": 0.23301262778111845,
+        "recall": 0.7226107226107226,
+        "wrong_confident": 5586
+      }
+    },
+    "B_amount_1.25": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 3805,
+        "wrong_type": 0
+      },
+      "n_total": 555719,
+      "perturbation_class": "B_not_designed_for_primary",
+      "psi_max": 0.083,
+      "row_gated": {
+        "accepted_correct": 547396,
+        "coverage": 0.9931530143831685,
+        "fallback_errors": 2039,
+        "false_reject_legit": 2826,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 551914,
+        "n_blocked": 3805,
+        "n_fallback": 3805,
+        "precision": 0.20586666666666667,
+        "recall": 0.7198135198135198,
+        "wrong_confident": 6083
+      },
+      "ungated": {
+        "accepted_correct": 548380,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 555719,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.20642098123445626,
+        "recall": 0.8512820512820513,
+        "wrong_confident": 6668
+      },
+      "window_blocked": false,
+      "window_gated": {
+        "accepted_correct": 547396,
+        "coverage": 0.9931530143831685,
+        "fallback_errors": 2039,
+        "false_reject_legit": 2826,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 551914,
+        "n_blocked": 3805,
+        "n_fallback": 3805,
+        "precision": 0.20586666666666667,
+        "recall": 0.7198135198135198,
+        "wrong_confident": 6083
+      }
+    },
+    "B_amount_1.5": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 4488,
+        "wrong_type": 0
+      },
+      "n_total": 555719,
+      "perturbation_class": "B_not_designed_for_primary",
+      "psi_max": 0.083,
+      "row_gated": {
+        "accepted_correct": 545134,
+        "coverage": 0.9919239759662707,
+        "fallback_errors": 2054,
+        "false_reject_legit": 3494,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 551231,
+        "n_blocked": 4488,
+        "n_fallback": 4488,
+        "precision": 0.1689084895259096,
+        "recall": 0.7142191142191142,
+        "wrong_confident": 7160
+      },
+      "ungated": {
+        "accepted_correct": 546144,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 555719,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.16495310245310246,
+        "recall": 0.8526806526806526,
+        "wrong_confident": 8382
+      },
+      "window_blocked": false,
+      "window_gated": {
+        "accepted_correct": 545134,
+        "coverage": 0.9919239759662707,
+        "fallback_errors": 2054,
+        "false_reject_legit": 3494,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 551231,
+        "n_blocked": 4488,
+        "n_fallback": 4488,
+        "precision": 0.1689084895259096,
+        "recall": 0.7142191142191142,
+        "wrong_confident": 7160
+      }
+    },
+    "B_hour": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 3376,
+        "wrong_type": 0
+      },
+      "n_total": 555719,
+      "perturbation_class": "B_not_designed_for_primary",
+      "psi_max": 0.083,
+      "row_gated": {
+        "accepted_correct": 544490,
+        "coverage": 0.9939249872687456,
+        "fallback_errors": 2025,
+        "false_reject_legit": 2411,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 552343,
+        "n_blocked": 3376,
+        "n_fallback": 3376,
+        "precision": 0.13847592332865824,
+        "recall": 0.6904428904428904,
+        "wrong_confident": 9418
+      },
+      "ungated": {
+        "accepted_correct": 545456,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 555719,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.15056818181818182,
+        "recall": 0.8153846153846154,
+        "wrong_confident": 9584
+      },
+      "window_blocked": false,
+      "window_gated": {
+        "accepted_correct": 544490,
+        "coverage": 0.9939249872687456,
+        "fallback_errors": 2025,
+        "false_reject_legit": 2411,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 552343,
+        "n_blocked": 3376,
+        "n_fallback": 3376,
+        "precision": 0.13847592332865824,
+        "recall": 0.6904428904428904,
+        "wrong_confident": 9418
+      }
+    },
+    "B_noise_0.25": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 3381,
+        "wrong_type": 0
+      },
+      "n_total": 555719,
+      "perturbation_class": "B_not_designed_for_primary",
+      "psi_max": 0.083,
+      "row_gated": {
+        "accepted_correct": 545834,
+        "coverage": 0.9939159899157668,
+        "fallback_errors": 2022,
+        "false_reject_legit": 2419,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 552338,
+        "n_blocked": 3381,
+        "n_fallback": 3381,
+        "precision": 0.16334283000949668,
+        "recall": 0.7216783216783217,
+        "wrong_confident": 7004
+      },
+      "ungated": {
+        "accepted_correct": 546801,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 555719,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.17434368689297047,
+        "recall": 0.8452214452214453,
+        "wrong_confident": 7222
+      },
+      "window_blocked": false,
+      "window_gated": {
+        "accepted_correct": 545834,
+        "coverage": 0.9939159899157668,
+        "fallback_errors": 2022,
+        "false_reject_legit": 2419,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 552338,
+        "n_blocked": 3381,
+        "n_fallback": 3381,
+        "precision": 0.16334283000949668,
+        "recall": 0.7216783216783217,
+        "wrong_confident": 7004
+      }
+    },
+    "B_noise_0.5": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 5629,
+        "wrong_type": 0
+      },
+      "n_total": 555719,
+      "perturbation_class": "B_not_designed_for_primary",
+      "psi_max": 0.083,
+      "row_gated": {
+        "accepted_correct": 540051,
+        "coverage": 0.9898707800165192,
+        "fallback_errors": 2021,
+        "false_reject_legit": 4669,
+        "frauds_caught_by_fallback": 696,
+        "n_accepted": 550090,
+        "n_blocked": 5629,
+        "n_fallback": 5629,
+        "precision": 0.11891767238065955,
+        "recall": 0.7212121212121212,
+        "wrong_confident": 9176
+      },
+      "ungated": {
+        "accepted_correct": 543128,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 555719,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.12862627986348124,
+        "recall": 0.8433566433566434,
+        "wrong_confident": 9488
+      },
+      "window_blocked": false,
+      "window_gated": {
+        "accepted_correct": 540051,
+        "coverage": 0.9898707800165192,
+        "fallback_errors": 2021,
+        "false_reject_legit": 4669,
+        "frauds_caught_by_fallback": 696,
+        "n_accepted": 550090,
+        "n_blocked": 5629,
+        "n_fallback": 5629,
+        "precision": 0.11891767238065955,
+        "recall": 0.7212121212121212,
+        "wrong_confident": 9176
+      }
+    },
+    "B_noise_1.0": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 23007,
+        "wrong_type": 0
+      },
+      "n_total": 555719,
+      "perturbation_class": "B_not_designed_for_primary",
+      "psi_max": 0.083,
+      "row_gated": {
+        "accepted_correct": 516731,
+        "coverage": 0.958613975768329,
+        "fallback_errors": 2016,
+        "false_reject_legit": 22041,
+        "frauds_caught_by_fallback": 687,
+        "n_accepted": 532720,
+        "n_blocked": 22999,
+        "n_fallback": 22999,
+        "precision": 0.08126518111733023,
+        "recall": 0.7174825174825175,
+        "wrong_confident": 13060
+      },
+      "ungated": {
+        "accepted_correct": 535391,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 555719,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.08255659121171771,
+        "recall": 0.8382284382284382,
+        "wrong_confident": 14391
+      },
+      "window_blocked": false,
+      "window_gated": {
+        "accepted_correct": 516731,
+        "coverage": 0.958613975768329,
+        "fallback_errors": 2016,
+        "false_reject_legit": 22041,
+        "frauds_caught_by_fallback": 687,
+        "n_accepted": 532720,
+        "n_blocked": 22999,
+        "n_fallback": 22999,
+        "precision": 0.08126518111733023,
+        "recall": 0.7174825174825175,
+        "wrong_confident": 13060
+      }
+    },
+    "clean": {
+      "gate_reasons": {
+        "missing": 0,
+        "non_finite": 0,
+        "out_of_range": 3376,
+        "wrong_type": 0
+      },
+      "n_total": 555719,
+      "perturbation_class": "A_designed_for",
+      "psi_max": 0.083,
+      "row_gated": {
+        "accepted_correct": 548897,
+        "coverage": 0.9939249872687456,
+        "fallback_errors": 2025,
+        "false_reject_legit": 2411,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 552343,
+        "n_blocked": 3376,
+        "n_fallback": 3376,
+        "precision": 0.24225046497210168,
+        "recall": 0.7286713286713287,
+        "wrong_confident": 5403
+      },
+      "ungated": {
+        "accepted_correct": 549863,
+        "coverage": 1.0,
+        "fallback_errors": 0,
+        "false_reject_legit": 0,
+        "frauds_caught_by_fallback": 0,
+        "n_accepted": 555719,
+        "n_blocked": 0,
+        "n_fallback": 0,
+        "precision": 0.24833853248338533,
+        "recall": 0.8536130536130536,
+        "wrong_confident": 5606
+      },
+      "window_blocked": false,
+      "window_gated": {
+        "accepted_correct": 548897,
+        "coverage": 0.9939249872687456,
+        "fallback_errors": 2025,
+        "false_reject_legit": 2411,
+        "frauds_caught_by_fallback": 697,
+        "n_accepted": 552343,
+        "n_blocked": 3376,
+        "n_fallback": 3376,
+        "precision": 0.24225046497210168,
+        "recall": 0.7286713286713287,
+        "wrong_confident": 5403
+      }
+    }
+  },
+  "contract": {
+    "bounds": {
+      "age": {
+        "hi": 140.21081451060917,
+        "lo": -32.40520191649554
+      },
+      "amt": {
+        "hi": 691.3116000000016,
+        "lo": -145.56
+      },
+      "category_code": {
+        "hi": 27.0,
+        "lo": -14.0
+      },
+      "dist_km": {
+        "hi": 218.38187179432805,
+        "lo": -75.20227483263662
+      },
+      "dow": {
+        "hi": 14.0,
+        "lo": -8.0
+      },
+      "hour": {
+        "hi": 47.0,
+        "lo": -24.0
+      },
+      "is_weekend": {
+        "hi": 3.0,
+        "lo": -2.0
+      },
+      "log_amt": {
+        "hi": 10.435270157766489,
+        "lo": -3.3182179385980577
+      },
+      "log_city_pop": {
+        "hi": 20.90150803454856,
+        "lo": -2.6412443834421673
+      }
+    },
+    "fallback_amount_threshold": 839.493200000003,
+    "source": "TRAIN window only (q01/q99 \u00b1 2\u00b7IQR)"
+  },
+  "dataset": {
+    "name": "kaggle",
+    "note": "9-feature dataset-appropriate representation; category codes fit on TRAIN only; fraudTest is the natural chronological final test (already exposed \u2014 exploratory only)",
+    "path": "data\\kaggle_fraud\\fraudTrain.csv",
+    "sha256": "fd7139200dbfcbed0b6742bbe05a4f1abce532c4fef20918228a651647a3e75d"
+  },
+  "definitions": {
+    "class_A": "NaN / +Inf / clearly out-of-range / wrong-type: 10% of test rows total (4 kinds \u00d7 2.5%), one random feature per row \u2014 SECONDARY evidence",
+    "class_B": "in-range subtle shifts on 30% of rows: Gaussian noise \u03c3\u2208(0.25, 0.5, 1.0)\u00d7train-std on top-3-variance features; amount \u00d7(1.1, 1.25, 1.5); cyclic hour +3h \u2014 PRIMARY exploratory investigation; magnitudes fixed a priori, full range recorded (never tuned to outcomes)",
+    "confident": "ML confident iff p >= 0.8 or p <= 0.2 (NR-05 exploratory definition; plan \u00a75.3 remains [TO BE FROZEN])",
+    "fallback": "amount > train q99.5 \u2192 FRAUD, else LEGIT (train-only rule; rules are always 'confident')",
+    "gated": "(component 1) row-level contract enforcement \u2014 Phase-41 semantics, TRAIN-window bounds; (component 2) window-level PSI gate (block if any feature PSI >= 0.25). Reported SEPARATELY as row_gated and window_gated (plan \u00a75.0); ungated = both bypassed",
+    "labels": "never modified; wrong decisions judged against original labels",
+    "ungated": "SAME model/preprocessing/imputation/inputs/population with both gates bypassed; invalid inputs scored via frozen median imputation (never crashes)",
+    "window_block_rule": "PSI >= 0.25 on \u22651 feature \u2192 entire window falls back (psi.py standard ALERT threshold, reused unchanged)"
+  },
+  "experiment_id": "nr05_kaggle_gating",
+  "exploratory": true,
+  "model_artifacts": "reports\\nr05\\artifacts\\nr05_kaggle_discrimination",
+  "non_independent": true,
+  "summary": {
+    "classA": {
+      "conditions": 4,
+      "row_gate_block_rates": {
+        "A_inf": 0.030916704305593345,
+        "A_nan": 0.03093469901155077,
+        "A_oor": 0.03090950642321033,
+        "A_type": 0.030931100070359263
+      },
+      "windows_blocked": {
+        "A_inf": false,
+        "A_nan": false,
+        "A_oor": false,
+        "A_type": false
+      }
+    },
+    "classB": {
+      "conditions": 7,
+      "row_gate": {
+        "better": 7,
+        "equal": 0,
+        "min_coverage": 0.958613975768329,
+        "recall_deltas": {
+          "B_amount_1.1": -0.13053613053613056,
+          "B_amount_1.25": -0.13146853146853144,
+          "B_amount_1.5": -0.1384615384615384,
+          "B_hour": -0.12494172494172495,
+          "B_noise_0.25": -0.12354312354312358,
+          "B_noise_0.5": -0.1221445221445222,
+          "B_noise_1.0": -0.12074592074592072
+        },
+        "worse": 0
+      },
+      "window_gate": {
+        "better": 7,
+        "equal": 0,
+        "min_coverage": 0.958613975768329,
+        "windows_blocked": 0,
+        "worse": 0
+      }
+    },
+    "clean": {
+      "row_gated": {
+        "coverage": 0.9939249872687456,
+        "false_reject_legit": 2411,
+        "recall": 0.7286713286713287,
+        "wrong_confident": 5403
+      },
+      "ungated": {
+        "recall": 0.8536130536130536,
+        "wrong_confident": 5606
+      },
+      "window_gated": {
+        "coverage": 0.9939249872687456,
+        "recall": 0.7286713286713287,
+        "window_blocked": false,
+        "wrong_confident": 5403
+      }
+    }
+  },
+  "threshold": {
+    "source": "CAL window @1%FPR (re-derived, identical)",
+    "value": 0.006655666997569969
+  }
+}

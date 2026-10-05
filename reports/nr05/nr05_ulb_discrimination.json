@@ -1,0 +1,485 @@
+{
+  "bootstrap_iid_ref": {
+    "ci_high": 0.9845,
+    "ci_low": 0.9326,
+    "level": 0.95,
+    "method": "percentile bootstrap",
+    "metric": "roc_auc",
+    "n_bootstrap": 300,
+    "point_estimate": 0.9588,
+    "resampling_unit": "observation (stratified by class)",
+    "seed": 42,
+    "withheld_reason": null
+  },
+  "bootstraps": {
+    "dependence_aware": {
+      "label": "EXPLORATORY \u2014 METHOD NOT YET FROZEN: dependence-aware resampling for diagnosis only; not a confirmatory CI | temporal block bootstrap (20 contiguous time blocks, blocks sampled with replacement)",
+      "main_roc_auc": {
+        "ci_high": 0.9814272061552402,
+        "ci_low": 0.9203451917999773,
+        "n_valid": 300,
+        "point": 0.9588297267682717
+      },
+      "mode": "block",
+      "n_bootstrap": 300,
+      "paired_delta_vs_lr": {
+        "ci_high": 0.0040698138322830014,
+        "ci_low": -0.04081246707753429,
+        "n_valid": 300,
+        "point": -0.015045265174820077
+      },
+      "paired_delta_vs_xgb": {
+        "ci_high": -0.003614770063734191,
+        "ci_low": -0.030771241046097388,
+        "n_valid": 300,
+        "point": -0.014549545590380797
+      },
+      "seed": 42
+    },
+    "iid": {
+      "label": "EXPLORATORY \u2014 METHOD NOT YET FROZEN: dependence-aware resampling for diagnosis only; not a confirmatory CI | IID stratified row bootstrap (baseline for contrast only \u2014 NOT the confirmatory default)",
+      "main_roc_auc": {
+        "ci_high": 0.9832872302400665,
+        "ci_low": 0.9286113464704883,
+        "n_valid": 300,
+        "point": 0.9588297267682717
+      },
+      "mode": "iid",
+      "n_bootstrap": 300,
+      "paired_delta_vs_lr": {
+        "ci_high": 0.010777365654718972,
+        "ci_low": -0.037906498848594636,
+        "n_valid": 300,
+        "point": -0.015045265174820077
+      },
+      "paired_delta_vs_xgb": {
+        "ci_high": -0.001812675420863732,
+        "ci_low": -0.02975561493252698,
+        "n_valid": 300,
+        "point": -0.014549545590380797
+      },
+      "seed": 42
+    }
+  },
+  "business": {
+    "top1pct": {
+      "alerts": 569,
+      "alerts_per_day": 1784.8388033691547,
+      "recall": 0.8266666666666667,
+      "window_days": 0.3187962962962963
+    },
+    "top5pct": {
+      "alerts": 2848,
+      "alerts_per_day": 8933.604414754574,
+      "recall": 0.8533333333333334,
+      "window_days": 0.3187962962962963
+    }
+  },
+  "calibration": {
+    "cal_n": 56961,
+    "cal_positives": 57,
+    "ensemble_platt": {
+      "brier": 0.000502967722807061,
+      "ece": 0.0003340801425981246
+    },
+    "ensemble_raw": {
+      "brier": 0.0026578198845011295,
+      "ece": 0.039121439840126566
+    },
+    "lr": {
+      "brier": 0.0006573681774310132,
+      "ece": 0.0005988396672732025
+    },
+    "method": "PlattCalibration (2-param sigmoid) fit on CAL window only",
+    "note": "No historical calibration numbers reused \u2014 all values executed here.",
+    "reliability_platt": [
+      {
+        "bin_lower": 0.0,
+        "bin_upper": 0.1,
+        "count": 56891,
+        "fraction_positive": 0.0003515494542194723,
+        "mean_predicted": 0.00017620179486072017
+      },
+      {
+        "bin_lower": 0.1,
+        "bin_upper": 0.2,
+        "count": 3,
+        "fraction_positive": 0.6666666666666666,
+        "mean_predicted": 0.12185275929762894
+      },
+      {
+        "bin_lower": 0.2,
+        "bin_upper": 0.30000000000000004,
+        "count": 2,
+        "fraction_positive": 0.0,
+        "mean_predicted": 0.22827634918716488
+      },
+      {
+        "bin_lower": 0.30000000000000004,
+        "bin_upper": 0.4,
+        "count": 3,
+        "fraction_positive": 0.0,
+        "mean_predicted": 0.3326601020319077
+      },
+      {
+        "bin_lower": 0.4,
+        "bin_upper": 0.5,
+        "count": 2,
+        "fraction_positive": 0.0,
+        "mean_predicted": 0.43817157272579654
+      },
+      {
+        "bin_lower": 0.5,
+        "bin_upper": 0.6000000000000001,
+        "count": 2,
+        "fraction_positive": 0.5,
+        "mean_predicted": 0.5366400694716782
+      },
+      {
+        "bin_lower": 0.6000000000000001,
+        "bin_upper": 0.7000000000000001,
+        "count": 5,
+        "fraction_positive": 0.6,
+        "mean_predicted": 0.6596708637674273
+      },
+      {
+        "bin_lower": 0.7000000000000001,
+        "bin_upper": 0.8,
+        "count": 3,
+        "fraction_positive": 1.0,
+        "mean_predicted": 0.7404436447886487
+      },
+      {
+        "bin_lower": 0.8,
+        "bin_upper": 0.9,
+        "count": 4,
+        "fraction_positive": 0.75,
+        "mean_predicted": 0.8530624966075369
+      },
+      {
+        "bin_lower": 0.9,
+        "bin_upper": 1.0,
+        "count": 47,
+        "fraction_positive": 0.9148936170212766,
+        "mean_predicted": 0.9899212343025989
+      }
+    ],
+    "test_n": 56962,
+    "test_positives": 75,
+    "xgb": {
+      "brier": 0.0004993722982746817,
+      "ece": 0.00042975779051209644
+    }
+  },
+  "classification": "EXPLORATORY \u2014 previously exposed dataset; NOT confirmatory Track M evidence; NOT independent replication",
+  "dataset": {
+    "name": "ulb",
+    "note": "ULB PCA feature representation; Time = seconds from first transaction (chronological order, no calendar semantics); entity ids absent \u2192 entity-disjoint NOT APPLICABLE",
+    "path": "data\\creditcard.csv",
+    "sha256": "76274b691b16a6c49d3f159c883398e03ccd6d1ee12d9d8ee38f4b4b98551a89"
+  },
+  "ensemble_platt": {
+    "alerts_top1pct": 569,
+    "alerts_top5pct": 2848,
+    "fn": 14,
+    "fp": 400,
+    "pr_auc": 0.7111356345674871,
+    "precision_at_thr": 0.13232104121475055,
+    "prevalence": {
+      "negative_count": 56887,
+      "note": "Accuracy is reported (if at all) as a SECONDARY metric: with fraud prevalence p, a trivial always-legit classifier achieves accuracy 1-p, so accuracy is dominated by the majority class and must not be read as detection effectiveness.",
+      "positive_count": 75,
+      "prevalence": 0.001316667251852112,
+      "total": 56962
+    },
+    "recall_at_1pct_fpr": 0.8133333333333334,
+    "recall_at_thr": 0.8133333333333334,
+    "recall_at_top1pct": 0.8266666666666667,
+    "recall_at_top5pct": 0.8533333333333334,
+    "roc_auc": 0.9588297267682717,
+    "small_sample_warnings": [
+      "HEAVY_IMBALANCE: prevalence below 1% \u2014 accuracy is meaningless as a headline metric; rely on PR-AUC and recall at a stated FPR operating point."
+    ],
+    "threshold": 0.001515165708293356,
+    "tn": 56487,
+    "tp": 61
+  },
+  "ensemble_raw": {
+    "alerts_top1pct": 569,
+    "alerts_top5pct": 2848,
+    "fn": 0,
+    "fp": 56887,
+    "pr_auc": 0.7111356345674871,
+    "precision_at_thr": 0.001316667251852112,
+    "prevalence": {
+      "negative_count": 56887,
+      "note": "Accuracy is reported (if at all) as a SECONDARY metric: with fraud prevalence p, a trivial always-legit classifier achieves accuracy 1-p, so accuracy is dominated by the majority class and must not be read as detection effectiveness.",
+      "positive_count": 75,
+      "prevalence": 0.001316667251852112,
+      "total": 56962
+    },
+    "recall_at_1pct_fpr": 1.0,
+    "recall_at_thr": 1.0,
+    "recall_at_top1pct": 0.8266666666666667,
+    "recall_at_top5pct": 0.8533333333333334,
+    "roc_auc": 0.9588297267682717,
+    "small_sample_warnings": [
+      "HEAVY_IMBALANCE: prevalence below 1% \u2014 accuracy is meaningless as a headline metric; rely on PR-AUC and recall at a stated FPR operating point."
+    ],
+    "threshold": 0.001515165708293356,
+    "tn": 0,
+    "tp": 75
+  },
+  "experiment_id": "nr05_ulb_discrimination",
+  "exploratory": true,
+  "features": [
+    "V1",
+    "V2",
+    "V3",
+    "V4",
+    "V5",
+    "V6",
+    "V7",
+    "V8",
+    "V9",
+    "V10",
+    "V11",
+    "V12",
+    "V13",
+    "V14",
+    "V15",
+    "V16",
+    "V17",
+    "V18",
+    "V19",
+    "V20",
+    "V21",
+    "V22",
+    "V23",
+    "V24",
+    "V25",
+    "V26",
+    "V27",
+    "V28",
+    "Amount",
+    "LogAmount"
+  ],
+  "headline": {
+    "brier": 0.000502967722807061,
+    "ece": 0.0003340801425981246,
+    "pr_auc": 0.7111356345674871,
+    "recall_at_1pct_fpr": 0.8133333333333334,
+    "roc_auc": 0.9588297267682717,
+    "test_n": 56962,
+    "test_pos": 75
+  },
+  "label": "Class",
+  "member_metrics": {
+    "if": {
+      "alerts_top1pct": 569,
+      "alerts_top5pct": 2848,
+      "fn": 0,
+      "fp": 56887,
+      "pr_auc": 0.03544719693059224,
+      "precision_at_thr": 0.001316667251852112,
+      "prevalence": {
+        "negative_count": 56887,
+        "note": "Accuracy is reported (if at all) as a SECONDARY metric: with fraud prevalence p, a trivial always-legit classifier achieves accuracy 1-p, so accuracy is dominated by the majority class and must not be read as detection effectiveness.",
+        "positive_count": 75,
+        "prevalence": 0.001316667251852112,
+        "total": 56962
+      },
+      "recall_at_1pct_fpr": 1.0,
+      "recall_at_thr": 1.0,
+      "recall_at_top1pct": 0.38666666666666666,
+      "recall_at_top5pct": 0.8133333333333334,
+      "roc_auc": 0.9444107323875988,
+      "small_sample_warnings": [
+        "HEAVY_IMBALANCE: prevalence below 1% \u2014 accuracy is meaningless as a headline metric; rely on PR-AUC and recall at a stated FPR operating point."
+      ],
+      "threshold": 0.001515165708293356,
+      "tn": 0,
+      "tp": 75
+    },
+    "lr": {
+      "alerts_top1pct": 569,
+      "alerts_top5pct": 2848,
+      "fn": 6,
+      "fp": 5294,
+      "pr_auc": 0.7002407227337982,
+      "precision_at_thr": 0.01286593324631736,
+      "prevalence": {
+        "negative_count": 56887,
+        "note": "Accuracy is reported (if at all) as a SECONDARY metric: with fraud prevalence p, a trivial always-legit classifier achieves accuracy 1-p, so accuracy is dominated by the majority class and must not be read as detection effectiveness.",
+        "positive_count": 75,
+        "prevalence": 0.001316667251852112,
+        "total": 56962
+      },
+      "recall_at_1pct_fpr": 0.92,
+      "recall_at_thr": 0.92,
+      "recall_at_top1pct": 0.8666666666666667,
+      "recall_at_top5pct": 0.8933333333333333,
+      "roc_auc": 0.9738749919430918,
+      "small_sample_warnings": [
+        "HEAVY_IMBALANCE: prevalence below 1% \u2014 accuracy is meaningless as a headline metric; rely on PR-AUC and recall at a stated FPR operating point."
+      ],
+      "threshold": 0.001515165708293356,
+      "tn": 51593,
+      "tp": 69
+    },
+    "rf": {
+      "alerts_top1pct": 569,
+      "alerts_top5pct": 2848,
+      "fn": 8,
+      "fp": 5152,
+      "pr_auc": 0.7843110527658557,
+      "precision_at_thr": 0.01283770837325158,
+      "prevalence": {
+        "negative_count": 56887,
+        "note": "Accuracy is reported (if at all) as a SECONDARY metric: with fraud prevalence p, a trivial always-legit classifier achieves accuracy 1-p, so accuracy is dominated by the majority class and must not be read as detection effectiveness.",
+        "positive_count": 75,
+        "prevalence": 0.001316667251852112,
+        "total": 56962
+      },
+      "recall_at_1pct_fpr": 0.8933333333333333,
+      "recall_at_thr": 0.8933333333333333,
+      "recall_at_top1pct": 0.84,
+      "recall_at_top5pct": 0.8933333333333333,
+      "roc_auc": 0.9396260422709347,
+      "small_sample_warnings": [
+        "HEAVY_IMBALANCE: prevalence below 1% \u2014 accuracy is meaningless as a headline metric; rely on PR-AUC and recall at a stated FPR operating point."
+      ],
+      "threshold": 0.001515165708293356,
+      "tn": 51735,
+      "tp": 67
+    },
+    "xgb": {
+      "alerts_top1pct": 569,
+      "alerts_top5pct": 2848,
+      "fn": 11,
+      "fp": 242,
+      "pr_auc": 0.7710141876549135,
+      "precision_at_thr": 0.20915032679738563,
+      "prevalence": {
+        "negative_count": 56887,
+        "note": "Accuracy is reported (if at all) as a SECONDARY metric: with fraud prevalence p, a trivial always-legit classifier achieves accuracy 1-p, so accuracy is dominated by the majority class and must not be read as detection effectiveness.",
+        "positive_count": 75,
+        "prevalence": 0.001316667251852112,
+        "total": 56962
+      },
+      "recall_at_1pct_fpr": 0.8533333333333334,
+      "recall_at_thr": 0.8533333333333334,
+      "recall_at_top1pct": 0.88,
+      "recall_at_top5pct": 0.8933333333333333,
+      "roc_auc": 0.9733792723586525,
+      "small_sample_warnings": [
+        "HEAVY_IMBALANCE: prevalence below 1% \u2014 accuracy is meaningless as a headline metric; rely on PR-AUC and recall at a stated FPR operating point."
+      ],
+      "threshold": 0.001515165708293356,
+      "tn": 56645,
+      "tp": 64
+    }
+  },
+  "models": {
+    "configs": "fixed a priori \u2014 no hyperparameter search",
+    "ensemble": "mean(lr,rf,xgb,if) \u2192 Platt on cal",
+    "members": [
+      "lr",
+      "rf",
+      "xgb",
+      "if"
+    ]
+  },
+  "n": {
+    "cal": 56961,
+    "cal_pos": 57,
+    "test": 56962,
+    "test_pos": 75,
+    "train": 170884,
+    "train_pos": 360
+  },
+  "non_independent": true,
+  "prevalence_test": {
+    "negative_count": 56887,
+    "note": "Accuracy is reported (if at all) as a SECONDARY metric: with fraud prevalence p, a trivial always-legit classifier achieves accuracy 1-p, so accuracy is dominated by the majority class and must not be read as detection effectiveness.",
+    "positive_count": 75,
+    "prevalence": 0.001316667251852112,
+    "total": 56962
+  },
+  "seed": 42,
+  "segments": {
+    "q1": {
+      "amount_range": [
+        0.0,
+        5.48
+      ],
+      "n": 15697,
+      "positives": 40,
+      "pr_auc": 0.8555305419948283,
+      "roc_auc": 0.9897697515488281
+    },
+    "q2": {
+      "amount_range": [
+        5.48,
+        21.895
+      ],
+      "n": 14992,
+      "positives": 9,
+      "pr_auc": 0.347158354293262,
+      "roc_auc": 0.9129457829985094
+    },
+    "q3": {
+      "amount_range": [
+        21.895,
+        76.7225
+      ],
+      "n": 13674,
+      "positives": 8,
+      "pr_auc": 0.8751186802753382,
+      "roc_auc": 0.9230023415776379
+    },
+    "q4": {
+      "amount_range": [
+        76.7225,
+        19656.53
+      ],
+      "n": 12599,
+      "positives": 18,
+      "pr_auc": 0.6346145338103756,
+      "roc_auc": 0.9146640878220245
+    }
+  },
+  "split": "temporal (sorted by time): 60/20/20",
+  "threshold": {
+    "applied": "test unchanged",
+    "source": "CAL window only (threshold_at_fpr_on_validation)",
+    "target_fpr": 0.01,
+    "value": 0.001515165708293356
+  },
+  "time_quartiles": {
+    "w1": {
+      "n": 14241,
+      "positives": 23,
+      "pr_auc": 0.8586288064335207,
+      "roc_auc": 0.9934192419896395
+    },
+    "w2": {
+      "n": 14240,
+      "positives": 30,
+      "pr_auc": 0.7424095210632633,
+      "roc_auc": 0.9543115177105325
+    },
+    "w3": {
+      "n": 14240,
+      "positives": 11,
+      "pr_auc": 0.8197414059254233,
+      "roc_auc": 0.9820596860445058
+    },
+    "w4": {
+      "n": 14241,
+      "positives": 11,
+      "pr_auc": 0.3441149993509755,
+      "roc_auc": 0.8788155625119786
+    }
+  }
+}

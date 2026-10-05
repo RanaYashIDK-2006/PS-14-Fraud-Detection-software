@@ -1,0 +1,140 @@
+{
+  "artifact_file_hashes": {
+    "if.joblib": "216e323e0dbc172bd2a9353848edc6b0a85012bf2aec0b9de5f942a24880363b",
+    "lr.joblib": "edb5cbc5b3bb845db5d2abd90ac367fe6f52fca8224044483989cbc36d72511e",
+    "pipeline_state.joblib": "e1445114599dc01db70fc7e6a89a06a473f7b56d5d232ac0273cae3e1d944e27",
+    "platt.joblib": "56c3e3b4f250a94bcef2b9793861fba17ea9f32553d19d37cde717e6027cbcef",
+    "rf.joblib": "2b6f9fb4fe0d824519467e95af2c1439c9d4ee165f88e4b06376ffedfe6fcccd",
+    "xgb.joblib": "6892ba2445d6b5556f49870252315ca72f43e53ac128e1c470eebac8a9c2608f"
+  },
+  "command": "python backend/scripts/nr05_diagnostics.py",
+  "dataset": {
+    "exists": true,
+    "path": "C:\\Users\\Rana Yash Singh\\OneDrive\\Documents\\Project\\data\\creditcard.csv",
+    "sha256": "76274b691b16a6c49d3f159c883398e03ccd6d1ee12d9d8ee38f4b4b98551a89",
+    "size_bytes": 150828752
+  },
+  "evaluation_config": {
+    "exploratory": true,
+    "exposure": "PREVIOUSLY EXPLORATORY/EXPOSED",
+    "features": [
+      "V1",
+      "V2",
+      "V3",
+      "V4",
+      "V5",
+      "V6",
+      "V7",
+      "V8",
+      "V9",
+      "V10",
+      "V11",
+      "V12",
+      "V13",
+      "V14",
+      "V15",
+      "V16",
+      "V17",
+      "V18",
+      "V19",
+      "V20",
+      "V21",
+      "V22",
+      "V23",
+      "V24",
+      "V25",
+      "V26",
+      "V27",
+      "V28",
+      "Amount",
+      "LogAmount"
+    ],
+    "metric_definitions_version": "1.0",
+    "n_boot": 300,
+    "non_independent": true,
+    "note": "ULB PCA feature representation; Time = seconds from first transaction (chronological order, no calendar semantics); entity ids absent \u2192 entity-disjoint NOT APPLICABLE",
+    "script": "backend/scripts/nr05_diagnostics.py",
+    "seed": 42,
+    "split": "temporal (sorted by time): 60/20/20"
+  },
+  "evaluation_id": "eval-20261004T105308+0000-2fc57be9b303",
+  "feature_schema_version": "nr05_ulb_features_v1",
+  "git_commit": "5a5ff55cc03df73318fdf31a16e3665f159a4720",
+  "metric_definitions_version": "1.0",
+  "metrics": {
+    "bootstraps": {
+      "dependence_aware": {
+        "ci_high": 0.9814272061552402,
+        "ci_low": 0.9203451917999773,
+        "n_valid": 300,
+        "point": 0.9588297267682717
+      },
+      "iid": {
+        "ci_high": 0.9832872302400665,
+        "ci_low": 0.9286113464704883,
+        "n_valid": 300,
+        "point": 0.9588297267682717
+      }
+    },
+    "calibration": {
+      "brier": 0.000502967722807061,
+      "cal_n": 56961,
+      "ece": 0.0003340801425981246
+    },
+    "ensemble_platt": {
+      "fn": 14,
+      "fp": 400,
+      "pr_auc": 0.7111356345674871,
+      "recall_at_1pct_fpr": 0.8133333333333334,
+      "roc_auc": 0.9588297267682717,
+      "tn": 56487,
+      "tp": 61
+    },
+    "headline": {
+      "brier": 0.000502967722807061,
+      "ece": 0.0003340801425981246,
+      "pr_auc": 0.7111356345674871,
+      "recall_at_1pct_fpr": 0.8133333333333334,
+      "roc_auc": 0.9588297267682717,
+      "test_n": 56962,
+      "test_pos": 75
+    },
+    "lr": {
+      "pr_auc": 0.7002407227337982,
+      "recall_at_1pct_fpr": 0.92,
+      "roc_auc": 0.9738749919430918
+    },
+    "xgb": {
+      "pr_auc": 0.7710141876549135,
+      "recall_at_1pct_fpr": 0.8533333333333334,
+      "roc_auc": 0.9733792723586525
+    }
+  },
+  "model_hash": "39d44118af2e42487d6bdb3b64afa4adb1e218ba0b0521c0f30f822a9a6b9d45",
+  "model_identifier": "nr05_ulb_discrimination",
+  "preprocessing_version": "median_impute_fit_on_train",
+  "record_version": "1.1",
+  "seed": 42,
+  "software": {
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "scipy": "1.18.0",
+    "sklearn": "1.9.0",
+    "xgboost": "3.4.1"
+  },
+  "status": "COMPLETED",
+  "threshold": 0.001515165708293356,
+  "threshold_source": "validation",
+  "timestamp_utc": "2026-10-04T10:53:08+00:00",
+  "training_dataset": null,
+  "warnings": [
+    "EXPLORATORY: previously exposed dataset \u2014 not confirmatory Track M evidence",
+    "NON-INDEPENDENT: prior project exposure (see DATASET_EXPOSURE_LEDGER.md)",
+    "single seed 42 \u2014 \u00a718 minimum-seed rule is [TO BE FROZEN]",
+    "dependence-aware CIs are EXPLORATORY \u2014 METHOD NOT YET FROZEN",
+    "baseline identity (LR vs XGB) is [TO BE FROZEN] in plan \u00a73 \u2014 both reported",
+    "HEAVY_IMBALANCE: prevalence below 1% \u2014 accuracy is meaningless as a headline metric; rely on PR-AUC and recall at a stated FPR operating point."
+  ]
+}
