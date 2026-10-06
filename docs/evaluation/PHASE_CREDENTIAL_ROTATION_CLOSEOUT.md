@@ -149,7 +149,9 @@ and SAST steps executed on the rotated configuration rather than only locally. B
 at 2026-10-06T05:54:19Z and completed successfully (CI/CD at 06:05:10Z).
 
 The documentation-only commit that carries this record is pushed to the same branch and therefore runs the same two
-workflows; its outcome is the last entry reported with this hand-off, and no later commit follows it in this phase.
+workflows; its outcome is the last CI result reported with this hand-off. Every commit after `28d0935` is
+non-code — this CI record plus hook-generated evaluation-run records — so the verified tip and the phase tip differ
+only in documentation.
 
 ## Owner action still required
 
