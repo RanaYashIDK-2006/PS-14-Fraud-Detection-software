@@ -141,11 +141,11 @@
     },
     {
       "id": "F-07",
-      "status": "CONFIRMED (CI process gap) -> UNBLOCKED, EXTERNAL VERIFICATION REQUIRED",
+      "status": "CONFIRMED (CI process gap) -> FIXED AND VERIFIED IN CI",
       "title": "CI secret scanner never executed (skipped behind the failed Bandit step)",
       "evidence": "run jobs: 'Check for Secrets' skipped in 37354366248 / 37354126833",
-      "fix": "Bandit gate now green; secret scanner will execute on the next push",
-      "residual": "trufflehog --only-verified may still flag the historical Supabase key until it is rotated"
+      "fix": "Bandit gate cleared; on commit 941d084 the scanner step ran and succeeded in both workflows (runs 37411380941, 37411380923)",
+      "residual": "trufflehog --only-verified does not fail on an unverifiable Supabase service key, so the historical exposure is still a rotation item"
     }
   ],
   "ci": {
@@ -153,7 +153,7 @@
       "CI/CD",
       "Security Scan"
     ],
-    "runs": [
+    "runs_pre_remediation": [
       {
         "id": 37354366368,
         "sha": "05d491b950fb4d26b04e7ff3cc1de1c6942c0e42",
@@ -183,6 +183,413 @@
         "created_at": "2026-10-05T18:11:54Z"
       }
     ],
+    "runs_post_remediation": [
+      {
+        "run_id": 37411380941,
+        "workflow": "Security Scan",
+        "head_sha": "941d084185eb64a3a1ed1c87e4efbeac1d22a78f",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-06T03:57:01Z",
+        "jobs": [
+          {
+            "name": "Security Scan",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Checkout code",
+                "conclusion": "success"
+              },
+              {
+                "name": "Set up Python",
+                "conclusion": "success"
+              },
+              {
+                "name": "Install dependencies",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run Security Scanner",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run Bandit (SAST)",
+                "conclusion": "success"
+              },
+              {
+                "name": "Secret hygiene + SAST gate regression",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run Safety (Dependencies)",
+                "conclusion": "success"
+              },
+              {
+                "name": "Check for Secrets",
+                "conclusion": "success"
+              },
+              {
+                "name": "Upload Security Reports",
+                "conclusion": "success"
+              },
+              {
+                "name": "Publish Security Summary",
+                "conclusion": "success"
+              },
+              {
+                "name": "Fail on Critical Issues",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Set up Python",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Checkout code",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "run_id": 37411380923,
+        "workflow": "CI/CD",
+        "head_sha": "941d084185eb64a3a1ed1c87e4efbeac1d22a78f",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-06T03:57:01Z",
+        "jobs": [
+          {
+            "name": "Test Suite",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "conclusion": "success"
+              },
+              {
+                "name": "Set up Python",
+                "conclusion": "success"
+              },
+              {
+                "name": "Install dependencies",
+                "conclusion": "success"
+              },
+              {
+                "name": "Generate synthetic data",
+                "conclusion": "success"
+              },
+              {
+                "name": "Train models",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run full regression suite",
+                "conclusion": "success"
+              },
+              {
+                "name": "Claim evidence enforcement",
+                "conclusion": "success"
+              },
+              {
+                "name": "Evaluation record schema tests",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run backup/restore test",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Set up Python",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          },
+          {
+            "name": "Security Scan",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "conclusion": "success"
+              },
+              {
+                "name": "Set up Python",
+                "conclusion": "success"
+              },
+              {
+                "name": "Install dependencies",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run Bandit static analysis",
+                "conclusion": "success"
+              },
+              {
+                "name": "Secret hygiene + SAST gate regression",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run pip-audit dependency scan",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run custom security scanner",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run penetration test",
+                "conclusion": "success"
+              },
+              {
+                "name": "Audit-chain hygiene invariant",
+                "conclusion": "success"
+              },
+              {
+                "name": "Upload security artifacts",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Set up Python",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          },
+          {
+            "name": "Docker Build",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "conclusion": "success"
+              },
+              {
+                "name": "Set up Python",
+                "conclusion": "success"
+              },
+              {
+                "name": "Install dependencies",
+                "conclusion": "success"
+              },
+              {
+                "name": "Generate synthetic data",
+                "conclusion": "success"
+              },
+              {
+                "name": "Train models",
+                "conclusion": "success"
+              },
+              {
+                "name": "Build Docker image",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify container runs as non-root",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify health check works",
+                "conclusion": "success"
+              },
+              {
+                "name": "Save Docker image",
+                "conclusion": "success"
+              },
+              {
+                "name": "Upload Docker image",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Set up Python",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          },
+          {
+            "name": "Integration Test",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "conclusion": "success"
+              },
+              {
+                "name": "Set up Python",
+                "conclusion": "success"
+              },
+              {
+                "name": "Install dependencies",
+                "conclusion": "success"
+              },
+              {
+                "name": "Generate synthetic data",
+                "conclusion": "success"
+              },
+              {
+                "name": "Train models",
+                "conclusion": "success"
+              },
+              {
+                "name": "Download Docker image",
+                "conclusion": "success"
+              },
+              {
+                "name": "Load Docker image",
+                "conclusion": "success"
+              },
+              {
+                "name": "Tag pre-built image for compose",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run live walkthrough",
+                "conclusion": "success"
+              },
+              {
+                "name": "Generate test secrets",
+                "conclusion": "success"
+              },
+              {
+                "name": "Start stack",
+                "conclusion": "success"
+              },
+              {
+                "name": "Wait for health",
+                "conclusion": "success"
+              },
+              {
+                "name": "Verify audit chain",
+                "conclusion": "success"
+              },
+              {
+                "name": "Dump logs on failure",
+                "conclusion": "skipped"
+              },
+              {
+                "name": "Cleanup",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Set up Python",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          },
+          {
+            "name": "Deploy Image",
+            "conclusion": "success",
+            "steps": [
+              {
+                "name": "Set up job",
+                "conclusion": "success"
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "conclusion": "success"
+              },
+              {
+                "name": "Download Docker image",
+                "conclusion": "success"
+              },
+              {
+                "name": "Load Docker image",
+                "conclusion": "success"
+              },
+              {
+                "name": "Log in to GitHub Container Registry",
+                "conclusion": "success"
+              },
+              {
+                "name": "Set image metadata",
+                "conclusion": "success"
+              },
+              {
+                "name": "Tag image",
+                "conclusion": "success"
+              },
+              {
+                "name": "Push to GHCR",
+                "conclusion": "success"
+              },
+              {
+                "name": "Deployment summary",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Log in to GitHub Container Registry",
+                "conclusion": "success"
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "conclusion": "success"
+              },
+              {
+                "name": "Complete job",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "post_remediation_summary": "commit 941d084: Security Scan run 37411380941 SUCCESS (Bandit, secret hygiene, safety, Check for Secrets all success); CI/CD run 37411380923 SUCCESS on all five jobs incl. Docker Build, Integration Test and Deploy Image",
     "freeze_check_workflow": "NOT RUN for these commits (trigger path-filtered to plan/prereg/freeze files) - by design",
     "local_bandit_reproduction": {
       "command": "bandit -r backend/src/ -f json -o ... --severity-level medium",

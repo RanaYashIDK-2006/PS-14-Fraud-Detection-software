@@ -13,7 +13,8 @@
 | HEAD at assessment start (Phase-3 push tip) | `05d491b950fb4d26b04e7ff3cc1de1c6942c0e42` |
 | Phase-3 push commits inspected in CI | `8cfa3ffa…`, `05d491b9…` |
 | **Phase-4 fix + evidence commit** (fixes, regression suites, CI wiring, assessment report, evidence bundle) | **`c07523530eed52042415c58f5196a41cb0df6d52`** |
-| Phase-4 closeout commit (this document) | the commit immediately following `c075235` on `main` |
+| Phase-4 closeout commit (this document) | `941d084185eb64a3a1ed1c87e4efbeac1d22a78f` |
+| Post-remediation CI result update (this document + the report + the regenerated evidence bundle) | the commit immediately following `941d084` on `main` |
 | Remote | `https://github.com/RanaYashIDK-2006/PS-14-Fraud-Detection-software.git` |
 
 ## Strix identity and final Strix result
@@ -44,15 +45,15 @@ cloud service or third-party endpoint was contacted; no real credential, banking
 | F-03 | NaN / `+Inf` / `-Inf` / `1e309` feature values and NaN amounts answered **500** instead of 422 (framework 422 handler crashed serialising the rejected value; middleware converted it to a generic 500) on risk **and** privacy | medium (wrong status, log noise; rejection itself still occurred before logic) | **fixed** — shared `RequestValidationError` handler + JSON-safe sanitiser in `backend/src/middleware/__init__.py`; regression test added; retest 422 |
 | F-04 | Supabase **`service_role` key + project URL hardcoded** in tracked `backend/scripts/smoke_test_supabase.py` (committed 2026-09-12, `6e0f9f8`); value equals the live `.env` credential | high (privileged credential in a public repo) | **source remediated** (env/`.env` + fail-fast); **rotation REQUIRES EXTERNAL ACTION** — value remains in git history |
 | F-05 | **JWT signing secret** (live `.env` value, which also derives the PII `fernet_key` and export signing key) plus an internal-token literal hardcoded in tracked `backend/scripts/start_risk_loadtest.py` | high | **source remediated** (env/`.env` + fail-fast); **rotation REQUIRES EXTERNAL ACTION** — rotating re-derives `fernet_key` and would break existing DB-1 PII ciphertext |
-| F-06 | CI **Bandit gate red** in all four Phase-3 runs: 15 B608 findings in `front_service/main.py`, **all false positives** on parameterised SQL | medium (gate defect; hid the security steps behind it) | **remediated** — 14 justified per-line `# nosec B608` annotations (identifier-only interpolation, values bound); Bandit exit 0 locally |
-| F-07 | CI **secret scanner never executed** (`Check for Secrets` / trufflehog skipped behind the failed Bandit step) | medium (instrumentation gap) | **unblocked** — gate now green; the scanner runs on the next push, and its result is **not yet observed** |
+| F-06 | CI **Bandit gate red** in all four Phase-3 runs: 15 B608 findings in `front_service/main.py`, **all false positives** on parameterised SQL | medium (gate defect; hid the security steps behind it) | **fixed and verified in CI** — 14 justified per-line `# nosec B608` annotations; Bandit exit 0 locally and green in both workflows on `941d084` |
+| F-07 | CI **secret scanner never executed** (`Check for Secrets` / trufflehog skipped behind the failed Bandit step) | medium (instrumentation gap) | **fixed and verified in CI** — the step ran and succeeded in both workflows on `941d084` (runs 37411380941, 37411380923); the rotation item below is unaffected because `--only-verified` cannot verify a Supabase service key |
 
 ### Unresolved
 
 | Item | State |
 |---|---|
 | Rotation of the two exposed credentials (F-04, F-05) | **Requires external action by the owner.** Not performed: rotating `jwt_secret` re-derives `fernet_key` and invalidates existing PII ciphertext; rewriting git history is out of scope for this phase |
-| CI secret-scanner verdict on the historical key (F-07) | Will execute on this push; `--only-verified` may flag the key until it is rotated |
+| Historical key remains in git history (F-04) | The secret scanner now runs and passes (`--only-verified` cannot verify a Supabase service key, so a CI pass does not retire this item) |
 | Strix execution | `ENVIRONMENT BLOCKED` (no Docker, no admin action taken) |
 | `/fraud-report` returns 500 (explicit body) when the report artifact is absent | **Observation**, left unchanged (status-code semantics, no leak, no content on this host) |
 | Dev 25-byte `jwt_secret` default and its derived keys | **Pre-existing, intentionally unchanged** documented dev debt; changing it breaks ciphertext |
@@ -92,7 +93,8 @@ cloud service or third-party endpoint was contacted; no real credential, banking
 | Bandit (`-r backend/src/ --severity-level medium`, the exact CI command) | **exit 0** (was exit 1 with 15 findings) |
 | Live post-remediation retest (suite C) | **18/18 PASS** against the restarted final-code stack |
 | Pre-remediation evidence | preserved before any fix: `phase4_results_a_PREFIX.json`, `phase4_results_b_PREFIX.json`, `phase4_probe_PREFIX.json` |
-| CI verification for Phase-3 push | CI/CD *Test Suite* PASS on both commits; both security jobs FAIL at Bandit (F-06) with downstream jobs **BLOCKED**; Freeze Check workflow **NOT RUN (by design, path-filtered)**. Artifact/log download requires auth (HTTP 401), so conclusions are authoritative and the Bandit failure was reproduced locally |
+| CI verification — Phase-3 push (pre-remediation) | CI/CD *Test Suite* PASS on both commits; both security jobs FAIL at Bandit (F-06) with downstream jobs **BLOCKED**; Freeze Check workflow **NOT RUN (by design, path-filtered)**. Artifact/log download requires auth (HTTP 401), so conclusions are authoritative and the Bandit failure was reproduced locally |
+| CI verification — Phase-4 commit `941d084` (post-remediation) | **Security Scan run 37411380941: SUCCESS on every step**, including Bandit, the new secret-hygiene suite, Safety and the previously-never-executed *Check for Secrets*. **CI/CD run 37411380923: all five jobs SUCCESS with zero failed steps** (Test Suite, Security Scan incl. pip-audit + penetration suite, Docker Build with non-root and healthcheck verification, Integration Test with live walkthrough and audit-chain verification, Deploy Image to GHCR) |
 
 ## Production-artifact changes
 
@@ -122,8 +124,8 @@ the remediations listed above plus comment-only Bandit annotations.
 |---|---|
 | `CONFIRMED → FIXED → RETEST PASSED` | F-01, F-02, F-03 |
 | `CONFIRMED → SOURCE REMEDIATED; ROTATION REQUIRES EXTERNAL ACTION` | F-04, F-05 |
-| `CONFIRMED (tooling) → REMEDIATED (gate green locally)` | F-06 |
-| `CONFIRMED (process) → UNBLOCKED; RESULT NOT YET OBSERVED` | F-07 |
+| `CONFIRMED (tooling) → FIXED; VERIFIED BY CI` | F-06 |
+| `CONFIRMED (process) → FIXED; SCANNER OBSERVED RUNNING AND PASSING IN CI` | F-07 |
 | `FALSE POSITIVE / TEST ARTIFACT` | suite-B G4, G5, H2, K1, K3; suite-C V10 (first run); 15 Bandit B608 |
 | `OBSERVATION` | `/fraud-report` 500 body, extra-field acceptance, `1e308` amount, duplicate-key last-wins, HTML shells, log-line incident from one probe |
 | `NOT TESTED` | inference/worker module (30 routes), deployment topology |

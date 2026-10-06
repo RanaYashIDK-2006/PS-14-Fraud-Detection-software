@@ -517,11 +517,25 @@ Root cause of the CI failure: **15 Bandit B608 "hardcoded SQL expression" findin
 `?,?,?`; table names either read from `sqlite_master` or matched against `^[A-Za-z_][A-Za-z0-9_]*$`; column names
 validated against the live schema; all values bound). This was a **genuine repository defect of the tooling gate**
 (a red build nobody could act on, hiding the security steps behind it), not an application vulnerability. It was
-remediated with justified per-line annotations and the gate is now green locally (`exit 0`); a CI re-run follows
-this push, and its result is recorded in the closeout rather than assumed here.
+remediated with justified per-line annotations and the gate is now green locally (`exit 0`).
 
 The fix did **not** touch scientific state, thresholds, datasets or workflows beyond adding one verification step
 to each security job.
+
+### 23.3 CI verification of the Phase-4 remediation (post-remediation)
+
+The Phase-4 commits were pushed and CI was re-inspected; the previously red jobs are now **green on
+commit `941d0841`**:
+
+| Workflow | Run id | Commit | Jobs | Steps | Classification |
+|---|---|---|---|---|---|
+| Security Scan | 37411380941 | `941d084` | Security Scan | all success — incl. **Run Bandit (SAST)**, the new **Secret hygiene + SAST gate regression**, Run Safety, and **Check for Secrets** (the step that had never executed before) | **PASS** |
+| CI/CD | 37411380923 | `941d084` | Test Suite / Security Scan / Docker Build / Integration Test / Deploy Image | **all five jobs success, zero failed steps** — Bandit, secret hygiene, pip-audit, custom scanner, penetration test, audit-chain hygiene, non-root container check, live walkthrough, audit-chain verification, GHCR push | **PASS** |
+
+So F-06 (Bandit gate) and F-07 (secret scanner never executed) are both **resolved and observed in CI**, not
+inferred: the secret scanner ran in both workflows and passed. Note the scanner uses `--only-verified` and a
+Supabase service key cannot be provider-verified, so this CI pass does **not** retire the credential-rotation item
+in §19 — it only proves the instrument now runs.
 
 ---
 
