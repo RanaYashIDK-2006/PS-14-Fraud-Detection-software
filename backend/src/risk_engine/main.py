@@ -1158,13 +1158,19 @@ def evaluate_batch(
                                  if i not in blocked_indices]
 
         degraded = False
+        ml_scores: list[float] = []
+        ml_weighteds: list[float] = []
+        uncertainties: list[dict] = []
         try:
-            # Use finance-enhanced prediction per-event (same as /evaluate)
-            ml_scores = []
-            ml_weighteds = []
-            uncertainties = []
-            for fd in feature_dicts:
-                if fusion._has_finance_model:
+            # Only ALLOWED events reach inference: BLOCK_INFERENCE means "do
+            # not infer" (runtime_enforcement) and the exception fallback below
+            # is sized to to_score_allowed.  With no blocked events — the
+            # normal case — feature_dicts_allowed == feature_dicts, so this is
+            # the previous behaviour verbatim; with blocked events the old loop
+            # inferred on them anyway and mis-paired their scores in the zip
+            # below.
+            if fusion._has_finance_model:
+                for fd in feature_dicts_allowed:
                     ms, fmeta = fusion.predict_with_finance(fd)
                     ml_scores.append(ms)
                     ml_weighteds.append(ms)
@@ -1175,7 +1181,17 @@ def evaluate_batch(
                         "is_micro_fraud_suspect": fmeta.get("is_micro_fraud_suspect", False),
                         "has_finance_data": fmeta.get("has_finance_data", False),
                     })
-                else:
+            elif hasattr(fusion, "predict_combined_many") and feature_dicts_allowed:
+                # Phase 5 Track A: one vectorized inference pass for the whole
+                # batch (docstring always promised predict_many; the loop was
+                # 30.9x slower on 200 rows). Per-row outputs, including the
+                # uncertainty rounding, are identical to predict_combined().
+                for cs, w, u in fusion.predict_combined_many(feature_dicts_allowed):
+                    ml_scores.append(cs)
+                    ml_weighteds.append(w)
+                    uncertainties.append(u)
+            else:
+                for fd in feature_dicts_allowed:
                     cs, w, u = fusion.predict_combined(fd)
                     ml_scores.append(cs)
                     ml_weighteds.append(w)

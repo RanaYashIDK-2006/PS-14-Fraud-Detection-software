@@ -251,6 +251,64 @@ def main() -> int:
                   "traceback" not in r.text.lower()
                   and "site-packages" not in r.text.lower(), r.text[:150])
 
+        # ---- Phase 5 Track A: batched inference equivalence --------------
+        # /internal/evaluate-batch now runs one vectorized predict pass
+        # (predict_combined_many) instead of predict_combined() per event.
+        # Same features -> same ml_score/risk_score/band/decision/codes as
+        # the single-event endpoint, and engine-level row outputs must be
+        # EXACT (same rounding, same clip) as the per-event method.
+        print("\n-- batch equivalence (Phase 5) --")
+        import numpy as _np  # noqa: PLC0415
+        import src.risk_engine.main as risk_main2  # noqa: PLC0415
+
+        varied = [
+            vector(amount_ratio=0.4 + i * 0.31, hour_of_day=(i * 7) % 24,
+                   txn_freq_last_24h=i % 8, new_device_flag=i % 2,
+                   unusual_recipient_flag=i % 4 // 2,
+                   failed_auth_count_24h=i % 6)
+            for i in range(32)
+        ]
+        eng = risk_main2.fusion
+        check("engine exposes predict_combined_many",
+              hasattr(eng, "predict_combined_many"))
+        loop_out = [eng.predict_combined(dict(f)) for f in varied]
+        many_out = eng.predict_combined_many([dict(f) for f in varied])
+        max_d = max(abs(a[0] - b[0]) for a, b in zip(loop_out, many_out))
+        check("predict_combined_many scores exactly match loop",
+              all(a[0] == b[0] and a[1] == b[1]
+                  for a, b in zip(loop_out, many_out)), f"max_d={max_d}")
+        unc_ok = all(a[2] == b[2] for a, b in zip(loop_out, many_out))
+        check("predict_combined_many uncertainty dicts match loop",
+              unc_ok)
+        check("batched score vector is finite",
+              bool(_np.isfinite([b[0] for b in many_out]).all()))
+
+        # endpoint-level: single vs batch on identical features
+        singles = [evaluate(c, f"ev-p5-single-{i:02d}", dict(f))
+                   for i, f in enumerate(varied)]
+        br = c.post(
+            "/internal/evaluate-batch",
+            headers={"X-Internal-Token": TOKEN},
+            json=[{"event_id": f"ev-p5-batch-{i:02d}", "fraud_id": FRAUD_ID,
+                   "features": f} for i, f in enumerate(varied)],
+        )
+        check("batch endpoint 200", br.status_code == 200,
+              f"status={br.status_code} {br.text[:200]}")
+        brows = br.json().get("results", []) if br.status_code == 200 else []
+        check("batch returns one result per event",
+              len(brows) == len(varied), f"n={len(brows)}")
+        if len(brows) == len(varied):
+            mism = []
+            for i, (s, b) in enumerate(zip(singles, brows)):
+                for key in ("risk_score", "risk_band", "decision",
+                            "reason_codes", "ml_score", "degraded"):
+                    if s.get(key) != b.get(key):
+                        mism.append(
+                            f"[{i}].{key}: single={s.get(key)!r} "
+                            f"batch={b.get(key)!r}")
+            check("single vs batch identical (score/band/decision/codes/ml)",
+                  not mism, "; ".join(mism[:3]) or f"{len(varied)} events")
+
         # ---- DB-3 separation (section 2) -----------------------------------
         print("\n-- DB-3 separation --")
         con = sqlite3.connect(Path(TMP) / "risk.db")

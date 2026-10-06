@@ -254,6 +254,46 @@ class AltmanNativeEnsembleEngine:
         p_cb = self.cb.predict_proba(X)[:, 1]
         return ENSEMBLE_WEIGHTS["xgb"] * p_xgb + ENSEMBLE_WEIGHTS["lgb"] * p_lgb + ENSEMBLE_WEIGHTS["cb"] * p_cb
 
+    def predict_combined_many(self, rows: list[dict]) -> list[tuple[float, float, dict]]:
+        """Batched equivalent of predict_combined(): one vectorized inference
+        pass, per-row outputs identical to calling predict() in a loop.
+
+        Phase 5 Track A: /internal/evaluate-batch previously called
+        predict_combined() per event (30.9x slower on a 200-row batch);
+        its own docstring always promised predict_many. Equivalence of the
+        per-row uncertainty fields (incl. the rounding predict() applies)
+        is asserted by risk_engine_test.
+        """
+        vecs = np.array([map_raw_to_native(r) for r in rows]).astype(np.float32)
+        X = self.scaler.transform(vecs)
+        # astype(np.float64): xgboost returns float32 probabilities, and
+        # 0.34 * float32_array stays float32 (NEP 50 weak scalars), rounding
+        # the first weighted term before the float64 terms join it — up to
+        # ~1e-9 off vs predict(), which upcasts each member via float()
+        # first. The widening cast is exact, making the sums bit-identical.
+        p_xgb = self.xgb.predict_proba(X)[:, 1].astype(np.float64)
+        p_lgb = self.lgb.predict_proba(X)[:, 1].astype(np.float64)
+        p_cb = self.cb.predict_proba(X)[:, 1].astype(np.float64)
+        raw = (ENSEMBLE_WEIGHTS["xgb"] * p_xgb
+               + ENSEMBLE_WEIGHTS["lgb"] * p_lgb
+               + ENSEMBLE_WEIGHTS["cb"] * p_cb)
+        probs = np.clip(raw, 0.0, 1.0)
+        out: list[tuple[float, float, dict]] = []
+        for i in range(len(rows)):
+            out.append((float(probs[i]), float(probs[i]), {
+                "model_variance": round(float(np.var([p_xgb[i], p_lgb[i], p_cb[i]])), 6),
+                "model_disagreement": round(float(np.ptp([p_xgb[i], p_lgb[i], p_cb[i]])), 6),
+                "individual_outputs": {
+                    "xgboost": round(float(p_xgb[i]), 4),
+                    "lightgbm": round(float(p_lgb[i]), 4),
+                    "catboost": round(float(p_cb[i]), 4),
+                },
+                "ensemble_raw": round(float(raw[i]), 6),
+                "model_version": self._version,
+                "model_type": "altman_native",
+            }))
+        return out
+
     @property
     def model_version(self) -> str:
         return self._version

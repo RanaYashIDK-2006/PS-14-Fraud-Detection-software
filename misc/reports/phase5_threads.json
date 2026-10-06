@@ -1,0 +1,50 @@
+{
+  "rows": 1153615,
+  "xgb": {
+    "t1": 5.285,
+    "t4": 1.598,
+    "t4_bit_identical_to_first": true,
+    "t8": 1.132,
+    "t8_bit_identical_to_first": true,
+    "t16": 0.698,
+    "t16_bit_identical_to_first": true
+  },
+  "lgb": {
+    "t1": 17.737,
+    "t4": 5.015,
+    "t4_bit_identical_to_first": true,
+    "t8": 2.985,
+    "t8_bit_identical_to_first": true,
+    "t16": 2.096,
+    "t16_bit_identical_to_first": true
+  },
+  "cb": {
+    "t1": 0.401,
+    "t4": 0.135,
+    "t4_bit_identical_to_first": true,
+    "t8": 0.098,
+    "t8_bit_identical_to_first": true,
+    "t16": 0.082,
+    "t16_bit_identical_to_first": true
+  },
+  "configs_s": {
+    "seq_4t_baseline": 6.556,
+    "conc_4t": 5.269,
+    "seq_8t": 4.217,
+    "conc_8t": 3.355,
+    "conc_16t": 2.97
+  },
+  "bit_identical_to_baseline": {
+    "conc4": true,
+    "conc8": true,
+    "seq8": true,
+    "conc16": true
+  },
+  "speedup_vs_baseline": {
+    "seq_4t_baseline": 1.0,
+    "conc_4t": 1.244,
+    "seq_8t": 1.555,
+    "conc_8t": 1.954,
+    "conc_16t": 2.207
+  }
+}

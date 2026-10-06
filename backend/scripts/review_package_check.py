@@ -332,8 +332,11 @@ def check_repo_state(root: Path = ROOT) -> list[str]:
     for rel, want in (
         ("backend/src/privacy_layer/native_features.py",
          "5760a20376306598312cfaf32d8d12b5e5f3ff268fcc0b4de4baff64e90f57d1"),
+        # Phase 5 Track A: +predict_combined_many (inference-only batched
+        # path; map_raw_to_native/predict/predict_many byte-identical —
+        # verified against HEAD in the Phase 5 closeout).
         ("backend/src/risk_engine/altman_native_ensemble.py",
-         "55f4ad5284ec6f45481660dfe2f9b256e90ad6ee2ff74abf68e876b8ebec2d24"),
+         "74e0b072d594ed6883f4e1a751612846bd727e685b1ecf58cd10bf4ef2c28060"),
     ):
         f = root / rel
         if not f.exists():

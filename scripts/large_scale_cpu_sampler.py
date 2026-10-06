@@ -28,11 +28,19 @@ def main() -> int:
     ap.add_argument("--rows", type=int, default=5_000_000)
     ap.add_argument("--out", default="misc/reports/phase3_cpu.json")
     ap.add_argument("--interval", type=float, default=0.5)
+    ap.add_argument("--threads", type=int, default=0,
+                    help="forwarded to the runner; 0 = Phase 3 baseline defaults")
+    ap.add_argument("--run-out", default="misc/reports/phase3_cpu_run.json",
+                    help="runner result path (Phase 5 runs must override this "
+                         "to avoid clobbering the committed Phase 3 record)")
     args = ap.parse_args()
 
-    out_json = Path("misc/reports/phase3_cpu_run.json")
-    p = subprocess.Popen([PY, "scripts/large_scale_runner.py", "--rows", str(args.rows),
-                          "--out", str(out_json), "--label", f"cpu-sample {args.rows:,}"],
+    out_json = Path(args.run_out)
+    cmd = [PY, "scripts/large_scale_runner.py", "--rows", str(args.rows),
+           "--out", str(out_json), "--label", f"cpu-sample {args.rows:,}"]
+    if args.threads:
+        cmd += ["--threads", str(args.threads)]
+    p = subprocess.Popen(cmd,
                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     proc = psutil.Process(p.pid)
     # Process objects MUST be kept alive across samples: psutil's
@@ -88,7 +96,8 @@ def main() -> int:
         "runner_exit_code": p.returncode,
         "runner": {k: run.get(k) for k in
                    ("rows_processed", "wall_seconds", "rows_per_second", "roc_auc",
-                    "latency_ms_per_batch", "stage_seconds")},
+                    "latency_ms_per_batch", "stage_seconds", "threads",
+                    "prediction_sha256", "member_sha256", "rss_MB_max")},
         "runner_stdout_tail": (stdout or "").strip().splitlines()[-4:],
     }
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)

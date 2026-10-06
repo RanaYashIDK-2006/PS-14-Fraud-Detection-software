@@ -1,0 +1,45 @@
+{
+  "per_member": {
+    "xgb": {
+      "max_abs_diff": 0.0,
+      "bit_identical": true,
+      "n_differing": 0
+    },
+    "lgb": {
+      "max_abs_diff": 0.0,
+      "bit_identical": true,
+      "n_differing": 0
+    },
+    "cb": {
+      "max_abs_diff": 0.0,
+      "bit_identical": true,
+      "n_differing": 0
+    },
+    "fused": {
+      "max_abs_diff": 0.0,
+      "bit_identical": true,
+      "n_differing": 0,
+      "would_flip_round100": 0
+    }
+  },
+  "model_load_fresh": {
+    "seq_fresh": [
+      1.966,
+      2.14,
+      2.179
+    ],
+    "par_fresh": [
+      1.611,
+      1.333,
+      1.439
+    ],
+    "file_sizes_MB": {
+      "cb_native.joblib": 0.3,
+      "lgb_native.joblib": 0.6,
+      "scaler_native.joblib": 0.0,
+      "xgb_native.joblib": 1.0
+    },
+    "seq_mean": 2.095,
+    "par_mean": 1.461
+  }
+}

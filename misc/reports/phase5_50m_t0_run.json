@@ -1,0 +1,116 @@
+{
+  "label": "cpu-sample 50,000,000",
+  "evidence_class": "SELF-TESTED \u2014 SYNTHETIC 50M \u2014 SCALE EXPERIMENT",
+  "rows_processed": 50000000,
+  "partitions_processed": 166,
+  "partition_order": "chronological (year_month ascending)",
+  "batch_size": 250000,
+  "workers": 1,
+  "fraud_rows": 61109,
+  "fraud_prevalence": 0.00122218,
+  "wall_seconds": 413.2211892604828,
+  "rows_per_second": 121000.5713634434,
+  "stage_seconds": {
+    "load": 3.5959887001663446,
+    "validate": 11.633099996251985,
+    "scale": 10.279796502087265,
+    "infer": 373.4480489001144,
+    "fuse": 0.8683083965443075,
+    "threshold": 0.04635850107297301,
+    "store": 1.4179217016790062
+  },
+  "stage_fraction": {
+    "load": 0.008702333746732278,
+    "validate": 0.02815223492549123,
+    "scale": 0.02487722500504972,
+    "infer": 0.9037485458295398,
+    "fuse": 0.0021013162420307316,
+    "threshold": 0.00011218810234765077,
+    "store": 0.003431386721035714
+  },
+  "bytes_read": 3916485262,
+  "latency_ms_per_batch": {
+    "mean": 4.992436757170966,
+    "p50": 4.883549991063774,
+    "p95": 9.297629934735594,
+    "p99": 10.056725083850324
+  },
+  "batch_wall_ms": {
+    "mean": 1208.713690058822,
+    "p50": 1049.715399974957,
+    "p95": 2062.8626348567195
+  },
+  "threads": 0,
+  "prediction_sha256": "ee1e7050f07363382448dcf5698d68f34e4f6d59879406eaf5076124e56da2e5",
+  "member_sha256": {
+    "xgb": "6e607f98761d79f358232fa021fe5e5bc934b824bc1587ade7e73d3448babc4d",
+    "lgb": "4fbf11811836e9200016ca17b412eb45735274201c8c856370547305a81caed4",
+    "cb": "66ea37e41b26ca325bb0d7d51788cbf867d0d3b5d502d07b1d6aa1f8769ca653"
+  },
+  "peak_rss_MB": 1807.10546875,
+  "threshold": 0.7847116291110687,
+  "confusion_at_threshold": {
+    "tp": 0,
+    "fp": 193,
+    "fn": 61109,
+    "tn": 49938698
+  },
+  "precision": 0.0,
+  "recall": 0.0,
+  "f1": 0.0,
+  "alert_rate": 3.86e-06,
+  "roc_auc": 0.5731960569465072,
+  "pr_auc": 0.0018011156833651009,
+  "brier": 0.0012478301068767905,
+  "member_roc_auc": {
+    "xgb": 0.5742367399519009,
+    "lgb": 0.5663669886096442,
+    "cb": 0.5584804183475692
+  },
+  "member_pr_auc": {
+    "xgb": 0.0018893237983878446,
+    "lgb": 0.0017328020402114482,
+    "cb": 0.0016638536708929233
+  },
+  "member_precision": {
+    "xgb": 0.0,
+    "lgb": 0.0,
+    "cb": 0.0007042253521126761
+  },
+  "nonfinite_values": 0,
+  "missing_feature_partitions": 0,
+  "calibrator_loaded": false,
+  "experiment_manifest": {
+    "git_sha": "ab5a6d0a6baf2c743de9c05fd4277b602478ea60",
+    "benchmark_id": "synthetic_50m",
+    "benchmark_combined_sha256": "c2db7142e24dd8d9c2806ef8a1ec0c23e62cbf2d8fcc4b4b614396922b47edf1",
+    "benchmark_schema_hash": "fb1d8e6a19ffa5837a28747bd928a6c40d4111a6c36eb6d89049bde620e09d96",
+    "generator_version": "1.0.0",
+    "benchmark_seed": 20261005,
+    "benchmark_source_sha256": "b01fa323c98522f8c710c7f7242581860c97c50183f1c5fa9e772e5c674a7f15",
+    "model_version": "altman_native_v2_20260904_115703",
+    "model_type": "xgb_lgb_cb_native",
+    "ensemble_weights": {
+      "xgb": 0.34,
+      "lgb": 0.33,
+      "cb": 0.33
+    },
+    "n_features": 48,
+    "feature_schema_version": "altman_native_v2",
+    "production_manifest_sha256": "e6da1a433ec618576aa12208190d35df3b53e9349b1bb6e54c16465e324b2485",
+    "feature_list_sha256": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+    "scaler_sha256": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+    "xgb_sha256": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+    "lgb_sha256": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+    "cb_sha256": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "cpu": "12th Gen Intel(R) Core(TM) i7-12650H",
+    "ram_gb": 15.6,
+    "batch_size": 250000,
+    "workers": 1,
+    "threads": 0,
+    "started_utc": "2026-10-06T15:59:14Z",
+    "ended_utc": "2026-10-06T16:08:14Z"
+  }
+}

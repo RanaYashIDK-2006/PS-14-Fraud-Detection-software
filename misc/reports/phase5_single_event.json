@@ -1,0 +1,56 @@
+{
+  "single_event": {
+    "threads_1": {
+      "map_ms": 0.057,
+      "scale_ms": 0.18,
+      "xgb_ms": 0.736,
+      "lgb_ms": 0.538,
+      "cb_ms": 0.462,
+      "predict_x200_s": 0.2488,
+      "per_event_ms": 1.244
+    },
+    "threads_2": {
+      "map_ms": 0.03,
+      "scale_ms": 0.107,
+      "xgb_ms": 0.971,
+      "lgb_ms": 0.376,
+      "cb_ms": 0.274,
+      "predict_x200_s": 0.2525,
+      "per_event_ms": 1.263
+    },
+    "threads_4": {
+      "map_ms": 0.038,
+      "scale_ms": 0.114,
+      "xgb_ms": 1.568,
+      "lgb_ms": 0.441,
+      "cb_ms": 0.347,
+      "predict_x200_s": 0.2614,
+      "per_event_ms": 1.307
+    },
+    "threads_16": {
+      "map_ms": 0.045,
+      "scale_ms": 0.151,
+      "xgb_ms": 4.106,
+      "lgb_ms": 0.625,
+      "cb_ms": 0.622,
+      "predict_x200_s": 0.3244,
+      "per_event_ms": 1.622
+    }
+  },
+  "single_overlap_100x": {
+    "sequential_s": 0.1169,
+    "threaded_s": 0.2449,
+    "note": "threadpool created per call (worst case); not reused"
+  },
+  "batch_endpoint_equivalence": {
+    "rows": 200,
+    "loop_s": 0.2713,
+    "batch_s": 0.0088,
+    "speedup": 30.91,
+    "max_abs_score_diff": 5.587935426876189e-10,
+    "exact_equal": false,
+    "uncertainty_identical": true,
+    "uncertainty_max_abs_diff": 0.0
+  },
+  "map_with_tracker_ms": 5.215
+}

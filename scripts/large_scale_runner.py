@@ -88,6 +88,12 @@ def main() -> int:
     ap.add_argument("--out", default="misc/reports/phase3_inference_50m.json")
     ap.add_argument("--label", default="inference")
     ap.add_argument("--keep-scores", action="store_true")
+    ap.add_argument("--threads", type=int, default=0,
+                    help="member thread budget (xgb/lgb n_jobs, cb thread_count); "
+                         "0 = model defaults = Phase 3 baseline behaviour")
+    ap.add_argument("--scores-out", default="",
+                    help="optional .npz for scores/labels/member outputs "
+                         "(Phase 5 offline analysis only)")
     ap.add_argument("--bench", default=BENCH,
                     help="benchmark root override; Phase 3 §12 fault injection "
                          "points this at COPIES of partitions, never the original")
@@ -107,10 +113,16 @@ def main() -> int:
         comb.update(ph[k].encode())
 
     # ---- model artifacts (read-only; never written) --------------------
-    scaler = joblib.load(MODEL_DIR / "scaler_native.joblib")
-    xgb = joblib.load(MODEL_DIR / "xgb_native.joblib")
-    lgb = joblib.load(MODEL_DIR / "lgb_native.joblib")
-    cb = joblib.load(MODEL_DIR / "cb_native.joblib")
+    # Loaded concurrently: bit-identical objects (deterministic unpickle of
+    # four independent files), measured 2.10s -> 1.46s fresh-process (p5_load).
+    from concurrent.futures import ThreadPoolExecutor
+    _art = [MODEL_DIR / "scaler_native.joblib", MODEL_DIR / "xgb_native.joblib",
+            MODEL_DIR / "lgb_native.joblib", MODEL_DIR / "cb_native.joblib"]
+    with ThreadPoolExecutor(max_workers=4) as _ex:
+        scaler, xgb, lgb, cb = _ex.map(joblib.load, _art)
+    if args.threads > 0:   # Phase 5 Track A: opt-in thread budget (default = baseline)
+        xgb.set_params(n_jobs=args.threads)
+        lgb.set_params(n_jobs=args.threads)
     cal_path = MODEL_DIR.parent / "artifacts" / "calibrator.joblib"
     calibrator = joblib.load(cal_path) if cal_path.exists() else None
 
@@ -127,7 +139,8 @@ def main() -> int:
 
     t = {k: 0.0 for k in ("load", "validate", "scale", "infer", "fuse",
                           "threshold", "store")}
-    lat: list[float] = []            # per-batch end-to-end latency
+    lat: list[float] = []            # per-batch store-tail latency (legacy definition)
+    batch_wall: list[float] = []     # Phase 5: FULL per-batch wall time
     n = 0
     n_fraud = 0
     n_alert = 0
@@ -148,6 +161,7 @@ def main() -> int:
                 break                        # cap reached inside this partition:
                                              # a further batch would be an empty
                                              # frame (RobustScaler rejects 0 rows)
+            t_batch = time.perf_counter()
             tb = time.perf_counter()
             df = batch.to_pandas()
             if n + len(df) > cap:
@@ -175,7 +189,8 @@ def main() -> int:
             tb = time.perf_counter()
             p_x = xgb.predict_proba(Xs)[:, 1]
             p_l = lgb.predict_proba(Xs)[:, 1]
-            p_c = cb.predict_proba(Xs)[:, 1]
+            p_c = (cb.predict_proba(Xs, thread_count=args.threads)[:, 1]
+                   if args.threads > 0 else cb.predict_proba(Xs)[:, 1])
             t["infer"] += time.perf_counter() - tb
 
             tb = time.perf_counter()
@@ -198,6 +213,7 @@ def main() -> int:
             splits[n:n + k] = np.where(sp == "test", 1, 0)
             n += k
             t["store"] += time.perf_counter() - tb
+            batch_wall.append(time.perf_counter() - t_batch)
 
             n_fraud += int(lab.sum())
             n_alert += int(pred.sum())
@@ -236,6 +252,19 @@ def main() -> int:
             "p95": float(np.percentile(lat_ms, 95)) if lat_ms.size else None,
             "p99": float(np.percentile(lat_ms, 99)) if lat_ms.size else None,
         },
+        # Phase 5: FULL per-batch wall (load..store). The legacy
+        # latency_ms_per_batch above measures only the post-inference store
+        # tail (kept unchanged for Phase 3 comparability).
+        "batch_wall_ms": {
+            "mean": float(np.mean(batch_wall) * 1000.0) if batch_wall else None,
+            "p50": float(np.percentile(batch_wall, 50) * 1000.0) if batch_wall else None,
+            "p95": float(np.percentile(batch_wall, 95) * 1000.0) if batch_wall else None,
+        },
+        "threads": args.threads,
+        "prediction_sha256": hashlib.sha256(
+            np.ascontiguousarray(s).tobytes()).hexdigest() if n else None,
+        "member_sha256": {k: hashlib.sha256(np.ascontiguousarray(v[:n]).tobytes()).hexdigest()
+                          for k, v in member.items()},
         "peak_rss_MB": psutil_mem_mb(),
         "threshold": threshold,
         "confusion_at_threshold": {"tp": tp, "fp": fp, "fn": fn, "tn": tn},
@@ -279,6 +308,7 @@ def main() -> int:
             "ram_gb": total_ram_gb(),
             "batch_size": args.batch,
             "workers": 1,
+            "threads": args.threads,
             "started_utc": started_utc,
             "ended_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         },
@@ -289,6 +319,11 @@ def main() -> int:
         tpk = int(((pv == 1) & (y == 1)).sum())
         fpk = int(((pv == 1) & (y == 0)).sum())
         res["member_precision"][k] = tpk / (tpk + fpk) if (tpk + fpk) else None
+
+    if args.scores_out:
+        np.savez_compressed(args.scores_out, scores=s, labels=y,
+                            **{f"member_{k}": v[:n] for k, v in member.items()})
+        res["scores_out"] = args.scores_out
 
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
     Path(args.out).write_text(json.dumps(res, indent=2, default=str), encoding="utf-8")

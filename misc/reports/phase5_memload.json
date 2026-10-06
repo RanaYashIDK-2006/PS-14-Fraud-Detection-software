@@ -1,0 +1,18 @@
+{
+  "extraction": {
+    "pandas": {
+      "ms_per_batch_mean": 22.8,
+      "transient_rss_MB_max": 57.6
+    },
+    "stack": {
+      "ms_per_batch_mean": 97.8,
+      "transient_rss_MB_max": 57.6
+    },
+    "prealloc": {
+      "ms_per_batch_mean": 64.3,
+      "transient_rss_MB_max": 58.5
+    }
+  },
+  "model_load_seq_s": 1.693,
+  "model_load_par_s": 0.037
+}

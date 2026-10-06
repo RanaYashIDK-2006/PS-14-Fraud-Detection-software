@@ -61,15 +61,18 @@ def bench_privacy_ingest(client, fraud_id, N=50):
 def bench_risk_evaluate(client, N=50):
     times = []
     features = {
-        "txn_amount": 150.0, "hour_of_day": 12, "day_of_week": 0,
-        "txn_time_unusual": 0, "amount_zscore": 0.5, "merchant_risk": 0.1,
+        "amount_ratio": 0.95, "hour_of_day": 12, "is_weekend": 0,
+        "txn_time_unusual": 0, "amount_zscore": 0.5,
         "new_device_flag": 0, "known_device_count": 1, "device_daily_count": 1,
         "txn_freq_last_24h": 1, "account_daily_spend_ratio": 0.01,
-        "location_risk": 0.05, "unusual_location_flag": 0, "recipient_risk": 0.1,
+        "unusual_location_flag": 0, "unusual_recipient_flag": 0,
+        "failed_auth_count_24h": 0, "days_since_last_similar_txn": 3.0,
+        "gradual_escalation_score": 0.0, "account_tenure_days": 90.0,
         "shared_recipient_accounts": 0, "shared_device_accounts": 0,
     }
     for i in range(N):
-        payload = {"event_id": f"bench-risk-{secrets.token_hex(8)}", "features": features}
+        payload = {"event_id": f"bench-risk-{secrets.token_hex(8)}",
+                   "fraud_id": "FBENCHABCDEFGHIJ", "features": features}
         t0 = time.perf_counter()
         resp = client.post("/internal/evaluate", json=payload,
                            headers={"X-Internal-Token": INTERNAL})
@@ -83,21 +86,24 @@ def bench_risk_evaluate(client, N=50):
 
 def bench_batch_risk(client, batch_size=50, N_batches=10):
     features = {
-        "txn_amount": 150.0, "hour_of_day": 12, "day_of_week": 0,
-        "txn_time_unusual": 0, "amount_zscore": 0.5, "merchant_risk": 0.1,
+        "amount_ratio": 0.95, "hour_of_day": 12, "is_weekend": 0,
+        "txn_time_unusual": 0, "amount_zscore": 0.5,
         "new_device_flag": 0, "known_device_count": 1, "device_daily_count": 1,
         "txn_freq_last_24h": 1, "account_daily_spend_ratio": 0.01,
-        "location_risk": 0.05, "unusual_location_flag": 0, "recipient_risk": 0.1,
+        "unusual_location_flag": 0, "unusual_recipient_flag": 0,
+        "failed_auth_count_24h": 0, "days_since_last_similar_txn": 3.0,
+        "gradual_escalation_score": 0.0, "account_tenure_days": 90.0,
         "shared_recipient_accounts": 0, "shared_device_accounts": 0,
     }
     times = []
     for b in range(N_batches):
         events = [
-            {"event_id": f"bench-batch-{b}-{j}", "features": features}
+            {"event_id": f"bench-batch-{b}-{j}",
+             "fraud_id": "FBENCHABCDEFGHIJ", "features": features}
             for j in range(batch_size)
         ]
         t0 = time.perf_counter()
-        resp = client.post("/internal/evaluate-batch", json={"events": events},
+        resp = client.post("/internal/evaluate-batch", json=events,
                            headers={"X-Internal-Token": INTERNAL})
         t1 = time.perf_counter()
         if resp.status_code != 200:
@@ -109,11 +115,13 @@ def bench_batch_risk(client, batch_size=50, N_batches=10):
 
 def bench_e2e_pipeline(priv_client, risk_client, fraud_id, N=20):
     features = {
-        "txn_amount": 150.0, "hour_of_day": 12, "day_of_week": 0,
-        "txn_time_unusual": 0, "amount_zscore": 0.5, "merchant_risk": 0.1,
+        "amount_ratio": 0.95, "hour_of_day": 12, "is_weekend": 0,
+        "txn_time_unusual": 0, "amount_zscore": 0.5,
         "new_device_flag": 0, "known_device_count": 1, "device_daily_count": 1,
         "txn_freq_last_24h": 1, "account_daily_spend_ratio": 0.01,
-        "location_risk": 0.05, "unusual_location_flag": 0, "recipient_risk": 0.1,
+        "unusual_location_flag": 0, "unusual_recipient_flag": 0,
+        "failed_auth_count_24h": 0, "days_since_last_similar_txn": 3.0,
+        "gradual_escalation_score": 0.0, "account_tenure_days": 90.0,
         "shared_recipient_accounts": 0, "shared_device_accounts": 0,
     }
     times = []
@@ -127,10 +135,13 @@ def bench_e2e_pipeline(priv_client, risk_client, fraud_id, N=20):
             "location_id": "US", "recipient_id": "bench-recv-001",
         }, headers={"X-Internal-Token": INTERNAL})
         t1 = time.perf_counter()
-        risk_client.post("/internal/evaluate", json={
-            "event_id": evt_id, "features": features,
+        r = risk_client.post("/internal/evaluate", json={
+            "event_id": evt_id, "fraud_id": fraud_id, "features": features,
         }, headers={"X-Internal-Token": INTERNAL})
         t2 = time.perf_counter()
+        if r.status_code != 200:
+            print(f"  E2E risk FAILED: {r.status_code} {r.text[:160]}")
+            continue
         times.append({"priv": (t1 - t0) * 1000, "risk": (t2 - t1) * 1000, "total": (t2 - t0) * 1000})
     return times
 
@@ -141,7 +152,7 @@ def main():
     print("PS-14 END-TO-END LATENCY BENCHMARK")
     print("=" * 70)
 
-    fraud_id = "FBENCH0000000001"
+    fraud_id = "FBENCHABCDEFGHIJ"
 
     with TestClient(privacy_app) as priv, TestClient(risk_app) as risk:
         print("\n--- 1. Privacy Layer Ingest ---")
@@ -193,7 +204,7 @@ def main():
             t0 = time.perf_counter()
             risk.post("/internal/evaluate", json={
                 "event_id": f"bench-conc-{i}-{secrets.token_hex(4)}",
-                "features": features,
+                "fraud_id": "FBENCHABCDEFGHIJ", "features": features,
             }, headers={"X-Internal-Token": INTERNAL})
             return (time.perf_counter() - t0) * 1000
 

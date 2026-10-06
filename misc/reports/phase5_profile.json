@@ -1,0 +1,49 @@
+{
+  "rows": 1153615,
+  "batch": 250000,
+  "stages_s": {
+    "load": 0.0702875996939838,
+    "to_numpy": 0.07519800029695034,
+    "isfinite": 0.060553299728780985,
+    "scale": 0.19282639981247485,
+    "models_load": 1.89263919997029
+  },
+  "sequential_member_s": {
+    "xgb": 1.496746800141409,
+    "lgb": 4.578910100040957,
+    "cb": 0.11710649984888732
+  },
+  "sequential_total_s": 6.192763400031254,
+  "concurrent_3t_s": 4.9025781999807805,
+  "speedup": 1.2631646344887535,
+  "thread_config": {
+    "xgb": {
+      "n_jobs": 4,
+      "params.n_jobs": 4
+    },
+    "lgb": {
+      "n_jobs": 4,
+      "params.n_jobs": 4
+    },
+    "cb": {}
+  },
+  "equivalence_seq_vs_conc": {
+    "xgb": {
+      "max_abs_diff": 0.0,
+      "exact": true
+    },
+    "lgb": {
+      "max_abs_diff": 0.0,
+      "exact": true
+    },
+    "cb": {
+      "max_abs_diff": 0.0,
+      "exact": true
+    },
+    "fused": {
+      "max_abs_diff": 0.0,
+      "exact": true
+    }
+  },
+  "cb_warm_s": 0.10073609999381006
+}

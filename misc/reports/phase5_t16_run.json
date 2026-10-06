@@ -1,0 +1,116 @@
+{
+  "label": "cpu-sample 5,000,000",
+  "evidence_class": "SELF-TESTED \u2014 SYNTHETIC 50M \u2014 SCALE EXPERIMENT",
+  "rows_processed": 5000000,
+  "partitions_processed": 17,
+  "partition_order": "chronological (year_month ascending)",
+  "batch_size": 250000,
+  "workers": 1,
+  "fraud_rows": 6028,
+  "fraud_prevalence": 0.0012056,
+  "wall_seconds": 20.29400610923767,
+  "rows_per_second": 246378.16570499795,
+  "stage_seconds": {
+    "load": 0.3519464002456516,
+    "validate": 1.0357433003373444,
+    "scale": 0.8768944991752505,
+    "infer": 15.328913799952716,
+    "fuse": 0.07687940006144345,
+    "threshold": 0.006632800213992596,
+    "store": 0.13274159980937839
+  },
+  "stage_fraction": {
+    "load": 0.017342381703800137,
+    "validate": 0.05103690689567114,
+    "scale": 0.04320953164472022,
+    "infer": 0.7553419328564761,
+    "fuse": 0.003788281113527829,
+    "threshold": 0.00032683543004224274,
+    "store": 0.006540926374756311
+  },
+  "bytes_read": 383869400,
+  "latency_ms_per_batch": {
+    "mean": 4.818236370655623,
+    "p50": 6.620100000873208,
+    "p95": 9.047080157324672,
+    "p99": 10.075808130204678
+  },
+  "batch_wall_ms": {
+    "mean": 539.700536353683,
+    "p50": 621.4161000680178,
+    "p95": 935.3914198931307
+  },
+  "threads": 16,
+  "prediction_sha256": "468cfe8d600d0b89e985fd4ee6c42d483561e33dc0d8f315e7cf9d818d092e81",
+  "member_sha256": {
+    "xgb": "3c0d3631fb6fa57ab974e94d8117d20b8650a8bd5f6ea7b5103b57c92510ba43",
+    "lgb": "f6d3bdf950f66505ec9bf8946fed6ffa3cfddb9483dcc71eab9b952ac2f71df1",
+    "cb": "2563c89eca19f711b11a187c325eca1bb47327ba5d3487af6627f5fde015df6a"
+  },
+  "peak_rss_MB": 891.7578125,
+  "threshold": 0.7847116291110687,
+  "confusion_at_threshold": {
+    "tp": 0,
+    "fp": 192,
+    "fn": 6028,
+    "tn": 4993780
+  },
+  "precision": 0.0,
+  "recall": 0.0,
+  "f1": 0.0,
+  "alert_rate": 3.84e-05,
+  "roc_auc": 0.5625890353104461,
+  "pr_auc": 0.001611501669933513,
+  "brier": 0.0014097524108365178,
+  "member_roc_auc": {
+    "xgb": 0.5815688032177725,
+    "lgb": 0.568781687103764,
+    "cb": 0.5430547433613038
+  },
+  "member_pr_auc": {
+    "xgb": 0.0018923266392961683,
+    "lgb": 0.0016231856665689921,
+    "cb": 0.001481390521941906
+  },
+  "member_precision": {
+    "xgb": 0.0,
+    "lgb": 0.0,
+    "cb": 0.0007072135785007072
+  },
+  "nonfinite_values": 0,
+  "missing_feature_partitions": 0,
+  "calibrator_loaded": false,
+  "experiment_manifest": {
+    "git_sha": "ab5a6d0a6baf2c743de9c05fd4277b602478ea60",
+    "benchmark_id": "synthetic_50m",
+    "benchmark_combined_sha256": "c2db7142e24dd8d9c2806ef8a1ec0c23e62cbf2d8fcc4b4b614396922b47edf1",
+    "benchmark_schema_hash": "fb1d8e6a19ffa5837a28747bd928a6c40d4111a6c36eb6d89049bde620e09d96",
+    "generator_version": "1.0.0",
+    "benchmark_seed": 20261005,
+    "benchmark_source_sha256": "b01fa323c98522f8c710c7f7242581860c97c50183f1c5fa9e772e5c674a7f15",
+    "model_version": "altman_native_v2_20260904_115703",
+    "model_type": "xgb_lgb_cb_native",
+    "ensemble_weights": {
+      "xgb": 0.34,
+      "lgb": 0.33,
+      "cb": 0.33
+    },
+    "n_features": 48,
+    "feature_schema_version": "altman_native_v2",
+    "production_manifest_sha256": "e6da1a433ec618576aa12208190d35df3b53e9349b1bb6e54c16465e324b2485",
+    "feature_list_sha256": "657459ac9526c77f6f9006b7ba18a41338a54937e12177cd16eaf944d59aed8f",
+    "scaler_sha256": "b98fadf339f77d09219dabeff94d4b621fd80009e644e5cdbcdec183b1008611",
+    "xgb_sha256": "a1cdebdfe01b709a5e0d9480078e75565521bd6cf5aa7eca06771a828d170bbc",
+    "lgb_sha256": "d59aebcb08d6df05dd9640e1f88c1454aeb0045f8676ee723588b3d401a5c87f",
+    "cb_sha256": "22b8377bc1ff4b6fd07e78630c5b9a8c8729829f286f7e4378948053692cc73f",
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "cpu": "12th Gen Intel(R) Core(TM) i7-12650H",
+    "ram_gb": 15.6,
+    "batch_size": 250000,
+    "workers": 1,
+    "threads": 16,
+    "started_utc": "2026-10-06T14:39:39Z",
+    "ended_utc": "2026-10-06T14:40:10Z"
+  }
+}

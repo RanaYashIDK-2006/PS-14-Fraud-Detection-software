@@ -1,0 +1,52 @@
+{
+  "label": "CPU-utilisation sample over a 5,000,000-row runner pass",
+  "evidence_class": "SELF-TESTED \u2014 SYNTHETIC 50M \u2014 SCALE EXPERIMENT",
+  "rows": 5000000,
+  "wall_seconds_sampled": 31.66779851913452,
+  "logical_cores": 16,
+  "samples": 62,
+  "sample_interval_s": 0.5,
+  "cpu_percent_mean": 784.5677419354838,
+  "cpu_percent_p50": 1119.5,
+  "cpu_percent_p95": 1504.9,
+  "cpu_percent_max": 1538.3,
+  "cpu_cores_busy_mean": 49.03548387096774,
+  "rss_MB_mean": 822.4524319556451,
+  "rss_MB_max": 1041.703125,
+  "runner_exit_code": 0,
+  "runner": {
+    "rows_processed": 5000000,
+    "wall_seconds": 20.29400610923767,
+    "rows_per_second": 246378.16570499795,
+    "roc_auc": 0.5625890353104461,
+    "latency_ms_per_batch": {
+      "mean": 4.818236370655623,
+      "p50": 6.620100000873208,
+      "p95": 9.047080157324672,
+      "p99": 10.075808130204678
+    },
+    "stage_seconds": {
+      "load": 0.3519464002456516,
+      "validate": 1.0357433003373444,
+      "scale": 0.8768944991752505,
+      "infer": 15.328913799952716,
+      "fuse": 0.07687940006144345,
+      "threshold": 0.006632800213992596,
+      "store": 0.13274159980937839
+    },
+    "threads": 16,
+    "prediction_sha256": "468cfe8d600d0b89e985fd4ee6c42d483561e33dc0d8f315e7cf9d818d092e81",
+    "member_sha256": {
+      "xgb": "3c0d3631fb6fa57ab974e94d8117d20b8650a8bd5f6ea7b5103b57c92510ba43",
+      "lgb": "f6d3bdf950f66505ec9bf8946fed6ffa3cfddb9483dcc71eab9b952ac2f71df1",
+      "cb": "2563c89eca19f711b11a187c325eca1bb47327ba5d3487af6627f5fde015df6a"
+    },
+    "rss_MB_max": null
+  },
+  "runner_stdout_tail": [
+    "ROC-AUC=0.562589 PR-AUC=0.001612 Brier=0.001410",
+    "member ROC-AUC: {'xgb': 0.5815688032177725, 'lgb': 0.568781687103764, 'cb': 0.5430547433613038}",
+    "latency ms p50/p95/p99: 7/9/10",
+    "report -> misc\\reports\\phase5_t16_run.json"
+  ]
+}
