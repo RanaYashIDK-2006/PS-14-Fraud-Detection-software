@@ -12,9 +12,9 @@
 |---|---|
 | Branch | `main` |
 | HEAD at phase start (Phase-4 push tip) | `0f2914c95078b1529f5f2159666c7bc4e98dab4f` |
-| **Phase-4A code + evidence commit** (versioned PII cipher, migration tool and its tests, rotated configuration contract, report, evidence bundle) | **`cb504ea`** |
-| Phase-4A closeout commit (this document) | the commit immediately following `cb504ea` on `main` |
-| Post-remediation CI result update | the commit immediately following the closeout commit on `main` |
+| **Phase-4A code + evidence commit** (versioned PII cipher, migration tool and its tests, rotated configuration contract, report, evidence bundle) | **`cb504ea`** (pushed with the commit below as `0f2914c..28d0935`) |
+| Phase-4A closeout commit (this document) | **`28d0935fb4b1ae0b4a4bd51999425d9bbbb94220`** |
+| Final Git SHA of the phase | `28d0935fb4b1ae0b4a4bd51999425d9bbbb94220`; the CI outcome below was appended afterwards in a **documentation-only** commit, because a commit cannot contain its own CI result |
 | Remote | `https://github.com/RanaYashIDK-2006/PS-14-Fraud-Detection-software.git` |
 
 Git history was **not** rewritten. The previously exposed values remain recoverable from history, and that is
@@ -125,7 +125,7 @@ documented in the report; none affected migrated data.
 | `scripts/check_freeze.py` | **rc 1 / 78 placeholder failures — expected by design**, unchanged by this phase |
 | Targeted scan of all 15 live `.env` values **and** all retired values over 1741 tracked/to-be-committed files | **no hits** (only the non-secret `CORS_ORIGINS` is present by design) |
 | `git status` on `models/`, `data/`, `backend/src/risk_engine/rules.yaml`, Research Plan, preregistration, review and dataset documents | **clean — no scientific artifact modified** |
-| CI on the final commit | recorded in the follow-up commit after push (both workflows) |
+| CI on the final commit | **both workflows green** on `28d0935` — CI/CD run `37420876940` (all five jobs) and Security Scan run `37420876927` (see *CI result* below) |
 
 ## Repository invariants
 
@@ -133,6 +133,23 @@ This phase changed application and security code, its tests, and evidence docume
 Research Plan, preregistration, statistical and domain review records, datasets, synthetic benchmark specification,
 model artifacts, thresholds, calibration, and the fraud-detection methodology. No new evaluation metric, split or
 claim was introduced, and no previously recorded result was altered.
+
+## CI result
+
+Verified through the GitHub Actions API against the phase tip `28d0935` (not inferred from a badge — the
+in-progress run was excluded until it reported a conclusion):
+
+| Workflow | Run | Conclusion | Jobs |
+|---|---|---|---|
+| CI/CD | [#138 / run `37420876940`](https://github.com/RanaYashIDK-2006/PS-14-Fraud-Detection-software/actions/runs/37420876940) | **success** | 5 / 5 — Test Suite, Security Scan, Docker Build, Integration Test, Deploy Image |
+| Security Scan | [#142 / run `37420876927`](https://github.com/RanaYashIDK-2006/PS-14-Fraud-Detection-software/actions/runs/37420876927) | **success** | 1 / 1 |
+
+The Security Scan workflow is the one that enforces the new hygiene suite and the Bandit gate, so the secret-scan
+and SAST steps executed on the rotated configuration rather than only locally. Both runs started from the same push
+at 2026-10-06T05:54:19Z and completed successfully (CI/CD at 06:05:10Z).
+
+The documentation-only commit that carries this record is pushed to the same branch and therefore runs the same two
+workflows; its outcome is the last entry reported with this hand-off, and no later commit follows it in this phase.
 
 ## Owner action still required
 

@@ -306,7 +306,7 @@ detector/fixture files (the rule and its patterns are unchanged) — the supply-
 | `check_freeze.py` | **rc 1 / 78 failures — expected by design**, unchanged by this phase |
 | Bandit | exit 0 |
 | Live post-rotation verification | 15/15 PASS |
-| CI on the final commit | recorded in the closeout |
+| CI on the final commit (`28d0935`) | **both workflows green** — CI/CD run `37420876940` (5/5 jobs, including the secret scanner and the Bandit gate) and Security Scan run `37420876927`; detail in the closeout |
 
 Scientific artifacts untouched: no change to the Research Plan, preregistration, review decisions, datasets,
 benchmark, model artifacts, thresholds, or the fraud-detection methodology.
