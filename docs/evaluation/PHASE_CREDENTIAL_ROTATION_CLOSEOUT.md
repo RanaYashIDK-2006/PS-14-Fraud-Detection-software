@@ -24,6 +24,13 @@ recorded below as part of the project's security history rather than fixed.
 
 No value is reproduced anywhere in this closeout, the report, the evidence bundle, any log or any test fixture.
 
+Exposure classification, using the phase brief's labels: `CURRENT SECRET EXPOSURE` — **none**; `HISTORICAL SECRET
+EXPOSURE` — the two committed local values plus the Supabase credential, all still in git history, which was not
+rewritten; `HISTORICALLY EXPOSED — ROTATED` — JWT signing secret and internal service token;
+`HISTORICALLY EXPOSED — OWNER ACTION PENDING` — Supabase `service_role` key + project URL.
+No credential is claimed to have been `SECRET NEVER EXPOSED` unless it was never committed, and only the PII key
+falls in that category (recorded as `NOT EXPOSED — ROTATED BY DESIGN`).
+
 | Credential type | Exposure | Rotation mechanism | Result |
 |---|---|---|---|
 | Authentication signing secret (HS256 JWT) | historically committed | application secret rotation | **ROTATED** |

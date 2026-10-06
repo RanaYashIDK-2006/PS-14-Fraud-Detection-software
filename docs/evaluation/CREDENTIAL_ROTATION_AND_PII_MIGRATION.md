@@ -265,6 +265,17 @@ new key and returned masked fields, and the same route refused a token signed wi
 A scanner returning zero findings does not prove the historical exposure never happened; the historical commits
 remain part of the project's security history.
 
+**Exposure classification (§16/§24 of the phase brief).** Stated with the brief's own labels so that current and
+historical exposure can never be confused:
+
+| Classification | Applies to |
+|---|---|
+| `CURRENT SECRET EXPOSURE` | **none** — every secret active today exists only in the gitignored `.env` (or the deployment secret store); nothing in the worktree is a live value |
+| `HISTORICAL SECRET EXPOSURE` | the previously committed JWT signing secret and internal-token literal, and the Supabase `service_role` key + project URL; all still recoverable from git history, which was deliberately **not** rewritten and is not claimed to be erased |
+| `HISTORICALLY EXPOSED — ROTATED` | JWT signing secret, internal service token — the values that were actually committed and are now replaced and demonstrably rejected |
+| `HISTORICALLY EXPOSED — OWNER ACTION PENDING` | Supabase `service_role` key + project URL — source-remediated and unused locally, but the provider credential itself is not yet rolled |
+| `NOT EXPOSED — ROTATED BY DESIGN` | PII data key material — never committed; rotated onto a dedicated versioned key because the phase requires independent rotation, not because it leaked |
+
 ---
 
 ## 12. Regression and failure testing (§18/§19)
