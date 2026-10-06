@@ -11,12 +11,14 @@ sections).
 | Item | SHA |
 |---|---|
 | Starting SHA (measured code for every Phase 5 run) | `ab5a6d0a6baf2c743de9c05fd4277b602478ea60` |
-| Source + evidence commit | recorded post-push below |
-| Docs commit (report + this closeout) | recorded post-push below |
-| Timer-records commit (records-only) | recorded post-push below |
-| CI record follow-up commit | recorded post-push below |
+| Source + evidence commit | `415ea415c242ea7ef517d60dcb9908727dfa2991` |
+| Docs commit (report + this closeout) | `d67da5c8567048ffa5504dae22f8bb8bb85b5c22` |
+| Timer-records commit (records-only) | `b4e4c8299d00a1d795912c39e168c4a6ca3f6d58` |
+| CI remediation (engine-aware test fix) | `10e3f80b8bd3b94c3de8a9d078b6369ee09a871a` |
+| This record commit + trailing timer records | described in prose below (self-referential SHA not possible) |
 
-*Ledger completed in the post-push follow-up commit, as in Phase 4A.*
+The phase tip carried by CI verification is `10e3f80` — every commit after
+it is documentation/records on the same tree, exactly as in Phase 4A.
 
 ## Changed files
 
@@ -29,9 +31,11 @@ sections).
 - `backend/src/risk_engine/main.py` — `/internal/evaluate-batch` uses the
   batched path; loop now iterates `feature_dicts_allowed` (fixes score/block
   mis-pairing under BLOCK_INFERENCE); truthful docstring. +30/−? lines.
-- `backend/scripts/risk_engine_test.py` — +58 lines: Phase 5
-  batch-equivalence block (exact loop-vs-many scores/uncertainties; 32-event
-  single-vs-batch endpoint identity).
+- `backend/scripts/risk_engine_test.py` — Phase 5 batch-equivalence block
+  (exact loop-vs-many scores/uncertainties; 32-event single-vs-batch endpoint
+  identity), subsequently made engine-aware after CI run #144 (see CI status:
+  `models/production/` is gitignored, so fresh checkouts load the fallback
+  engine and the native-only assertion must skip rather than fail).
 - `backend/scripts/benchmark_e2e.py` — repaired (missing `fraud_id`, wrong
   batch payload shape, stale `FeatureVector` names, invalid bench fraud_id
   pattern, no status check on section 4); runs end-to-end.
@@ -142,6 +146,7 @@ slightly worse at t16 (4.94 → 6.62 ms).
 | `claim_evidence_check` / `eval_record_test` / `review_resolution_check` / `review_package_check` | PASS (22) / 22/22 / PASS (14/14) / PASS (13/13) |
 | `check_freeze.py` | rc=1, **78 problems — expected unchanged** pre-freeze state (77 placeholders + missing FREEZE_RECORD); deliberately not "fixed" |
 | `benchmark_e2e.py` | runs end-to-end after repair |
+| CI-faithful scratch clone (fresh checkout + fresh venv + CI's own data/train steps) | **23/23 PASS** after the engine-aware fix (was 22/23, matching CI run #144) |
 
 Battery history: run 1 (services down) 81/84 — 3× `WinError 10061`
 (`security_test`, `sql_injection_test`, `security_ci_gate`); stack started →
@@ -164,8 +169,39 @@ failures; run 3 complete and green.
 
 ## CI status
 
-- Pending at document time; verified via the GitHub REST API immediately
-  after push and recorded in the post-push follow-up commit below.
+Verified through the GitHub Actions REST API (not inferred from a badge —
+in-progress runs were excluded until they reported a conclusion):
+
+| Workflow | Run | Head | Conclusion | Jobs |
+|---|---|---|---|---|
+| CI/CD | [#144 / run `37505675517`](https://github.com/RanaYashIDK-2006/PS-14-Fraud-Detection-software/actions/runs/37505675517) | `b4e4c82` | **failure** (diagnosed, then remediated) | 1/4 — failed at "Run full regression suite" (32.0 s), other jobs skipped |
+| CI/CD | [#145 / run `37509221280`](https://github.com/RanaYashIDK-2006/PS-14-Fraud-Detection-software/actions/runs/37509221280) | `10e3f80` | **success** | 5/5 — Test Suite, Security Scan, Docker Build, Integration Test, Deploy Image (2026-10-06T18:10:14Z → 18:21:15Z) |
+| Security Scan | [#149 / run `37509221200`](https://github.com/RanaYashIDK-2006/PS-14-Fraud-Detection-software/actions/runs/37509221200) | `10e3f80` | **success** | 1/1 |
+
+**The #144 failure, honestly recorded:** the Phase 5 batch-equivalence
+block asserted `predict_combined_many` on the app's engine unconditionally.
+`models/production/` is gitignored (`.gitignore:95`), so a fresh CI checkout
+has no native production model and the risk engine loads the fallback fused
+engine — which has `predict_combined` but no `predict_combined_many`. The
+assertion could only ever pass on a dev machine holding the production
+artifacts. Because anonymous API/log access could not retrieve the CI log
+(no token; job logs are sign-in-gated), the failure was **reproduced
+faithfully in a scratch clone** (`git clone` of the pushed SHA + fresh venv
++ `pip install -r backend/requirements.txt` + CI's own `generate_synthetic_data.py`
+and `train_compare.py` steps): 22/23 with that single failure, exactly
+matching CI's step timings. Remediation (`10e3f80`): engine-level exactness
+checks run whenever the native engine is loaded and print an explicit `[SKIP]`
+otherwise; the endpoint-level single-vs-batch identity checks remain
+unconditional (the batch endpoint falls back to the per-event loop without
+the method). Verified **23/23 in both environments** — main checkout
+(native, `max_d=0.0`) and the CI clone (fallback engine) — before push;
+#145 then confirmed success on GitHub.
+
+The documentation-only commit that carries this record is pushed to the same
+branch and therefore runs the same two workflows; its outcome is the last CI
+result reported with this hand-off. Every commit after `10e3f80` is
+documentation or hook-generated records on the same tree, so the verified
+tip and the phase tip differ only in documentation.
 
 ## Evidence classification
 

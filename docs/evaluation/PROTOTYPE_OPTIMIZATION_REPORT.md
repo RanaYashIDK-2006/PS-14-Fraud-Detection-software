@@ -550,11 +550,23 @@ production credentials).
 | PII rotation test | in fast suite (`pii_key_rotation`) | PASS |
 | Latency benchmark | `benchmark_e2e.py` | runs end-to-end after repair (§10) |
 
+**CI (verified via the GitHub Actions REST API, not a badge):** the first
+phase push (`b4e4c82`, run #144) **failed** at the regression-suite step.
+Root cause, reproduced in a scratch clone that replays CI's exact steps:
+`models/production/` is gitignored, so a fresh checkout has no native
+production model and the app loads the fallback fused engine — the new
+test's native-only assertion could only pass on a dev machine. Fixed at
+`10e3f80` by making the engine-level exactness checks conditional (explicit
+`[SKIP]` without the native engine) while keeping the endpoint-level
+single-vs-batch identity unconditional; verified 23/23 in **both** the main
+checkout and the CI-faithful clone before push. Re-run **#145: success,
+5/5 jobs** (Test Suite, Security Scan, Docker Build, Integration Test,
+Deploy Image); Security Scan workflow **#149: success**. Full table and
+reproduction detail: `PHASE_OPTIMIZATION_CLOSEOUT.md` → CI status.
+
 `Supabase service_role` rotation remains exactly
 **`OWNER ACTION REQUIRED — PROVIDER CREDENTIAL ROTATION`** — this phase did
-not touch it and does not claim completion (brief §13). CI status is recorded
-in `PHASE_OPTIMIZATION_CLOSEOUT.md` after the push (post-push follow-up
-commit, Phase 4A pattern).
+not touch it and does not claim completion (brief §13).
 
 ## 17. Reproducibility information
 
