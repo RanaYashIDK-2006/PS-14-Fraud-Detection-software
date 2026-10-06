@@ -70,6 +70,12 @@ class Settings(BaseSettings):
     # Dev defaults are randomly generated per-process (no hardcoded secrets).
     jwt_secret: str = ""
     pii_encryption_key: str = ""
+    # Phase 4A: versioned PII data key. PII_KEY_CURRENT is the active key;
+    # PII_KEY_LEGACY keeps the previous key readable during and after the
+    # migration. Both are optional — with neither set, the historical
+    # PII_ENCRYPTION_KEY derivation stays authoritative (unchanged behavior).
+    pii_key_current: str = os.environ.get("PII_KEY_CURRENT", "")
+    pii_key_legacy: str = os.environ.get("PII_KEY_LEGACY", "")
     export_signing_key_str: str = os.environ.get("EXPORT_SIGNING_KEY", "")
     jwt_expiry_minutes: int = 15
     internal_token: str = ""
@@ -147,13 +153,31 @@ class Settings(BaseSettings):
         return Path(self.db_dir) / "verify.db"
 
     @property
+    def pii_key_version(self) -> str:
+        """Version name of the active PII data key (v2 once PII_KEY_CURRENT is set)."""
+        return os.environ.get("PII_KEY_VERSION", "") or ("v2" if self.pii_key_current else "v1")
+
+    @property
     def fernet_key(self) -> bytes:
-        """PII encryption key - SEPARATE from JWT secret.
+        """Active PII encryption key - SEPARATE from JWT secret.
+
+        Phase 4A verified from the stored ciphertext that this key (and never
+        `jwt_secret`) protects PII at rest; rotation therefore cannot break
+        authentication and vice versa.
 
         Production: envelope encryption with per-tenant keys backed by
         KMS/HSM (architecture section 3/4).
         """
-        return base64.urlsafe_b64encode(hashlib.sha256(self.pii_encryption_key.encode()).digest())
+        material = self.pii_key_current or self.pii_encryption_key
+        return base64.urlsafe_b64encode(hashlib.sha256(material.encode()).digest())
+
+    @property
+    def fernet_key_legacy(self) -> bytes | None:
+        """Previous PII data key, kept only to read pre-migration ciphertext."""
+        material = self.pii_key_legacy or self.pii_encryption_key
+        if not material:
+            return None
+        return base64.urlsafe_b64encode(hashlib.sha256(material.encode()).digest())
 
     @property
     def export_signing_key(self) -> bytes:
@@ -206,11 +230,19 @@ def load_dotenv_and_patch() -> None:
         ("compliance_token", "COMPLIANCE_TOKEN"),
         ("jwt_secret", "JWT_SECRET"),
         ("pii_encryption_key", "PII_ENCRYPTION_KEY"),
+        ("pii_key_current", "PII_KEY_CURRENT"),
+        ("pii_key_legacy", "PII_KEY_LEGACY"),
         ("export_signing_key_str", "EXPORT_SIGNING_KEY"),
     ):
         env_val = _os.environ.get(env_name)
         if env_val:
             object.__setattr__(settings, field, env_val)
+    # Drop any PII cipher built before the patch (it memoised the pre-.env,
+    # randomly generated key). Guarded lookup: pii_crypto imports settings.
+    import sys as _sys
+    _pii_crypto = _sys.modules.get("src.pii_crypto")
+    if _pii_crypto is not None:
+        _pii_crypto.reset_cipher_cache()
 
 
 # --- Production security gate ----------------------------------------------

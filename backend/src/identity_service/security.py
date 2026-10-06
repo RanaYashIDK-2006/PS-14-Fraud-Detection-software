@@ -17,9 +17,11 @@ import time
 import jwt
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from cryptography.fernet import Fernet
 
 from src.settings import settings
+from src.pii_crypto import (  # noqa: F401 - re-exported for existing callers
+    decrypt_opt, decrypt_pii, encrypt_opt, encrypt_pii,
+)
 
 # Base32-ish alphabet without confusables (no I, O, 0, 1). 16 chars -> 80 bits,
 # sized to fit the VARCHAR(16) pseudonym_mapping.fraud_id column (section 13).
@@ -27,7 +29,6 @@ FRAUD_ID_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 FRAUD_ID_LENGTH = 16
 
 _ph = PasswordHasher()
-_fernet = Fernet(settings.fernet_key)
 
 
 def gen_fraud_id() -> str:
@@ -44,34 +45,6 @@ def verify_password(password: str, secret_hash: str) -> bool:
         return _ph.verify(secret_hash, password)
     except VerifyMismatchError:
         return False
-
-
-def encrypt_pii(value: str) -> bytes:
-    return _fernet.encrypt(value.encode("utf-8"))
-
-
-def decrypt_pii(value: bytes) -> str:
-    return _fernet.decrypt(value).decode("utf-8")
-
-
-def encrypt_opt(value: str | None) -> bytes | None:
-    """Encrypt an optional plaintext value (None stays None)."""
-    return encrypt_pii(value) if value is not None else None
-
-
-def decrypt_opt(value) -> str | None:
-    """Decrypt an optional PII column, tolerating legacy plaintext rows.
-
-    Columns were plaintext until the #25 privacy fix + migration; reading a
-    str means the row predates encryption - return it unchanged so reads
-    never crash mid-migration. After scripts/migrate_identity_pii.py the
-    value is always bytes.
-    """
-    if value is None:
-        return None
-    if isinstance(value, (bytes, bytearray)):
-        return decrypt_pii(bytes(value))
-    return str(value)  # legacy plaintext row
 
 
 def blind_index(value: str) -> str:

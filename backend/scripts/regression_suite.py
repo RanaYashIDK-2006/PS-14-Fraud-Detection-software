@@ -27,6 +27,8 @@ FAST_TESTS = [
     # Security / privacy (no services needed)
     ("pseudonym_separation", "scripts/pseudonym_separation_test.py", {}),
     ("production_gate", "scripts/production_gate_test.py", {}),
+    # Phase 4A: versioned PII key rotation (hermetic; temp stores + keys)
+    ("pii_key_rotation", "scripts/pii_key_rotation_test.py", {}),
     # ML integrity (offline)
     ("smoke_test", "scripts/smoke_test.py", {}),
     ("risk_engine", "scripts/risk_engine_test.py", {}),

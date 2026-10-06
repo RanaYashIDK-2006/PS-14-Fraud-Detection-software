@@ -283,8 +283,11 @@ except Exception:
 
 secrets_found = []
 # Exclude test scripts, walkthrough scripts, and phase78 itself from secret scan
-# (test fixtures intentionally contain synthetic test credentials)
-exclude_prefixes = ("backend/scripts/phase", "backend/scripts/live_walkthrough", "backend/scripts/penetration_test", "backend/scripts/security_scan", "backend/src/monitoring/security_hardening")
+# (test fixtures intentionally contain synthetic test credentials).
+# Phase 4/4A: secret_hygiene_test.py is itself a secret DETECTOR (it holds the
+# credential-shape regexes and a documented detector allowlist), so it belongs
+# in this list for the same reason security_scan.py does.
+exclude_prefixes = ("backend/scripts/phase", "backend/scripts/live_walkthrough", "backend/scripts/penetration_test", "backend/scripts/security_scan", "backend/scripts/secret_hygiene_test", "backend/src/monitoring/security_hardening")
 for fpath in tracked_py_files:
     if any(fpath.startswith(p) for p in exclude_prefixes):
         continue
