@@ -1,12 +1,25 @@
 #!/usr/bin/env python3
-"""Full pipeline smoke test against Supabase PostgreSQL."""
-from supabase import create_client
-import json, hashlib, time
+"""Full pipeline smoke test against Supabase PostgreSQL.
+
+Credentials are never stored in source: SUPABASE_URL and
+SUPABASE_SERVICE_KEY come from the environment, falling back to the
+repo-root .env via the shared loader.
+"""
+import json, hashlib, os, sys, time
 
 import requests as _req
+from supabase import create_client
 
-url = "https://aihweclhmdgryjahmamy.supabase.co"
-key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpaHdlY2xobWRncnlqYWhtYW15Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NzY2MTQyMywiZXhwIjoyMTAzMjM3NDIzfQ.s7thpwjK7HO1JBLf6XENiqpmMBzZOjremzIJ-UN-_qI"
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+
+from src.settings import load_dotenv_and_patch  # noqa: E402
+
+load_dotenv_and_patch()
+url = os.environ.get("SUPABASE_URL", "")
+key = os.environ.get("SUPABASE_SERVICE_KEY", "")
+if not url or not key:
+    sys.exit("SUPABASE_URL and SUPABASE_SERVICE_KEY are required "
+             "(environment or repo-root .env) — no defaults in source")
 
 # Schema-aware helper using raw requests with Accept-Profile header
 class SchemaClient:

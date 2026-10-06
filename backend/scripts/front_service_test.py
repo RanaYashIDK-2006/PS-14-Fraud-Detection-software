@@ -193,6 +193,51 @@ def main() -> int:
         check("essentials with session -> 200", r.status_code == 200 and "essentials" in r.json(),
               f"status={r.status_code}")
 
+        # ---- phase 4 security findings F1/F2 (regression) -----------------
+        # F1: /security/scan-history and /security/scan-latest served scan
+        # reports (scores, issue lists) with no admin gate while their sibling
+        # /security-scan required one. F2: /run-security-scan 500'd with a
+        # NameError — `env` was assigned in dead code after `raise`.
+        print("\n-- security scan endpoints (phase 4 F1/F2) --")
+        # The login above set an admin_session cookie on this TestClient —
+        # drop it so the probes below are genuinely unauthenticated (Bearer
+        # checks after this point still work without cookies).
+        c.cookies.clear()
+        r = c.get("/security/scan-history")
+        check("F1: scan-history unauthenticated -> 401", r.status_code == 401,
+              f"status={r.status_code}")
+        r = c.get("/security/scan-latest")
+        check("F1: scan-latest unauthenticated -> 401", r.status_code == 401,
+              f"status={r.status_code}")
+        r = c.get("/security/scan-history", headers=auth)
+        check("F1: scan-history with admin session -> 200",
+              r.status_code == 200 and "scans" in r.json(),
+              f"status={r.status_code}")
+        r = c.get("/security/scan-latest", headers=auth)
+        check("F1: scan-latest with admin session -> 200/404 (route reached)",
+              r.status_code in (200, 404), f"status={r.status_code}")
+
+        # F2: mock the subprocess to stay hermetic — the NameError fired while
+        # evaluating env=env at the call site, so a broken build still 500s.
+        import subprocess as _sp
+        _orig_run = fm.subprocess.run
+        _scan_calls: list = []
+
+        def _fake_scan(cmd, **kw):
+            _scan_calls.append((cmd, kw))
+            return _sp.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+        fm.subprocess.run = _fake_scan
+        try:
+            r = c.post("/run-security-scan", headers=auth, json={})
+        finally:
+            fm.subprocess.run = _orig_run
+        check("F2: /run-security-scan no longer 500s", r.status_code == 200,
+              f"status={r.status_code} {r.text[:150]}")
+        check("F2: scan subprocess got the UTF-8 env",
+              bool(_scan_calls) and _scan_calls[0][1].get("env", {}).get("PYTHONIOENCODING") == "utf-8",
+              str(bool(_scan_calls)))
+
         r = c.post("/admin/rotate", headers=auth,
                    json={"current_passphrase": "wrong", "new_passphrase": "new-pass-456"})
         check("rotate with wrong current -> 401", r.status_code == 401, f"status={r.status_code}")

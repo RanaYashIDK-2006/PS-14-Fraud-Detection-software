@@ -49,6 +49,14 @@ jobs:
           bandit -r backend/src/ -f json -o bandit-report.json --severity-level medium
         continue-on-error: false
       
+      - name: Secret hygiene + SAST gate regression
+        # Phase 4: no live .env value / credential-shaped literal in tracked
+        # files, remediated scripts carry no literal credentials, and the
+        # Bandit medium+ gate above stays green.
+        run: python backend/scripts/secret_hygiene_test.py
+        env:
+          PYTHONIOENCODING: utf-8
+
       - name: Run Safety (Dependencies)
         run: |
           safety check --file backend/requirements.txt --output json > safety-report.json

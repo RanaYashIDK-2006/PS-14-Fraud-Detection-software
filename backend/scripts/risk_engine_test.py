@@ -12,6 +12,7 @@ Run from the project root:
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import sqlite3
@@ -226,6 +227,29 @@ def main() -> int:
             "event_id": "ev-bad-token", "fraud_id": FRAUD_ID, "features": vector(),
         })
         check("wrong internal token 401", r.status_code == 401)
+
+        # ---- phase 4 finding F3: NaN/Inf input must stay 422 ---------------
+        # The finite-values validator rejects correctly, but the 422 detail
+        # used to crash JSON serialization (input_value=nan) and surface as a
+        # generic 500. Raw bodies here: json= cannot encode NaN itself.
+        _fv = json.dumps(vector())[1:-1]
+        for tag, payload in (
+                ("NaN", _fv.replace('"amount_ratio": 0.95', '"amount_ratio": NaN')),
+                ("+Inf", _fv.replace('"amount_ratio": 0.95', '"amount_ratio": Infinity')),
+                ("-Inf", _fv.replace('"amount_ratio": 0.95', '"amount_ratio": -Infinity')),
+                ("NaN-unconstrained", _fv.replace('"amount_zscore": 0', '"amount_zscore": NaN'))):
+            raw = ('{"event_id": "ev-%s-0001", "fraud_id": "%s", "features": {%s}}'
+                   % (tag.replace("+", "pos").replace("-", "neg").lower(),
+                      FRAUD_ID, payload))
+            r = c.post("/internal/evaluate",
+                       headers={"X-Internal-Token": TOKEN,
+                                "Content-Type": "application/json"},
+                       content=raw)
+            check(f"F3: {tag} feature -> 422 (not 500)", r.status_code == 422,
+                  f"status={r.status_code} {r.text[:200]}")
+            check(f"F3: {tag} response has no traceback leak",
+                  "traceback" not in r.text.lower()
+                  and "site-packages" not in r.text.lower(), r.text[:150])
 
         # ---- DB-3 separation (section 2) -----------------------------------
         print("\n-- DB-3 separation --")

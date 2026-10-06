@@ -780,7 +780,7 @@ def run_security_scan(request: Request):
         script = SCRIPTS_DIR / "security_scan.py"
         if not script.exists():
             raise HTTPException(status_code=500, detail="security_scan.py not found")
-            env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
+        env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
         result = subprocess.run(
             [sys.executable, str(script), "--json", "--output", str(SECURITY_REPORT)],
             capture_output=True, text=True, timeout=60,
@@ -815,8 +815,9 @@ SECURITY_SCANS_DIR = Path(settings.db_dir) / "security_scans"
 
 
 @app.get("/security/scan-history")
-def security_scan_history() -> JSONResponse:
+def security_scan_history(request: Request) -> JSONResponse:
     """Return the history of automated security scans."""
+    _require_admin_session(request)
     history_file = SECURITY_SCANS_DIR / "scan_history.json"
     if not history_file.exists():
         return JSONResponse({"scans": [], "total": 0})
@@ -828,8 +829,9 @@ def security_scan_history() -> JSONResponse:
 
 
 @app.get("/security/scan-latest")
-def security_scan_latest() -> JSONResponse:
+def security_scan_latest(request: Request) -> JSONResponse:
     """Return the latest automated security scan results."""
+    _require_admin_session(request)
     if not SECURITY_SCANS_DIR.exists():
         return JSONResponse({"error": "no scans found"}, status_code=404)
     try:
@@ -2048,7 +2050,7 @@ def admin_db_schema(
                 "SELECT name, type, pk FROM pragma_table_info(?)", (name,)
             ).fetchall()]
             quoted = name.replace('"', '""')
-            n = conn.execute(f'SELECT COUNT(*) FROM "{quoted}"').fetchone()[0]
+            n = conn.execute(f'SELECT COUNT(*) FROM "{quoted}"').fetchone()[0]  # nosec B608 - table name from sqlite_master, quote-escaped identifier
             tables.append({
                 "name": name,
                 "columns": cols,
@@ -2093,7 +2095,7 @@ def admin_db_rows(
         if not exists:
             raise HTTPException(status_code=404, detail=f"table not found: {req.table}")
         cur = conn.execute(
-            f'SELECT rowid AS _rowid, * FROM "{req.table}" ORDER BY rowid DESC LIMIT ?',
+            f'SELECT rowid AS _rowid, * FROM "{req.table}" ORDER BY rowid DESC LIMIT ?',  # nosec B608 - table name regex-validated, LIMIT bound as ?
             (req.limit,),
         )
         rows = [dict(r) for r in cur.fetchall()]
@@ -2161,7 +2163,7 @@ def admin_db_update(
             for r in conn.execute("SELECT name, pk FROM pragma_table_info(?)", (req.table,)).fetchall()
         }
         old_row = conn.execute(
-            f'SELECT * FROM "{req.table}" WHERE rowid = ?', (req.rowid,)
+            f'SELECT * FROM "{req.table}" WHERE rowid = ?', (req.rowid,)  # nosec B608 - table name regex-validated, rowid bound as ?
         ).fetchone()
         if old_row is None:
             raise HTTPException(status_code=404, detail="row not found")
@@ -2183,7 +2185,7 @@ def admin_db_update(
 
         values.append(req.rowid)
         cur = conn.execute(
-            f'UPDATE "{req.table}" SET {", ".join(assigns)} WHERE rowid = ?', values
+            f'UPDATE "{req.table}" SET {", ".join(assigns)} WHERE rowid = ?', values  # nosec B608 - table name regex-validated, columns from live schema, values bound
         )
         if cur.rowcount != 1:
             conn.rollback()
@@ -2459,7 +2461,7 @@ def _review_states(event_ids: list[str]) -> dict[str, str]:
     marks = ",".join("?" * len(event_ids))
     rows = _ro_rows(
         "risk",
-        "SELECT event_id, review_state FROM event_reviews "
+        "SELECT event_id, review_state FROM event_reviews "  # nosec B608 - placeholder skeleton only, ids bound as ?
         f"WHERE event_id IN ({marks})",
         tuple(event_ids)) or []
     return {r["event_id"]: r["review_state"] for r in rows}
@@ -2855,7 +2857,7 @@ def admin_api_transactions(
         def _rc(extra: list, extra_p: list) -> int:
             w = " AND ".join(bw + extra) if (bw or extra) else "1=1"
             return _ro_scalar(
-                "risk", f"SELECT COUNT(*) FROM risk_scores WHERE {w}",
+                "risk", f"SELECT COUNT(*) FROM risk_scores WHERE {w}",  # nosec B608 - WHERE skeleton built from ? placeholders only
                 tuple(bp) + tuple(extra_p)) or 0
 
         review_counts = {
@@ -2874,7 +2876,7 @@ def admin_api_transactions(
             bw + [f"{_st} = ?", "risk_band NOT IN ('low', 'unknown')"])
         ar = _ro_rows(
             "risk",
-            f"SELECT SUM(CASE WHEN age < 900 THEN 1 ELSE 0 END) "
+            f"SELECT SUM(CASE WHEN age < 900 THEN 1 ELSE 0 END) "  # nosec B608 - static aggregate SQL, no interpolated values
             f"       AS under_15m, "
             f"       SUM(CASE WHEN age >= 900 AND age < 3600 "
             f"           THEN 1 ELSE 0 END) AS bucket_15m_1h, "
@@ -2927,11 +2929,11 @@ def admin_api_transactions(
     elif queue_sort == "newest":
         order_sql = "scored_at DESC, event_id"
     total = _ro_scalar("risk",
-                       f"SELECT COUNT(*) FROM risk_scores WHERE {where_sql}",
+                       f"SELECT COUNT(*) FROM risk_scores WHERE {where_sql}",  # nosec B608 - WHERE skeleton built from ? placeholders only
                        tuple(params)) or 0
     rows_out = _ro_rows(
         "risk",
-        f"SELECT event_id, fraud_id, risk_score, risk_band, reason_codes, "
+        f"SELECT event_id, fraud_id, risk_score, risk_band, reason_codes, "  # nosec B608 - static column list + ? skeleton
         f"model_version, ml_score, rule_score, degraded, scored_at, "
         f"{_AGE_SQL} AS waiting_s "
         f"FROM risk_scores WHERE {where_sql} "
@@ -2948,7 +2950,7 @@ def admin_api_transactions(
         marks = ",".join("?" * len(fids))
         erows = _ro_rows(
             "audit",
-            "SELECT fraud_id, event_type, payload_summary FROM audit_events "
+            "SELECT fraud_id, event_type, payload_summary FROM audit_events "  # nosec B608 - placeholder skeleton only, ids bound as ?
             f"WHERE fraud_id IN ({marks}) AND event_type IN "
             "('score_generated', 'runtime_release_unverified', "
             "'data_quality_blocked') ORDER BY seq DESC LIMIT 400",
@@ -3047,7 +3049,7 @@ def admin_api_transaction_detail(
 
     score_rows = _ro_rows(
         "risk",
-        "SELECT score_id, event_id, fraud_id, risk_score, risk_band, "
+        "SELECT score_id, event_id, fraud_id, risk_score, risk_band, "  # nosec B608 - static column list + ? skeleton
         "reason_codes, model_version, ml_score, rule_score, degraded, "
         f"scored_at, {_AGE_SQL} AS waiting_s "
         "FROM risk_scores WHERE event_id = ? LIMIT 1",
@@ -3369,7 +3371,7 @@ def _review_workload(now: datetime, workload_range: str,
         # metric.  NULL (empty queue or unavailable store) -> UI shows N/A.
         oldest_waiting = _ro_scalar(
             "risk",
-            "SELECT MAX(" + _AGE_SQL + ") FROM risk_scores WHERE "
+            "SELECT MAX(" + _AGE_SQL + ") FROM risk_scores WHERE "  # nosec B608 - static SQL fragment, no interpolated values
             "COALESCE((SELECT review_state FROM event_reviews er "
             "WHERE er.event_id = risk_scores.event_id), "
             "'UNREVIEWED') = 'UNREVIEWED' "
@@ -3586,7 +3588,7 @@ def admin_api_summary(request: Request, workload_range: str = "24h") -> dict:
         marks = ",".join("?" * len(fids))
         erows = _ro_rows(
             "audit",
-            "SELECT event_id, payload_summary FROM audit_events "
+            "SELECT event_id, payload_summary FROM audit_events "  # nosec B608 - placeholder skeleton only, ids bound as ?
             f"WHERE fraud_id IN ({marks}) AND event_type IN "
             "('score_generated', 'runtime_release_unverified') "
             "ORDER BY seq DESC LIMIT 40",
@@ -4112,7 +4114,7 @@ def admin_api_live(request: Request, window: str = "15m") -> dict:
         marks = ",".join("?" * len(fids))
         erows = _ro_rows(
             "audit",
-            "SELECT fraud_id, event_type, payload_summary FROM audit_events "
+            "SELECT fraud_id, event_type, payload_summary FROM audit_events "  # nosec B608 - placeholder skeleton only, ids bound as ?
             f"WHERE fraud_id IN ({marks}) AND event_type IN "
             "('score_generated', 'runtime_release_unverified', "
             "'data_quality_blocked') ORDER BY seq DESC LIMIT 400",
