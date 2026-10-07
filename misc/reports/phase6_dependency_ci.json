@@ -1,0 +1,40 @@
+{
+  "phase": "Phase 6 - Dependency & Fresh-Environment Integrity",
+  "verified_commit": "ecebe8422b9862c0cd9d18aaafef1a57212633d8",
+  "branch": "main",
+  "head_equals_origin_main": true,
+  "runs": [
+    {
+      "workflow": "CI/CD",
+      "run_number": 148,
+      "head_sha": "ecebe8422b9862c0cd9d18aaafef1a57212633d8",
+      "conclusion": "success",
+      "total_duration": "13m 6s",
+      "jobs": [
+        {"name": "Test Suite", "duration": "1m 25s", "conclusion": "success"},
+        {"name": "Security Scan", "duration": "1m 1s", "conclusion": "success"},
+        {"name": "Docker Build", "duration": "3m 48s", "conclusion": "success"},
+        {"name": "Integration Test", "duration": "2m 52s", "conclusion": "success"},
+        {"name": "Deploy Image", "duration": "1m 34s", "conclusion": "success"}
+      ],
+      "evidence_source": "api.github.com actions/runs?head_sha=ecebe84 (status) + anonymous Actions run page https://github.com/RanaYashIDK-2006/PS-14-Fraud-Detection-software/actions/runs/37573044414 (per-job outcomes and durations). Job logs remain sign-in gated."
+    },
+    {
+      "workflow": "Security Scan",
+      "run_number": 152,
+      "head_sha": "ecebe8422b9862c0cd9d18aaafef1a57212633d8",
+      "conclusion": "success",
+      "evidence_source": "api.github.com actions/runs?head_sha=ecebe84"
+    }
+  ],
+  "what_this_establishes": [
+    "The pinned manifest PLUS the new constraints lock install successfully on the CI Linux runner (CPython 3.12) in all four dependency-consuming jobs.",
+    "The fast regression suite (23 suites) passes on the CI Linux resolve of the locked set.",
+    "The CI security job - which installs the locked set and then runs bandit, secret hygiene and 'pip-audit' - stays green, including pip-audit against the new pins.",
+    "The Docker image builds with the new COPY/RUN constraint wiring and its health check passes.",
+    "The integration job boots the full six-service compose stack from the pre-built image and verifies the audit chain."
+  ],
+  "not_established_here": [
+    "Native production artifact loading: models/production/ is gitignored, so CI still trains its own artifacts via train_compare.py and loads the fallback/native-absent path. That is the Phase-7 native-engine fixture."
+  ]
+}

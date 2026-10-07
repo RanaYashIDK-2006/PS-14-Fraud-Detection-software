@@ -15,8 +15,9 @@ No other phase's fixes are included. Started 2026-10-07.
 | Branch | `main` |
 | Starting SHA (phase start / pre-change tree) | `24a8d3eb52a5897cfb5139984c9a70ec49d37aac` |
 | Manifest of the native-engine defect | `69cad0b` / `24a8d3e` (code review source of truth) |
-| Phase-6 implementation + evidence + docs commit | `<this commit>` — SHA recorded in `git log` / the CI-record commit below (a commit cannot embed its own SHA) |
-| Final phase SHA | the phase-6 delivery commit on `main`; the CI outcome is appended afterwards in a **documentation-only** commit |
+| **Phase-6 implementation + evidence + docs commit** | **`ecebe8422b9862c0cd9d18aaafef1a57212633d8`** |
+| CI verified on that SHA | `CI/CD #148` **success** (all 5 jobs) + `Security Scan #152` **success** |
+| Ending Git SHA | this documentation-only CI-record commit, appended after `ecebe84` — the final phase tip on `main` (a commit cannot embed its own SHA) |
 | Remote | `https://github.com/RanaYashIDK-2006/PS-14-Fraud-Detection-software.git` |
 
 Git history was not rewritten. No model artifacts, databases, logs, caches or
@@ -313,7 +314,7 @@ verification commands, and the limitations in §19.
 | Risk-engine, evidence, review-resolution and hygiene suites green | **SELF-TESTED** |
 | Full Phase-114 battery (84 suites) green on the final tree | **SELF-TESTED** |
 | Native **artifact** loading from a clean checkout | **BLOCKED** — `models/production/` is gitignored; no artifacts exist in a clean clone (it *was* demonstrated locally against the developer's artifacts) |
-| CI (Linux) resolves and tests the same set | **NOT ESTABLISHED at writing time** — to be confirmed by the CI run recorded after the push (§CI record) |
+| CI (Linux) installs the locked set and runs the suites green | **DEMONSTRATED** — `CI/CD #148` success on all five jobs (see “CI record”) |
 | Vulnerability/CVE coverage of the dependency set | **NOT ESTABLISHED** — Phase 12 |
 
 ---
@@ -322,14 +323,14 @@ verification commands, and the limitations in §19.
 
 1. **Phase identity** — Phase 6, Dependency & Fresh-Environment Integrity (above).
 2. **Starting Git SHA** — `24a8d3eb52a5897cfb5139984c9a70ec49d37aac`.
-3. **Ending Git SHA** — the phase-6 delivery commit on `main` (ledger above; the
-   CI-record commit follows it).
+3. **Ending Git SHA** — `ecebe8422b9862c0cd9d18aaafef1a57212633d8` (delivery),
+   plus this documentation-only CI-record commit as the final tip on `main`.
 4. **Files changed** — `backend/requirements.txt`, `backend/constraints.txt`
    (new), `.github/workflows/ci-cd.yml`, `.github/workflows/security-scan.yml`,
    `backend/Dockerfile`, `README.md`,
    `docs/admin_console_staging_deploy.md`, `misc/reports/phase6_dependency_*`
    (evidence: `_state.json`, `_fresh_env.json`, `_audit.txt`,
-   `_battery_results.tsv`, `_battery_stackdown.tsv`), this document.
+   `_battery_results.tsv`, `_battery_stackdown.tsv`, `_ci.json`), this document.
 5. **Dependencies added** — `lightgbm`, `catboost`, `redis`.
 6. **Dependency versions** — direct pins: lightgbm 4.7.0, catboost 1.2.10,
    redis 8.1.0, numpy 2.5.3, pandas 3.0.6, scikit-learn 1.9.0, xgboost 3.4.1,
@@ -362,7 +363,8 @@ verification commands, and the limitations in §19.
     review-package suites green, `secret_hygiene_test` **16/16**, `pip check`
     clean. Two documented non-regressions: `secret_hygiene_test` needs the CI
     `bandit` scanner in a bare venv (prints its own remediation), and
-    `check_freeze` is rc=1 pre-freeze **by design**.
+    `check_freeze` is rc=1 pre-freeze **by design**. CI: `CI/CD #148` success
+    (all 5 jobs) and `Security Scan #152` success on the delivered SHA.
 16. **Security / hygiene verification** — Part H: no secrets, no new indexes,
     legitimate package names, existing gates green, `pip-audit` clean on the lock.
 17. **Before / after dependency state** — Part J table.
@@ -385,8 +387,38 @@ verification commands, and the limitations in §19.
 - Timer-generated calibration records (`reports/evaluation_runs/record_eval-*.json`,
   `eval_ledger.jsonl`, `reports/calibration_test/calibration_metrics.json`) are
   left **uncommitted** and are not part of this phase's changes.
+- Committed as `ecebe84` (13 files, +999 / −30) and **pushed to `origin/main`**
+  (`24a8d3e..ecebe84`); `HEAD == origin/main` verified.
+- **CI verified after the push** — `CI/CD #148` and `Security Scan #152` both
+  success on `ecebe84` (see “CI record”). One documentation-only commit follows
+  to record that result, since a commit cannot contain its own CI outcome.
 
 ---
+
+## CI record
+
+Pushed `24a8d3e..ecebe84` to `origin/main`; `HEAD == origin/main` verified at
+`ecebe8422b9862c0cd9d18aaafef1a57212633d8`. Machine-readable copy:
+`misc/reports/phase6_dependency_ci.json`.
+
+| Workflow | Run | SHA | Result | Jobs |
+|---|---|---|---|---|
+| **CI/CD** | **#148** | `ecebe84` | **success** (13m 6s) | Test Suite 1m 25s · Security Scan 1m 1s · Docker Build 3m 48s · Integration Test 2m 52s · Deploy Image 1m 34s — **all five completed successfully** |
+| **Security Scan** | **#152** | `ecebe84` | **success** | — |
+
+What this establishes on Linux/CPython 3.12: the pinned manifest **plus** the new
+constraints lock install cleanly in all four dependency-consuming CI jobs; the
+fast regression suite passes on the CI resolve of the locked set; the security
+job's `bandit`, secret-hygiene and **`pip-audit`** gates stay green against the
+new pins; the Docker image builds with the new `constraints.txt` wiring and its
+health check passes; and the integration job boots the full six-service compose
+stack and verifies the audit chain.
+
+Not established here: native artifact loading — CI still trains its own
+artifacts via `train_compare.py` because `models/production/` is gitignored
+(Phase-7 native-engine fixture). Job logs remain sign-in gated; the per-job
+outcomes above were read from the anonymous Actions run page
+(`/actions/runs/37573044414`) and the public API.
 
 ## §19 — Limitations
 
@@ -397,10 +429,10 @@ verification commands, and the limitations in §19.
    artifact loading is `BLOCKED` from a clean checkout and was only demonstrated
    locally. Committing the large artifacts to make the test pass was explicitly
    rejected.
-2. **CI/Linux resolution is asserted, not locally demonstrated.** The lock was
-   resolved and installed on Windows/CPython 3.12.10. The Linux CI run after the
-   push is the authority for the CI leg; every pinned distribution is a standard
-   manylinux/cp312-compatible release.
+2. **The lock was authored on Windows/CPython 3.12.10.** The Linux leg is not a
+   local measurement; it is established by `CI/CD #148`, which installed the
+   locked set from a clean checkout on ubuntu-latest/CPython 3.12 and passed.
+   Every pinned distribution is a standard manylinux/cp312-compatible release.
 3. **`redis` is declared but never exercised for a live connection** here — the
    declaration fixes the import failure; the graceful in-memory fallback still
    depends on the import succeeding, which is now possible.
@@ -440,6 +472,6 @@ locked set.
 
 **Why "WITH LIMITATIONS":** native **artifact** loading remains `BLOCKED` from a
 clean checkout because `models/production/` is gitignored — the dependency layer
-is proven, artifact provenance/loading in CI is not (Phase 7). CI/Linux
-resolution is asserted from a Windows-authored lock and awaits the post-push CI
-run, and no CVE coverage is claimed (Phase 12).
+is proven, artifact provenance/loading in CI is not (Phase 7). The lock is
+Windows-authored (its Linux leg rests on the CI run rather than a local
+measurement), and no CVE coverage is claimed (Phase 12).
