@@ -1,12 +1,16 @@
 # PS-14 — Phase 6 (Dependency & Fresh-Environment Integrity) Closeout
 
-**Phase identity:** Phase 6 — Dependency & Fresh-Environment Integrity.
+**Phase identity:** Phase 6 — Dependency & Fresh-Environment Integrity
+**Date:** 2026-10-07 (started and completed)
+**Starting commit:** `24a8d3eb52a5897cfb5139984c9a70ec49d37aac`
+**Final commit:** `fd346d3c68d1cc0266dbeccf31360a70bf212e45`
+(Phase-6 delivery `ecebe84`; CI-record follow-up `fd346d3`)
+**Final verdict:** **`PASS WITH LIMITATIONS`** (phase-qualified form:
+`DEPENDENCY INTEGRITY PASS WITH LIMITATIONS`)
+
 Scope: dependency declarations, dependency reproducibility, and proving a fresh
 environment can install the declared set and load the native production engine.
-No other phase's fixes are included. Started 2026-10-07.
-
-**Final decision:** `DEPENDENCY INTEGRITY PASS WITH LIMITATIONS`
-(see §20).
+No other phase's fixes are included.
 
 ## Commit / SHA ledger
 
@@ -209,6 +213,19 @@ Result: one clean checkout, CI, and the Docker image all resolve the **same**
 dependency set. The CI security job still installs `bandit` / `pip-audit`
 explicitly (those are scanner tools, deliberately not constrained).
 
+`backend/docker-compose.yml` and `backend/docker-compose.prod.yml` were both
+inspected: every application service builds from the *same* `backend/Dockerfile`
+(the dev compose via `context: ..`, prod via an identical build stanza), so all
+of them inherit the one lock. Prod compose's `postgres:16-alpine` and
+`redis:7-alpine` are upstream images and are unaffected by this phase.
+
+**Docker limitation:** `docker` is **not installed on this workstation**
+(`docker: command not found`), so the image was never built locally. The
+authority for the Docker leg is CI — `CI/CD #148`'s `Docker Build` job
+(3m 48s, success, including the non-root `whoami` assertion and the container
+health check) and its `Integration Test` job (2m 52s, success), which boots all
+six compose services from that image and verifies the audit chain.
+
 ---
 
 ## Part G — Regression verification
@@ -255,6 +272,7 @@ not import the added packages).
 | No dependency replaced with an unrelated package | **confirmed** — every added name is the legitimate upstream package for its import |
 | Package names are the real upstream packages | **confirmed** — `lightgbm` (LightGBM), `catboost` (CatBoost), `redis` (redis-py) |
 | Existing security controls remain green | `bandit` (medium+) gate unchanged; `secret_hygiene_test` 16/16; the `pip-audit` CI gate is **clean on the new lock** (`No known vulnerabilities found`, exit 0 — recorded in `misc/reports/phase6_dependency_audit.txt`) |
+| No unnecessary or obsolete package introduced or retained | **confirmed** — the only additions are the three packages whose imports justified them, all current upstream releases (`lightgbm` 4.7.0, `catboost` 1.2.10, `redis` 8.1.0); nothing was added or kept merely to make an import succeed, and no existing declaration was dropped to smooth the lock |
 
 Pinning `PyJWT==2.15.1` (not the dev venv's advisory-laden 2.13.0) is exactly
 what keeps the existing `pip-audit` gate green. **CVE coverage is not claimed —
@@ -302,6 +320,10 @@ verification commands, and the limitations in §19.
 
 ### Evidence classification
 
+Labels are the brief's set — `DEMONSTRATED`, `SELF-TESTED`, `SIMULATED`,
+`NOT ESTABLISHED`, `BLOCKED`. Nothing local is upgraded to `DEMONSTRATED`
+merely because a command exited 0.
+
 | Claim | Classification |
 |---|---|
 | Declared dependency set installs in a clean environment (twice, identically) | **DEMONSTRATED** |
@@ -316,6 +338,7 @@ verification commands, and the limitations in §19.
 | Native **artifact** loading from a clean checkout | **BLOCKED** — `models/production/` is gitignored; no artifacts exist in a clean clone (it *was* demonstrated locally against the developer's artifacts) |
 | CI (Linux) installs the locked set and runs the suites green | **DEMONSTRATED** — `CI/CD #148` success on all five jobs (see “CI record”) |
 | Vulnerability/CVE coverage of the dependency set | **NOT ESTABLISHED** — Phase 12 |
+| Any simulated-workload result | **`SIMULATED` — not applicable, none claimed.** No Phase-6 result rests on simulated workload behaviour: this phase verifies installation, resolution, hashes and imports, and re-runs the project's own suites. (Those suites consume synthetic data, but they are the project's own test machinery, hence `SELF-TESTED`.) |
 
 ---
 
@@ -371,7 +394,8 @@ verification commands, and the limitations in §19.
 18. **Evidence classification** — Part J table (`DEMONSTRATED` / `SELF-TESTED` /
     `NOT ESTABLISHED` / `BLOCKED`).
 19. **Limitations** — §19 below.
-20. **Final decision** — `DEPENDENCY INTEGRITY PASS WITH LIMITATIONS` (§20).
+20. **Final decision** — `PASS WITH LIMITATIONS` (§20; phase-qualified
+    `DEPENDENCY INTEGRITY PASS WITH LIMITATIONS`).
 
 ---
 
@@ -452,14 +476,42 @@ outcomes above were read from the anonymous Actions run page
    regress; vulnerability scanning is Phase 12.
 8. **Stale documentation elsewhere was intentionally left** (README suite counts,
    historical evaluation docs) — broader documentation cleanup is a later phase.
+9. **Phase 5 documentation follow-up (recorded here, deliberately not fixed).**
+   The Phase 5 closeout still ends with an unfilled
+   `## Post-push record (appended after CI verification)` placeholder — three
+   lines total: the heading, a blank line, and the promise "Filled in by the
+   post-push follow-up commit: final SHAs + CI run outcome." Its CI table stops
+   at `10e3f80` (#145 / #149) and therefore does not carry the final Phase-5 tip
+   `24a8d3e`, which was re-verified for this record as `CI/CD #147`
+   (run `37513659834`, success, 5/5 jobs, 10m 43s) and `Security Scan #151`
+   (run `37513659867`, success, 1/1, 1m 39s). **The missing record was not
+   invented or backfilled here** — this phase does not reopen Phase 5
+   optimization. It is handed to the later documentation-integrity phase.
+10. **Phase 5 roadmap wording is stale and was left as historical text.** The
+    Phase 5 report and closeout name the intended next phase as "PHASE 6 —
+    PROTOTYPE VALIDATION & PACKAGING" and assign live-server HTTP performance to
+    "Phase 6 packaging". The current roadmap is authoritative (Phase 6 =
+    Dependency & Fresh-Environment Integrity), so no edit was made — with the
+    consequence that the deferred live-server measurement remains open and was
+    **not** addressed by this phase.
+11. **No type checking was run, because the project has none.** There is no
+    `pyproject.toml`, `setup.cfg`, `tox.ini`, `mypy.ini` or
+    `.pre-commit-config.yaml`, and no `mypy` / `pyright` / `ruff` dependency or
+    CI step anywhere. Recorded as a verified fact rather than skipped silently.
+12. **The Docker leg is CI-verified only** (no local build — see Part F), and
+    sign-in-gated CI job logs were not retrievable; per-job outcomes came from
+    the anonymous Actions pages and the public API, which was itself rate-limited
+    for part of the session.
 
 ---
 
 ## §20 — Final decision
 
-`DEPENDENCY INTEGRITY PASS WITH LIMITATIONS`
+# `PASS WITH LIMITATIONS`
 
-**Why PASS:** every runtime dependency required by the native production engine
+(phase-qualified form: `DEPENDENCY INTEGRITY PASS WITH LIMITATIONS`)
+
+**Why `PASS` and not `BLOCKED`:** every runtime dependency required by the native production engine
 (and the shipped inference service) is now explicitly declared — `lightgbm`,
 `catboost`, and the additionally-discovered `redis` — with per-package import /
 model-loading evidence; the repository now has a deterministic, single-source
@@ -470,7 +522,7 @@ environments installed the declared set with **identical** results and a clean
 security gates stay green, with the fast regression suite **23/23** on the
 locked set.
 
-**Why "WITH LIMITATIONS":** native **artifact** loading remains `BLOCKED` from a
+**Why `WITH LIMITATIONS` and not a plain `PASS`:** native **artifact** loading remains `BLOCKED` from a
 clean checkout because `models/production/` is gitignored — the dependency layer
 is proven, artifact provenance/loading in CI is not (Phase 7). The lock is
 Windows-authored (its Linux leg rests on the CI run rather than a local
