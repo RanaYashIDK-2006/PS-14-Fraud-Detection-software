@@ -3,8 +3,10 @@
 **Phase identity:** Phase 6 — Dependency & Fresh-Environment Integrity
 **Date:** 2026-10-07 (started and completed)
 **Starting commit:** `24a8d3eb52a5897cfb5139984c9a70ec49d37aac`
-**Final commit:** `fd346d3c68d1cc0266dbeccf31360a70bf212e45`
-(Phase-6 delivery `ecebe84`; CI-record follow-up `fd346d3`)
+**Final commit:** `ecebe8422b9862c0cd9d18aaafef1a57212633d8` — the substantive
+Phase-6 commit (dependency fix + evidence + this document). Documentation-only
+CI-record commits follow it on `main` (`fd346d3`, and the commit carrying this
+line); **every pushed tip was CI-verified** — see “CI record”.
 **Final verdict:** **`PASS WITH LIMITATIONS`** (phase-qualified form:
 `DEPENDENCY INTEGRITY PASS WITH LIMITATIONS`)
 
@@ -421,14 +423,25 @@ merely because a command exited 0.
 
 ## CI record
 
-Pushed `24a8d3e..ecebe84` to `origin/main`; `HEAD == origin/main` verified at
-`ecebe8422b9862c0cd9d18aaafef1a57212633d8`. Machine-readable copy:
-`misc/reports/phase6_dependency_ci.json`.
+Pushed `24a8d3e..ecebe84`, then `ecebe84..fd346d3` and `fd346d3..fae4860` to
+`origin/main`; `HEAD == origin/main` verified after each push. Machine-readable
+copy: `misc/reports/phase6_dependency_ci.json` (covers the `ecebe84` runs).
 
 | Workflow | Run | SHA | Result | Jobs |
 |---|---|---|---|---|
 | **CI/CD** | **#148** | `ecebe84` | **success** (13m 6s) | Test Suite 1m 25s · Security Scan 1m 1s · Docker Build 3m 48s · Integration Test 2m 52s · Deploy Image 1m 34s — **all five completed successfully** |
 | **Security Scan** | **#152** | `ecebe84` | **success** | — |
+| **CI/CD** | **#149** | `fd346d3` | **success** | docs-only CI-record follow-up; all jobs green |
+| **Security Scan** | **#153** | `fd346d3` | **success** | — |
+| **CI/CD** | **#150** | `fae4860` | **success** (12m 0s) | Test Suite 2m 1s · Security Scan 1m 29s · Docker Build 3m 44s · Integration Test 2m 53s · Deploy Image 1m 35s — **all five completed successfully** |
+| **Security Scan** | **#154** | `fae4860` | **success** | — |
+
+Every pushed tip of this phase was verified green (`ecebe84`, `fd346d3`,
+`fae4860`). Two caveats, stated rather than smoothed over: per the repository's
+convention the run belonging to the *last* documentation-only commit is
+reported in the hand-off rather than embedded here, because a commit cannot
+contain its own CI result; and #149/#153 were read from the public API (run
+numbers verified, no per-job durations captured).
 
 What this establishes on Linux/CPython 3.12: the pinned manifest **plus** the new
 constraints lock install cleanly in all four dependency-consuming CI jobs; the
