@@ -32,6 +32,11 @@ FAST_TESTS = [
     # ML integrity (offline)
     ("smoke_test", "scripts/smoke_test.py", {}),
     ("risk_engine", "scripts/risk_engine_test.py", {}),
+    # Phase 7: native production-engine path on a clean checkout — tiny
+    # deterministic TEST FIXTURE drives the real AltmanNativeEnsembleEngine
+    # loader, all three native members, the Phase 5 batch contract and
+    # main.py's native selection (models/production/ stays gitignored).
+    ("native_fixture", "scripts/native_fixture_test.py", {}),
     ("drift_monitor", "scripts/drift_test.py", {}),
     ("k_anonymity", "scripts/k_anonymity_test.py", {}),
     ("ood_gate", "scripts/ood_gate_test.py", {}),
