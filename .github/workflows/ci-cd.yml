@@ -36,7 +36,7 @@ jobs:
           cache: 'pip'
 
       - name: Install dependencies
-        run: pip install -r backend/requirements.txt
+        run: pip install -r backend/requirements.txt -c backend/constraints.txt
 
       - name: Generate synthetic data
         run: python backend/src/generate_synthetic_data.py
@@ -85,7 +85,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r backend/requirements.txt
+          pip install -r backend/requirements.txt -c backend/constraints.txt
           pip install bandit pip-audit
 
       - name: Run Bandit static analysis
@@ -150,7 +150,7 @@ jobs:
           cache: 'pip'
 
       - name: Install dependencies
-        run: pip install -r backend/requirements.txt
+        run: pip install -r backend/requirements.txt -c backend/constraints.txt
 
       # Bake trained artifacts into the image: models/artifacts/ is
       # gitignored (joblib files), so a fresh checkout ships none and the
@@ -212,7 +212,7 @@ jobs:
           cache: 'pip'
 
       - name: Install dependencies
-        run: pip install -r backend/requirements.txt
+        run: pip install -r backend/requirements.txt -c backend/constraints.txt
 
       # The live walkthrough boots its own five services (ports 8001-8005)
       # and needs trained model artifacts on the runner.

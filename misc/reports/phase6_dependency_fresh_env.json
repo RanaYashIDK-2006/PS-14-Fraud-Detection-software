@@ -1,0 +1,132 @@
+{
+  "part": "D/E - fresh-environment verification + reproducibility",
+  "envs": {
+    "env1": {
+      "path": ".freebuff/p6/env1",
+      "python": "3.12.10",
+      "package_count": 61
+    },
+    "env2": {
+      "path": ".freebuff/p6/env2",
+      "python": "3.12.10",
+      "package_count": 61
+    }
+  },
+  "install_command": "pip install -r backend/requirements.txt -c backend/constraints.txt",
+  "pip_check": "No broken requirements found (both envs)",
+  "env1_vs_env2_packages_identical": true,
+  "package_set_matches_constraints_exactly": true,
+  "imports": {
+    "numpy": {
+      "ok": true,
+      "version": "2.5.3"
+    },
+    "pandas": {
+      "ok": true,
+      "version": "3.0.6"
+    },
+    "sklearn": {
+      "ok": true,
+      "version": "1.9.0"
+    },
+    "xgboost": {
+      "ok": true,
+      "version": "3.4.1"
+    },
+    "lightgbm": {
+      "ok": true,
+      "version": "4.7.0"
+    },
+    "catboost": {
+      "ok": true,
+      "version": "1.2.10"
+    },
+    "joblib": {
+      "ok": true,
+      "version": "1.6.0"
+    },
+    "redis": {
+      "ok": true,
+      "version": "8.1.0"
+    },
+    "fastapi": {
+      "ok": true,
+      "version": "0.142.2"
+    },
+    "cryptography": {
+      "ok": true,
+      "version": "50.0.2"
+    },
+    "sqlalchemy": {
+      "ok": true,
+      "version": "2.1.3"
+    },
+    "httpx": {
+      "ok": true,
+      "version": "0.28.1"
+    },
+    "yaml": {
+      "ok": true,
+      "version": "6.0.3"
+    },
+    "jwt": {
+      "ok": true,
+      "version": "2.15.1"
+    },
+    "matplotlib": {
+      "ok": true,
+      "version": "3.11.2"
+    },
+    "src.risk_engine.altman_native_ensemble": {
+      "ok": true
+    },
+    "src.risk_engine.altman_ensemble": {
+      "ok": true
+    },
+    "src.inference.realtime_scorer": {
+      "ok": true
+    },
+    "src.inference.service": {
+      "ok": true
+    },
+    "src.redis_conn": {
+      "ok": true
+    },
+    "src.privacy_layer.velocity_tracker": {
+      "ok": true
+    },
+    "src.risk_engine.main": {
+      "ok": true
+    },
+    "src.privacy_layer.main": {
+      "ok": true
+    },
+    "src.identity_service.main": {
+      "ok": true
+    },
+    "src.audit_service.main": {
+      "ok": true
+    },
+    "src.verification_service.main": {
+      "ok": true
+    },
+    "src.front_service.main": {
+      "ok": true
+    }
+  },
+  "import_failures": [],
+  "production_dir_present": true,
+  "native_artifact_boundary": {
+    "AltmanNativeEnsembleEngine(altman_native)": {
+      "loaded": true,
+      "version": "altman_native_E_hardneg_cert_20260904",
+      "n_features": 48,
+      "members": {
+        "xgb": "XGBClassifier",
+        "lgb": "LGBMClassifier",
+        "cb": "CatBoostClassifier"
+      }
+    }
+  },
+  "artifact_loading_note": "models/production/ is gitignored (.gitignore:95); it loaded here only because the local checkout holds the artifacts - NOT reproducible from a clean clone."
+}

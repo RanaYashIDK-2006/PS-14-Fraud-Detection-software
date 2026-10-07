@@ -7,8 +7,8 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /app
 
 # System deps first so the layer cache survives code edits.
-COPY backend/requirements.txt ./backend/requirements.txt
-RUN pip install --no-cache-dir -r backend/requirements.txt
+COPY backend/requirements.txt backend/constraints.txt ./backend/
+RUN pip install --no-cache-dir -r backend/requirements.txt -c backend/constraints.txt
 
 # Application: source, scripts, trained artifacts, and data.
 # db/ is NOT copied — it is a named volume at runtime.

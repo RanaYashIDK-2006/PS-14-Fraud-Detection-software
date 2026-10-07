@@ -679,12 +679,13 @@ bash scripts/live_walkthrough.sh            # full 5-service register-to-audit c
 
 ## Setup
 
-Requires Python 3.10+.
+Requires Python 3.12 (the version CI pins and the pinned dependency set is
+resolved against).
 
 ```bash
 python -m venv .venv
 # Windows: .venv\Scripts\activate   |   macOS/Linux: source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r backend/requirements.txt -c backend/constraints.txt
 ```
 
 ### Demo accounts (for testing)

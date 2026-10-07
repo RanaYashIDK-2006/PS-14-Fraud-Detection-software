@@ -13,8 +13,8 @@ device/secret at enrollment time — it is never committed, logged, or printed.
 --------------------------------------------------
 
 - Create/refresh the virtualenv: `python -m venv .venv`
-- Install: `./.venv/Scripts/pip install -r requirements.txt` (Windows) or
-  `./.venv/bin/pip install -r requirements.txt` (POSIX)
+- Install (Windows): `./.venv/Scripts/pip install -r backend/requirements.txt -c backend/constraints.txt`
+- Install (POSIX): `./.venv/bin/pip install -r backend/requirements.txt -c backend/constraints.txt`
 - Confirm: `./.venv/Scripts/python.exe -c "import fastapi, uvicorn"`
 
 --------------------------------------------------

@@ -1,0 +1,13 @@
+# Phase 6 - dependency gate check (Phase 12 owns CVE coverage; this only confirms
+# the EXISTING CI security gates stay green on the new lock, per Part G/H).
+# Command: <clean-venv>/python -m pip_audit   (pip-audit 3.x, same tool .github/workflows/ci-cd.yml runs)
+# Environment: backend/requirements.txt installed with -c backend/constraints.txt
+# pip: 26.2.1
+
+=== FINAL locked set ===
+No known vulnerabilities found
+exit=0
+
+=== Dev-venv baseline (drifted, pre-lock) for contrast ===
+pyjwt 2.13.0 -> PYSEC-2026-4140..4152, CVE-2026-102275 (fix: 2.14.0/2.15.0)
+  -> the reason the lock standardises on PyJWT 2.15.1 instead of freezing the dev venv verbatim
