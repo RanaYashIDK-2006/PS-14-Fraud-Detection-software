@@ -37,6 +37,10 @@ FAST_TESTS = [
     # loader, all three native members, the Phase 5 batch contract and
     # main.py's native selection (models/production/ stays gitignored).
     ("native_fixture", "scripts/native_fixture_test.py", {}),
+    # Phase 8: audit decision-path resilience — DB-4 failure injection,
+    # payload-bearing pending store, bounded retry/eviction, recovery,
+    # idempotency, FIFO, shutdown, concurrency, decision-path invariant.
+    ("audit_resilience", "scripts/audit_resilience_test.py", {}),
     ("drift_monitor", "scripts/drift_test.py", {}),
     ("k_anonymity", "scripts/k_anonymity_test.py", {}),
     ("ood_gate", "scripts/ood_gate_test.py", {}),
