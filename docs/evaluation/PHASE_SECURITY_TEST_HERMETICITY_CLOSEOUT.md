@@ -8,7 +8,9 @@
   session start; three Phase 9 evidence commits (`f4cd4ca`, `dcb283d`, `ec17560`) landed
   after `6c24cb6`. The working tree was **clean** at baseline; no SHA was assumed.
 - **Implementation SHA**: `c95917b` (`test(phase10): make security_test.py hermetic and environmentally honest`)
-- **Final SHA**: `<pending — set in the CI record below after push>`
+- **Final SHA**: `e5e738a` (closeout content; the CI record below is this phase's
+  trailing commit, whose SHA is reported in the session report — a commit cannot
+  contain its own SHA)
 - **Verification window**: 2026-10-09 (this session)
 
 ## Baseline
@@ -207,10 +209,20 @@ left unstaged and untouched (only the two Phase 10 files are staged at commit ti
 ## Commit / CI
 
 - staged: `backend/scripts/security_test.py` (commit `c95917b`),
-  `docs/evaluation/PHASE_SECURITY_TEST_HERMETICITY_CLOSEOUT.md` (this commit) —
+  `docs/evaluation/PHASE_SECURITY_TEST_HERMETICITY_CLOSEOUT.md` (commit `e5e738a`) —
   Phase 10 files only; hook-regenerated calibration records deliberately left unstaged
-- Implementation/Final SHA + CI/CD + Security Scan outcomes: see the lines below after
-  push.
+- pushed `origin/main` `ec17560..e5e738a` (2 commits); `HEAD` == `origin/main` ==
+  `e5e738a` confirmed after push
+
+| workflow | SHA | status | conclusion |
+|---|---|---|---|
+| CI/CD | `e5e738a` | completed | **success** (observed via Actions API this session) |
+| Security Scan | `e5e738a` | completed | **success** (observed via Actions API this session) |
+
+GitHub API note: unauthenticated polling intermittently returned
+`403 rate limit exceeded` between observations; both conclusions above were read from
+completed runs, never inferred. The trailing CI-record commit's own workflow runs were
+not re-verified (rate limit) — recorded honestly rather than assumed.
 
 ## Verdict
 
