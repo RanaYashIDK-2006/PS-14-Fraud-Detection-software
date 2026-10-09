@@ -5,11 +5,18 @@ These tests verify that security controls are properly implemented
 and functioning as expected.
 
 Usage:
-    python scripts/security_test.py
+    python scripts/security_test.py [--url http://host:port]
+
+Exit codes:
+    0 - every security assertion evaluated and passed
+    1 - at least one security assertion FAILED
+    2 - no assertion failed, but the identity service was unreachable, so
+        live checks are reported as ENVIRONMENTAL (security NOT verified)
 """
 
 from __future__ import annotations
 
+import re
 import sys
 import time
 from pathlib import Path
@@ -28,8 +35,8 @@ except ImportError:
 class SecurityTest:
     """Base class for security tests."""
     
-    def __init__(self, base_url: str = "http://127.0.0.1"):
-        self.base_url = base_url
+    def __init__(self, base_url: str = "http://127.0.0.1:8001"):
+        self.base_url = base_url.rstrip("/")
         # Disable SSL verification for self-signed certs (dev/self-signed)
         self.client = httpx.Client(timeout=5.0, verify=False)
         self.results: list[dict] = []
@@ -41,10 +48,44 @@ class SecurityTest:
         print(f"  [{status}] {test}")
         if details and not passed:
             print(f"         {details}")
+
+    def log_env(self, test: str, details: str):
+        """Record a check that could NOT be evaluated (service unreachable).
+
+        Kept separate from log(): an unreachable service is an
+        environmental condition, never a passed or failed security
+        assertion.
+        """
+        self.results.append({"test": test, "passed": None, "details": details, "env": True})
+        print(f"  [ENVIRONMENTAL] {test}")
+        print(f"         {details}")
     
     def run_all(self) -> bool:
         """Run all tests and return True if all passed."""
         raise NotImplementedError
+
+
+def _is_unreachable(exc: Exception) -> bool:
+    """Transport-level failure = service unavailable, not a failed assertion."""
+    return isinstance(exc, httpx.TransportError)
+
+
+def _rejection_budget() -> int:
+    """Attempts needed to observe a 429 from ANY starting lockout state.
+
+    The identity service checks the failed-login lockout BEFORE recording
+    the failure, so a cold service needs threshold+1 attempts before the
+    429 fires; already-warmed or actively-blocked state trips on attempt 1.
+    The middleware limiter (production mode only) rejects at its own
+    /auth/login max_requests. Both limits are read from source so the
+    budget stays correct if they drift; a formatting change fails this
+    test loudly rather than silently shrinking the budget.
+    """
+    ident = (ROOT / "backend" / "src" / "identity_service" / "main.py").read_text(encoding="utf-8")
+    lockout = int(re.search(r"_LOGIN_LOCKOUT_THRESHOLD\s*=\s*(\d+)", ident).group(1))
+    rl = (ROOT / "backend" / "src" / "middleware" / "rate_limiter.py").read_text(encoding="utf-8")
+    login = int(re.search(r'"/auth/login":\s*RateLimitConfig\(max_requests=(\d+)', rl).group(1))
+    return max(lockout, login) + 1
 
 
 class CORSRegistrationTest(SecurityTest):
@@ -56,7 +97,7 @@ class CORSRegistrationTest(SecurityTest):
         # Test 1: Wildcard should be rejected
         try:
             resp = self.client.options(
-                f"{self.base_url}:8001/auth/login",
+                f"{self.base_url}/auth/login",
                 headers={
                     "Origin": "https://evil-website.com",
                     "Access-Control-Request-Method": "POST",
@@ -69,12 +110,15 @@ class CORSRegistrationTest(SecurityTest):
                 f"Got: {allowed!r}"
             )
         except Exception as e:
-            self.log("Reject wildcard origin", False, str(e))
+            if _is_unreachable(e):
+                self.log_env("Reject wildcard origin", f"identity service unreachable: {e}")
+            else:
+                self.log("Reject wildcard origin", False, str(e))
         
         # Test 2: Trusted origin should be allowed
         try:
             resp = self.client.options(
-                f"{self.base_url}:8001/auth/login",
+                f"{self.base_url}/auth/login",
                 headers={
                     "Origin": "http://127.0.0.1:8000",
                     "Access-Control-Request-Method": "POST",
@@ -87,7 +131,10 @@ class CORSRegistrationTest(SecurityTest):
                 f"Got: {allowed!r}"
             )
         except Exception as e:
-            self.log("Allow trusted origin", False, str(e))
+            if _is_unreachable(e):
+                self.log_env("Allow trusted origin", f"identity service unreachable: {e}")
+            else:
+                self.log("Allow trusted origin", False, str(e))
         
         return all(r["passed"] for r in self.results)
 
@@ -98,12 +145,17 @@ class RateLimitTest(SecurityTest):
     def run_all(self) -> bool:
         print("\n[Rate Limit Tests]")
         
-        # Test: Should block after multiple attempts
+        # The service must reject a brute-force client with 429 within this
+        # budget, regardless of lockout state left by previous runs: cold
+        # state needs threshold+1 attempts (the check runs before the
+        # failure is recorded), warm/blocked state rejects on attempt 1.
+        budget = _rejection_budget()
         blocked = False
-        for i in range(10):
+        unreachable = False
+        for i in range(budget):
             try:
                 resp = self.client.post(
-                    f"{self.base_url}:8001/auth/login",
+                    f"{self.base_url}/auth/login",
                     json={"email": "test@test.com", "password": f"wrong{i}"}
                 )
                 if resp.status_code == 429:
@@ -111,15 +163,25 @@ class RateLimitTest(SecurityTest):
                     self.log(
                         "Block after rate limit exceeded",
                         True,
-                        f"Blocked on attempt {i+1}"
+                        f"Blocked on attempt {i+1} of {budget}"
                     )
+                    # Visible on PASS too: records which starting state the
+                    # run exercised (attempt 1 = already warm/blocked,
+                    # attempt {lockout+1} = cold service).
+                    print(f"         (429 after {i + 1} of {budget} attempts)")
                     break
             except Exception as e:
-                self.log("Rate limit check", False, str(e))
+                if _is_unreachable(e):
+                    self.log_env("Block after rate limit exceeded",
+                                 f"identity service unreachable: {e}")
+                    unreachable = True
+                else:
+                    self.log("Block after rate limit exceeded", False, str(e))
                 break
         
-        if not blocked:
-            self.log("Block after rate limit exceeded", False, "Never blocked")
+        if not blocked and not unreachable:
+            self.log("Block after rate limit exceeded", False,
+                     f"Never blocked within {budget} attempts")
         
         return all(r["passed"] for r in self.results)
 
@@ -131,7 +193,7 @@ class SecurityHeadersTest(SecurityTest):
         print("\n[Security Headers Tests]")
         
         try:
-            resp = self.client.get(f"{self.base_url}:8001/health")
+            resp = self.client.get(f"{self.base_url}/health")
             
             # Core headers
             required_headers = {
@@ -196,7 +258,11 @@ class SecurityHeadersTest(SecurityTest):
                 f"Should be absent, got: {xssp}" if xssp else "Correctly absent"
             )
         except Exception as e:
-            self.log("Security headers check", False, str(e))
+            if _is_unreachable(e):
+                self.log_env("Security headers (10 checks)",
+                             f"identity service unreachable: {e} — checks not evaluated")
+            else:
+                self.log("Security headers check", False, str(e))
         
         return all(r["passed"] for r in self.results)
 
@@ -238,11 +304,27 @@ class KeySeparationTest(SecurityTest):
         return all(r["passed"] for r in self.results)
 
 
-def run_all_tests(base_url: str = "http://127.0.0.1") -> bool:
-    """Run all security tests."""
+def run_all_tests(base_url: str = "http://127.0.0.1:8001") -> int:
+    """Run all security tests. Returns the process exit code:
+
+    0 = all assertions evaluated and passed;
+    1 = at least one security assertion failed;
+    2 = nothing failed but the identity service was unreachable (live
+        checks reported as ENVIRONMENTAL, security NOT verified).
+    """
+    base_url = base_url.rstrip("/")
     print("=" * 60)
     print("PS14 SECURITY TESTS")
     print("=" * 60)
+    
+    # Readiness probe: establish the precondition for the live checks and
+    # report unavailability as an environmental condition up front.
+    try:
+        httpx.get(f"{base_url}/health", timeout=5.0)
+    except httpx.TransportError as e:
+        print(f"\nWARNING: identity service unreachable at {base_url} ({e})")
+        print("         Live checks will be reported as ENVIRONMENTAL, "
+              "not as security failures.")
     
     all_results = []
     
@@ -263,21 +345,29 @@ def run_all_tests(base_url: str = "http://127.0.0.1") -> bool:
     print("TEST SUMMARY")
     print("=" * 60)
     
-    passed = sum(1 for r in all_results if r["passed"])
-    failed = sum(1 for r in all_results if not r["passed"])
+    passed = sum(1 for r in all_results if r["passed"] is True)
+    failed = sum(1 for r in all_results if r["passed"] is False)
+    env = sum(1 for r in all_results if r.get("env"))
     
     print(f"Total: {len(all_results)}")
     print(f"Passed: {passed}")
     print(f"Failed: {failed}")
+    if env:
+        print(f"Environmental (not evaluated): {env}")
     
-    if failed == 0:
-        print("\n✅ ALL SECURITY TESTS PASSED")
-    else:
+    if failed:
         print(f"\n❌ {failed} SECURITY TEST(S) FAILED")
+    elif env:
+        print(f"\n⚠️ ENVIRONMENTAL: {env} live check(s) not evaluated — "
+              "identity service unreachable, security NOT verified")
+    else:
+        print("\n✅ ALL SECURITY TESTS PASSED")
     
     print("=" * 60)
     
-    return failed == 0
+    if failed:
+        return 1
+    return 2 if env else 0
 
 
 def main():
@@ -285,11 +375,11 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description="PS14 Security Tests")
-    parser.add_argument("--url", default="http://127.0.0.1", help="Base URL")
+    parser.add_argument("--url", default="http://127.0.0.1:8001",
+                        help="Identity service origin (default: http://127.0.0.1:8001)")
     args = parser.parse_args()
     
-    success = run_all_tests(args.url)
-    sys.exit(0 if success else 1)
+    sys.exit(run_all_tests(args.url))
 
 
 if __name__ == "__main__":
