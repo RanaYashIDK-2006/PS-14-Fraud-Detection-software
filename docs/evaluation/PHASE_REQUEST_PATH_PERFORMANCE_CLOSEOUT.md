@@ -5,7 +5,7 @@
 - **Phase**: 9 — Request-Path Performance & Latency Baseline
 - **Start SHA**: `4948cba` (`Phase 8 — Audit Decision-Path Resilience`, pushed to `origin/main`; recorded in every evidence file's `environment.git`)
 - **Implementation SHA**: `0764b3b` (`feat(phase9): add the live request-path benchmark harness`)
-- **Final SHA**: `<pending — set in the Post-push record after CI verification>`
+- **Final SHA**: `9990ad5` (closeout content; this CI-record append is the phase's trailing commit, whose SHA is reported in the session report — a commit cannot contain its own SHA)
 - **Verification window**: 2026-10-09 (this session, 10:05–11:30 IST / 04:35–06:00 UTC)
 - **Scope**: measurement only. No model, threshold, calibration, rule, feature-contract, or
   decision-semantics changes. No optimizations were performed or accepted in this phase.
@@ -351,4 +351,21 @@ identity result.
 
 ## Post-push record
 
-_(appended after push + CI verification)_
+Pushed `origin/main` `4948cba..9990ad5` (2 commits):
+
+- `0764b3b` `feat(phase9): add the live request-path benchmark harness`
+- `9990ad5` `docs(phase9): record the request-path performance baseline closeout`
+
+GitHub Actions on `9990ad5` (queried via the Actions API this session):
+
+| workflow | status | conclusion |
+|---|---|---|
+| CI/CD | completed | **success** |
+| Security Scan | completed | **success** |
+
+Also verified in the same query: Phase 8's push (`4948cba`) CI/CD and Security Scan both
+completed **success** — this resolves the "CI not confirmed" caveat (Limitations #1) in
+`PHASE_AUDIT_RESILIENCE_CLOSEOUT.md`, whose SHA fields this phase already filled.
+
+Local verification + CI + Security Scan are all green for Phase 9. This record was
+appended in a follow-up `docs(phase9)` commit pushed after verification.
