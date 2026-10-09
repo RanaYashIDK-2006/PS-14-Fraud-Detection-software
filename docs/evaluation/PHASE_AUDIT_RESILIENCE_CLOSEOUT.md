@@ -4,9 +4,10 @@
 
 - **Phase**: 8 — Audit Decision-Path Resilience
 - **Start SHA**: `b5589ec` (`docs(phase7): record the production-engine CI coverage closeout`)
-- **Implementation SHA**: `<pending commit>` (committed in this phase; pushed when Git is available)
-- **Final SHA**: `<pending commit>`
+- **Implementation SHA**: `4948cba` (committed and pushed in this phase)
+- **Final SHA**: `4948cba` (same commit; CI still in progress, see Limitations #1)
 - **Verification window**: 2026-10-08 (this session)
+Tentative until CI: yes — local verification is conclusive; the GitHub CI/CD and Security Scan runs triggered by this push were `in_progress` at session end and were not confirmed here (GitHub API rate-limited the polling and `gh` is not on $PATH).
 
 ## Baseline
 
@@ -141,6 +142,8 @@ No performance regression claim is made for live/production scale — those rema
 | `audit_hygiene_check.py` | PASS — CLEAN (fixture snapshot exact, forks evidence-matched, no duplicates, no drift) |
 | `secret_hygiene_test.py` | PASS — 16/16 (scoped grep detectors + bandit machine gate `bandit -r backend/src --severity-level medium` exits 0) |
 | `auto_security_scan.py` (bandit + penetration_test self-authored suite) | PASS — score 100 / grade A / 0 issues; runs `security_scan.py --full --json` and `penetration_test.py` locally, no live service required |
+| GitHub CI/CD (this push) | not confirmed in session — `in_progress` at end; see Limitations #1 |
+| GitHub Security Scan (this push) | not confirmed in session — `in_progress` at end; see Limitations #1 |
 
 ## Evidence
 
@@ -166,25 +169,29 @@ No performance regression claim is made for live/production scale — those rema
 
 ## Limitations
 
-1. **Synthetic/local failure injection only.** DB-4 failure is modeled by injecting an `OperationalError`
+1. **CI not confirmed for this push.** The push triggered GitHub CI/CD and Security Scan; both were
+   `in_progress` at session end. I could not confirm their conclusions here because the unauthenticated
+   GitHub API rate-limited the polling (`HTTP 403 rate limit exceeded`) and the `gh` CLI is not on $PATH.
+   Local verification is conclusive; CI is the remaining gate.
+2. **Synthetic/local failure injection only.** DB-4 failure is modeled by injecting an `OperationalError`
    at `SessionLocal()` creation inside the hermetic test harness. This validates the software failure modes
    but is not a real institutional DB outage, filesystem-loss, or cross-process SQLite lockstorm.
-2. **No production-scale resilience stress.** Load/concurrency here is an 8-thread local burst plus a
+3. **No production-scale resilience stress.** Load/concurrency here is an 8-thread local burst plus a
    queue-full and lock-contention probe; it does not exercise sustained production throughput or a
    real multi-process writers contention pattern (cross-process ordering remains Phase 109’s concern and
    is tested by `phase109_audit_fork_repair_test` independently).
-3. **Live HTTP performance remains Phase 9.** The controlled append/decision latency numbers are local
+4. **Live HTTP performance remains Phase 9.** The controlled append/decision latency numbers are local
    measurements from the test harness, not production load-test results.
-4. **`security_test.py` failure is environmental, not a Phase 8 regression.** That suite tests live
+5. **`security_test.py` failure is environmental, not a Phase 8 regression.** That suite tests live
    service reachability (`CORS`, rate limiting, JWT auth, admin, input validation) against
    `http://127.0.0.1:8001`, which is not running in this session. It is reported honestly and NOT
    attributed as a Phase 8 failure. The relevant CI gates that ARE exercised here — bandit machine gate,
    `secret_hygiene_test.py`, and `auto_security_scan.py` — all pass.
-5. **`pentest_test.py` / `claim_env_var_violations.py` do not exist** in this repository. The session
+6. **`pentest_test.py` / `claim_env_var_violations.py` do not exist** in this repository. The session
    attempted to run them by name from the prior session’s notes; they are not present and were not run.
    The repository’s actual self-authored pentest entrypoint is `scripts/penetration_test.py`, currently
    invoked by `scripts/auto_security_scan.py`; that ran this session and returned score 100/A/0 issues.
-6. **Verdict is software-path verification only.** The closeout does not establish real-world fraud
+7. **Verdict is software-path verification only.** The closeout does not establish real-world fraud
    detection efficacy, institutional dataset validation, independent penetration testing, or production
    resilience under genuine outage — those remain open items documented elsewhere.
 
