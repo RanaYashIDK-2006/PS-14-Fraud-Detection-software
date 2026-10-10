@@ -31,6 +31,7 @@ os.environ["INTERNAL_TOKEN"] = "smoke-internal-token"
 
 from fastapi.testclient import TestClient  # noqa: E402
 
+from src.risk_engine import main as risk_main  # noqa: E402
 from src.risk_engine.main import REASON_CODE_TEXT, app as risk_app  # noqa: E402
 
 TOKEN = "smoke-internal-token"
@@ -332,6 +333,33 @@ def main() -> int:
         check("DB-3 has no feature-store tables", not ({"transaction_features", "fraud_profiles", "device_fingerprints"} & tables))
         check("evaluations persisted", n_scores >= 5, f"n={n_scores}")
         check("scores all in 0-100", out_of_range == 0)
+
+    # ---- untrained checkout: no metadata.json, no release manifest ---------
+    # Regression for F3: the "metadata.json MISSING" branch used to only warn,
+    # leaving `model_version` unassigned, so the lifespan died with
+    # `NameError: name 'model_version' is not defined` at observability init on
+    # ANY checkout without trained artifacts (a fresh clone; CI before
+    # training) -- the whole service failed to start. Redirecting the two
+    # module paths is the isolated equivalent of an untrained checkout: no
+    # artifact or manifest on disk is read, moved, or modified.
+    print("\n-- untrained checkout (no artifacts) --")
+    real_artifacts, real_production = risk_main.ARTIFACTS_DIR, risk_main.PRODUCTION_DIR
+    empty_artifacts = Path(tempfile.mkdtemp(prefix="ps14-untrained-"))
+    risk_main.ARTIFACTS_DIR = empty_artifacts
+    risk_main.PRODUCTION_DIR = empty_artifacts
+    try:
+        with TestClient(risk_main.app) as c_untrained:
+            h = c_untrained.get("/health")
+            check("untrained startup succeeds (no NameError)", h.status_code == 200,
+                  f"status={h.status_code}")
+            body = h.json() if h.status_code == 200 else {}
+            check("untrained: /health reports the missing model honestly",
+                  body.get("model_readiness") == "not_loaded",
+                  str({k: body.get(k) for k in ("model_id", "model_readiness", "runtime_state")}))
+            check("untrained: model_version is the 'unknown' sentinel, not a fabricated id",
+                  risk_main.model_version == "unknown", repr(risk_main.model_version))
+    finally:
+        risk_main.ARTIFACTS_DIR, risk_main.PRODUCTION_DIR = real_artifacts, real_production
 
     print("\n" + ("ALL CHECKS PASSED" if not failures else f"{len(failures)} CHECK(S) FAILED"))
     return 1 if failures else 0

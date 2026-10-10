@@ -403,6 +403,19 @@ def main() -> int:
 
     # ══ 7. FIFO order under failure (§5) ═════════════════════════════════════
     section("FIFO order under failure")
+    # Explicit synchronization (F4): suspend the retry sweep while the pending
+    # file is being built. The writer's ordering note allows a per-item
+    # BACKED-OFF head to be replayed after later items (durability takes
+    # priority over strict cross-item order), so with the live retry worker
+    # running the seq order of recovery is a scheduling artifact: with a
+    # widened DB-4-failure window it reproduced 12/12 non-ascending (see the
+    # Phase 15 closeout). With sweeps suspended no item accrues backoff
+    # mid-fixture and recovery is one pass over the file in append order --
+    # exactly what the replay check below asserts. The schedule-independent
+    # invariants (every event recovered exactly once, chain intact) are
+    # asserted unconditionally as well.
+    real_sweep = w._retry_sweep
+    w._retry_sweep = lambda: 0.05
     fail_sessions()
     fifo_ids = []
     for i in range(6):
@@ -418,6 +431,7 @@ def main() -> int:
     check("pending file preserves append order (FIFO)", got and order_ok,
           str([r["payload"].get("marker") for r in fifo_recs]))
     restore_sessions()
+    w._retry_sweep = real_sweep  # resume the worker: replay from the file
     rec_ok = wait_until(lambda: all(row_by_event_id(e) is not None for e in fifo_ids),
                         timeout=12.0)
     check("all FIFO events recovered", rec_ok)
@@ -425,6 +439,10 @@ def main() -> int:
     seqs = [r.seq for r in rows_f if r is not None]
     check("recovery replays in FIFO (seq ascending == append order)",
           seqs == sorted(seqs) and len(seqs) == 6, str(seqs))
+    # Durable invariant, independent of any schedule: each event lands ONCE.
+    check("recovery is exactly-once (6 distinct seqs, no duplicates)",
+          len(rows_f) == 6 and all(r is not None for r in rows_f)
+          and len(set(seqs)) == 6, str(seqs))
 
     # ══ 8. Delayed audit persistence does not block the decision path (§5) ══
     section("delayed persistence (§5 delayed DB-4)")

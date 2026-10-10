@@ -79,7 +79,11 @@ def main() -> int:
     # (production-only features like shared_device_accounts may not exist here)
     available = [f for f in ML_FEATURES if f in df.columns]
     if len(available) < len(ML_FEATURES):
-        import sys; print(f"  [info] {len(ML_FEATURES) - len(available)} features not in CSV, using {len(available)} available", file=sys.stderr, flush=True)
+        # `sys` is imported at module scope above; a local `import sys` here
+        # would make `sys` local for ALL of main() and break the sys.stdin
+        # read below (UnboundLocalError) whenever every ML_FEATURES column is
+        # present and this branch is skipped.
+        print(f"  [info] {len(ML_FEATURES) - len(available)} features not in CSV, using {len(available)} available", file=sys.stderr, flush=True)
     Xtr = train[available].to_numpy(dtype=float)
     ytr = train["label"].to_numpy(dtype=int)
     Xte = test[available].to_numpy(dtype=float)

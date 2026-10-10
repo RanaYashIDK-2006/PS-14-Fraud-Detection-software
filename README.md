@@ -91,7 +91,7 @@ Self-authored automated security regression suite (scenario count is not pinned 
 - Human-in-the-loop verification workflow with case management
 - Federated learning algorithm (FedAvg, DP variant, heterogeneity map)
 - Deployment infrastructure (Docker, Caddy auto-HTTPS, PostgreSQL config, CI/CD)
-- Regression test battery — `backend/scripts/regression_suite.py --fast`: **26 hermetic suites, 26/26 PASS in 78.8 s**, exit 0 (measured 2026-10-10, this repository). A local `.freebuff/p114_battery.sh` (79 checks: phase suites 46–118 + security + core; Phase 105: 76/79 as-run with services down, 3/3 re-run PASS with stack up = 79/79) exists only in the author's working copy — `.freebuff/` is gitignored, so it is **not reproducible from a clone**
+- Regression test battery — `backend/scripts/regression_suite.py --fast`: **27 hermetic suites, 27/27 PASS in 77.8 s**, exit 0 (measured 2026-10-10, this repository). A local `.freebuff/p114_battery.sh` (79 checks: phase suites 46–118 + security + core; Phase 105: 76/79 as-run with services down, 3/3 re-run PASS with stack up = 79/79) exists only in the author's working copy — `.freebuff/` is gitignored, so it is **not reproducible from a clone**
 - Feedback loop (verification outcomes → labeled data → retraining)
 - Drift monitoring (PSI-based, hash-chained alerts)
 - k-anonymity checker exists (`src/k_anonymity/checker.py`, `k_anonymity_test.py`) but is **test/CLI-only — not wired into `/audit/export`** (README previously claimed a gate on data exports; corrected per Phase 104 audit)
@@ -129,7 +129,7 @@ Every claim in this repository is classified by its evidence type and status.
 | 15 | Throughput and scalability | `load_test.py` (~40–60 TPS, ~15–25ms p50) | Self-tested | **SELF-TESTED** | Single concurrent request, SQLite backend, no audit chain writes measured |
 | 16 | 50-case scenario testing | `batch_cases.py`, invariant checks (determinism, monotonicity, audit chain) | Self-tested | **SELF-TESTED** | Synthetic hand-designed scenarios + seeded perturbations; does not establish detection performance |
 | 17 | Cross-domain vs domain-specific training | 4-dataset ROC-AUC matrix, `meta_ensemble.py` | Experiment | **EXPERIMENTAL** | 4 public datasets; diagonal outperformed off-diagonal in this evaluation — not a universal theorem |
-| 18 | CI/CD pipeline validation | `.github/workflows/ci-cd.yml`, `security-scan.yml` | Implementation | **DEMONSTRATED** | Both workflows run on pushes to `main`/`develop` and on pull requests (the security workflow also runs weekly); Phase 105 added evidence-enforcement + eval-record steps, Phase 13 added the coverage-measurement step; `backend/scripts/regression_suite.py --fast` = **26** hermetic suites |
+| 18 | CI/CD pipeline validation | `.github/workflows/ci-cd.yml`, `security-scan.yml` | Implementation | **DEMONSTRATED** | Both workflows run on pushes to `main`/`develop` and on pull requests (the security workflow also runs weekly); Phase 105 added evidence-enforcement + eval-record steps, Phase 13 added the coverage-measurement step; `backend/scripts/regression_suite.py --fast` = **27** hermetic suites |
 
 ### What this project does NOT currently claim
 
@@ -450,7 +450,7 @@ The two main workflows (`.github/workflows/ci-cd.yml`, `.github/workflows/securi
 
 | Job | Steps (short form) |
 |---|---|
-| **Test Suite** | synthetic data → `backend/src/train_compare.py` → `backend/scripts/regression_suite.py --fast` (**26 hermetic suites**) → **coverage measurement** (`backend/scripts/coverage_run.py`, XML artifact) → claim-evidence enforcement → evaluation-record schema tests → backup/restore |
+| **Test Suite** | synthetic data → `backend/src/train_compare.py` → `backend/scripts/regression_suite.py --fast` (**27 hermetic suites**) → **coverage measurement** (`backend/scripts/coverage_run.py`, XML artifact) → claim-evidence enforcement → evaluation-record schema tests → backup/restore |
 | **Security Scan** | bandit medium+, secret-hygiene gate, pip-audit, custom SAST (`security_scan.py --full`), penetration test, audit-chain hygiene |
 | **Docker Build** | image builds, runs as non-root, `/health` answers, image artifact uploaded |
 | **Integration Test** | the live register-to-audit walkthrough boots all five services over real HTTP, then the compose stack health-checks and the audit chain verifies |
@@ -463,9 +463,9 @@ pip install coverage==7.6.0
 python backend/scripts/coverage_run.py
 ```
 
-Measured on this repository (2026-10-10, Windows/Python 3.12): **27/27 batteries PASS, total 23.6 % (line 26.0 %, branch 16.3 %)**; CI's fresh-runner run of the same battery measured **22.9 %**. What this number is *not*: it covers only the fast battery, so it excludes the live-service suites, and `src/inference/*` (~2,700 statements) stays at 0 % because its tests need a running Redis and are not wired into the battery. See `docs/evaluation/PHASE_TEST_COVERAGE_CLOSEOUT.md`.
+Measured on this repository (2026-10-10, Windows/Python 3.12): **28/28 batteries PASS, total 24.0 % (line 26.4 %, branch 16.6 %)**; CI's fresh-runner run of the Phase 13 battery measured **22.9 %** (not re-measured for the Phase 15 battery). What this number is *not*: it covers only the fast battery, so it excludes the live-service suites, and `src/inference/*` (~2,700 statements) stays at 0 % because its tests need a running Redis and are not wired into the battery. See `docs/evaluation/PHASE_TEST_COVERAGE_CLOSEOUT.md`.
 
-> **Note:** The `rules_gate` test is a documented fragile test — ML alone catches ~97 % of synthetic fraud, so rule-removal cannot move recall. It also needs `data/transactions.csv` to exist (CI generates synthetic data before the suite). The full fast battery measured **26/26 PASS** in this phase.
+> **Note:** The `rules_gate` test is a documented fragile test — ML alone catches ~97 % of synthetic fraud, so rule-removal cannot move recall. It also needs `data/transactions.csv` to exist (CI generates synthetic data before the suite). The full fast battery measured **27/27 PASS** as of Phase 15 (26/26 at Phase 14).
 
 ### Promotion gate (Phases 46-47)
 
@@ -597,7 +597,7 @@ After load, `/health` re-checks the artifact set on every call (post-load drift 
 - **Leakage audit scope** — the 10-check leakage audit covers target correlation, temporal ordering, entity contamination, scaler fitting, and distribution shift within the audited pipeline. It does not guarantee the absence of all possible leakage forms.
 - **Model calibration scope** — Platt calibration (Brier 0.0009, ECE 0.0013 — reproduced Phase 105 on the synthetic validation split, ledger `eval-20261003T084644+0000-72d714bd81b3`) was fit and validated on synthetic data distribution. Calibration on real-world data has not been attempted.
 - **Inference service unexercised** — the Redis-backed `src/inference/service.py` (port 8006) is outside the six-service demo stack. It has no live verification in this phase and 0 % test coverage; its behaviour is **NOT ESTABLISHED** here.
-- **Test-coverage limits** — the reproducible coverage command covers the **fast** battery only: 26.0 % line / 16.3 % branch over `backend/src` (23.6 % combined, `coverage report` TOTAL; verified 2026-10-10). Live-service suites, the frontend (no runner), and `src/inference/*` are excluded. The number is a visibility instrument, not a quality gate.
+- **Test-coverage limits** — the reproducible coverage command covers the **fast** battery only: 26.4 % line / 16.6 % branch over `backend/src` (24.0 % combined, `coverage report` TOTAL; verified 2026-10-10, Phase 15). Live-service suites, the frontend (no runner), and `src/inference/*` are excluded. The number is a visibility instrument, not a quality gate.
 - **Open defects carried forward (not fixed here)** — three pre-existing, environment-dependent defects surfaced during the Phase 13 coverage work and remain **open**: **F1** `backend/scripts/federated_worker.py` shadows `sys` inside `main()` (an `import sys;` inside an `if` branch makes `sys` local for the whole function, so the `sys.stdin` call raises `UnboundLocalError` when every `ML_FEATURES` column is present — the fresh-CI-data path); **F2** `backend/scripts/audit_test.py` hard-codes chain entry counts that assume a gitignored runtime-attestation manifest (fresh checkout sees 4 entries, not 5); **F3** `backend/src/risk_engine/main.py` raises `NameError: model_version` on an untrained checkout. F1/F2 sit in the live-service (`FULL_TESTS`) group and are therefore outside the fast battery CI runs; F3 is on the untrained-startup path. Also open: a timing-sensitive FIFO assertion in `backend/scripts/audit_resilience_test.py` flakes under coverage tracing (~2 of 12 instrumented runs; passes uninstrumented and in CI). Root causes and reproduction traces: [`docs/evaluation/PHASE_TEST_COVERAGE_CLOSEOUT.md`](docs/evaluation/PHASE_TEST_COVERAGE_CLOSEOUT.md) §6.
 
 ## Reproducible Evaluation
@@ -680,7 +680,7 @@ python experiments/phase24_conditional_external_eval/run_evaluation.py --dry-run
 ### Regression tests
 
 ```bash
-python backend/scripts/regression_suite.py          # fast mode: 26 hermetic suites (78.8 s measured)
+python backend/scripts/regression_suite.py          # fast mode: 27 hermetic suites (77.8 s measured)
 python backend/scripts/regression_suite.py --full   # adds the 7 live-service suites (stack must be up)
 python backend/scripts/coverage_run.py              # the fast battery + line/branch coverage of backend/src
 ```
@@ -869,13 +869,13 @@ python backend/scripts/feature_compatibility_test.py # training/serving feature 
 python backend/scripts/production_gate_test.py       # fail-closed startup in production mode
 ```
 
-Each script prints its own per-check `[PASS]`/`[FAIL]` lines and a final `ALL CHECKS PASSED`. The per-script check totals previously quoted here were **not pinned by any artifact** and drifted from the code (e.g. `risk_engine_test.py` now prints 69 passing checks, not 37); they are no longer quoted. Suites marked `(live stack)` need the services already serving on ports 8001–8005 (and 8000 for the front page).
+Each script prints its own per-check `[PASS]`/`[FAIL]` lines and a final `ALL CHECKS PASSED`. The per-script check totals previously quoted here were **not pinned by any artifact** and drifted from the code (e.g. `risk_engine_test.py` now prints 72 passing checks, not 37); they are no longer quoted. Suites marked `(live stack)` need the services already serving on ports 8001–8005 (and 8000 for the front page).
 
-Full test suite — 33 suites in total (**26 fast / hermetic** + **7 full / live services required**):
+Full test suite — 34 suites in total (**27 fast / hermetic** + **7 full / live services required**):
 
 ```bash
-python backend/scripts/regression_suite.py          # fast mode: 26 suites, ~79 s, no services needed
-python backend/scripts/regression_suite.py --full   # all 33: adds the 7 live-service suites
+python backend/scripts/regression_suite.py          # fast mode: 27 suites, ~78 s, no services needed
+python backend/scripts/regression_suite.py --full   # all 34: adds the 7 live-service suites
 
 #   risk_engine_test.py     # scoring, bands, rules, attribution, DB-3
 #   smoke_test.py           # full pipeline: register → ingest → evaluate → audit
@@ -895,6 +895,7 @@ python backend/scripts/regression_suite.py --full   # all 33: adds the 7 live-se
 #   federated_test.py       # federated learning, DP, heterogeneity
 #   feature_compatibility_test.py  # training/serving feature skew
 #   security_headers_test.py # hermetic middleware security (Phase 13)
+#   federated_worker_test.py # federated worker startup + protocol (Phase 15)
 ```
 
 The two lists above are illustrative; the authoritative suite names are the `FAST_TESTS` / `FULL_TESTS` tables in `backend/scripts/regression_suite.py`.
@@ -1130,11 +1131,11 @@ The model registry (`src/risk_engine/model_registry.py`) supports staged rollout
 
 Unified test runner for CI/CD:
 ```bash
-python backend/scripts/regression_suite.py   # fast mode: 26 hermetic suites (the default)
+python backend/scripts/regression_suite.py   # fast mode: 27 hermetic suites (the default)
 ```
 
 Separate suites (authoritative lists: `FAST_TESTS` / `FULL_TESTS` in `backend/scripts/regression_suite.py`):
-- **Fast** (26 suites, ~79 s, no services): pseudonym_separation, production_gate, pii_key_rotation, smoke_test, risk_engine, native_fixture, audit_resilience, drift_monitor, k_anonymity, ood_gate, rules_gate, tuner, pipeline, ml_validity_gate, feature_parity, feedback_loop, leakage, privacy, leakage_structural, temporal, calibration, adversarial, negative_validation, backup_restore, p2_regression, security_headers
+- **Fast** (27 suites, ~78 s, no services): pseudonym_separation, production_gate, pii_key_rotation, smoke_test, risk_engine, native_fixture, audit_resilience, drift_monitor, k_anonymity, ood_gate, rules_gate, tuner, pipeline, ml_validity_gate, feature_parity, feedback_loop, leakage, privacy, leakage_structural, temporal, calibration, adversarial, negative_validation, backup_restore, p2_regression, security_headers, federated_worker
 - **Full-only** (+7, needs the live stack): security_test, sql_injection, verification_flow, audit_chain, front_service, resilience, federated_learning
 - **Coverage** (`backend/scripts/coverage_run.py`): the fast battery under `coverage run`, with line + branch reporting over `backend/src`
 

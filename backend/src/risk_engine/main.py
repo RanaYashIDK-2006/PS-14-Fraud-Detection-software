@@ -377,6 +377,11 @@ async def lifespan(_app: FastAPI):
     severity_floor = int(cfg.get("severity_floor", 80))
     global RULE_VERSION
     meta_path = ARTIFACTS_DIR / "metadata.json"
+    # Default BEFORE the branch: on an untrained checkout (no metadata.json)
+    # the else path only warns, so an unassigned `model_version` used to raise
+    # NameError further down. "unknown" is the honest sentinel (never a
+    # fabricated version) and matches the existing fallbacks on /health.
+    model_version = "unknown"
     if meta_path.exists():
         meta = json.loads(meta_path.read_text(encoding="utf-8"))
         model_version = f"seed{meta['seed']}-{Path(meta['data']).name}"

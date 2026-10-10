@@ -33,6 +33,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 
 from src.audit_service.export import verify_export_chain, verify_export_signature  # noqa: E402
 from src.audit_service.main import app as audit_app  # noqa: E402
+from src.audit_service.writer import flush_audit_queue  # noqa: E402
 from src.identity_service.main import app as identity_app  # noqa: E402
 from src.identity_service.security import create_access_token  # noqa: E402
 from src.privacy_layer.main import app as privacy_app  # noqa: E402
@@ -80,6 +81,20 @@ def main() -> int:
     with TestClient(risk_app) as rc, TestClient(verify_app) as vc, TestClient(audit_app) as ac, \
          TestClient(privacy_app) as pc, TestClient(identity_app) as ic:
 
+        # ---- startup baseline (environment-independent) --------------------
+        # The risk-engine lifespan appends `runtime_attestation_state`, plus a
+        # `runtime_release_loaded` entry ONLY when a VERIFIED release manifest
+        # is on disk (gitignored models/production/release_manifest.json). A
+        # fresh checkout has neither the manifest nor a trained model, so its
+        # startup chain is one entry shorter than a dev tree. Read the real
+        # baseline here and assert DELTAS from it, so the chain-length
+        # invariant is enforced in both environments.
+        r = ac.get("/audit/integrity", headers={"X-Internal-Token": TOKEN})
+        assert r.status_code == 200, r.text
+        STARTUP_N = r.json()["n_entries"]
+        N3 = STARTUP_N + 3  # + 2x score_generated + verification_resolved
+        N5 = STARTUP_N + 5  # + feature_ingested + fraud_id_resolved
+
         # ---- populate the chain --------------------------------------------
         r = rc.post("/internal/evaluate", headers={"X-Internal-Token": TOKEN},
                     json={"event_id": "audit-evil-0001", "fraud_id": FRAUD_ID, "features": attack_vector()})
@@ -92,7 +107,10 @@ def main() -> int:
         r = vc.post("/alerts/audit-evil-0001/confirm", headers=auth, json={"outcome": "this_wasnt_me"})
         assert r.status_code == 200, r.text
         check("chain: risk + verification events appended", True)
-
+        # Explicit barrier before reading the chain: append_audit_event only
+        # QUEUES the event (it never writes on the caller thread), so a read
+        # issued straight after an appending call races the background writer.
+        flush_audit_queue(5.0)
         # ---- chain linkage + compliance viewer -----------------------------
         r = ac.get(f"/audit/events?fraud_id={FRAUD_ID}", headers={"X-Internal-Token": TOKEN,
                                                                   "X-Audit-Actor": "compliance-officer-1"})
@@ -114,8 +132,8 @@ def main() -> int:
 
         r = ac.get("/audit/integrity", headers={"X-Internal-Token": TOKEN})
         assert r.status_code == 200, r.text
-        # Phase 49: lifespan startup adds one `runtime_attestation_state` event.
-        check("integrity ok", r.json()["ok"] is True and r.json()["n_entries"] == 5, str(r.json()))
+        # Startup baseline + the 3 events appended just above (N3).
+        check("integrity ok", r.json()["ok"] is True and r.json()["n_entries"] == N3, str(r.json()))
 
         r = ac.get("/audit/integrity", headers={"X-Internal-Token": TOKEN})
         check("integrity stable across reads", r.json()["ok"] is True)
@@ -138,6 +156,8 @@ def main() -> int:
         assert r.status_code == 200, r.text
         check("identity: break-glass returns masked identity",
               "email_masked" in r.json() and "audit@" not in r.json()["email_masked"])
+        # Same barrier: the ingest + break-glass appends above are queued.
+        flush_audit_queue(5.0)
 
         r = ac.get(f"/audit/events?fraud_id={FRAUD_ID}", headers={"X-Internal-Token": TOKEN})
         evs = r.json()["events"]
@@ -158,8 +178,8 @@ def main() -> int:
               and "audit@" not in str(rp) and "Tester" not in str(rp) and "919876543222" not in str(rp), str(rp))
         # The new events are linked into the chain like every other event.
         r = ac.get("/audit/integrity", headers={"X-Internal-Token": TOKEN})
-        # Phase 49: chain has 5 real events + 1 startup attestation event.
-        check("audit: chain still verifies", r.json()["ok"] is True and r.json()["n_entries"] == 7,
+        # 5 events appended by this suite + the startup baseline (N5).
+        check("audit: chain still verifies", r.json()["ok"] is True and r.json()["n_entries"] == N5,
               str(r.json()))
 
         # ---- compliance viewer UI (static page + passphrase-gated API) -----
@@ -185,7 +205,7 @@ def main() -> int:
         r = ac.get("/compliance/events", headers=c_hdr)
         assert r.status_code == 200, r.text
         c_events = r.json()["events"]
-        check("compliance viewer: trail served", len(c_events) == 7, str(len(c_events)))
+        check("compliance viewer: trail served", len(c_events) == N5, str(len(c_events)))
         score_ev = next(e for e in c_events
                         if e["event_type"] == "score_generated" and e["payload"].get("reason_codes"))
         check("compliance viewer: category reason texts", "reason_texts" in score_ev["payload"],
@@ -198,24 +218,26 @@ def main() -> int:
         r = ac.get("/compliance/events?limit=2&offset=2", headers=c_hdr)
         assert r.status_code == 200, r.text
         p2 = r.json()
-        r = ac.get("/compliance/events?limit=3&offset=4", headers=c_hdr)
+        # Final page sized from the runtime chain length (N5 - 4 spans the
+        # remainder after two 2-event pages, for either startup baseline).
+        r = ac.get(f"/compliance/events?limit={N5 - 4}&offset=4", headers=c_hdr)
         assert r.status_code == 200, r.text
         p3 = r.json()
         all_seqs = [e["seq"] for e in p1["events"] + p2["events"] + p3["events"]]
         check("compliance: offset pages are disjoint + cover the trail",
-              len(p1["events"]) == 2 and len(p2["events"]) == 2 and len(p3["events"]) == 3
-              and len({e["seq"] for e in p1["events"] + p2["events"] + p3["events"]}) == 7
-              and sorted(all_seqs) == list(range(1, 8)),
+              len(p1["events"]) == 2 and len(p2["events"]) == 2 and len(p3["events"]) == N5 - 4
+              and len({e["seq"] for e in p1["events"] + p2["events"] + p3["events"]}) == N5
+              and sorted(all_seqs) == list(range(1, N5 + 1)),
               str(all_seqs))
         check("compliance: total reflects the whole chain",
-              p1.get("total") == 7 and p2.get("total") == 7 and p3.get("total") == 7,
+              p1.get("total") == N5 and p2.get("total") == N5 and p3.get("total") == N5,
               str(p1.get("total")))
         check("compliance: offset beyond the tail returns empty",
-              ac.get("/compliance/events?limit=2&offset=10", headers=c_hdr).json()["events"] == [])
+              ac.get(f"/compliance/events?limit=2&offset={N5 + 3}", headers=c_hdr).json()["events"] == [])
         r = ac.get("/audit/events?limit=2&offset=2", headers={"X-Internal-Token": TOKEN})
         assert r.status_code == 200, r.text
         check("audit/events: internal endpoint also pages (total present)",
-              r.json().get("total") == 7 and {e["seq"] for e in r.json()["events"]} == {5, 4},
+              r.json().get("total") == N5 and {e["seq"] for e in r.json()["events"]} == {N5 - 2, N5 - 3},
               str(r.json().get("total")))
 
         # ---- event-type filter on the compliance trail ---------------------
@@ -258,8 +280,8 @@ def main() -> int:
               set(ov) == {"integrity", "latest_case", "events", "count", "total", "by_type", "no_flag_scores"},
               str(sorted(ov)))
         check("audit/overview: integrity + totals consistent",
-              ov["integrity"]["ok"] is True and ov["integrity"]["n_entries"] == 7
-              and ov["total"] == 7 and ov["count"] == 7 and len(ov["events"]) == 7,
+              ov["integrity"]["ok"] is True and ov["integrity"]["n_entries"] == N5
+              and ov["total"] == N5 and ov["count"] == N5 and len(ov["events"]) == N5,
               str(ov["integrity"]))
         check("audit/overview: latest_case is the newest verification_resolved",
               ov["latest_case"] is not None and ov["latest_case"]["case_id"]
@@ -279,12 +301,12 @@ def main() -> int:
                   for e in ov["events"]))
         r2 = ac.get("/audit/overview?limit=2&offset=0", headers={"X-Internal-Token": TOKEN})
         check("audit/overview: paging respected (limit/offset)",
-              r2.json()["count"] == 2 and r2.json()["total"] == 7 and len(r2.json()["events"]) == 2,
+              r2.json()["count"] == 2 and r2.json()["total"] == N5 and len(r2.json()["events"]) == 2,
               str((r2.json().get("count"), r2.json().get("total"))))
         r = ac.get("/audit/overview")  # no token
         check("audit/overview: requires role (401)", r.status_code == 401)
         r = ac.get("/compliance/integrity", headers=c_hdr)
-        check("compliance viewer: integrity ok", r.json()["ok"] is True and r.json()["n_entries"] == 7,
+        check("compliance viewer: integrity ok", r.json()["ok"] is True and r.json()["n_entries"] == N5,
               str(r.json()))
 
         # ---- compliance export (regulator-facing, signed) ------------------
@@ -295,27 +317,33 @@ def main() -> int:
         exp = r.json()
         check("export: format + integrity ok", exp.get("format") == "ps14-audit-export-v1"
               and exp.get("integrity", {}).get("ok") is True, str(exp.get("integrity")))
-        check("export: all events dumped", len(exp.get("events", [])) == 7, f"n={len(exp.get('events'))}")
+        check("export: all events dumped", len(exp.get("events", [])) == N5, f"n={len(exp.get('events'))}")
         check("export: signed (hmac-sha256)", bool(exp.get("signature"))
               and exp.get("signature_algorithm") == "hmac-sha256")
         key = get_settings().export_signing_key
         check("export: signature verifies", verify_export_signature(exp, key))
         chk = verify_export_chain(exp, exp["genesis_hash"])
-        check("export: chain re-verifies independently", chk["ok"] is True and chk["n_entries"] == 7, str(chk))
+        check("export: chain re-verifies independently", chk["ok"] is True and chk["n_entries"] == N5, str(chk))
 
         # A tampered copy (as a regulator would receive it) must fail BOTH
         # checks: the signature (content changed) and the chain (hash
         # mismatch at the altered entry).
         tampered = json.loads(json.dumps(exp))
-        tampered["events"][1]["payload"]["risk_score"] = 1  # seq 2 = first score_generated
+        # Target the FIRST score_generated payload, derived from the chain:
+        # absolute seqs shift with the startup baseline (manifest or not), so
+        # a literal "seq 2" would tamper a different entry per environment.
+        # Export events are ordered seq-ascending.
+        SCORE_SEQ = next(e["seq"] for e in exp["events"] if e["event_type"] == "score_generated")
+        tampered["events"][SCORE_SEQ - 1]["payload"]["risk_score"] = 1
         check("export: tampered copy fails signature", not verify_export_signature(tampered, key))
         cv = verify_export_chain(tampered, tampered["genesis_hash"])
-        check("export: tampered copy fails chain", cv["ok"] is False and cv.get("first_bad_seq") == 2, str(cv))
+        check("export: tampered copy fails chain",
+              cv["ok"] is False and cv.get("first_bad_seq") == SCORE_SEQ, str(cv))
 
         # ---- append-only guard (storage layer) -----------------------------
         con = sqlite3.connect(Path(TMP) / "audit.db")
         try:
-            con.execute("UPDATE audit_events SET payload_summary = 'hacked' WHERE seq = 2")  # seq 1 = Phase 49 startup attestation
+            con.execute(f"UPDATE audit_events SET payload_summary = 'hacked' WHERE seq = {SCORE_SEQ}")  # first score_generated
             con.commit()
             blocked = False
         except sqlite3.DatabaseError as e:
@@ -327,24 +355,24 @@ def main() -> int:
         # ---- tamper detection ----------------------------------------------
         con = sqlite3.connect(Path(TMP) / "audit.db")
         con.execute("DROP TRIGGER IF EXISTS audit_events_no_update")
-        con.execute("UPDATE audit_events SET payload_summary = 'hacked' WHERE seq = 2")  # seq 1 = Phase 49 startup attestation
+        con.execute(f"UPDATE audit_events SET payload_summary = 'hacked' WHERE seq = {SCORE_SEQ}")  # first score_generated
         con.commit()
         con.close()
 
         r = ac.get("/audit/integrity", headers={"X-Internal-Token": TOKEN})
         body = r.json()
-        check("tamper detected", body["ok"] is False and body.get("first_bad_seq") == 2,
+        check("tamper detected", body["ok"] is False and body.get("first_bad_seq") == SCORE_SEQ,
               str(body))
         r = ac.get("/compliance/integrity", headers={"X-Compliance-Token": "smoke-compliance-token"})
         cbody = r.json()
-        check("compliance viewer also reports tamper", cbody["ok"] is False and cbody.get("first_bad_seq") == 2,
+        check("compliance viewer also reports tamper", cbody["ok"] is False and cbody.get("first_bad_seq") == SCORE_SEQ,
               str(cbody))
         r2 = ac.get(f"/audit/events?fraud_id={FRAUD_ID}", headers={"X-Internal-Token": TOKEN})
-        # seq=2 is the startup attestation (fraud_id=SYSTEM), not in FRAUD_ID results.
-        # The corruption is confirmed by integrity check above.  Look for the
-        # tampered summary on the unfiltered chain to complete the compliance path.
+        # The corruption is confirmed by the integrity checks above; look for
+        # the tampered summary on the unfiltered chain to complete the
+        # compliance path (the filtered call above cannot see it).
         r_all = ac.get("/audit/events", headers={"X-Internal-Token": TOKEN})
-        tampered_entry = next((e for e in r_all.json()["events"] if e["seq"] == 2), None)
+        tampered_entry = next((e for e in r_all.json()["events"] if e["seq"] == SCORE_SEQ), None)
         check("tampered payload flagged for compliance",
               tampered_entry is not None and tampered_entry["payload"].get("corrupted_payload") == "hacked",
               str(tampered_entry))
@@ -355,11 +383,11 @@ def main() -> int:
         r = ac.get("/audit/export", headers={"X-Internal-Token": TOKEN})
         exp2 = r.json()
         check("export: broken chain flagged", exp2["integrity"]["ok"] is False
-              and exp2["integrity"].get("first_bad_seq") == 2, str(exp2["integrity"]))
+              and exp2["integrity"].get("first_bad_seq") == SCORE_SEQ, str(exp2["integrity"]))
         check("export: broken chain still authentic", verify_export_signature(exp2, key))
         cv2 = verify_export_chain(exp2, exp2["genesis_hash"])
         check("export: broken chain rejected by regulator check",
-              cv2["ok"] is False and cv2.get("first_bad_seq") == 2, str(cv2))
+              cv2["ok"] is False and cv2.get("first_bad_seq") == SCORE_SEQ, str(cv2))
 
         # ---- access logging + DB separation --------------------------------
         con = sqlite3.connect(Path(TMP) / "audit.db")

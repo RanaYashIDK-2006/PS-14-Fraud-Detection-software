@@ -68,6 +68,13 @@ FAST_TESTS = [
     # CSP dev/prod, Origin allow-list, rate-limiter window/block/cleanup) —
     # previously only checked against a live service by security_test.py
     ("security_headers", "scripts/security_headers_test.py", {}),
+    # Phase 15: the federated institution worker must START and answer the
+    # protocol on a CSV that carries EVERY ML_FEATURES column (the
+    # fresh-checkout/CI data shape). Regression for F1: a function-local
+    # `import sys` inside the missing-column branch made `sys` local for all
+    # of main(), so the all-columns path died with UnboundLocalError at
+    # startup and federated_test.py failed with `worker t_0 failed to start`.
+    ("federated_worker", "scripts/federated_worker_test.py", {}),
 ]
 
 FULL_TESTS = [

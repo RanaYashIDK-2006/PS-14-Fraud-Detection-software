@@ -33,18 +33,22 @@ if str(BACKEND) not in sys.path:
 from regression_suite import FAST_TESTS  # noqa: E402
 
 # Additional hermetic service suite (TestClient, no live stack) exercising
-# the FastAPI mains beyond FAST_TESTS. Only suites proven hermetic on a FRESH
-# checkout belong here: audit_test.py and federated_test.py are deliberately
-# excluded despite passing locally — they sit in regression_suite.FULL_TESTS
-# because they depend on environment state that CI does not have:
-#   - audit_test.py hard-codes n_entries == 5, which assumes the
+# the FastAPI mains beyond FAST_TESTS. Battery composition is unchanged since
+# Phase 13: only suites proven hermetic on a FRESH checkout belong here. The
+# two suites Phase 13 excluded for environment dependence stay in
+# regression_suite.FULL_TESTS and NOT in this measurement battery:
+#   - audit_test.py hard-coded n_entries == 5, which assumed the
 #     runtime_release_loaded startup event that only fires when a gitignored
-#     attestation manifest exists (fresh checkout: 4 entries -> FAIL),
-#   - federated_test.py crashes its workers with UnboundLocalError (the
-#     `import sys;` at federated_worker.py:79 makes `sys` local to main(), so
-#     when every ML_FEATURES column is present — fresh CI data — the branch
-#     is skipped and `sys.stdin` at line 100 is unbound).
-# Both are reported as findings in PHASE_TEST_COVERAGE_CLOSEOUT.md §6.
+#     attestation manifest exists (fresh checkout: 4 entries -> FAIL). That
+#     assumption was FIXED in Phase 15 (the suite now derives every expected
+#     chain length from a startup baseline it reads at runtime) — the battery
+#     composition is deliberately left unchanged.
+#   - federated_test.py crashed its workers with UnboundLocalError; the
+#     underlying defect (a function-local `import sys` in federated_worker.py)
+#     was FIXED in Phase 15, and F1 now has a dedicated hermetic regression
+#     suite (federated_worker_test.py) registered in FAST_TESTS.
+# Both findings are reported in PHASE_TEST_COVERAGE_CLOSEOUT.md §6; their
+# remediation is recorded in PHASE_DEFECT_REMEDIATION_CLOSEOUT.md.
 EXTRA_TESTS = [
     ("verification_flow", "scripts/verification_test.py", {}),
 ]
