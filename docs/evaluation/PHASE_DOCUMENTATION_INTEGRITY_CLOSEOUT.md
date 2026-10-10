@@ -15,8 +15,8 @@ logic, model artifact, training data, rule, threshold or calibration change was 
 | Starting SHA | `83d975b9f2b271dc385e3ede17180cf447e66184` |
 | `origin/main` at start | `83d975b9f2b271dc385e3ede17180cf447e66184` (in sync; `git rev-list --left-right --count` = `0 0`) |
 | Inherited working tree | 2 modified (`reports/calibration_test/calibration_metrics.json`, `reports/evaluation_runs/eval_ledger.jsonl`) + 72 untracked `reports/evaluation_runs/record_eval-*.json` |
-| Final phase SHA (content commit) | `e10fc250dc9f64ac695d421a562ca6399ae78fac` — **CI/CD + Security Scan both PASS** (§10) |
-| Results commit | the follow-up commit that records §10 (documentation only) |
+| Final content SHA | `e10fc250dc9f64ac695d421a562ca6399ae78fac` — **CI/CD + Security Scan both PASS** (§10) |
+| Documentation-only follow-ups | `c968306` (records §10; **CI/CD + Security Scan both PASS**, run ids in §10) and the post-check correction commit for D16 (documentation only) |
 
 ## 2. Files audited and modified
 
@@ -55,6 +55,7 @@ logic, model artifact, training data, rule, threshold or calibration change was 
 | **D13** | The six `uvicorn …` commands had no import path, so they fail from the repository root. | `--app-dir backend` added (the same resolution `.freebuff/start_stack.ps1` achieves with `PYTHONPATH=backend`); verified live (§5). |
 | **D14** | The Docker commands assumed a compose file at the repository root; the compose files live in `backend/`. | Commands rewritten as `docker compose -f backend/docker-compose.yml …` / `-f backend/docker-compose.prod.yml …`; `Caddyfile` / `docker-compose.prod.yml` references prefixed. **Not executed — Docker is not installed on this host** (§6). |
 | **D15** | The phase narrative stops at Phase 103 while `docs/` carries Phase 104–106 and the NR/RP series (Phase 106 register gap G-12). | Pointer added listing the later documents; the narrative is not otherwise rewritten. |
+| **D16** | "Demo accounts (for testing)" presented five user credentials as if they were pre-seeded. They appear **nowhere in the repository** — a repo-wide search (`.py/.json/.sh/.ps1/.html/.js`, excluding the minified bundles) finds `alice@test.com` … `EveDemo345!` only in `README.md`, and `db/` is gitignored so a fresh clone has an empty Identity store. Nothing pre-creates demo users (`grep -rn 'demo_accounts\|seed_users\|create_demo_user' backend` → no hits); accounts are created by `POST /auth/register` (`backend/src/identity_service/main.py:270`). | Section retitled "Accounts (for testing)", states that the repository seeds no accounts, tells the reader to register via the API or the Sign in panel, and labels the five pairs as the author's local-demo credentials rather than a requirement. |
 
 ## 4. Evidence supporting substantive documentation claims
 
@@ -92,6 +93,7 @@ logic, model artifact, training data, rule, threshold or calibration change was 
 | Per-suite `[PASS]` counts (`grep -c '\[PASS\]'`) for 9 fast suites | smoke 47, risk_engine 69, drift 20, k_anonymity 23, tune 25, pipeline 30, feedback 29, ood_gate 8, rules_gate 8 |
 | Route cross-check (`@app.get/post` in `verification_service/main.py`) | all documented verification/audit paths exist; only the `{id}` shorthands were wrong (fixed) |
 | Secret-shaped-string scan of the README diff (`AKIA`, `-----BEGIN`, JWT-ish, 40+ hex) | no matches; nothing staged at review time |
+| Demo-account provenance search (`@test\.com` across `.py/.json/.sh/.ps1/.html/.js`, and `demo_accounts`/`seed_users`/`create_demo_user`) | no seeded demo users anywhere; only the README table and unrelated `pentest-*@test.com` literals generated at runtime by `penetration_test.py` → corrected as **D16** |
 
 ## 6. Unverified instructions and remaining limitations
 
@@ -174,4 +176,7 @@ The documentation-only follow-up commit that records these results is the last c
 phase; its own workflow runs are the same two workflows and are green as well (no code change).
 
 **Phase 14 is complete:** README.md corrected against verified evidence, all ten closeout
-sections present, CI/CD and Security Scan green at the final phase SHA.
+sections present, CI/CD and Security Scan green at `e10fc25` and again at the docs-only
+`c968306`. A final documentation-only commit carries the D16 correction found by the
+post-push completion check; it changes no code, so its workflows are the same two (the same
+shape as `c968306`, which was observed green).

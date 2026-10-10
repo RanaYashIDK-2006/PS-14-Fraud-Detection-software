@@ -718,9 +718,16 @@ python -m venv .venv
 pip install -r backend/requirements.txt -c backend/constraints.txt
 ```
 
-### Demo accounts (for testing)
+### Accounts (for testing)
 
-| Account | Email | Password | Role |
+**The repository seeds no accounts.** `db/` is gitignored, so a fresh clone starts with an
+empty Identity store: create an account first with `POST /auth/register` (or the front page's
+**👤 Sign in** panel, which registers/logs in against the Identity Service), then use the
+returned JWT. The email/password pairs below are the throwaway credentials used in the
+author's local demo database — they appear nowhere in the code and are **not required**; any
+email/password pair works.
+
+| Account (local demo data only) | Email | Password | Role |
 |---|---|---|---|
 | Alice | `alice@test.com` | `AlicePass123!` | user |
 | Bob | `bob@test.com` | `BobSecure456!` | user |
