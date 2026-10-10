@@ -10,7 +10,7 @@
 |---|---|
 | Branch | `main` |
 | Starting SHA (`HEAD` before this phase) | `4a97c6dc77930dc622f8608215f7db6eea32606c` |
-| Final SHA (this phase's commit) | recorded in §10 after push |
+| Final SHA (this phase's commit) | recorded in §10 after push (initial push `a29c2e96800a1e64ea0d900d9d239cdbe631ca9c`; follow-up commit corrects the measurement battery after CI's fresh checkout exposed the F1/F2 findings) |
 | Remote | `https://github.com/RanaYashIDK-2006/PS-14-Fraud-Detection-software.git` |
 | Note | This phase added no production dependency, no model/artifact, and no privacy/AES secrets. Only reviewed Phase-13 files were staged (measurement driver, config, focused test, CI step, `.gitignore` entries, this closeout). Inherited working-tree artifacts (evaluation-ledger records, calibration metrics) were preserved and not committed. |
 
@@ -31,8 +31,10 @@ python backend/scripts/coverage_run.py
 
 The driver:
 1. Runs `coverage erase` (fresh data; stale data would silently inflate).
-2. Runs each of `FAST_TESTS` (the exact `regression_suite.py --fast` battery) plus three hermetic TestClient service suites (`verification_test.py`, `audit_test.py`, `federated_test.py`) under `coverage run --append`, from `cwd=backend` with the same env contract as `regression_suite.run_test()`.
+2. Runs each of `FAST_TESTS` (the exact `regression_suite.py --fast` battery, 26 scripts including the new `security_headers_test.py`) plus the hermetic TestClient suite `verification_test.py` — **27 scripts total** — under `coverage run --append`, from `cwd=backend` with the same env contract as `regression_suite.run_test()`. Any failing script prints its output tail (same visibility as `regression_suite.py`).
 3. Prints `coverage report --show-missing` (line + **branch** coverage, missing line numbers per module) and writes `backend/coverage.xml`.
+
+**Battery correction after the first CI run (honest-accounting note):** the initial commit (a29c2e9) also included `audit_test.py` and `federated_test.py` in the coverage battery. CI's fresh checkout failed both — not because of coverage, but because they are `FULL_TESTS` entries with pre-existing environment dependencies (§6, findings F1–F2). They were removed from the *measurement battery* (they remain in `FULL_TESTS` unchanged). The corrected battery was validated on a pristine `git clone` of the exact SHA with CI's preprocessing steps (`generate_synthetic_data.py`, artifacts present): **27/27 PASS, exit 0**, TOTAL 22.9 % on that clean state.
 
 Config: `backend/.coveragerc` — `source = src`, `branch = True`, `show_missing = true`, `precision = 1`. **No `omit`, no `exclude_lines`**: every first-party module under `backend/src` is measured, including ORM `models.py` files. Paths in the config resolve relative to the working directory (`backend/`), which the driver always sets.
 
@@ -71,19 +73,15 @@ The measurement gate cannot silently pass with an empty report.
 
 ## 4. Measured line and branch coverage (final SHA measurement)
 
-Final instrumented run: **29/29 tests passed, exit 0** (`/tmp/phase13_cov_final.log`, 2 m 52 s).
+Final instrumented run (corrected 27-script battery): **27/27 tests passed, exit 0**, TOTAL 23.6 %.
 
-```
-TOTAL   25333 stmts   18497 miss   8378 branches   283 partial   24.5%
-```
+From `backend/coverage.xml` of that run (machine-readable, uploaded as a CI artifact):
 
-From `backend/coverage.xml` (machine-readable, uploaded as a CI artifact):
-
-| Metric | Value |
-|---|---|
-| Line coverage | **27.0 %** (6 836 / 25 333 statements) |
-| Branch coverage | **17.1 %** (1 432 / 8 378 branches) |
-| Combined (coverage.py `Cover` column) | **24.5 %** |
+| Metric | Value (main tree, warm state) | Value (pristine clone of the same SHA, CI-like) |
+|---|---|---|
+| Line coverage | **26.0 %** (6 597 / 25 333 statements) | — (XML from the clone run: TOTAL 22.9 % combined) |
+| Branch coverage | **16.3 %** (1 362 / 8 378 branches) | — |
+| Combined (coverage.py `Cover` column) | **23.6 %** | **22.9 %** |
 
 Selected risk-relevant modules (line coverage, from the same run):
 
@@ -139,6 +137,16 @@ No module was excluded because it was hard to measure; the 0 % modules are shown
 
 Deferred findings (explicitly out of Phase 13 scope per the phase brief):
 
+### Defects discovered by the Phase 13 measurement (reported, NOT fixed here)
+
+Running the coverage battery on a **pristine clone** (the CI environment) surfaced three pre-existing, environment-dependent defects that the warm working tree masks. All three files are untouched by Phase 13 (`git diff 4a97c6d..HEAD` empty for them); they are reported, not fixed, because each is a test-infra/product fix outside this phase's scope:
+
+- **F1 — `backend/scripts/federated_worker.py:79` `UnboundLocalError`:** `import sys; print(...)` sits inside `main()` in the `if len(available) < len(ML_FEATURES):` branch, so `sys` is a *local* name for the whole function. When every `ML_FEATURES` column is present in the CSV (the fresh-CI-data case), the branch is skipped and `for line in sys.stdin` (line 100) raises `UnboundLocalError: cannot access local variable 'sys'` — every worker dies at startup and `federated_test.py` fails with `worker t_0 failed to start (rc=1)`. The warm tree masks it because the cached pool CSV lacks a production-only feature, executing the import. Fix: drop the inline `import sys` (module already imports it at top level). **This means `federated_test.py` (FULL_TESTS) is currently broken on any fresh checkout with complete feature columns — it only passes where the branch happens to execute.**
+- **F2 — `backend/scripts/audit_test.py` hard-codes `n_entries == 5/7`:** the counts assume a `runtime_release_loaded` startup event that is only appended when a gitignored attestation manifest exists. On a fresh checkout (no manifest) the risk-engine lifespan takes the legacy/dev path and writes only `runtime_attestation_state`, so the chain has 4 (then 6) entries and 11 checks fail despite every payload reporting `ok: True`. The suite is in `FULL_TESTS` for this environment sensitivity.
+- **F3 — `backend/src/risk_engine/main.py:414` `NameError: model_version`:** when `models/artifacts/metadata.json` is missing (fresh checkout, before training), the `else` branch prints a warning but never assigns `model_version`; line 414 (`_obs_store.model_telemetry.model_id = model_version or "unknown"`) then crashes the lifespan. Any `TestClient(risk_app)` startup on an untrained checkout dies here (observed while reproducing F2). Fix: initialize `model_version = "unknown"` before the `if`.
+
+The coverage *battery* was adjusted instead of these being fixed: `audit_test.py` and `federated_test.py` remain in `FULL_TESTS` (unchanged) and were removed from the measurement battery; the corrected battery was validated 27/27 on a pristine clone with CI's preprocessing.
+
 - **Regression-runner exit-code issue** — deferred, unchanged, not bundled.
 - **Production-mode rate-limiting coverage** (`rate_limit_middleware` 429 path, `src/middleware/rate_limiter.py` lines 158–193) — the middleware intentionally no-ops unless `PS14_MODE=production`; covering it requires production-mode fixtures. Deferred; the mode-independent logic (window, block, config, cleanup) **is** now covered (79.8 %).
 - **`/internal/metrics` NameError fix** — not bundled (per phase brief).
@@ -172,8 +180,9 @@ No application source under `backend/src/` was modified. No model architecture, 
 | Gate | Command | Result |
 |---|---|---|
 | Fast regression baseline (pre-measurement) | `python backend/scripts/regression_suite.py --fast` | **25/25 PASS, exit 0** (75.2 s) |
-| Coverage battery (baseline + 3 service suites + new test) | `python backend/scripts/coverage_run.py` | **29/29 PASS, exit 0** (2 m 52 s); TOTAL 24.5 % |
-| New focused test (standalone) | `python backend/scripts/security_headers_test.py` | **40/40 PASS, exit 0** |
+| Coverage battery (corrected 27-script) | `python backend/scripts/coverage_run.py` | **27/27 PASS, exit 0**; TOTAL 23.6 % (line 26.0 %, branch 16.3 %) |
+| Same battery on a pristine clone of the same SHA (CI simulation, after `generate_synthetic_data.py`) | `python backend/scripts/coverage_run.py` | **27/27 PASS, exit 0**; TOTAL 22.9 % |
+| New focused test (standalone, main tree + pristine clone) | `python backend/scripts/security_headers_test.py` | **40/40 PASS, exit 0** in both |
 | Secret hygiene + Bandit medium gate | `python backend/scripts/secret_hygiene_test.py` | **PASS** (16 passed, 0 failed; bandit medium+ exits 0) |
 | Claim evidence enforcement | `python backend/scripts/claim_evidence_check.py` | **PASS** (22 claims verified) |
 | YAML sanity of both workflows | `yaml.safe_load` | PASS |
@@ -181,9 +190,9 @@ No application source under `backend/src/` was modified. No model architecture, 
 
 **Limitations / observed flake (honest reporting):**
 
-- **Timing-sensitive FIFO assertion in `audit_resilience_test.py`:** on one instrumented run (1 of 4), the check `recovery replays in FIFO (seq ascending == append order)` failed under coverage tracing (`[11, 6, 7, 8, 9, 10]`). It passed on 2 plain runs and on the coverage retry, and in the final 29/29 run. This is instrumentation-induced scheduling variance in the recovery thread, **not** a product defect proven either way; it is reported here rather than papered over. If it recurs in CI, the assertion's tolerance should be reviewed in a dedicated phase.
+- **Timing-sensitive FIFO assertion in `audit_resilience_test.py` (observed flake, rate ~17 %: 2 of 12 instrumented full-battery/standalone runs):** the check `recovery replays in FIFO (seq ascending == append order)` intermittently fails under coverage tracing — e.g. `[11, 6, 7, 8, 9, 10]`, where the first-appended pending event received the highest seq (replay of event 0 landed after events 1–5). Passing runs: 3/3 standalone instrumented reruns, both pristine-clone battery runs, and the CI coverage step itself. Failing runs: 2 main-tree battery runs. The recovery sweep replays the pending file in order, but per-item backoff/retry means a retried item can be appended after later items — so exact seq-ascending equality is stricter than the writer's documented contract ("FIFO holds within each stream (queue drain order, pending-file order)"). `audit_resilience_test.py` still passes in CI's plain (uninstrumented) regression step. Not a proven product defect and not fixed here; flagged for a dedicated phase to either relax the assertion to "all events recovered exactly once" (already checked separately) or make recovery seq assignment order-stable.
 - The measured percentage covers the **fast** battery. Full-mode live-service suites (`security_test.py`, `sql_injection_test.py`, `resilience_test.py`, `front_service_test.py`) are not in the coverage run (documented §5).
-- Branch coverage (17.1 %) is materially lower than line coverage — the fast battery mostly exercises happy paths; the branch gaps are enumerated per module in `coverage.xml` (CI artifact) and `coverage report --show-missing` output.
+- Branch coverage (16.3 %) is materially lower than line coverage — the fast battery mostly exercises happy paths; the branch gaps are enumerated per module in `coverage.xml` (CI artifact) and `coverage report --show-missing` output.
 - CI results for the final SHA are recorded in §10 after push; local results above are `DEMONSTRATED` on the measurement host (Windows, Python 3.12 venv).
 
 ## 9. Evidence labels
@@ -193,7 +202,9 @@ No application source under `backend/src/` was modified. No model architecture, 
 | `DEMONSTRATED` | Coverage tool + version (`coverage 7.6.0`), measured via `coverage.__version__` and the `coverage xml` header |
 | `DEMONSTRATED` | Exact measurement commands (driver + CI step) and environment |
 | `DEMONSTRATED` | Fail-visible behavior (no data / wrong cwd / test failure / xml failure all exit 1 with explicit messages) |
-| `DEMONSTRATED` | Measured line 27.0 % + branch 17.1 % (combined 24.5 %) over all of `backend/src`, from a 29/29-passing instrumented run; machine-readable in `backend/coverage.xml` |
+| `DEMONSTRATED` | Measured line 26.0 % + branch 16.3 % (combined 23.6 %) over all of `backend/src`, from a 27/27-passing instrumented run; machine-readable in `backend/coverage.xml` |
+| `DEMONSTRATED` | Corrected battery re-validated 27/27 (exit 0) on a pristine `git clone` of the same SHA with CI's preprocessing (combined 22.9 %) |
+| `DEMONSTRATED` | Three pre-existing environment-dependent defects discovered and root-caused on the pristine clone (F1 `federated_worker.py` `UnboundLocalError`; F2 `audit_test.py` hard-coded chain counts; F3 `risk_engine/main.py` `NameError: model_version`), each reproduced with a minimal trace and confirmed untouched by Phase 13 |
 | `DEMONSTRATED` | Fast regression baseline 25/25 PASS; secret hygiene 16/16 PASS; claim evidence PASS |
 | `SELF-TESTED` | New `security_headers_test.py` (40/40 on this host; wired into `FAST_TESTS` so CI re-runs it) |
 | `SELF-TESTED` | Per-module missing-line lists (visible in the run log and XML artifact) |
@@ -206,8 +217,13 @@ No application source under `backend/src/` was modified. No model architecture, 
 
 ## 10. Observed CI/CD and Security Scan results for the exact final SHA
 
-Final SHA: **to be recorded here after push and CI observation** (local-only at time of writing; the working tree is not a git repository per `AGENTS.md`... see note below).
+Initial push `a29c2e96800a1e64ea0d900d9d239cdbe631ca9c` (7 files):
 
-**Repository note:** this working copy has functioning `git status`/`git log` (HEAD = `4a97c6dc77930dc622f8608215f7db6eea32606c`, `main`, in sync with `origin/main` at phase start). CI observation (`ci-cd.yml` test job now includes the coverage step; `security-scan.yml` unchanged) for the phase-13 commit SHA is appended below once the push completes.
+| Workflow | Result | Detail |
+|---|---|---|
+| Security Scan (`security-scan.yml`, run 38030150316) | **PASS (completed/success)** | PS14 scanner, Bandit medium+, secret hygiene, Safety, TruffleHog all green for this SHA |
+| CI/CD (`ci-cd.yml`, run 38030150325) | **FAIL — Test Suite job only, in my new coverage step** | Steps: checkout ✓, Python ✓, deps ✓, synthetic data ✓, train models ✓, **Run full regression suite ✓** (all 26 fast tests incl. `security_headers` PASS), **Coverage measurement ✗**, upload XML ✓. Downstream jobs (Security/Docker/Integration/Deploy) skipped by `needs:`. Root cause: the two non-hermetic EXTRA suites (`audit_chain`, `federated_learning`) — findings F1/F2 — failed on the fresh checkout (27/29 passed; the coverage report itself was produced, TOTAL 24.2 %). This is exactly the fail-visible behavior required by the phase: the gate did not silently pass.
+
+The follow-up commit removes those two suites from the measurement battery (they stay in `FULL_TESTS` unchanged) and records this closeout; CI results for that final SHA are appended below after push.
 
 <!-- CI-RESULTS-APPEND-POINT -->
