@@ -104,3 +104,9 @@ reports/altman_*.json
 benchmarks/
 backend/scripts/_sweep_out.log
 backend/scripts/_sweep_summary.json
+
+# Phase 13: coverage measurement artifacts
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml

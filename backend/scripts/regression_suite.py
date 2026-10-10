@@ -64,6 +64,10 @@ FAST_TESTS = [
     ("backup_restore", "scripts/backup_restore_test.py", {}),
     # P2 regression: previously-fixed bugs must stay fixed
     ("p2_regression", "scripts/priority2_full_regression_test.py", {}),
+    # Phase 13: hermetic middleware security (413 body limit, 500 mapping,
+    # CSP dev/prod, Origin allow-list, rate-limiter window/block/cleanup) —
+    # previously only checked against a live service by security_test.py
+    ("security_headers", "scripts/security_headers_test.py", {}),
 ]
 
 FULL_TESTS = [

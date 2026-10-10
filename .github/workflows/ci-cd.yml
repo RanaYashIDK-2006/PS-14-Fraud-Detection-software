@@ -49,6 +49,28 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
 
+      # Phase 13: line+branch coverage of backend/src over the same fast
+      # battery plus the hermetic service suites. Installed ad hoc like the
+      # security tools in security-scan.yml (coverage is a measurement tool,
+      # not a runtime dependency). The step fails visibly if any test fails
+      # OR if the measurement produces no report — there is deliberately no
+      # global coverage threshold (see PHASE_TEST_COVERAGE_CLOSEOUT.md §5).
+      - name: Coverage measurement (backend/src)
+        run: |
+          pip install coverage==7.6.0
+          python backend/scripts/coverage_run.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Upload coverage XML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: backend/coverage.xml
+          retention-days: 30
+          if-no-files-found: ignore
+
       # Phase 105: evidence enforcement — a quantitative claim introduced in a
       # managed README surface without a validated claims-registry entry (or a
       # registry entry whose evidence/ledger record does not check out) fails CI.
