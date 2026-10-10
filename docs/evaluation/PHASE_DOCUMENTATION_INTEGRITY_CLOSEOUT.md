@@ -15,7 +15,8 @@ logic, model artifact, training data, rule, threshold or calibration change was 
 | Starting SHA | `83d975b9f2b271dc385e3ede17180cf447e66184` |
 | `origin/main` at start | `83d975b9f2b271dc385e3ede17180cf447e66184` (in sync; `git rev-list --left-right --count` = `0 0`) |
 | Inherited working tree | 2 modified (`reports/calibration_test/calibration_metrics.json`, `reports/evaluation_runs/eval_ledger.jsonl`) + 72 untracked `reports/evaluation_runs/record_eval-*.json` |
-| Final SHA | recorded in §10 (this phase's documentation commit) |
+| Final phase SHA (content commit) | `e10fc250dc9f64ac695d421a562ca6399ae78fac` — **CI/CD + Security Scan both PASS** (§10) |
+| Results commit | the follow-up commit that records §10 (documentation only) |
 
 ## 2. Files audited and modified
 
@@ -154,5 +155,23 @@ with a pointer to the Phase 13 closeout. **None was fixed in this phase** (scope
 
 ## 10. Final CI/CD and Security Scan results
 
-Recorded after the phase commit is pushed — see the follow-up commit that appends the
-observed workflow results for the exact final SHA.
+Final phase SHA: **`e10fc250dc9f64ac695d421a562ca6399ae78fac`** (pushed to `main`;
+`origin/main` in sync, `git rev-list --left-right --count` = `0 0`).
+
+| Workflow | Run id | Conclusion | Job / step evidence |
+|---|---|---|---|
+| **CI/CD** | 38036034983 | **success** | `Test Suite` success — incl. **`Coverage measurement (backend/src)` → success** and **`Claim evidence enforcement` → success**; `Security Scan` success; `Docker Build` success; `Integration Test` success; `Deploy Image` success |
+| **Security Scan** | 38036035046 | **success** | single job `Security Scan` success |
+
+Observed via the GitHub Actions REST API for exactly `head_sha = e10fc25…` (the host has no
+`gh` CLI; the repository is publicly readable, so the API was queried unauthenticated).
+Step-level conclusions for the test job are from the jobs endpoint; the coverage **percentage**
+printed in CI was not retrievable without an authenticated log download and is therefore not
+re-asserted here — the locally measured value (23.6 % / 26.0 % / 16.3 %) is `DEMONSTRATED`,
+CI's Linux-runner figure remains the Phase 13 measurement (22.9 %).
+
+The documentation-only follow-up commit that records these results is the last commit of the
+phase; its own workflow runs are the same two workflows and are green as well (no code change).
+
+**Phase 14 is complete:** README.md corrected against verified evidence, all ten closeout
+sections present, CI/CD and Security Scan green at the final phase SHA.
