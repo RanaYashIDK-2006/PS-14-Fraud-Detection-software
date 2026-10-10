@@ -75,6 +75,13 @@ FAST_TESTS = [
     # of main(), so the all-columns path died with UnboundLocalError at
     # startup and federated_test.py failed with `worker t_0 failed to start`.
     ("federated_worker", "scripts/federated_worker_test.py", {}),
+
+    # Phase 16: hermetic inference tests - RedisSlidingWindow (fakeredis),
+    # AutoScaler, WorkerInfo, RedisMetricsCollector, WorkerPoolManager status,
+    # AB traffic splitter, UnifiedScorer, failure-path tests. No Redis needed.
+    ("inference_hermetic", "scripts/inference_hermetic_test.py", {}),
+    # Phase 17: hermetic Redis state tests using fakeredis (no real Redis needed)
+    ("redis_state_hermetic", "scripts/test_redis_state.py", {}),
 ]
 
 FULL_TESTS = [

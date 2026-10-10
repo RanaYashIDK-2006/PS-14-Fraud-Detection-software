@@ -51,6 +51,8 @@ from regression_suite import FAST_TESTS  # noqa: E402
 # remediation is recorded in PHASE_DEFECT_REMEDIATION_CLOSEOUT.md.
 EXTRA_TESTS = [
     ("verification_flow", "scripts/verification_test.py", {}),
+    # Phase 17: hermetic Redis state tests (fakeredis) for coverage
+    ("redis_state_hermetic", "scripts/test_redis_state.py", {}),
 ]
 
 BATTERY = FAST_TESTS + EXTRA_TESTS

@@ -417,8 +417,15 @@ class RedisStateManager:
             raise
 
     def get_window(self, user_id: str) -> RedisSlidingWindow:
-        """Get the Redis-backed sliding window for a user."""
-        return RedisSlidingWindow(self.r, user_id, self.window_size, self.prefix)
+        """Get the Redis-backed sliding window for a user.
+
+        The window key is constructed as ``{prefix}window:{user_id}`` so that
+        ``get_stats()`` can discover active users by scanning for
+        ``{prefix}window:*``.
+        """
+        # Append "window:" to match the key pattern expected by get_stats()
+        window_prefix = self.prefix if self.prefix.endswith("window:") else self.prefix + "window:"
+        return RedisSlidingWindow(self.r, user_id, self.window_size, window_prefix)
 
     def add_transaction(self, txn) -> dict:
         """Add transaction and return velocity features. Uses pipeline."""
@@ -450,14 +457,16 @@ class RedisStateManager:
                 return base_stats
 
         try:
-            # Count active users
-            pattern = f"{self.prefix}window:*"
+            # Count active users by scanning for window keys.
+            # Window keys have format {prefix}{user_id} where prefix includes "window:".
+            pattern = f"{self.prefix}*"
             cursor = 0
             active_users = 0
             while True:
                 cursor, keys = self.r.scan(cursor, match=pattern, count=1000)
                 for k in keys:
                     k_str = k.decode() if isinstance(k, bytes) else k
+                    # Count only the window ZSET keys (not agg, tx, or access)
                     if ":agg" not in k_str and ":tx" not in k_str and ":access" not in k_str:
                         active_users += 1
                 if cursor == 0:
