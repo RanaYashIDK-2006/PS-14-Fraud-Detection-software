@@ -10,7 +10,7 @@
 |---|---|
 | Branch | `main` |
 | Starting SHA (`HEAD` before this phase) | `4a97c6dc77930dc622f8608215f7db6eea32606c` |
-| Final SHA (this phase's commit) | recorded in §10 after push (initial push `a29c2e96800a1e64ea0d900d9d239cdbe631ca9c`; follow-up commit corrects the measurement battery after CI's fresh checkout exposed the F1/F2 findings) |
+| Final SHA (this phase's commit) | `4c7bc3863a0d90c2b30d4f266f104ac39ac3725f` (CI: CI/CD all 5 jobs PASS, Security Scan PASS — see §10); the closeout-only follow-up commit that records those results is the last push of the phase |
 | Remote | `https://github.com/RanaYashIDK-2006/PS-14-Fraud-Detection-software.git` |
 | Note | This phase added no production dependency, no model/artifact, and no privacy/AES secrets. Only reviewed Phase-13 files were staged (measurement driver, config, focused test, CI step, `.gitignore` entries, this closeout). Inherited working-tree artifacts (evaluation-ledger records, calibration metrics) were preserved and not committed. |
 
@@ -226,4 +226,15 @@ Initial push `a29c2e96800a1e64ea0d900d9d239cdbe631ca9c` (7 files):
 
 The follow-up commit removes those two suites from the measurement battery (they stay in `FULL_TESTS` unchanged) and records this closeout; CI results for that final SHA are appended below after push.
 
-<!-- CI-RESULTS-APPEND-POINT -->
+**Final SHA `4c7bc3863a0d90c2b30d4f266f104ac39ac3725f` (battery correction + this closeout):**
+
+| Workflow | Run | Result |
+|---|---|---|
+| Security Scan (`security-scan.yml`) | 38032687xxx (same push) | **PASS** (completed/success) |
+| CI/CD (`ci-cd.yml`) | 38032687700 | **PASS — all 5 jobs**: Test Suite ✓, Security Scan ✓, Docker Build ✓, Integration Test ✓, Deploy Image ✓ |
+
+Test Suite steps at the final SHA (all success): checkout, Python, deps, generate synthetic data, train models, **Run full regression suite**, **Coverage measurement (backend/src)**, Upload coverage XML, Claim evidence enforcement, Evaluation record schema tests, backup/restore test.
+
+CI-measured coverage at the final SHA (from the run-38032687700 job log): **27/27 tests passed**, `TOTAL 25333 stmts / 18921 miss / 8378 branches / 271 partial → 22.9 % combined`, XML written and uploaded (line ≈ 25.3 %, branch ≈ 16.4 % on the runner's fresh state).
+
+**Verdict:** DEMONSTRATED — the coverage measurement is reproducible locally and in CI, fails visibly when broken (proven by the a29c2e9 run), the baseline is honestly reported with explicit inclusion/exclusion rules, the high-risk middleware gap is closed by a new hermetic test that runs in CI, and both workflows are green at the final phase SHA. Per the phase brief, no Phase 14 work was started.
