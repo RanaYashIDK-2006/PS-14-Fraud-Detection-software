@@ -10,8 +10,9 @@ C-010/C-013/C-014). This phase does not establish production readiness.
 | | SHA |
 | --- | --- |
 | Starting HEAD | `ac9f7aec89a3e279c5d3656868ac19063d04fa6c` (= origin/main at phase start) |
-| Phase 21 commit | recorded in `git log` — `fix(demo): Phase 21 — restore the CI regression gate, fix the stale backup/restore assertion, add batch failure-recovery tests` |
-| Remote | `origin/main`, verified via `git ls-remote` before push |
+| Phase 21 implementation commit | `8d36c52790603f936acb599933dfd8be99b339f3` — `fix(demo): Phase 21 — restore the CI regression gate, fix the stale backup/restore assertion, add batch failure-recovery tests` (7 files, +997/−9) |
+| Final HEAD | the `docs(phase21)` commits that record the CI results and these SHAs (this file), direct children of `8d36c52` |
+| Remote | `origin/main`, verified via `git ls-remote` after each push |
 
 Branch `main`, tracking `origin/main`, in sync at phase start.
 
