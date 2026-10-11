@@ -19,7 +19,8 @@ Evidence labels used below: `DEMONSTRATED` (live, observed), `SELF-TESTED`
 | | SHA |
 | --- | --- |
 | Starting HEAD (= origin/main at phase start) | `82a2e9bb35b9130c9b6dbf0aaf97588adf25d998` |
-| Final HEAD | this closeout's commit, direct child of `82a2e9b` (see `git log`) |
+| Phase 22 implementation commit | `c55b7409b47e4e26f282e2bae7cf4f642741e516` — `docs(phase22): final demo acceptance …` (2 files: `frontend/index.html` dead-resource removal + this closeout) |
+| Final HEAD | the `docs(phase22)` commits recording the CI results and these SHAs (this file), direct children of `c55b740` |
 
 Branch `main`, tracking `origin/main`, in sync at start; verified via
 `git ls-remote` before push.
@@ -165,11 +166,12 @@ honest state; CI's audit of the pinned set passes.
 | `bandit -r backend/src -f json --severity-level medium` (CI command) | **exit 0, 0 results** (JSON-verified; the text-mode Medium/High numbers are by-confidence counts of low-severity issues excluded by the severity filter) |
 | `security_scan.py --full` | "No security issues found", exit 0 |
 
-**CI (workflow runs on exact SHAs):** CI/CD **#177** and Security Scan
-**#182** on the starting SHA `82a2e9b` — both **PASS** (continuing the green
-streak from #175/#180 on the Phase 21 SHA). Local results above are
-distinguished from these CI results. Fresh runs on this commit are triggered
-by the push; the working tree carries no workflow changes.
+**CI (workflow runs on exact SHAs):** on the starting SHA `82a2e9b`:
+CI/CD **#177** PASS, Security Scan **#182** PASS. On the Phase 22 commit
+`c55b740` (recorded post-push in this evidence-reconciliation edit):
+CI/CD **#178** PASS, Security Scan **#183** PASS. Local results above are
+distinguished from these CI results. The working tree carries no workflow
+changes.
 
 ## 7. Operator rehearsal checklist (every item tested this phase)
 
