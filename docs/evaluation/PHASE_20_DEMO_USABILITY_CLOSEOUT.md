@@ -9,8 +9,9 @@ data.** This phase does not make the system production-ready.
 | | SHA |
 | --- | --- |
 | Starting HEAD (Phase 20 work began on top of) | `7ce38a6` (`docs(phase19): reconcile closeout evidence…`) |
-| Phase 20 commit | see `git log` — commit message `feat(demo): Phase 20 — 25,000-transaction batch demo, reports API, demo UI` |
-| Remote | `origin/main`, verified before push (`git ls-remote` reachable) |
+| Phase 20 implementation commit | `9d9c59831c47ca81b02f97dd48bcfe3cdd26a9a1` — `feat(demo): Phase 20 — 25,000-transaction batch demo, reports API, demo UI` (11 files, +3066/−10) |
+| Final HEAD | the `docs(phase20)` commit that records these SHAs (this file), the direct child of `9d9c598` |
+| Remote | `origin/main` = `9d9c598…` verified via `git ls-remote` immediately after push |
 
 Parent of `7ce38a6` is the Phase 19 implementation commit `1b14a42`.
 
