@@ -448,6 +448,49 @@ def monitor_app_js() -> Response:
     return resp
 
 
+@app.get("/static/demo-app.js", include_in_schema=False)
+def demo_app_js() -> Response:
+    """Phase 20: logic for the landing page's Live Demo section."""
+    resp = FileResponse(STATIC / "demo-app.js")
+    resp.headers["Cache-Control"] = "public, max-age=86400"
+    return resp
+
+
+@app.get("/demo-page", include_in_schema=False)
+def demo_page() -> Response:
+    """Phase 20: batch demo + reports application (redesigned demo UI)."""
+    resp = FileResponse(STATIC / "demo.html")
+    resp.headers["Cache-Control"] = "private, max-age=10"
+    return resp
+
+
+@app.get("/static/demo.js", include_in_schema=False)
+def demo_js() -> Response:
+    resp = FileResponse(STATIC / "demo.js")
+    resp.headers["Cache-Control"] = "public, max-age=86400"
+    return resp
+
+
+@app.get("/static/demo.css", include_in_schema=False)
+def demo_css() -> Response:
+    resp = FileResponse(STATIC / "demo.css")
+    resp.headers["Cache-Control"] = "public, max-age=86400"
+    return resp
+
+
+@app.get("/static/chart.umd.js", include_in_schema=False)
+def chart_umd_js() -> Response:
+    """Vendored Chart.js (already shipped with the frontend for the monitor)."""
+    resp = FileResponse(STATIC / "chart.min.js")
+    resp.headers["Cache-Control"] = "public, max-age=86400"
+    return resp
+
+
+# Phase 20: batch demo + reports API (subprocess-backed, no model in this proc)
+from src.front_service.demo_batch_api import router as demo_batch_router  # noqa: E402
+app.include_router(demo_batch_router)
+
+
 
 @app.get("/fraud-report-page", include_in_schema=False)
 def fraud_report_page() -> Response:
@@ -625,6 +668,210 @@ async def status(response: Response) -> JSONResponse:
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok", "service": "front-page"}
+
+
+# ----------------------------------------------------------------------
+# Phase 20 — synthetic demo surface (usability only)
+#
+# Two small endpoints back the landing page's "Live Demo" section:
+#
+#   GET  /demo/readiness              honest per-service liveness/readiness
+#   POST /demo/synthetic-transaction  one synthetic txn through Privacy -> Risk
+
+# Demo input bounds: strictly allowlisted shapes so the public page cannot be
+# used to relay arbitrary payloads to the internal endpoints.
+DEMO_TOKEN_FIELD = r"^[A-Za-z0-9][A-Za-z0-9\-_]{0,31}$"
+DEMO_RATE_WINDOW_S = 60
+DEMO_RATE_MAX = 20
+_demo_hits: dict[str, list[float]] = {}
+
+
+def _demo_rate_limited(client_key: str) -> bool:
+    """Tiny per-client sliding window (in-process, demo-scale only)."""
+    now = time.time()
+    hits = [t for t in _demo_hits.get(client_key, []) if now - t < DEMO_RATE_WINDOW_S]
+    if len(hits) >= DEMO_RATE_MAX:
+        _demo_hits[client_key] = hits
+        return True
+    hits.append(now)
+    _demo_hits[client_key] = hits
+    if len(_demo_hits) > 512:  # bound memory; demo use is single-operator
+        _demo_hits.clear()
+    return False
+
+
+class DemoTransactionRequest(BaseModel):
+    """Synthetic transaction inputs from the landing page.
+
+    Every field is bounded/allowlisted: the browser never supplies an event id
+    (the server mints a unique one, so replays never collide) and never touches
+    a token, a model artifact, or an internal URL.
+    """
+    fraud_id: str | None = Field(default=None, pattern=r"^F[A-Z2-9]{15}$")
+    amount: float = Field(gt=0, le=1_000_000)
+    hour_of_day: int | None = Field(default=None, ge=0, le=23)
+    device_id: str | None = Field(default=None, pattern=DEMO_TOKEN_FIELD)
+    location_id: str | None = Field(default=None, pattern=DEMO_TOKEN_FIELD)
+    recipient_id: str | None = Field(default=None, pattern=DEMO_TOKEN_FIELD)
+    failed_auth_count_24h: int = Field(default=0, ge=0, le=50)
+
+
+def _demo_upstream_error(service: str, resp: httpx.Response) -> HTTPException:
+    """Translate an upstream failure into a safe, plain-language API error.
+
+    4xx upstream detail (validation text) is safe to surface; 5xx bodies are
+    not — they are replaced with a generic message. Nothing here can leak the
+    internal token, a stack trace, or a filesystem path.
+    """
+    if resp.status_code >= 500:
+        return HTTPException(
+            status_code=502,
+            detail=(f"{service} failed internally (HTTP {resp.status_code}). "
+                    "No risk decision was produced — nothing is being shown "
+                    "in place of a real result."),
+            headers={"X-Demo-Service": service.lower().replace(" ", "-")},
+        )
+    detail = f"{service} rejected the synthetic transaction (HTTP {resp.status_code})."
+    try:
+        upstream = resp.json().get("detail")
+    except Exception:  # noqa: BLE001 - upstream body is untrusted
+        upstream = None
+    if isinstance(upstream, str):
+        detail += f" {upstream}"
+    return HTTPException(status_code=resp.status_code, detail=detail,
+                         headers={"X-Demo-Service": service.lower().replace(" ", "-")})
+
+
+@app.get("/demo/readiness")
+async def demo_readiness() -> JSONResponse:
+    """Honest readiness for the demo path.
+
+    `liveness` is derived from the service's own /health answer (never a
+    hardcoded value). `readiness` / `model_readiness` are only reported when
+    that service's /health actually exposes them — a service that does not
+    publish readiness reports `null`, not `ready`.
+    """
+    cached = _STATUS_CACHE.get("data")
+    fresh = cached and (
+        datetime.now(timezone.utc) - _STATUS_CACHE.get("ts", datetime.min.replace(tzinfo=timezone.utc))
+    ).total_seconds() < STATUS_TTL_SECONDS
+    if not fresh:
+        await _refresh_status_cache()
+        cached = _STATUS_CACHE.get("data")
+
+    services: dict[str, dict] = {}
+    for name in SERVICES:
+        info = (cached or {}).get(name) or {}
+        health = info.get("health") or {}
+        alive = info.get("status") == "ok"
+        readiness = health.get("readiness")
+        model_readiness = health.get("model_readiness")
+        services[name] = {
+            "liveness": "alive" if alive else "unreachable",
+            "readiness": readiness if isinstance(readiness, str) else None,
+            "model_readiness": model_readiness if isinstance(model_readiness, str) else None,
+            "latency_ms": info.get("latency_ms"),
+            "detail": None if alive else str(info.get("status") or "down"),
+        }
+
+    privacy_risk_up = (services["privacy"]["liveness"] == "alive"
+                       and services["risk"]["liveness"] == "alive")
+    risk_model = services["risk"]["model_readiness"]
+    model_ok = risk_model in (None, "loaded")
+    return JSONResponse({
+        "checked_at": datetime.now(timezone.utc).isoformat(),
+        "demo_path_ready": bool(privacy_risk_up and model_ok),
+        "all_services_alive": all(s["liveness"] == "alive" for s in services.values()),
+        "services": services,
+        "note": ("liveness = the service's /health answered HTTP 200. "
+                 "readiness/model_readiness are shown only when that service's "
+                 "/health exposes them; null means 'not published', never 'ready'."),
+    })
+
+
+@app.post("/demo/synthetic-transaction")
+async def demo_synthetic_transaction(req: DemoTransactionRequest, request: Request) -> JSONResponse:
+    """Run ONE synthetic transaction through the documented demo path.
+
+    POST /internal/ingest-transaction (Privacy Layer) -> derived features
+    POST /internal/evaluate           (Risk Engine)    -> real decision contract
+
+    The server mints the unique event id (replay-safe), holds the internal
+    token (never sent to the browser), and returns only fields the backend
+    actually produced. Failures are returned as plain-language errors — never
+    converted into a success-looking result.
+    """
+    client_key = request.client.host if request.client else "unknown"
+    if _demo_rate_limited(client_key):
+        raise HTTPException(status_code=429,
+                            detail="Demo rate limit reached — wait about a minute and try again.")
+
+    fraud_id = req.fraud_id or ("F" + "".join(
+        secrets.choice("ABCDEFGHJKLMNPQRSTUVWXYZ23456789") for _ in range(15)))
+    event_id = f"DEMO-{uuid.uuid4().hex}"
+    payload = {
+        "event_id": event_id,
+        "fraud_id": fraud_id,
+        "amount": req.amount,
+        "ts": datetime.now(timezone.utc).replace(tzinfo=None).isoformat(),
+        "hour_of_day": req.hour_of_day if req.hour_of_day is not None else datetime.now().hour,
+        "device_id": req.device_id or f"demo-device-{uuid.uuid4().hex[:6]}",
+        "location_id": req.location_id or "L-DEMO",
+        "recipient_id": req.recipient_id or "R-DEMO",
+        "failed_auth_count_24h": req.failed_auth_count_24h,
+    }
+    headers = {"X-Internal-Token": settings.internal_token}
+    privacy_url = f"{SERVICES['privacy'].rstrip('/')}/internal/ingest-transaction"
+    risk_url = f"{SERVICES['risk'].rstrip('/')}/internal/evaluate"
+
+    async with httpx.AsyncClient(timeout=5.0) as client:
+        try:
+            ing = await client.post(privacy_url, headers=headers, json=payload)
+        except httpx.HTTPError:
+            raise HTTPException(
+                status_code=503,
+                detail=("Privacy Layer is unreachable. Start the demo stack and "
+                        "check /demo/readiness before running the demo."),
+                headers={"X-Demo-Service": "privacy"},
+            )
+        if ing.status_code != 200:
+            raise _demo_upstream_error("Privacy Layer", ing)
+        try:
+            features = ing.json()
+        except Exception:  # noqa: BLE001 - upstream body is untrusted
+            raise HTTPException(status_code=502,
+                                detail="Privacy Layer returned an unreadable response; no features were derived.",
+                                headers={"X-Demo-Service": "privacy"})
+
+        try:
+            ev = await client.post(risk_url, headers=headers,
+                                   json={"event_id": event_id, "fraud_id": fraud_id, "features": features})
+        except httpx.HTTPError:
+            raise HTTPException(
+                status_code=503,
+                detail=("Risk Engine is unreachable. The transaction was NOT scored "
+                        "— no decision is being shown in its place."),
+                headers={"X-Demo-Service": "risk"},
+            )
+        if ev.status_code != 200:
+            raise _demo_upstream_error("Risk Engine", ev)
+        try:
+            decision = ev.json()
+        except Exception:  # noqa: BLE001 - upstream body is untrusted
+            raise HTTPException(status_code=502,
+                                detail="Risk Engine returned an unreadable response; no decision was produced.",
+                                headers={"X-Demo-Service": "risk"})
+
+    return JSONResponse({
+        "synthetic": True,
+        "event_id": event_id,
+        "fraud_id": fraud_id,
+        "ingest": features,
+        "decision": decision,
+        "note": ("Synthetic demo input scored by the running model and rules. "
+                 "This demonstrates the software path, not institutional or "
+                 "real-world fraud-detection performance."),
+    })
 
 
 @app.post("/csp-report")

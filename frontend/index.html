@@ -132,6 +132,8 @@ tailwind.config = {
       </div>
     </div>
     <div class="hidden md:flex items-center gap-1">
+      <a href="/demo-page" class="px-3 py-2 text-sm text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50">Demo &amp; Reports</a>
+      <a href="#demo" class="px-3 py-2 text-sm text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50">Live Demo</a>
       <a href="#performance" class="px-3 py-2 text-sm text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50">Performance</a>
       <a href="#architecture" class="px-3 py-2 text-sm text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50">Architecture</a>
       <a href="#phases" class="px-3 py-2 text-sm text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50">Validation</a>
@@ -149,8 +151,8 @@ tailwind.config = {
   <div class="max-w-7xl mx-auto text-center">
     <div data-aos="fade-up">
       <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs text-slate-400 mb-6">
-        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-        All systems operational
+        <span id="system-status-badge" class="w-2 h-2 rounded-full bg-slate-500"></span>
+        <span id="system-status-text">Checking services…</span>
       </div>
       <h1 class="text-4xl md:text-6xl font-bold mb-4">
         <span class="gradient-text">Privacy-First</span> AI Fraud Detection
@@ -160,12 +162,89 @@ tailwind.config = {
         Built for India's DPDP Act 2023 and RBI Guidelines.
       </p>
       <div class="flex items-center justify-center gap-3">
-        <a href="#performance" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all">
+        <a href="#demo" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all">
+          Run the Demo
+        </a>
+        <a href="#performance" class="px-6 py-3 glass text-slate-300 font-semibold rounded-xl hover:text-white transition-all">
           View Metrics
         </a>
-        <a href="#architecture" class="px-6 py-3 glass text-slate-300 font-semibold rounded-xl hover:text-white transition-all">
-          Architecture →
-        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Live Demo (Phase 20) -->
+<section id="demo" class="py-16 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-10 fade-in">
+      <h2 class="text-2xl font-bold mb-2">Live Demo</h2>
+      <p class="text-slate-400 text-sm">Score a synthetic transaction through the real Privacy Layer → Risk Engine path</p>
+      <p class="text-amber-400/80 text-xs mt-2">Synthetic demo data. This demonstrates the software path — not institutional or real-world fraud-detection performance.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Readiness -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-sm font-bold mb-1">Service readiness</h3>
+        <p class="text-[11px] text-slate-500 mb-3">Liveness from each service's own <code class="font-mono">/health</code>; readiness is shown only where a service publishes it.</p>
+        <div id="demo-readiness" class="text-xs"><span class="text-slate-500">Checking…</span></div>
+        <div id="demo-not-ready-warning" class="hidden mt-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20 text-[11px] text-amber-300">
+          The demo path is not fully ready — running it now will fail. Start the missing service(s) and this list updates automatically.
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="text-sm font-bold mb-3">Synthetic transaction</h3>
+        <label class="block text-[11px] text-slate-500 mb-1">Scenario</label>
+        <select id="demo-preset" class="w-full mb-3 px-3 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500"></select>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] text-slate-500 mb-1">Amount</label>
+            <input id="demo-amount" type="number" min="0.01" step="0.01" class="w-full px-3 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-500 mb-1">Hour of day (0-23)</label>
+            <input id="demo-hour" type="number" min="0" max="23" step="1" class="w-full px-3 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-500 mb-1">Device</label>
+            <input id="demo-device" type="text" maxlength="32" class="w-full px-3 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-500 mb-1">Location</label>
+            <input id="demo-location" type="text" maxlength="32" class="w-full px-3 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-500 mb-1">Recipient</label>
+            <input id="demo-recipient" type="text" maxlength="32" class="w-full px-3 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-500 mb-1">Failed logins (24h)</label>
+            <input id="demo-failed" type="number" min="0" max="50" step="1" class="w-full px-3 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <label class="block text-[11px] text-slate-500 mb-1">Synthetic demo account (repeat runs build history)</label>
+          <input id="demo-account" type="text" maxlength="16" readonly class="w-full px-3 py-2 bg-slate-900/30 border border-slate-800 rounded-lg text-xs font-mono text-slate-400">
+          <div id="demo-account-note" class="mt-1 text-[11px] text-slate-500">Each run mints a unique event id, so replaying a scenario never duplicates a transaction.</div>
+        </div>
+
+        <div class="mt-4 flex gap-2">
+          <button id="demo-run" class="flex-1 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+            Run synthetic transaction
+          </button>
+          <button id="demo-new-account" class="px-3 py-2.5 glass text-xs text-slate-400 rounded-xl hover:text-white transition-colors">New account</button>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div class="glass rounded-2xl p-6 min-h-[240px]">
+        <h3 class="text-sm font-bold mb-3">Result</h3>
+        <div id="demo-result" class="hidden"></div>
+        <div class="text-xs text-slate-500">Fields shown here are exactly what the backend returned. Nothing is invented, averaged or smoothed.</div>
       </div>
     </div>
   </div>
@@ -367,10 +446,10 @@ tailwind.config = {
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-800/50">
-            <tr><td class="py-2 font-semibold">Test Suite</td><td class="text-slate-400 text-xs">22/22 regression checks on clean checkout</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">PASSING</span></td></tr>
-            <tr><td class="py-2 font-semibold">Security Scan</td><td class="text-slate-400 text-xs">bandit medium+ clean · dependency audit · pen test (0 FAIL)</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">PASSING</span></td></tr>
-            <tr><td class="py-2 font-semibold">Docker Build</td><td class="text-slate-400 text-xs">Image builds with trained artifacts, non-root, /health works</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">PASSING</span></td></tr>
-            <tr><td class="py-2 font-semibold">Integration Test</td><td class="text-slate-400 text-xs">Live walkthrough + compose stack + chain verify</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">PASSING</span></td></tr>
+            <tr><td class="py-2 font-semibold">Test Suite</td><td class="text-slate-400 text-xs">29 hermetic regression suites on a clean checkout</td><td><span class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 text-xs font-medium">FAILING</span> <span class="text-[11px] text-slate-500">pre-existing: the suite list references a test script that was never committed</span></td></tr>
+            <tr><td class="py-2 font-semibold">Security Scan</td><td class="text-slate-400 text-xs">bandit medium+ clean, secret hygiene · dependency audit · pen test (0 FAIL)</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">PASSING</span></td></tr>
+            <tr><td class="py-2 font-semibold">Docker Build</td><td class="text-slate-400 text-xs">Image builds with trained artifacts, non-root, /health works</td><td><span class="px-2 py-0.5 rounded bg-slate-500/10 text-slate-400 text-xs font-medium">SKIPPED</span> <span class="text-[11px] text-slate-500">gated on Test Suite</span></td></tr>
+            <tr><td class="py-2 font-semibold">Integration Test</td><td class="text-slate-400 text-xs">Live walkthrough + compose stack + chain verify</td><td><span class="px-2 py-0.5 rounded bg-slate-500/10 text-slate-400 text-xs font-medium">SKIPPED</span> <span class="text-[11px] text-slate-500">gated on Test Suite</span></td></tr>
             <tr><td class="py-2 font-semibold">Deploy</td><td class="text-slate-400 text-xs">Push to GHCR on every merge to main</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">ON PUSH</span></td></tr>
           </tbody>
         </table>
@@ -545,5 +624,6 @@ async function handleAdminPass(e) {
   }
 }
 </script>
+<script src="/static/demo-app.js"></script>
 </body>
 </html>
