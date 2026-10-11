@@ -8,7 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<!-- Phase 22: the AOS stylesheet was removed — this repo's CSP (security_headers)
+     blocks cross-origin styles, so it was refused on every load (console error)
+     and had no effect. The AOS script and data-aos attributes are unchanged. -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
 tailwind.config = {
