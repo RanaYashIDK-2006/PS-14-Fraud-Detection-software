@@ -54,6 +54,20 @@ RULES_PATH = BACKEND / "src" / "risk_engine" / "rules.yaml"
 ARTIFACTS_DIR = ROOT / "models" / "artifacts"
 DEFAULT_OUT_DIR = ROOT / "db" / "demo_batch"
 DATASET_NAME = "transactions_causal.csv"
+
+
+def _rel(path: Path) -> str:
+    """Repo-relative POSIX path for report metadata.
+
+    Phase 21: reports are user-facing artifacts (fetched and exported through
+    the demo API); absolute paths leak the local username/layout for no
+    reproducibility benefit — the repo-relative location is what a reader
+    needs.
+    """
+    try:
+        return Path(path).resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return Path(path).name
 SUMMARY_NAME = "generation_summary_causal.json"
 SCHEMA_VERSION = "ps14-features-v1"
 NON_FEATURE_COLUMNS = {"event_id", "fraud_id", "ts", "archetype", "label",
@@ -110,7 +124,7 @@ def select_rows(csv_path: Path, rows: int, seed: int, out_path: Path):
     out_path.parent.mkdir(parents=True, exist_ok=True)
     selected.to_csv(out_path, index=False)
     meta = {
-        "source_csv": str(csv_path),
+        "source_csv": _rel(csv_path),
         "rows_available": int(total_available),
         "rows_selected": int(len(selected)),
         "selection_method": method,
@@ -254,7 +268,7 @@ def execute_offline(df, chunk_size: int, progress_cb=None) -> tuple[list[dict], 
     engine_meta = {
         "engine_class": type(fusion).__name__,
         "engine_version": getattr(fusion, "model_version", None) or "unknown",
-        "artifacts_dir": str(ARTIFACTS_DIR),
+        "artifacts_dir": _rel(ARTIFACTS_DIR),
         "artifacts_fingerprint": artifacts_fingerprint(),
         "locked_threshold": float(getattr(fusion, "locked_threshold", 0.0) or 0.0),
     }
@@ -568,7 +582,7 @@ def run_batch(mode: str, rows: int, seed: int, noise: float, out_dir: Path,
     (run_dir / "report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     _progress(run_dir, {"state": report["state"], "report_id": report_id,
                         "processed": int(len(results)), "total": int(len(usable)),
-                        "report_file": str(run_dir / "report.json")})
+                        "report_file": _rel(run_dir / "report.json")})
     return report
 
 

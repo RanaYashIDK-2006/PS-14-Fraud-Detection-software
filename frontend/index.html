@@ -446,10 +446,10 @@ tailwind.config = {
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-800/50">
-            <tr><td class="py-2 font-semibold">Test Suite</td><td class="text-slate-400 text-xs">29 hermetic regression suites on a clean checkout</td><td><span class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 text-xs font-medium">FAILING</span> <span class="text-[11px] text-slate-500">pre-existing: the suite list references a test script that was never committed</span></td></tr>
+            <tr><td class="py-2 font-semibold">Test Suite</td><td class="text-slate-400 text-xs">30 hermetic regression suites on a clean checkout</td><td><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-xs font-medium">PASSING</span> <span class="text-[11px] text-slate-500">30/30 locally in Phase 21; the pre-existing missing-script gate failure is fixed</span></td></tr>
             <tr><td class="py-2 font-semibold">Security Scan</td><td class="text-slate-400 text-xs">bandit medium+ clean, secret hygiene · dependency audit · pen test (0 FAIL)</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">PASSING</span></td></tr>
-            <tr><td class="py-2 font-semibold">Docker Build</td><td class="text-slate-400 text-xs">Image builds with trained artifacts, non-root, /health works</td><td><span class="px-2 py-0.5 rounded bg-slate-500/10 text-slate-400 text-xs font-medium">SKIPPED</span> <span class="text-[11px] text-slate-500">gated on Test Suite</span></td></tr>
-            <tr><td class="py-2 font-semibold">Integration Test</td><td class="text-slate-400 text-xs">Live walkthrough + compose stack + chain verify</td><td><span class="px-2 py-0.5 rounded bg-slate-500/10 text-slate-400 text-xs font-medium">SKIPPED</span> <span class="text-[11px] text-slate-500">gated on Test Suite</span></td></tr>
+            <tr><td class="py-2 font-semibold">Docker Build</td><td class="text-slate-400 text-xs">Image builds with trained artifacts, non-root, /health works</td><td><span class="px-2 py-0.5 rounded bg-slate-500/10 text-slate-400 text-xs font-medium">ON PUSH</span></td></tr>
+            <tr><td class="py-2 font-semibold">Integration Test</td><td class="text-slate-400 text-xs">Live walkthrough + compose stack + chain verify</td><td><span class="px-2 py-0.5 rounded bg-slate-500/10 text-slate-400 text-xs font-medium">ON PUSH</span></td></tr>
             <tr><td class="py-2 font-semibold">Deploy</td><td class="text-slate-400 text-xs">Push to GHCR on every merge to main</td><td><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 text-xs font-medium">ON PUSH</span></td></tr>
           </tbody>
         </table>

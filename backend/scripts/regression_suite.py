@@ -82,6 +82,10 @@ FAST_TESTS = [
     ("inference_hermetic", "scripts/inference_hermetic_test.py", {}),
     # Phase 17: hermetic Redis state tests using fakeredis (no real Redis needed)
     ("redis_state_hermetic", "scripts/test_redis_state.py", {}),
+    # Phase 21: batch demo failure recovery — invalid launches, duplicate
+    # submissions, crashed-run false-success invariant, export fidelity,
+    # error hygiene, batch rate limit (hermetic; fake subprocess boundary).
+    ("phase21_batch_recovery", "scripts/phase21_batch_recovery_test.py", {}),
 ]
 
 FULL_TESTS = [

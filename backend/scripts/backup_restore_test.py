@@ -324,15 +324,42 @@ def main() -> None:
                     # fails closed.
                     from src.monitoring.phase109_audit_fork_repair import (
                         AFFECTED_SEQUENCES,
+                        FINDING_BY_SEQ,
                         evaluate_chain,
                     )
                     res = evaluate_chain(rows)
                     check("Audit chain integrity (strict + quarantine)",
                           res["ok"],
                           f"strict_ok={res['strict_ok']} first_bad={res['first_bad_seq']}")
-                    check("Restore preserves all five quarantined forks",
-                          set(res.get("quarantined_breaks") or []) == set(AFFECTED_SEQUENCES),
-                          str(res.get("quarantined_breaks")))
+                    # Phase 21: this check previously asserted that the five
+                    # documented 2026-09-19 forks (AFFECTED_SEQUENCES) are
+                    # STILL live breaks in the restored chain. That encoded a
+                    # stale environmental assumption: the live chain has since
+                    # been legitimately repaired (strict walk passes over all
+                    # rows), so quarantined_breaks is [] and the hard-coded
+                    # comparison can never match. The property backup/restore
+                    # must actually guarantee is FIDELITY — the restored chain
+                    # evaluates identically to the source copy it was made
+                    # from, whether that source is strictly valid or carries
+                    # quarantined breaks. Compare against the source copy
+                    # instead of a frozen historical snapshot.
+                    src_audit = src_dir / "audit.db"
+                    if src_audit.exists():
+                        src_rows, _ = _dump_audit(src_audit)
+                        src_res = evaluate_chain(src_rows)
+                        check("Restored chain matches source quarantine state",
+                              (res["ok"], res["strict_ok"],
+                               list(res.get("quarantined_breaks") or []))
+                              == (src_res["ok"], src_res["strict_ok"],
+                                  list(src_res.get("quarantined_breaks") or [])),
+                              f"source(strict_ok={src_res['strict_ok']} "
+                              f"quarantined={src_res.get('quarantined_breaks')}) "
+                              f"restored(strict_ok={res['strict_ok']} "
+                              f"quarantined={res.get('quarantined_breaks')})")
+                        check("Quarantine findings remain loadable (evidence intact)",
+                              len(AFFECTED_SEQUENCES) == 5
+                              and all(s in FINDING_BY_SEQ for s in AFFECTED_SEQUENCES),
+                              str(AFFECTED_SEQUENCES))
                     check("Restored row count matches walk",
                           res["n_entries"] == len(rows),
                           str(res["n_entries"]))
