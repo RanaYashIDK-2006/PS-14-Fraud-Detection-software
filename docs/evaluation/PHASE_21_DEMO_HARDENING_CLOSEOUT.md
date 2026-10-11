@@ -150,8 +150,10 @@ before the handler). The product behavior was verified in both cases.
 | Secret hygiene | `secret_hygiene_test.py` | **16/16 PASS, exit 0** |
 | Custom scanner | `security_scan.py --full --json` | **exit 0** |
 | pip-audit | `pip_audit` on the local venv | exit 1 — 25 advisories in 6 packages (see below) |
-| CI Security Scan (workflow) | run #177 on `7ce38a6` | **PASS** (verified pre-phase) |
-| CI/CD (workflow) | run #172 on `7ce38a6` | **FAIL** — the regression gate, root-caused and fixed in §2; fresh runs on the Phase 21 SHA are recorded in `git log`/Actions after push |
+| CI Security Scan (workflow) | run #180 on `8d36c52` (Phase 21 SHA) | **PASS** |
+| CI/CD (workflow) | run #175 on `8d36c52` (Phase 21 SHA) | **PASS** — all 5 jobs green (Test Suite, Security Scan, Docker Build, Integration Test, Deploy Image); the regression gate that failed on `1b14a42`/`7ce38a6`/`9d9c598`/`ac9f7ae` is verified fixed in CI |
+| (pre-phase context) CI/CD #172 on `7ce38a6` | | FAIL — the regression gate, root-caused and fixed in §2 |
+| (pre-phase context) Security Scan #177 on `7ce38a6` | | PASS |
 
 pip-audit finding, investigated: the local venv has **drifted** from the
 pinned set (venv PyJWT 2.13.0 vs pinned `PyJWT==2.15.1`; the requirements
@@ -218,9 +220,10 @@ session in §4 exercised the full user path against them.
 - pip-audit on the *local* venv fails due to documented venv drift from the
   pinned set; the pinned set is what CI audits and it passes. Re-syncing the
   local venv is deferred (requires full-battery re-run per pin rationale).
-- CI/CD outcome on the Phase 21 SHA cannot be pre-recorded; the push
-  triggers fresh runs. Pre-phase state: CI/CD #172 `7ce38a6` FAIL
-  (regression gate, now fixed), Security Scan #177 `7ce38a6` PASS.
+- CI/CD #175 and Security Scan #180 on the Phase 21 SHA `8d36c52` both
+  PASS (recorded post-push in this evidence-reconciliation edit); the
+  historical runs on earlier SHAs remain as they were (CI/CD FAIL on the
+  regression gate, Security Scan PASS).
 - Docker build/integration jobs were not run locally; they run on push.
 - `--full` (live-service) suites were not run this phase; the Phase 19 live
   e2e demo and this phase's browser session cover the live path.
